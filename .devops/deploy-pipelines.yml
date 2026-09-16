@@ -15,8 +15,7 @@ variables:
   NODE_VERSION: '22.12.0'
   vmImageNameDefault: 'ubuntu-latest'
   blob_container_path: 'piattaformaunitaria'
-  extra_modules_path: 'https://github.com/pagopa/p4pa-send-fe.git'
-
+  
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/uat') }}:
     environment: 'UAT'
     azure_subscription: '$(UAT_AZURE_SUBSCRIPTION)'
@@ -33,6 +32,7 @@ variables:
     openapi_url: '$(UAT_OPENAPI_URL)'
     openapi_fileshare_url: '$(UAT_OPENAPI_FILESHARE_URL)'
     resources_url: '$(UAT_VITE_RESOURCES_URL)'
+    extra_modules_path: '$(UAT_EXTRA_MODULES_PATH)'
 
   ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
     environment: 'PROD'
@@ -50,6 +50,7 @@ variables:
     openapi_url: '$(PROD_OPENAPI_URL)'
     openapi_fileshare_url: '$(PROD_OPENAPI_FILESHARE_URL)'
     resources_url: '$(PROD_VITE_RESOURCES_URL)'
+    extra_modules_path: '$(PROD_EXTRA_MODULES_PATH)'
 
   # every branch different from past will be considered as DEV
   ${{ else }}:
@@ -68,6 +69,7 @@ variables:
     openapi_url: '$(DEV_OPENAPI_URL)'
     openapi_fileshare_url: '$(DEV_OPENAPI_FILESHARE_URL)'
     resources_url: '$(DEV_VITE_RESOURCES_URL)'
+    extra_modules_path: '$(DEV_EXTRA_MODULES_PATH)'
 
 pool:
   vmImage: '$(vmImageNameDefault)'
@@ -87,9 +89,15 @@ stages:
               set -euo pipefail
               # backticks instead of $(...) so Azure DevOps macro substitution leaves it alone
               AUTH=`printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0`
-              git -c http.extraheader="AUTHORIZATION: basic $AUTH" \
-                clone --depth 1 "$(extra_modules_path)"
-            displayName: 'Clone extra module'
+              # extra_modules_path may contain a comma-separated list of git urls
+              IFS=',' read -ra REPOS <<< "$(extra_modules_path)"
+              for repo in "${REPOS[@]}"; do
+                repo="$(echo "$repo" | xargs)"
+                [ -z "$repo" ] && continue
+                git -c http.extraheader="AUTHORIZATION: basic $AUTH" \
+                  clone --depth 1 "$repo"
+              done
+            displayName: 'Clone extra modules'
             env:
               GITHUB_TOKEN: $(GITHUB_TOKEN)
 
@@ -107,8 +115,6 @@ stages:
           - script: |
               export OPENAPI_URL=$(openapi_url)
               export OPENAPI_FILESHARE_URL=$(openapi_fileshare_url)
-              export VITE_APIHOST_SEND="https://api.dev.p4pa.pagopa.it/pu/send"
-              export OPENAPI_SEND="https://raw.githubusercontent.com/pagopa/p4pa-doc/refs/heads/main/openapi/uat/internal/p4pa-send-bff.generated.openapi.json"
               yarn build
             displayName: 'yarn build'
 
