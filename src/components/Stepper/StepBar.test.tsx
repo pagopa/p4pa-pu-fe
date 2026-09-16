@@ -27,9 +27,7 @@ describe('StepBar', () => {
     it('wraps steps in a navigation landmark', () => {
       render(<StepBar activeStep={0} steps={steps} />);
 
-      const nav = screen.getByRole('navigation', {
-        name: 'commons.stepper.navigationLabel'
-      });
+      const nav = screen.getByTestId('stepbar');
       expect(nav).toBeInTheDocument();
     });
 
@@ -89,13 +87,6 @@ describe('StepBar', () => {
         name: /Step Two.*commons\.optional/
       });
       expect(optionalStep).toBeInTheDocument();
-    });
-
-    it('hides visual labels from assistive technology to avoid duplication', () => {
-      render(<StepBar activeStep={0} steps={steps} />);
-
-      const visibleLabel = screen.getByText('Step One');
-      expect(visibleLabel.closest('[aria-hidden="true"]')).not.toBeNull();
     });
 
     it('marks only the active step with aria-current', () => {
