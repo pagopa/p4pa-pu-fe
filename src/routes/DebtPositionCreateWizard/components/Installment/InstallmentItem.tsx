@@ -189,6 +189,7 @@ const InstallmentItem = <T extends FieldValues>({
       <IconButton
         id={`installment-remove-${index}`}
         data-testid={`installment-remove-${index}`}
+        aria-label={`${t('debtPositionCreateWizard.step3.installments.removeInstallment')} ${index + 1}`}
         size="small"
         onClick={handleRemove}
         disabled={!onRemove || isEditing}
