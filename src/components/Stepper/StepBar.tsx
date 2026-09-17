@@ -50,42 +50,41 @@ export const StepBar = ({ activeStep, steps }: StepBarProps) => {
   };
 
   return (
-    <nav aria-label={t('commons.stepper.navigationLabel')}>
-      <MuiStepper
-        alternativeLabel
-        activeStep={activeStep}
-        data-testid="stepbar"
-        component="ol"
-        sx={{
-          listStyle: 'none',
-          padding: 0,
-          margin: 0
-        }}
-      >
-        {steps.map(({ label, optional }, index) => {
-          const state = getStepState(index, activeStep);
-          const ariaLabel = buildStepAriaLabel(index, label, optional, state);
+    <MuiStepper
+      alternativeLabel
+      activeStep={activeStep}
+      data-testid="stepbar"
+      component="ol"
+      aria-label={t('commons.stepper.navigationLabel')}
+      sx={{
+        listStyle: 'none',
+        padding: 0,
+        margin: 0
+      }}
+    >
+      {steps.map(({ label, optional }, index) => {
+        const state = getStepState(index, activeStep);
+        const ariaLabel = buildStepAriaLabel(index, label, optional, state);
 
-          return (
-            <Step
-              key={label}
-              component="li"
-              aria-label={ariaLabel}
-              aria-current={state.isActive ? 'step' : undefined}
-              sx={{ listStyle: 'none' }}
-            >
-              <Stack alignItems="center">
-                <StepLabel aria-hidden="true">{label}</StepLabel>
-                {optional ? (
-                  <Typography variant="caption" aria-hidden="true">
-                    {t('commons.optional')}
-                  </Typography>
-                ) : null}
-              </Stack>
-            </Step>
-          );
-        })}
-      </MuiStepper>
-    </nav>
+        return (
+          <Step
+            key={label}
+            component="li"
+            aria-label={ariaLabel}
+            aria-current={state.isActive ? 'step' : undefined}
+            sx={{ listStyle: 'none' }}
+          >
+            <Stack alignItems="center">
+              <StepLabel>{label}</StepLabel>
+              {optional ? (
+                <Typography variant="caption" aria-hidden="true">
+                  {t('commons.optional')}
+                </Typography>
+              ) : null}
+            </Stack>
+          </Step>
+        );
+      })}
+    </MuiStepper>
   );
 };

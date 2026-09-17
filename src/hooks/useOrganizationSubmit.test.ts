@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '../__tests__/renderers';
 import { useOrganizationSubmit } from './useOrganizationSubmit';
 import {
-  OrganizationDetailDTO,
+  OrganizationDetail,
   OrganizationStatus
 } from '../../generated/core/data-contracts';
 import { UnifiedFormData } from '../models/OrganizationEditTypes';
@@ -82,7 +82,7 @@ const createFormData = (
   ...overrides
 });
 
-const originalData: OrganizationDetailDTO = {
+const originalData: OrganizationDetail = {
   organizationId: 1,
   flagTreasury: false,
   externalOrganizationId: 'EXT1',
@@ -222,7 +222,7 @@ describe('useOrganizationSubmit', () => {
     const { default: utils } = await import('../utils');
     const formData = createFormData();
 
-    const activeOriginalData: OrganizationDetailDTO = {
+    const activeOriginalData: OrganizationDetail = {
       ...originalData,
       status: OrganizationStatus.ACTIVE
     };

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router';
 import { updateOrganization } from '../api/organizations';
 import {
-  OrganizationDetailDTO,
+  OrganizationDetail,
   OrganizationStatus
 } from '../../generated/core/data-contracts';
 import { UnifiedFormData } from '../models/OrganizationEditTypes';
@@ -17,7 +17,7 @@ import { transformFormDataToApiPayload } from '../utils/organizationFormTransfor
 
 type UseOrganizationSubmitParams = {
   organizationId: number;
-  originalData: OrganizationDetailDTO;
+  originalData: OrganizationDetail;
   onSuccess?: () => void;
 };
 

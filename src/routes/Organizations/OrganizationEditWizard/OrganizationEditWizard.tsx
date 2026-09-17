@@ -4,7 +4,7 @@ import { useNavigate, useParams, generatePath } from 'react-router';
 import { PageRoutes } from '../../../routes';
 import { useStore } from '../../../store/GlobalStore';
 import { getOrganizationDetail } from '../../../api/organizations';
-import { OrganizationDetailDTO } from '../../../../generated/core/data-contracts';
+import { OrganizationDetail } from '../../../../generated/core/data-contracts';
 import { UnifiedFormData } from '../../../models/OrganizationEditTypes';
 import { transformApiDataToFormData } from '../../../utils/organizationFormTransformers';
 import { OrganizationEditForm } from './components/OrganizationEditForm';
@@ -13,7 +13,7 @@ import utils from '../../../utils';
 const OrganizationEditWizard = () => {
   const [formData, setFormData] = useState<UnifiedFormData | null>(null);
   const [isDataReady, setIsDataReady] = useState(false);
-  const organizationDetailDataRef = useRef<OrganizationDetailDTO | null>(null);
+  const organizationDetailDataRef = useRef<OrganizationDetail | null>(null);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { organizationId: organizationIdByURL } = useParams<{

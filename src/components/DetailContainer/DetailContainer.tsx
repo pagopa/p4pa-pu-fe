@@ -177,10 +177,15 @@ const DetailContainer = ({
                 <Grid
                   py={1}
                   container
-                  direction={omitFlexGridDirection ? undefined : 'column'}
+                  direction={omitFlexGridDirection ? 'row' : 'column'}
                 >
                   {section.data.map((item, index) => (
-                    <Grid container py={1} key={index} direction="row">
+                    <Grid
+                      container
+                      py={1}
+                      key={index}
+                      direction={omitFlexGridDirection ? 'row' : 'column'}
+                    >
                       {item.label && (
                         <Grid
                           item
@@ -201,7 +206,7 @@ const DetailContainer = ({
                       <Grid item md={section.inline ? setColumnWidth : 12}>
                         {renderItemValue(item)}
                       </Grid>
-                      {section.divider && index !== section.data.length - 1 && (
+                      {section.divider && index < section.data.length - 1 && (
                         <Divider
                           orientation="horizontal"
                           flexItem

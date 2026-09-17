@@ -2,12 +2,14 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import BookIcon from '@mui/icons-material/Book';
+
 import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../../components/FormComponent';
 import { DebtTypeOrgForm } from '../../types';
+import { BudgetItems } from './components/BudgetItems';
 
-export const Step3Accounting = () => {
+export const Step3Accounting = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
   const { control } = useFormContext<DebtTypeOrgForm>();
 
@@ -29,6 +31,7 @@ export const Step3Accounting = () => {
           required={false}
           InputLabelProps={{ shrink: true }}
         />
+
         <FormComponent.ControlledTextField
           name="iban"
           data-testid="iban"
@@ -37,6 +40,7 @@ export const Step3Accounting = () => {
           required={false}
           InputLabelProps={{ shrink: true }}
         />
+
         <FormComponent.ControlledTextField
           name="postalAccountCode"
           data-testid="postalAccountCode"
@@ -45,6 +49,7 @@ export const Step3Accounting = () => {
           required={false}
           InputLabelProps={{ shrink: true }}
         />
+
         <FormComponent.ControlledTextField
           name="holderPostalCc"
           data-testid="holderPostalCc"
@@ -54,6 +59,7 @@ export const Step3Accounting = () => {
           InputLabelProps={{ shrink: true }}
         />
       </SectionBox>
+
       <SectionBox
         title={t('debtTypeOrgCreate.accounting.section.budgetInfo')}
         adornment={<BookIcon />}
@@ -64,10 +70,11 @@ export const Step3Accounting = () => {
           control={control}
           label={t('debtTypeOrgCreate.accounting.defaultBudgetStructure')}
           multiline
-          InputLabelProps={{ shrink: true }}
           rows={4}
           required={false}
+          InputLabelProps={{ shrink: true }}
         />
+
         <FormComponent.ControlledTextField
           name="orgSector"
           data-testid="orgSector"
@@ -77,6 +84,8 @@ export const Step3Accounting = () => {
           InputLabelProps={{ shrink: true }}
         />
       </SectionBox>
+
+      <BudgetItems edit={edit} />
     </WizardStepWrapper>
   );
 };

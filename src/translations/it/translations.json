@@ -173,6 +173,15 @@
         "previous": "vai alla pagina precedente"
       },
       "paginationPage": "vai a risultati di pagina {{page}}"
+    },
+    "filters": {
+      "removeFilter": "Elimina filtro di ricerca {{filter}}",
+      "filterRemoved": "Filtro {{filter}} eliminato"
+    },
+    "select": {
+      "clear": "Cancella il valore selezionato",
+      "open": "Apri elenco opzioni",
+      "close": "Chiudi elenco opzioni"
     }
   },
   "appPreview": {
@@ -1152,9 +1161,15 @@
       "checkboxRequired": "Questa conferma è obbligatoria",
       "invalidIban": "Formato IBAN non valido",
       "invalidPostalIban": "Formato conto poste non valido",
-      "invalidFiscalCodeOrVat": "Il codice fiscale o la partita IVA non sono corretti"
+      "invalidFiscalCodeOrVat": "Il codice fiscale o la partita IVA non sono corretti",
+      "sectionCodeRequired": "Il campo codice capitolo è obbligatorio",
+      "sectionDescriptionRequired": "Il campo Denominazione capitolo è obbligatorio"
     },
-    "yes": "Si"
+    "yes": "Si",
+    "steps": "Passaggi",
+    "step": "Passaggio",
+    "completedStep": "Completato",
+    "uncompletedStep": "Non completato"
   },
   "conservation": {
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni."
@@ -1337,6 +1352,7 @@
         "subtitle": "Si è verificato un errore durante la creazione della posizione debitoria. Verifica i dati e riprova."
       },
       "installments": {
+        "removeInstallment": "Rimuovi rata",
         "addInstallment": "Aggiungi rata",
         "amount": {
           "label": "Importo",
@@ -1815,6 +1831,19 @@
       "postalAccountHolder": "Intestatario CC Poste",
       "defaultBudgetStructure": "Struttura Bilancio Default",
       "entitySector": "Settore Ente",
+      "sectionCode": "Codice Capitolo",
+      "sectionDescription": "Denominazione Capitolo",
+      "officeCode": "Codice Ufficio",
+      "officeDescription": "Denominazione Ufficio",
+      "assessmentCode": "Codice Accertamento",
+      "assessmentDescription": "Denominazione Accertamento",
+      "budget": {
+        "subtitle": "Imposta dove registrare in bilancio i costi aggiuntivi sulle posizioni debitorie",
+        "year": "ANNO {{year}}",
+        "NOTIFICATION_COST": "Costo notifica",
+        "DELAY_COST": "Oneri",
+        "INTEREST_COST": "Interessi"
+      },
       "budgetCost": {
         "yearTabLabel": "Anno di bilancio {{year}}",
         "type": {
@@ -2379,6 +2408,19 @@
     "editOrg": "Modifica ente",
     "alertTitle": "Completa i dati per attivare l'ente",
     "alertBody": "È necessario compilare i seguenti campi obbligatori: {{emptyFields}}.",
+    "registry": {
+      "title": "Anagrafica"
+    },
+    "manageIntegrations": "Gestisci integrazioni",
+    "management": {
+      "title": "Gestioni",
+      "debtTypes": "Tipi di dovuto associati",
+      "debtTypesLink": "Gestisci dovuti",
+      "operators": "Operatori",
+      "operatorsLink": "Gestisci operatori",
+      "subUnits": "Sottounità",
+      "subUnitsLink": "Gestisci sottounità"
+    },
     "enableDialog": {
       "title": "Sei sicuro di voler abilitare l’ente ad operare?",
       "message": "Una volta abilitato l'ente <strong>{{orgName}}</strong> potrà operare su Piattaforma Unitaria.",

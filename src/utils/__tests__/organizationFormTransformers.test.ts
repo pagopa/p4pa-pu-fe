@@ -14,7 +14,7 @@ import {
 } from '../../models/OrganizationEditTypes';
 import {
   OrganizationAdditionalLanguage,
-  OrganizationDetailDTO,
+  OrganizationDetail,
   OrganizationStatus
 } from '../../../generated/core/data-contracts';
 
@@ -23,7 +23,7 @@ vi.mock('../filevalidation', () => ({
 }));
 
 describe('organizationFormTransformers', () => {
-  const baseOrganization: OrganizationDetailDTO = {
+  const baseOrganization: OrganizationDetail = {
     organizationId: 1,
     flagTreasury: false,
     externalOrganizationId: 'EXT123',
@@ -142,7 +142,7 @@ describe('organizationFormTransformers', () => {
     });
 
     it('should normalize and validate additionalLanguage from API', () => {
-      const orgWithLang: OrganizationDetailDTO = {
+      const orgWithLang: OrganizationDetail = {
         ...baseOrganization,
         additionalLanguage: OrganizationAdditionalLanguage.EN
       };
@@ -154,7 +154,7 @@ describe('organizationFormTransformers', () => {
     });
 
     it('should set additionalLanguage as false when API provides invalid language', () => {
-      const orgWithInvalidLang: OrganizationDetailDTO = {
+      const orgWithInvalidLang: OrganizationDetail = {
         ...baseOrganization,
         additionalLanguage: 'xx' as OrganizationAdditionalLanguage
       };

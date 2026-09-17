@@ -6,8 +6,8 @@ import {
   OrganizationsFilteredRequest
 } from './mappings';
 import { parseAndLog } from '../../utils/loaders';
-import { organizationDetailDTOSchema } from '../../../generated/core/zod-schema';
-import { OrganizationDetailDTO } from '../../../generated/core/data-contracts';
+import { organizationDetailSchema } from '../../../generated/core/zod-schema';
+import { OrganizationUpdateDTO } from '@generated/core/client';
 
 export const getOrganizationsByBrokerIdAndFilters = () =>
   useMutation({
@@ -34,7 +34,7 @@ export const getOrganizationDetail = (organizationId: number) => {
         await utils.apiClient.bff.getOrganizationDetail(organizationId);
 
       if (organizationDetail) {
-        parseAndLog(organizationDetailDTOSchema, organizationDetail);
+        parseAndLog(organizationDetailSchema, organizationDetail);
       }
       return organizationDetail;
     }
@@ -49,7 +49,7 @@ export const updateOrganization = () =>
       organizationData
     }: {
       organizationId: number;
-      organizationData: OrganizationDetailDTO;
+      organizationData: OrganizationUpdateDTO;
     }) => {
       await utils.apiClient.bff.updateOrganization(
         organizationId,

@@ -19,7 +19,14 @@ export const _ControlledSwitch = <T extends FieldValues>({
     control={control}
     render={({ field }) => (
       <FormControlLabel
-        control={<Switch {...field} {...switchProps} checked={!!field.value} />}
+        control={
+          <Switch
+            {...field}
+            {...switchProps}
+            checked={!!field.value}
+            sx={{ mx: 1 }}
+          />
+        }
         label={label}
       />
     )}

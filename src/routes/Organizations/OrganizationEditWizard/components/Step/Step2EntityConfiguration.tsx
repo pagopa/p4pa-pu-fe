@@ -9,7 +9,6 @@ import {
 import { theme } from '@pagopa/mui-italia';
 import { AccountingInfoSection } from './sections/AccountingInfoSection';
 import { PaymentsInfoSection } from './sections/PaymentsInfoSection';
-import { PagoPAIntegrationSection } from './sections/PagoPAIntegrationSection';
 import { createIBANValidationRules } from '../../../../../utils/validationRules';
 import {
   mapStep2ValuesToFieldData,
@@ -65,7 +64,6 @@ const Step2EntityConfiguration = ({ data, setData, onNext, onBack }: Props) => {
   // Watch the additionalLanguage switch to show/hide select
   const watchAdditionalLanguage = watch('additionalLanguage');
   // Watch the flagNotifyIo switch to show/hide IO API Key field
-  const watchFlagNotifyIo = watch('flagNotifyIo');
 
   const onSubmit = (values: UnifiedFormValues, enableOrg?: boolean) => {
     const step2Data = formValuesToFieldData(values, data);
@@ -121,23 +119,6 @@ const Step2EntityConfiguration = ({ data, setData, onNext, onBack }: Props) => {
             data={data}
             t={t}
             watchAdditionalLanguage={watchAdditionalLanguage}
-          />
-        </Box>
-      </Grid>
-
-      {/* PagoPA Products Integration Section */}
-      <Grid item xs={12} sx={{ mt: 4 }}>
-        <Box
-          borderRadius={2}
-          bgcolor={theme.palette.background.paper}
-          padding={4}
-        >
-          <PagoPAIntegrationSection
-            control={control}
-            errors={errors}
-            data={data}
-            t={t}
-            watchFlagNotifyIo={watchFlagNotifyIo}
           />
         </Box>
       </Grid>

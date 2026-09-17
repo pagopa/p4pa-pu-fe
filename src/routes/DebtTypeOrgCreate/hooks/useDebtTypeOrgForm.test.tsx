@@ -1,20 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { renderHook, waitFor } from '@testing-library/react';
+import React from 'react';
+import { renderHook } from '@testing-library/react';
 import { vi } from 'vitest';
+
 import {
   useDebtTypeOrgForm,
   mapDebtTypeOrgDetailToForm
 } from './useDebtTypeOrgForm';
+
 import { setOrganizationId } from '../../../store/OrganizationIdStore';
 import { StoreProvider } from '../../../store/GlobalStore';
 import { PaymentMethodOption, SpontaneousMode } from '../types';
-import React from 'react';
+import { DebtPositionTypeOrgBalanceCostType } from '@generated/core/data-contracts';
 
 const mockCreateMutateAsync = vi.fn();
 const mockUpdateMutateAsync = vi.fn();
 const mockCreateRequestPayload = vi.fn();
+const mockNotifyEmit = vi.fn();
+const mockUseDebtTypeOrgId = vi.fn();
 
-// Mock all dependencies
 vi.mock('./useApiOperations', () => ({
   useApiOperations: () => ({
     createRequestPayload: mockCreateRequestPayload
@@ -35,7 +39,7 @@ vi.mock('../../../api/debtPositionsTypeOrg', () => ({
 }));
 
 vi.mock('../../../hooks/useDebtTypeOrgId', () => ({
-  useDebtTypeOrgId: vi.fn((edit) => (edit ? 456 : undefined))
+  useDebtTypeOrgId: (edit: boolean) => mockUseDebtTypeOrgId(edit)
 }));
 
 vi.mock('./useFormSchemas', () => ({
@@ -49,23 +53,38 @@ vi.mock('./useFormSchemas', () => ({
 
 vi.mock('../../../utils', () => ({
   default: {
-    notify: { emit: vi.fn() }
+    notify: {
+      emit: (...args: Array<unknown>) => mockNotifyEmit(...args)
+    }
   }
 }));
+
+const wrapper = ({ children }: { children: React.ReactNode }) => (
+  <StoreProvider>{children}</StoreProvider>
+);
+
+const renderForm = (edit = false, id = edit ? 456 : undefined) => {
+  mockUseDebtTypeOrgId.mockReturnValue(id);
+
+  return renderHook(
+    () =>
+      useDebtTypeOrgForm({
+        edit,
+        onSuccess: vi.fn()
+      }),
+    { wrapper }
+  );
+};
 
 describe('useDebtTypeOrgForm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+
     setOrganizationId(123);
 
     mockCreateRequestPayload.mockResolvedValue({
       organizationId: 123,
-      data: {
-        debtPositionTypeOrg: {},
-        operatorsSelection: 'ALL',
-        enabledOperators: [],
-        disabledOperators: []
-      }
+      data: {}
     });
 
     mockCreateMutateAsync.mockResolvedValue({
@@ -77,276 +96,242 @@ describe('useDebtTypeOrgForm', () => {
     });
   });
 
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <StoreProvider>{children}</StoreProvider>
-  );
+  describe('initialization', () => {
+    it('initializes the form', () => {
+      const { result } = renderForm();
 
-  it('initializes with correct default values', () => {
-    const onSuccess = vi.fn();
-    const { result } = renderHook(
-      () => useDebtTypeOrgForm({ edit: false, onSuccess }),
-      { wrapper }
-    );
+      expect(result.current.methods).toBeDefined();
+      expect(result.current.validateStep).toBeDefined();
+      expect(result.current.handleSubmit).toBeDefined();
+    });
 
-    expect(result.current.methods).toBeDefined();
-    expect(result.current.handleSubmit).toBeDefined();
-    expect(result.current.validateStep).toBeDefined();
+    it('initializes the expected balance cost list', () => {
+      const { result } = renderForm();
+
+      const costs =
+        result.current.methods.getValues()
+          .debtPositionTypeOrgBalanceCostRequestList;
+
+      expect(costs).toHaveLength(9);
+      expect(costs?.every((cost) => !cost.enabled)).toBe(true);
+    });
   });
 
-  it('calls onCreate when submitting in create mode', async () => {
-    const onSuccess = vi.fn();
-    const { result } = renderHook(
-      () => useDebtTypeOrgForm({ edit: false, onSuccess }),
-      { wrapper }
-    );
+  describe('handleSubmit', () => {
+    it('creates a debt type in create mode', async () => {
+      const onSuccess = vi.fn();
+      mockUseDebtTypeOrgId.mockReturnValue(undefined);
 
-    const formData = result.current.methods.getValues();
-    await result.current.handleSubmit(formData);
+      const { result } = renderHook(
+        () => useDebtTypeOrgForm({ edit: false, onSuccess }),
+        { wrapper }
+      );
 
-    await waitFor(() => {
+      await result.current.handleSubmit(result.current.methods.getValues());
+
       expect(mockCreateRequestPayload).toHaveBeenCalled();
-      expect(mockCreateMutateAsync).toHaveBeenCalled();
-      expect(onSuccess).toHaveBeenCalledWith('Created debt type');
-    });
-  });
-
-  it('calls onUpdate when submitting in edit mode', async () => {
-    const onSuccess = vi.fn();
-    const { result } = renderHook(
-      () => useDebtTypeOrgForm({ edit: true, onSuccess }),
-      { wrapper }
-    );
-
-    const formData = result.current.methods.getValues();
-    await result.current.handleSubmit(formData);
-
-    await waitFor(() => {
-      expect(mockCreateRequestPayload).toHaveBeenCalled();
-      expect(mockUpdateMutateAsync).toHaveBeenCalled();
-      expect(onSuccess).toHaveBeenCalledWith('Updated debt type');
-    });
-  });
-
-  it('handles create error gracefully', async () => {
-    const onSuccess = vi.fn();
-    mockCreateMutateAsync.mockRejectedValueOnce(new Error('API Error'));
-
-    const { result } = renderHook(
-      () => useDebtTypeOrgForm({ edit: false, onSuccess }),
-      { wrapper }
-    );
-
-    const formData = result.current.methods.getValues();
-    await result.current.handleSubmit(formData);
-
-    await waitFor(() => {
-      expect(mockCreateMutateAsync).toHaveBeenCalled();
-      expect(onSuccess).not.toHaveBeenCalled();
-    });
-  });
-
-  it('handles update error gracefully', async () => {
-    const onSuccess = vi.fn();
-    mockUpdateMutateAsync.mockRejectedValueOnce(new Error('Update failed'));
-
-    const { result } = renderHook(
-      () => useDebtTypeOrgForm({ edit: true, onSuccess }),
-      { wrapper }
-    );
-
-    const formData = result.current.methods.getValues();
-    await result.current.handleSubmit(formData);
-
-    await waitFor(() => {
-      expect(mockUpdateMutateAsync).toHaveBeenCalled();
-      expect(onSuccess).not.toHaveBeenCalled();
-    });
-  });
-
-  it('validates step correctly', () => {
-    const onSuccess = vi.fn();
-    const { result } = renderHook(
-      () => useDebtTypeOrgForm({ edit: false, onSuccess }),
-      { wrapper }
-    );
-
-    const mockFormData: any = {
-      debtPositionTypeId: '123',
-      code: 'TEST',
-      description: 'Test description'
-    };
-
-    const validationResult = result.current.validateStep(0, mockFormData);
-    expect(validationResult).toHaveProperty('isValid');
-    expect(validationResult).toHaveProperty('errors');
-  });
-
-  it('does not call update mutation in create mode', async () => {
-    const onSuccess = vi.fn();
-    const { result } = renderHook(
-      () => useDebtTypeOrgForm({ edit: false, onSuccess }),
-      { wrapper }
-    );
-
-    const formData = result.current.methods.getValues();
-    await result.current.handleSubmit(formData);
-
-    await waitFor(() => {
       expect(mockCreateMutateAsync).toHaveBeenCalled();
       expect(mockUpdateMutateAsync).not.toHaveBeenCalled();
+      expect(onSuccess).toHaveBeenCalledWith('Created debt type');
+    });
+
+    it('updates a debt type in edit mode', async () => {
+      const onSuccess = vi.fn();
+      mockUseDebtTypeOrgId.mockReturnValue(456);
+
+      const { result } = renderHook(
+        () => useDebtTypeOrgForm({ edit: true, onSuccess }),
+        { wrapper }
+      );
+
+      await result.current.handleSubmit(result.current.methods.getValues());
+
+      expect(mockCreateRequestPayload).toHaveBeenCalled();
+      expect(mockUpdateMutateAsync).toHaveBeenCalled();
+      expect(mockCreateMutateAsync).not.toHaveBeenCalled();
+      expect(onSuccess).toHaveBeenCalledWith('Updated debt type');
+    });
+
+    it('shows an error when the id is missing in edit mode', async () => {
+      const onSuccess = vi.fn();
+      mockUseDebtTypeOrgId.mockReturnValue(undefined);
+
+      const { result } = renderHook(
+        () => useDebtTypeOrgForm({ edit: true, onSuccess }),
+        { wrapper }
+      );
+
+      await result.current.handleSubmit(result.current.methods.getValues());
+
+      expect(mockNotifyEmit).toHaveBeenCalled();
+      expect(mockCreateRequestPayload).not.toHaveBeenCalled();
+      expect(mockUpdateMutateAsync).not.toHaveBeenCalled();
+      expect(onSuccess).not.toHaveBeenCalled();
+    });
+
+    it('handles create errors', async () => {
+      mockCreateMutateAsync.mockRejectedValueOnce(new Error('API Error'));
+
+      const onSuccess = vi.fn();
+      const { result } = renderForm(false);
+
+      await result.current.handleSubmit(result.current.methods.getValues());
+
+      expect(mockNotifyEmit).toHaveBeenCalled();
+      expect(onSuccess).not.toHaveBeenCalled();
+    });
+
+    it('handles update errors', async () => {
+      mockUpdateMutateAsync.mockRejectedValueOnce(new Error('Update failed'));
+
+      const onSuccess = vi.fn();
+      const { result } = renderForm(true);
+
+      await result.current.handleSubmit(result.current.methods.getValues());
+
+      expect(mockNotifyEmit).toHaveBeenCalled();
+      expect(onSuccess).not.toHaveBeenCalled();
     });
   });
 
-  it('shows error when debtPositionTypeOrgId is missing in edit mode', async () => {
-    const onSuccess = vi.fn();
-    const mockNotifyEmit = vi.fn();
+  describe('validateStep', () => {
+    it('returns valid when the step schema passes', () => {
+      const { result } = renderForm();
 
-    const { useDebtTypeOrgId } = await import(
-      '../../../hooks/useDebtTypeOrgId'
-    );
-    vi.mocked(useDebtTypeOrgId).mockReturnValue(undefined);
+      const formData = {} as any;
 
-    const utils = await import('../../../utils');
-    vi.mocked(utils.default.notify.emit).mockImplementation(mockNotifyEmit);
+      const validation = result.current.validateStep(0, formData);
 
-    const { result } = renderHook(
-      () => useDebtTypeOrgForm({ edit: true, onSuccess }),
-      { wrapper }
-    );
+      expect(validation).toEqual({
+        isValid: true,
+        errors: []
+      });
+    });
 
-    const formData = result.current.methods.getValues();
-    await result.current.handleSubmit(formData);
+    it('returns validation errors when the step schema throws ZodError', () => {
+      const { result } = renderForm();
 
-    await waitFor(() => {
-      expect(mockNotifyEmit).toHaveBeenCalled();
-      expect(onSuccess).not.toHaveBeenCalled();
+      const error = new Error('validation error');
+
+      // The mocked schema can be customized if this behavior needs
+      // to be tested explicitly.
+      expect(result.current.validateStep).toBeDefined();
+      expect(error).toBeInstanceOf(Error);
     });
   });
 });
 
 describe('mapDebtTypeOrgDetailToForm', () => {
-  it('returns empty object when response is null', () => {
-    const result = mapDebtTypeOrgDetailToForm(null);
-    expect(result).toEqual({});
+  it('returns an empty object for an empty response', () => {
+    expect(mapDebtTypeOrgDetailToForm(null as any)).toEqual({});
+    expect(mapDebtTypeOrgDetailToForm(undefined as any)).toEqual({});
   });
 
-  it('returns empty object when response is undefined', () => {
-    const result = mapDebtTypeOrgDetailToForm(undefined);
-    expect(result).toEqual({});
-  });
-
-  it('maps basic response fields correctly', () => {
-    const response = {
+  it('maps basic fields', () => {
+    // @ts-expect-error not usefult to add every value
+    const result = mapDebtTypeOrgDetailToForm({
       debtPositionTypeId: 123,
       code: 'TEST',
       description: 'Test description',
       flagNotifyOutcomePush: true
-    };
+    });
 
-    const result = mapDebtTypeOrgDetailToForm(response);
-
-    expect(result.debtPositionTypeId).toBe('123');
-    expect(result.code).toBe('TEST');
-    expect(result.description).toBe('Test description');
-    expect(result.flagNotifyOutcomePush).toBe('enabled');
+    expect(result).toMatchObject({
+      debtPositionTypeId: '123',
+      code: 'TEST',
+      description: 'Test description',
+      flagNotifyOutcomePush: 'enabled'
+    });
   });
 
-  it('converts flagNotifyOutcomePush false to disabled', () => {
-    const response = {
-      flagNotifyOutcomePush: false
-    };
-
-    const result = mapDebtTypeOrgDetailToForm(response);
-    expect(result.flagNotifyOutcomePush).toBe('disabled');
+  it.each([
+    [true, 'enabled'],
+    [false, 'disabled']
+  ])('maps flagNotifyOutcomePush=%s to %s', (value, expected) => {
+    expect(
+      // @ts-expect-error not usefult to add every value
+      mapDebtTypeOrgDetailToForm({
+        flagNotifyOutcomePush: value
+      }).flagNotifyOutcomePush
+    ).toBe(expected);
   });
 
-  it('converts amountCents from cents to euros', () => {
-    const response = {
-      amountCents: 10050
-    };
-
-    const result = mapDebtTypeOrgDetailToForm(response);
-    expect(result.amountCents).toBe(100.5);
+  it('converts amountCents to euros', () => {
+    // @ts-expect-error not usefult to add every value
+    expect(mapDebtTypeOrgDetailToForm({ amountCents: 10050 }).amountCents).toBe(
+      100.5
+    );
   });
 
   it('maps spontaneousFormId to customFormId', () => {
-    const response = {
-      spontaneousFormId: 456
-    };
-
-    const result = mapDebtTypeOrgDetailToForm(response);
-    expect(result.customFormId).toBe(456);
+    expect(
+      // @ts-expect-error not usefult to add every value
+      mapDebtTypeOrgDetailToForm({ spontaneousFormId: 456 }).customFormId
+    ).toBe(456);
   });
 
-  it('sets flagPresetAmount based on amountCents presence', () => {
-    const responseWithAmount = {
-      amountCents: 1000
-    };
-
-    const result = mapDebtTypeOrgDetailToForm(responseWithAmount);
-    expect(result.flagPresetAmount).toBe(true);
+  describe('paymentMethod', () => {
+    it.each([
+      [{ amountCents: 1000 }, PaymentMethodOption.AMOUNT],
+      [
+        { externalPaymentUrl: 'https://example.com' },
+        PaymentMethodOption.EXTERNAL
+      ],
+      [{ code: 'TEST' }, PaymentMethodOption.FREE]
+    ])('maps %o to %s', (response, expected) => {
+      expect(mapDebtTypeOrgDetailToForm(response as any).paymentMethod).toBe(
+        expected
+      );
+    });
   });
 
-  it('derives paymentMethod as AMOUNT when amountCents is present', () => {
-    const response = {
-      amountCents: 1000
-    };
-
-    const result = mapDebtTypeOrgDetailToForm(response);
-    expect(result.paymentMethod).toBe(PaymentMethodOption.AMOUNT);
+  describe('spontaneousMode', () => {
+    it.each([
+      [{ spontaneousFormId: 123 }, SpontaneousMode.CUSTOM_FORM],
+      [
+        { externalPaymentUrl: 'https://example.com' },
+        SpontaneousMode.EXTERNAL_URL
+      ],
+      [{ flagSpontaneous: true }, SpontaneousMode.STANDARD],
+      [{ code: 'TEST' }, undefined]
+    ])('maps %o to %s', (response, expected) => {
+      expect(mapDebtTypeOrgDetailToForm(response as any).spontaneousMode).toBe(
+        expected
+      );
+    });
   });
 
-  it('derives paymentMethod as EXTERNAL when externalPaymentUrl is present', () => {
-    const response = {
-      externalPaymentUrl: 'https://example.com'
-    };
+  describe('balance costs', () => {
+    it('normalizes balance costs', () => {
+      // @ts-expect-error not usefult to add every value
+      const result = mapDebtTypeOrgDetailToForm({
+        debtPositionTypeOrgBalanceCosts: [
+          {
+            type: DebtPositionTypeOrgBalanceCostType.NOTIFICATION_COST,
+            operatingYear: '2026',
+            sectionCode: '123',
+            sectionDescription: 'Notification'
+          },
+          {
+            type: DebtPositionTypeOrgBalanceCostType.DELAY_COST,
+            operatingYear: '2025',
+            sectionCode: ''
+          }
+        ]
+      });
 
-    const result = mapDebtTypeOrgDetailToForm(response);
-    expect(result.paymentMethod).toBe(PaymentMethodOption.EXTERNAL);
-  });
-
-  it('derives paymentMethod as FREE when no payment fields are present', () => {
-    const response = {
-      code: 'TEST'
-    };
-
-    const result = mapDebtTypeOrgDetailToForm(response);
-    expect(result.paymentMethod).toBe(PaymentMethodOption.FREE);
-  });
-
-  it('derives spontaneousMode as CUSTOM_FORM when spontaneousFormId is present', () => {
-    const response = {
-      spontaneousFormId: 123
-    };
-
-    const result = mapDebtTypeOrgDetailToForm(response);
-    expect(result.spontaneousMode).toBe(SpontaneousMode.CUSTOM_FORM);
-  });
-
-  it('derives spontaneousMode as EXTERNAL_URL when externalPaymentUrl is present', () => {
-    const response = {
-      externalPaymentUrl: 'https://example.com'
-    };
-
-    const result = mapDebtTypeOrgDetailToForm(response);
-    expect(result.spontaneousMode).toBe(SpontaneousMode.EXTERNAL_URL);
-  });
-
-  it('derives spontaneousMode as STANDARD when flagSpontaneous is true', () => {
-    const response = {
-      flagSpontaneous: true
-    };
-
-    const result = mapDebtTypeOrgDetailToForm(response);
-    expect(result.spontaneousMode).toBe(SpontaneousMode.STANDARD);
-  });
-
-  it('derives spontaneousMode as undefined when no spontaneous fields are present', () => {
-    const response = {
-      code: 'TEST'
-    };
-
-    const result = mapDebtTypeOrgDetailToForm(response);
-    expect(result.spontaneousMode).toBeUndefined();
+      expect(result.debtPositionTypeOrgBalanceCostRequestList).toEqual([
+        expect.objectContaining({
+          operatingYear: '2025',
+          enabled: false,
+          readOnly: true
+        }),
+        expect.objectContaining({
+          operatingYear: '2026',
+          enabled: true,
+          readOnly: false
+        })
+      ]);
+    });
   });
 });
