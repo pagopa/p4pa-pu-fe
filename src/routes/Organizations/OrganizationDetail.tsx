@@ -68,9 +68,12 @@ export const OrganizationDetail = () => {
   };
 
   const isSuperAdmin = utils.roles.useIsSuperAdmin();
+  const { status } = organizationDetailData || {};
 
   const canShowEdit =
-    organizationDetailData?.status === OrganizationStatus.DRAFT && isSuperAdmin;
+    organizationDetailData &&
+    isSuperAdmin &&
+    status === OrganizationStatus.DRAFT;
 
   const update = updateOrganization();
 
@@ -173,7 +176,7 @@ export const OrganizationDetail = () => {
 
       {canShowEdit && (
         <OrganizationDetailAlert
-          editFunction={handleEditClick}
+          onEdit={handleEditClick}
           organizationDetailData={organizationDetailData}
         />
       )}
