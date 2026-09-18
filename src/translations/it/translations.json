@@ -2405,8 +2405,9 @@
     "logoPlaceholder": "Logo placeholder",
     "enableOrg": "Abilita ente",
     "editOrg": "Modifica ente",
-    "alertTitle": "Completa i dati per attivare l'ente",
-    "alertBody": "È necessario compilare i seguenti campi obbligatori: {{emptyFields}}.",
+    "alertTitle": "Mancano alcune informazioni importanti",
+    "alertBody": "Completa queste informazioni per poter operare senza interruzioni: {{emptyFields}}",
+    "alertButton": "Completa informazioni",
     "registry": {
       "title": "Anagrafica"
     },
