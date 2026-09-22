@@ -1,67 +1,84 @@
-import { Alert, AlertTitle, Button, Typography } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import { ReactNode, useEffect, useState } from 'react';
+import { AlertTitle, Button, Box, Typography } from '@mui/material';
+import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
-import { OrganizationDetail } from '../../../../generated/core/data-contracts';
+import type { OrganizationDetail } from '../../../../generated/core/data-contracts';
+import { MIAlert } from '@pagopa/mui-italia/components/MIAlert';
 
-type OrganizationDetailAlertProps = {
-  editFunction: () => void;
-  organizationDetailData: OrganizationDetail;
+type MandatoryField = Extract<
+  keyof OrganizationDetail,
+  'iban' | 'orgLogo' | 'segregationCode'
+>;
+
+const MISSING_PLACEHOLDER = '-';
+
+const MANDATORY_FIELD_LABEL_KEYS: Record<MandatoryField, string> = {
+  iban: 'commons.iban',
+  orgLogo: 'organizations.orgLogo',
+  segregationCode: 'commons.segregationCode'
 };
 
-export const OrganizationDetailAlert: React.FC<
-  OrganizationDetailAlertProps
-> = ({
-  editFunction,
-  organizationDetailData
+const MANDATORY_FIELDS = Object.keys(
+  MANDATORY_FIELD_LABEL_KEYS
+) as Array<MandatoryField>;
+
+const isMissing = (value?: string) => {
+  const trimmed = value?.trim();
+  return !trimmed || trimmed === MISSING_PLACEHOLDER;
+};
+
+export type OrganizationDetailAlertProps = {
+  organizationDetailData: OrganizationDetail;
+  onEdit: () => void;
+};
+
+export const OrganizationDetailAlert = ({
+  organizationDetailData,
+  onEdit
 }: OrganizationDetailAlertProps) => {
   const { t } = useTranslation();
-  const [emptyFieldsString, setEmptyFieldsString] = useState<string>('');
+  const titleId = useId();
+  const bodyId = useId();
 
-  const mandatoryFields: Partial<Record<keyof OrganizationDetail, string>> = {
-    iban: t('commons.iban'),
-    orgLogo: t('organizations.orgLogo'),
-    segregationCode: t('commons.segregationCode')
-  };
+  const missingFields = MANDATORY_FIELDS.filter((field) =>
+    isMissing(organizationDetailData[field])
+  ).map((field) => t(MANDATORY_FIELD_LABEL_KEYS[field]));
 
-  useEffect(() => {
-    // create an error bucket if a mandatory key missing in data or exists with an empty value
-    const missingKeys = (
-      Object.keys(mandatoryFields) as Array<keyof OrganizationDetail>
-    )
-      .filter((key) => {
-        const value = organizationDetailData[key];
-        return !(key in organizationDetailData) || value === '';
-      })
-      .map((key) => mandatoryFields[key] ?? key);
-    setEmptyFieldsString(missingKeys.join(', '));
-  }, [organizationDetailData]);
-
-  const editButton: ReactNode = (
-    <Button startIcon={<EditIcon />} onClick={editFunction}>
-      {t('organizations.editOrg')}
-    </Button>
-  );
+  if (missingFields.length === 0) {
+    return null;
+  }
 
   return (
-    <>
-      {emptyFieldsString && (
-        <Alert
-          severity="info"
-          data-testid="org-empty-fields-error"
-          action={editButton}
+    <MIAlert
+      severity="warning"
+      data-testid="org-empty-fields-error"
+      aria-labelledby={titleId}
+      aria-describedby={bodyId}
+    >
+      <Box color="Color/Status Warning/Warning 850">
+        <AlertTitle color="inherit" id={titleId}>
+          {t('organizations.alertTitle')}
+        </AlertTitle>
+        <Typography
+          id={bodyId}
+          color="inherit"
+          variant="body2"
+          component="p"
+          mt={0.5}
         >
-          <AlertTitle>{t('organizations.alertTitle')}</AlertTitle>
-          <Typography variant={'body2'}>
-            {t('organizations.alertBody', {
-              emptyFields: emptyFieldsString,
-              interpolation: { escapeValue: false }
-            })}
-          </Typography>
-        </Alert>
-      )}
-    </>
+          {t('organizations.alertBody', {
+            emptyFields: missingFields.join(', '),
+            interpolation: { escapeValue: false }
+          })}
+        </Typography>
+        <Button
+          variant="naked"
+          sx={{ color: 'inherit', mt: 2 }}
+          onClick={onEdit}
+          aria-describedby={bodyId}
+        >
+          {t('organizations.alertButton')}
+        </Button>
+      </Box>
+    </MIAlert>
   );
 };
-
-export default OrganizationDetailAlert;
