@@ -19,6 +19,12 @@ import { useSearch } from '../../../../../hooks/useSearch';
 import { useParams } from 'react-router';
 import { DebtTypeOrgForm } from '../../../types';
 
+type OperatorFixture = {
+  mappedExternalUserId?: string;
+  firstName?: string;
+  lastName?: string;
+};
+
 const buildApiResponse = (
   content: Array<Record<string, unknown>>,
   number = 0
@@ -83,6 +89,11 @@ const pageWithMissingLastName = buildApiResponse([
     enabled: false
   }
 ]);
+
+const getOperatorDisplayName = (operator: OperatorFixture) =>
+  `${operator.firstName || ''} ${
+    operator.lastName || operator.mappedExternalUserId || ''
+  }`.trim();
 
 let currentApiResponse = pageOneResponse;
 
@@ -178,6 +189,19 @@ const renderWithProviders = ({
 const getFormState = () =>
   JSON.parse(screen.getByTestId('form-state').textContent || '{}');
 
+const rerenderWithResponse = (
+  view: ReturnType<typeof render>,
+  apiResponse: typeof currentApiResponse
+) => {
+  currentApiResponse = apiResponse;
+
+  view.rerender(
+    <TestFormWrapper>
+      <OperatorSelector edit />
+    </TestFormWrapper>
+  );
+};
+
 describe('OperatorSelector component integration', () => {
   const mockedUseParams = vi.mocked(useParams);
   const mockedUseSearch = vi.mocked(useSearch);
@@ -197,9 +221,15 @@ describe('OperatorSelector component integration', () => {
 
     // Wait for operators to be rendered by useSearch data
     await waitFor(() => {
-      expect(screen.getByText('John Doe')).toBeInTheDocument();
-      expect(screen.getByText('Jane Smith')).toBeInTheDocument();
-      expect(screen.getByText('Default Operator')).toBeInTheDocument();
+      expect(
+        screen.getByText(getOperatorDisplayName(pageOneResponse.content[0]))
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(getOperatorDisplayName(pageOneResponse.content[1]))
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(getOperatorDisplayName(pageOneResponse.content[2]))
+      ).toBeInTheDocument();
     });
 
     // Alert shows selected count text (contains translation key as string)
@@ -220,7 +250,9 @@ describe('OperatorSelector component integration', () => {
     renderWithProviders({ edit: true });
 
     await waitFor(() => {
-      expect(screen.getByText('Default Operator')).toBeInTheDocument();
+      expect(
+        screen.getByText(getOperatorDisplayName(pageOneResponse.content[2]))
+      ).toBeInTheDocument();
     });
 
     // Get checkboxes (exclude "Select All"; assumes basic structure)
@@ -257,7 +289,9 @@ describe('OperatorSelector component integration', () => {
     renderWithProviders({ edit: true });
 
     await waitFor(() => {
-      expect(screen.getByText('John Doe')).toBeInTheDocument();
+      expect(
+        screen.getByText(getOperatorDisplayName(pageOneResponse.content[0]))
+      ).toBeInTheDocument();
     });
 
     const checkboxes = screen.getAllByRole('checkbox');
@@ -289,27 +323,21 @@ describe('OperatorSelector component integration', () => {
       expect(selectableOperatorOnPageOne).toBeChecked();
     });
 
-    currentApiResponse = pageTwoResponse;
-    view.rerender(
-      <TestFormWrapper>
-        <OperatorSelector edit />
-      </TestFormWrapper>
-    );
+    rerenderWithResponse(view, pageTwoResponse);
 
     await waitFor(() => {
-      expect(screen.getByText('Bob Taylor')).toBeInTheDocument();
+      expect(
+        screen.getByText(getOperatorDisplayName(pageTwoResponse.content[1]))
+      ).toBeInTheDocument();
       expect(screen.getAllByRole('checkbox')).toHaveLength(3);
     });
 
-    currentApiResponse = pageOneResponse;
-    view.rerender(
-      <TestFormWrapper>
-        <OperatorSelector edit />
-      </TestFormWrapper>
-    );
+    rerenderWithResponse(view, pageOneResponse);
 
     await waitFor(() => {
-      expect(screen.getByText('Jane Smith')).toBeInTheDocument();
+      expect(
+        screen.getByText(getOperatorDisplayName(pageOneResponse.content[1]))
+      ).toBeInTheDocument();
       expect(screen.getAllByRole('checkbox')[2]).toBeChecked();
     });
   });
@@ -337,7 +365,9 @@ describe('OperatorSelector component integration', () => {
     renderWithProviders({ edit: false, showFormState: true });
 
     await waitFor(() => {
-      expect(screen.getByText('Default Operator')).toBeInTheDocument();
+      expect(
+        screen.getByText(getOperatorDisplayName(pageOneResponse.content[2]))
+      ).toBeInTheDocument();
     });
 
     await waitFor(() => {
@@ -359,7 +389,9 @@ describe('OperatorSelector component integration', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Jane Smith')).toBeInTheDocument();
+      expect(
+        screen.getByText(getOperatorDisplayName(pageOneResponse.content[1]))
+      ).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getAllByRole('checkbox')[2]);
@@ -397,7 +429,9 @@ describe('OperatorSelector component integration', () => {
     renderWithProviders({ edit: true, showFormState: true });
 
     await waitFor(() => {
-      expect(screen.getByText('Default Operator')).toBeInTheDocument();
+      expect(
+        screen.getByText(getOperatorDisplayName(pageOneResponse.content[2]))
+      ).toBeInTheDocument();
     });
 
     fireEvent.click(
