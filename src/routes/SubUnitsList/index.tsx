@@ -64,13 +64,18 @@ export const SubUnitsList = () => {
 
   return (
     <Stack gap={5}>
-      <TitleComponent title={t('subunits.list.title', { orgName })} />
+      <Stack>
+        <TitleComponent
+          title={t('subunits.list.title', { orgName })}
+          description={t('subunits.list.description')}
+        />
+      </Stack>
       <FormProvider {...form}>
         <form
           noValidate
           onSubmit={form.handleSubmit(campaignNotifications.applyFilters)}
         >
-          <Stack component="section" gap={2}>
+          <Stack component="section" gap={3}>
             <SubUnitsFilters clearFilters={clearFilters} />
             <SubUnitsDataGrid data={query?.data as PagedOrgSubUnit} />
           </Stack>
