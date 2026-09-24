@@ -6,7 +6,7 @@ import {
   fireEvent,
   waitFor
 } from '../../../../../__tests__/renderers';
-import { useForm, FormProvider } from 'react-hook-form';
+import { useForm, FormProvider, useFormContext } from 'react-hook-form';
 import {
   OperatorsSelection,
   UserInfoDTO
@@ -14,9 +14,10 @@ import {
 import * as api from '../../../../../api/debtPositionTypeOrgOperators';
 import { OperatorSelector } from './OperatorSelector';
 import { setUserInfo } from '../../../../../store/UserInfoStore';
-import { vi } from 'vitest';
+import { expect, vi } from 'vitest';
 import { useSearch } from '../../../../../hooks/useSearch';
 import { useParams } from 'react-router';
+import { DebtTypeOrgForm } from '../../../types';
 
 const buildApiResponse = (
   content: Array<Record<string, unknown>>,
@@ -73,9 +74,33 @@ const pageTwoResponse = buildApiResponse(
   1
 );
 
+const pageWithMissingLastName = buildApiResponse([
+  {
+    mappedExternalUserId: 'op-fallback',
+    operatorId: 'operator-fallback',
+    firstName: 'Fallback',
+    lastName: '',
+    enabled: false
+  }
+]);
+
 let currentApiResponse = pageOneResponse;
 
 const mockMutateAsync = vi.fn(() => Promise.resolve());
+
+const FormStateSpy = () => {
+  const { watch } = useFormContext<DebtTypeOrgForm>();
+
+  return (
+    <pre data-testid="form-state">
+      {JSON.stringify({
+        enabledOperators: watch('enabledOperators') || [],
+        disabledOperators: watch('disabledOperators') || [],
+        operatorsSelection: watch('operatorsSelection')
+      })}
+    </pre>
+  );
+};
 
 vi.mock('../../../../../hooks/useSearch', () => ({
   useSearch: vi.fn(() => ({
@@ -104,26 +129,54 @@ vi.spyOn(api, 'getDebtPositionTypeOrgOperators').mockImplementation(
     }) as any
 );
 
-const TestFormWrapper = ({ children }: { children: React.ReactNode }) => {
-  const methods = useForm({
+const TestFormWrapper = ({
+  children,
+  defaultValues,
+  showFormState = false
+}: {
+  children: React.ReactNode;
+  defaultValues?: Partial<DebtTypeOrgForm>;
+  showFormState?: boolean;
+}) => {
+  const methods = useForm<DebtTypeOrgForm>({
     defaultValues: {
       enabledOperators: [],
       disabledOperators: [],
-      operatorsSelection: OperatorsSelection.SELECTED
+      operatorsSelection: OperatorsSelection.SELECTED,
+      ...defaultValues
     }
   });
 
-  return <FormProvider {...methods}>{children}</FormProvider>;
+  return (
+    <FormProvider {...methods}>
+      {children}
+      {showFormState ? <FormStateSpy /> : null}
+    </FormProvider>
+  );
 };
 
 // Helper: render the component wrapped with RHF form context and optional edit mode
-const renderWithProviders = (edit?: boolean) => {
+const renderWithProviders = ({
+  edit,
+  defaultValues,
+  showFormState = false
+}: {
+  edit?: boolean;
+  defaultValues?: Partial<DebtTypeOrgForm>;
+  showFormState?: boolean;
+} = {}) => {
   return render(
-    <TestFormWrapper>
+    <TestFormWrapper
+      defaultValues={defaultValues}
+      showFormState={showFormState}
+    >
       <OperatorSelector edit={edit} />
     </TestFormWrapper>
   );
 };
+
+const getFormState = () =>
+  JSON.parse(screen.getByTestId('form-state').textContent || '{}');
 
 describe('OperatorSelector component integration', () => {
   const mockedUseParams = vi.mocked(useParams);
@@ -140,13 +193,13 @@ describe('OperatorSelector component integration', () => {
   });
 
   it('renders operators and displays selection alert', async () => {
-    renderWithProviders(true /* edit mode */);
+    renderWithProviders({ edit: true });
 
     // Wait for operators to be rendered by useSearch data
     await waitFor(() => {
-      expect(screen.getByText('op-1')).toBeInTheDocument();
-      expect(screen.getByText('op-2')).toBeInTheDocument();
-      expect(screen.getByText('default-op')).toBeInTheDocument();
+      expect(screen.getByText('John Doe')).toBeInTheDocument();
+      expect(screen.getByText('Jane Smith')).toBeInTheDocument();
+      expect(screen.getByText('Default Operator')).toBeInTheDocument();
     });
 
     // Alert shows selected count text (contains translation key as string)
@@ -164,10 +217,10 @@ describe('OperatorSelector component integration', () => {
       mappedExternalUserId: 'default-op'
     } as UserInfoDTO);
 
-    renderWithProviders(true);
+    renderWithProviders({ edit: true });
 
     await waitFor(() => {
-      expect(screen.getByText('default-op')).toBeInTheDocument();
+      expect(screen.getByText('Default Operator')).toBeInTheDocument();
     });
 
     // Get checkboxes (exclude "Select All"; assumes basic structure)
@@ -179,7 +232,7 @@ describe('OperatorSelector component integration', () => {
   });
 
   it('clears selection when Delete Selection button is clicked', async () => {
-    renderWithProviders(true);
+    renderWithProviders({ edit: true });
 
     // Wait until alert and button appear
     await waitFor(() => {
@@ -201,10 +254,10 @@ describe('OperatorSelector component integration', () => {
   });
 
   it('updates selection alert when selecting and deselecting operators', async () => {
-    renderWithProviders(true);
+    renderWithProviders({ edit: true });
 
     await waitFor(() => {
-      expect(screen.getByText('op-1')).toBeInTheDocument();
+      expect(screen.getByText('John Doe')).toBeInTheDocument();
     });
 
     const checkboxes = screen.getAllByRole('checkbox');
@@ -221,7 +274,7 @@ describe('OperatorSelector component integration', () => {
   });
 
   it('preserves selected operators when paginated results change', async () => {
-    const view = renderWithProviders(true);
+    const view = renderWithProviders({ edit: true });
 
     await waitFor(() => {
       expect(screen.getAllByRole('checkbox')).toHaveLength(4);
@@ -244,7 +297,7 @@ describe('OperatorSelector component integration', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('op-4')).toBeInTheDocument();
+      expect(screen.getByText('Bob Taylor')).toBeInTheDocument();
       expect(screen.getAllByRole('checkbox')).toHaveLength(3);
     });
 
@@ -256,14 +309,110 @@ describe('OperatorSelector component integration', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('op-2')).toBeInTheDocument();
+      expect(screen.getByText('Jane Smith')).toBeInTheDocument();
       expect(screen.getAllByRole('checkbox')[2]).toBeChecked();
+    });
+  });
+
+  it('renders nothing when operators selection is not SELECTED', () => {
+    renderWithProviders({
+      edit: false,
+      defaultValues: {
+        operatorsSelection: OperatorsSelection.ALL
+      }
+    });
+
+    expect(
+      screen.queryByRole('button', { name: 'commons.deleteSelection' })
+    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('grid')).not.toBeInTheDocument();
+  });
+
+  it('preselects the default operator in create mode', async () => {
+    setUserInfo({
+      mappedExternalUserId: 'default-op'
+    } as UserInfoDTO);
+    mockedUseParams.mockReturnValue({});
+
+    renderWithProviders({ edit: false, showFormState: true });
+
+    await waitFor(() => {
+      expect(screen.getByText('Default Operator')).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(getFormState().enabledOperators).toEqual(['default-op']);
+    });
+  });
+
+  it('clears disabled operators after a new selection in create mode', async () => {
+    mockedUseParams.mockReturnValue({});
+
+    renderWithProviders({
+      edit: false,
+      showFormState: true,
+      defaultValues: {
+        enabledOperators: [],
+        disabledOperators: ['legacy-disabled'],
+        operatorsSelection: OperatorsSelection.SELECTED
+      }
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Jane Smith')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getAllByRole('checkbox')[2]);
+
+    await waitFor(() => {
+      expect(getFormState().disabledOperators).toEqual([]);
+      expect(getFormState().enabledOperators).toContain('op-2');
+    });
+  });
+
+  it('falls back to mappedExternalUserId when lastName is missing', async () => {
+    currentApiResponse = pageWithMissingLastName;
+
+    renderWithProviders({ edit: true });
+
+    await waitFor(() => {
+      expect(screen.getByText('Fallback op-fallback')).toBeInTheDocument();
+    });
+  });
+
+  it('returns no rows when the query has no data yet', () => {
+    currentApiResponse = undefined as any;
+
+    renderWithProviders({ edit: true });
+
+    expect(screen.queryByRole('button', { name: 'commons.deleteSelection' })).not.toBeInTheDocument();
+    expect(screen.getByRole('grid')).toBeInTheDocument();
+  });
+
+  it('preserves the default operator when clearing the selection', async () => {
+    setUserInfo({
+      mappedExternalUserId: 'default-op'
+    } as UserInfoDTO);
+
+    renderWithProviders({ edit: true, showFormState: true });
+
+    await waitFor(() => {
+      expect(screen.getByText('Default Operator')).toBeInTheDocument();
+    });
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'commons.deleteSelection' })
+    );
+
+    await waitFor(() => {
+      expect(getFormState().enabledOperators).toEqual(['default-op']);
+      expect(getFormState().disabledOperators).toEqual(['op-1']);
     });
   });
 
   describe('API filter logic', () => {
     it('passes debtPositionTypeOrgId to useSearch filters when in edit mode', () => {
-      renderWithProviders(true);
+      renderWithProviders({ edit: true });
 
       expect(mockedUseSearch).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -276,7 +425,7 @@ describe('OperatorSelector component integration', () => {
       // Override beforeEach setup for create mode, which has no URL params
       mockedUseParams.mockReturnValue({});
 
-      renderWithProviders(false);
+      renderWithProviders({ edit: false });
 
       expect(mockedUseSearch).toHaveBeenCalledWith(
         expect.objectContaining({
