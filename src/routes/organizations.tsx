@@ -2,9 +2,10 @@ import {
   AdminRouteGuard,
   SuperAdminRouteGuard
 } from '../components/RouteGuard/RouteGuard';
-import Organizations from './Organizations/Organizations';
 import { OrganizationDetail } from './Organizations/OrganizationDetail';
 import OrganizationEditWizard from './Organizations/OrganizationEditWizard/OrganizationEditWizard';
+import Organizations from './Organizations/Organizations';
+import { SubUnitsList } from './SubUnitsList';
 
 export const organizationsRoutes = [
   {
@@ -52,6 +53,19 @@ export const organizationsRoutes = [
         handle: {
           backButton: false,
           hideBreadcrumbs: true
+        }
+      },
+      {
+        id: 'ORGANIZATIONS_SUB_UNITS',
+        element: (
+          <AdminRouteGuard>
+            <SubUnitsList />
+          </AdminRouteGuard>
+        ),
+        path: `:organizationId/:orgName/subunits`,
+        handle: {
+          backButton: false,
+          custom: true
         }
       }
     ]
