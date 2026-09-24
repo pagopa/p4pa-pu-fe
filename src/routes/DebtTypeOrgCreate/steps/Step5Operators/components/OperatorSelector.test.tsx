@@ -18,43 +18,69 @@ import { vi } from 'vitest';
 import { useSearch } from '../../../../../hooks/useSearch';
 import { useParams } from 'react-router';
 
-// Sample data to be returned by the mocked useSearch hook
-const testApiResponse = {
-  content: [
+const buildApiResponse = (
+  content: Array<Record<string, unknown>>,
+  number = 0
+) => ({
+  content,
+  totalPages: 2,
+  totalElements: 4,
+  size: 2,
+  number
+});
+
+const pageOneResponse = buildApiResponse([
+  {
+    mappedExternalUserId: 'op-1',
+    operatorId: 'operator-1',
+    firstName: 'John',
+    lastName: 'Doe',
+    enabled: true
+  },
+  {
+    mappedExternalUserId: 'op-2',
+    operatorId: 'operator-2',
+    firstName: 'Jane',
+    lastName: 'Smith',
+    enabled: false
+  },
+  {
+    mappedExternalUserId: 'default-op',
+    operatorId: 'operator-3',
+    firstName: 'Default',
+    lastName: 'Operator',
+    enabled: true
+  }
+]);
+
+const pageTwoResponse = buildApiResponse(
+  [
     {
-      mappedExternalUserId: 'op-1',
-      operatorId: 'operator-1',
-      firstName: 'John',
-      lastName: 'Doe',
-      enabled: true
-    },
-    {
-      mappedExternalUserId: 'op-2',
-      operatorId: 'operator-2',
-      firstName: 'Jane',
-      lastName: 'Smith',
+      mappedExternalUserId: 'op-3',
+      operatorId: 'operator-3',
+      firstName: 'Alice',
+      lastName: 'Johnson',
       enabled: false
     },
     {
-      mappedExternalUserId: 'default-op',
-      operatorId: 'operator-3',
-      firstName: 'Default',
-      lastName: 'Operator',
+      mappedExternalUserId: 'op-4',
+      operatorId: 'operator-4',
+      firstName: 'Bob',
+      lastName: 'Taylor',
       enabled: true
     }
   ],
-  totalPages: 1,
-  totalElements: 3,
-  size: 5,
-  number: 0
-};
+  1
+);
+
+let currentApiResponse = pageOneResponse;
 
 const mockMutateAsync = vi.fn(() => Promise.resolve());
 
 vi.mock('../../../../../hooks/useSearch', () => ({
   useSearch: vi.fn(() => ({
     query: {
-      data: testApiResponse,
+      data: currentApiResponse,
       isLoading: false,
       mutateAsync: mockMutateAsync
     },
@@ -74,27 +100,28 @@ vi.mock('react-router', async (importOriginal) => {
 vi.spyOn(api, 'getDebtPositionTypeOrgOperators').mockImplementation(
   () =>
     ({
-      data: testApiResponse
+      data: currentApiResponse
     }) as any
 );
 
+const TestFormWrapper = ({ children }: { children: React.ReactNode }) => {
+  const methods = useForm({
+    defaultValues: {
+      enabledOperators: [],
+      disabledOperators: [],
+      operatorsSelection: OperatorsSelection.SELECTED
+    }
+  });
+
+  return <FormProvider {...methods}>{children}</FormProvider>;
+};
+
 // Helper: render the component wrapped with RHF form context and optional edit mode
 const renderWithProviders = (edit?: boolean) => {
-  const Wrapper = ({ children }: { children: React.ReactNode }) => {
-    const methods = useForm({
-      defaultValues: {
-        enabledOperators: [],
-        disabledOperators: [],
-        operatorsSelection: OperatorsSelection.SELECTED
-      }
-    });
-    return <FormProvider {...methods}>{children}</FormProvider>;
-  };
-
   return render(
-    <Wrapper>
+    <TestFormWrapper>
       <OperatorSelector edit={edit} />
-    </Wrapper>
+    </TestFormWrapper>
   );
 };
 
@@ -106,6 +133,7 @@ describe('OperatorSelector component integration', () => {
     // Reset mocks to a clean state before each test
     vi.clearAllMocks();
     setUserInfo(undefined);
+    currentApiResponse = pageOneResponse;
 
     // Provide a default return value for useParams for tests in edit mode
     mockedUseParams.mockReturnValue({ debtPositionTypeOrgId: '123' });
@@ -116,9 +144,9 @@ describe('OperatorSelector component integration', () => {
 
     // Wait for operators to be rendered by useSearch data
     await waitFor(() => {
-      expect(screen.getByText('John Doe')).toBeInTheDocument();
-      expect(screen.getByText('Jane Smith')).toBeInTheDocument();
-      expect(screen.getByText('Default Operator')).toBeInTheDocument();
+      expect(screen.getByText('op-1')).toBeInTheDocument();
+      expect(screen.getByText('op-2')).toBeInTheDocument();
+      expect(screen.getByText('default-op')).toBeInTheDocument();
     });
 
     // Alert shows selected count text (contains translation key as string)
@@ -139,7 +167,7 @@ describe('OperatorSelector component integration', () => {
     renderWithProviders(true);
 
     await waitFor(() => {
-      expect(screen.getByText('Default Operator')).toBeInTheDocument();
+      expect(screen.getByText('default-op')).toBeInTheDocument();
     });
 
     // Get checkboxes (exclude "Select All"; assumes basic structure)
@@ -176,19 +204,60 @@ describe('OperatorSelector component integration', () => {
     renderWithProviders(true);
 
     await waitFor(() => {
-      expect(screen.getByText('John Doe')).toBeInTheDocument();
+      expect(screen.getByText('op-1')).toBeInTheDocument();
     });
 
     const checkboxes = screen.getAllByRole('checkbox');
     // Assuming first checkbox is Select All, second checkbox corresponds to John Doe, third to Jane Smith, etc.
     const janeCheckbox = checkboxes[2];
 
-    // Select Jane Smith
+    // Select the non-default operator in the current page.
     fireEvent.click(janeCheckbox);
 
     // Alert updates (now 2 selected)
     await waitFor(() => {
       expect(screen.getByText(/commons.selectedOperator/)).toBeInTheDocument();
+    });
+  });
+
+  it('preserves selected operators when paginated results change', async () => {
+    const view = renderWithProviders(true);
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('checkbox')).toHaveLength(4);
+    });
+
+    const pageOneCheckboxes = screen.getAllByRole('checkbox');
+    const selectableOperatorOnPageOne = pageOneCheckboxes[2];
+
+    fireEvent.click(selectableOperatorOnPageOne);
+
+    await waitFor(() => {
+      expect(selectableOperatorOnPageOne).toBeChecked();
+    });
+
+    currentApiResponse = pageTwoResponse;
+    view.rerender(
+      <TestFormWrapper>
+        <OperatorSelector edit />
+      </TestFormWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('op-4')).toBeInTheDocument();
+      expect(screen.getAllByRole('checkbox')).toHaveLength(3);
+    });
+
+    currentApiResponse = pageOneResponse;
+    view.rerender(
+      <TestFormWrapper>
+        <OperatorSelector edit />
+      </TestFormWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('op-2')).toBeInTheDocument();
+      expect(screen.getAllByRole('checkbox')[2]).toBeChecked();
     });
   });
 

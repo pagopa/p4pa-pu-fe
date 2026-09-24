@@ -112,7 +112,6 @@ export const SidebarMenuItem = ({ collapsed, item, onClick }: Props) => {
     const list = el.querySelector('ul');
     const firstItem = list?.querySelector('a');
     if (firstItem) {
-      console.log('Focusing first item:', firstItem);
       firstItem.focus();
     }
   };

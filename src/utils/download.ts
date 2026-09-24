@@ -1,6 +1,5 @@
-import notify from "./notify";
+import notify from './notify';
 import i18n from '../translations/i18n';
-
 
 export const downloadBlob = (blob: Blob, fileName: string): void => {
   try {
@@ -17,7 +16,10 @@ export const downloadBlob = (blob: Blob, fileName: string): void => {
   }
 };
 
-export const downloadFileFromUrl = async (fileUrl?: string, fileName?: string) => {
+export const downloadFileFromUrl = async (
+  fileUrl?: string,
+  fileName?: string
+) => {
   if (!fileUrl) {
     notify.emit(i18n.t('commons.files.downloadFailed'), 'error');
     return;
@@ -25,7 +27,9 @@ export const downloadFileFromUrl = async (fileUrl?: string, fileName?: string) =
   try {
     const accessToken = localStorage.getItem('accessToken');
     const response = await fetch(fileUrl, {
-      headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined
+      headers: accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : undefined
     });
     if (!response.ok) {
       notify.emit(i18n.t('commons.files.downloadFailed'), 'error');
