@@ -18,14 +18,20 @@ import { useSearch } from '../../../../../hooks/useSearch';
 import { getDebtPositionTypeOrgOperators } from '../../../../../api/debtPositionTypeOrgOperators';
 import { useParams } from 'react-router';
 
-type OperatorData = {
-  id: string;
-  operator: string;
-  firstName?: string;
-  lastName?: string;
-  enabled?: boolean;
-  mappedExternalUserId?: string;
-};
+const getOperatorId = (operator: DebtPositionTypeOrgOperatorDTO) =>
+  operator.mappedExternalUserId || operator.operatorId || '';
+
+const getUniqueOperatorIds = (operatorIds: Array<string>) =>
+  Array.from(new Set(operatorIds.filter(Boolean)));
+
+const areOperatorIdsEqual = (
+  currentOperatorIds: Array<string>,
+  nextOperatorIds: Array<string>
+) =>
+  currentOperatorIds.length === nextOperatorIds.length &&
+  currentOperatorIds.every(
+    (operatorId, index) => operatorId === nextOperatorIds[index]
+  );
 
 export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
@@ -44,6 +50,7 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
   const { watch, setValue } = useFormContext<DebtTypeOrgForm>();
 
   const enabledOperators = watch('enabledOperators') || [];
+  const disabledOperators = watch('disabledOperators') || [];
   const operatorsSelection = watch('operatorsSelection');
 
   const query = getDebtPositionTypeOrgOperators(organizationId);
@@ -55,33 +62,68 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
     query
   });
 
-  const operators: Array<OperatorData> = useMemo(() => {
+  const operators: Array<DebtPositionTypeOrgOperatorDTO> = useMemo(() => {
     if (!debtTypeOrgOperators.query?.data?.content) return [];
 
-    return debtTypeOrgOperators.query?.data?.content.map(
-      (operator: DebtPositionTypeOrgOperatorDTO) => ({
-        ...operator,
-        id: operator.mappedExternalUserId || operator.operatorId || '',
-        operator:
-          `${operator.firstName || ''} ${operator.lastName || ''}`.trim() ||
-          operator.mappedExternalUserId ||
-          operator.operatorId ||
-          'N/A'
-      })
-    );
+    return debtTypeOrgOperators.query?.data?.content;
   }, [debtTypeOrgOperators.query?.data]);
 
+  // Track only the ids currently rendered by the grid so selection updates can
+  // merge the visible page with selections preserved from other server pages.
+  const operatorIdsInCurrentPage = useMemo(
+    () => operators.map(getOperatorId).filter(Boolean),
+    [operators]
+  );
+
+  // The DataGrid must only receive ids that exist in the current page rows;
+  // full cross-page selection remains stored in the form state.
+  const selectedOperatorsInCurrentPage = useMemo(
+    () =>
+      enabledOperators.filter((operatorId) =>
+        operatorIdsInCurrentPage.includes(operatorId)
+      ),
+    [enabledOperators, operatorIdsInCurrentPage]
+  );
+
+  // Force a remount when the server page changes so MUI drops any internal row
+  // references from the previous page and does not raise MissingRowIdError.
+  const gridKey = useMemo(
+    () =>
+      `${debtTypeOrgOperators.query?.data?.number ?? 0}-${operatorIdsInCurrentPage.join('|')}`,
+    [debtTypeOrgOperators.query?.data?.number, operatorIdsInCurrentPage]
+  );
+
   useEffect(() => {
-    if (debtTypeOrgOperators.query?.data && !isInitialized) {
-      if (edit) {
-        const enabledFromApi = operators
-          .filter((op) => op.enabled)
-          .map((op) => op.id);
-        setValue('enabledOperators', enabledFromApi);
-        setValue('operatorsSelection', OperatorsSelection.SELECTED);
-      } else if (defaultOperator) {
-        setValue('enabledOperators', [defaultOperator]);
+    if (!debtTypeOrgOperators.query?.data) {
+      return;
+    }
+
+    if (edit) {
+      // In edit mode each fetched page may contain operators already enabled on
+      // the server. Merge them into the persisted selection unless the user has
+      // explicitly disabled them in this session.
+      const enabledFromApi = operators
+        .filter((op) => op.enabled)
+        .map(getOperatorId);
+      const nextEnabledOperators = getUniqueOperatorIds([
+        ...enabledOperators,
+        ...enabledFromApi.filter(
+          (operatorId) => !disabledOperators.includes(operatorId)
+        )
+      ]);
+
+      if (!areOperatorIdsEqual(enabledOperators, nextEnabledOperators)) {
+        setValue('enabledOperators', nextEnabledOperators);
       }
+
+      if (!isInitialized) {
+        setValue('operatorsSelection', OperatorsSelection.SELECTED);
+      }
+    } else if (!isInitialized && defaultOperator) {
+      setValue('enabledOperators', [defaultOperator]);
+    }
+
+    if (!isInitialized) {
       setIsInitialized(true);
     }
   }, [
@@ -89,6 +131,8 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
     operators,
     edit,
     defaultOperator,
+    enabledOperators,
+    disabledOperators,
     setValue,
     isInitialized
   ]);
@@ -97,68 +141,68 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
     return String(params.id) !== defaultOperator;
   };
 
-  const currentPageRows = useMemo(() => {
-    return operators.map((op) => ({
-      id: op.id
-    }));
-  }, [operators]);
-
-  const currentPageSelectedIds = useMemo(() => {
-    if (!enabledOperators || enabledOperators.length === 0) return [];
-    if (currentPageRows.length === 0) return [];
-
-    const currentPageIds = new Set(currentPageRows.map((row) => row.id));
-
-    return enabledOperators.filter((opId) => currentPageIds.has(opId));
-  }, [enabledOperators, currentPageRows]);
-
   const handleSelectionChange = useCallback(
-    (newSelectedIds: Array<string>) => {
-      const currentPageIds = currentPageRows.map((row) => row.id);
-
-      const otherPagesEnabled = enabledOperators.filter(
-        (opId) => !currentPageIds.includes(opId)
-      );
-
-      const finalSelectedIds =
-        defaultOperator && !newSelectedIds.includes(defaultOperator)
-          ? [...newSelectedIds, defaultOperator]
-          : [...newSelectedIds];
-
-      const updatedEnabled = [...otherPagesEnabled, ...finalSelectedIds];
-
-      setValue('enabledOperators', updatedEnabled);
-
-      const currentPageDisabled = currentPageIds.filter(
-        (opId) => !finalSelectedIds.includes(opId) && opId !== defaultOperator
-      );
-
-      const currentDisabled = watch('disabledOperators') || [];
-      const otherPagesDisabled = currentDisabled.filter(
-        (opId) => !currentPageIds.includes(opId)
-      );
-
-      const updatedDisabled = [...otherPagesDisabled, ...currentPageDisabled];
-
-      setValue('disabledOperators', updatedDisabled);
-    },
-    [enabledOperators, currentPageRows, setValue, watch, defaultOperator]
-  );
-
-  const handleRowSelectionChange = useCallback(
     (newSelection: GridRowSelectionModel) => {
-      const selectedIds = newSelection
-        .map((id) => (typeof id === 'string' ? id : null))
-        .filter((id): id is string => id !== null);
+      const currentDefaultOperator = userInfo?.mappedExternalUserId;
 
-      handleSelectionChange(selectedIds);
+      // The grid only reports the current page selection. Keep off-page ids from
+      // the form state and replace only the portion belonging to the visible page.
+      const selectedOperatorsInCurrentPage = newSelection
+        .map((operatorId) => String(operatorId))
+        .filter(Boolean);
+      const selectedOperatorsOutsideCurrentPage = enabledOperators.filter(
+        (operatorId) => !operatorIdsInCurrentPage.includes(operatorId)
+      );
+
+      setValue(
+        'enabledOperators',
+        getUniqueOperatorIds([
+          ...selectedOperatorsOutsideCurrentPage,
+          ...selectedOperatorsInCurrentPage,
+          ...(currentDefaultOperator ? [currentDefaultOperator] : [])
+        ])
+      );
+
+      if (edit) {
+        // When editing an existing configuration, remember which operators were
+        // originally enabled by the backend but are now unchecked by the user.
+        const enabledFromApiInCurrentPage = operators
+          .filter((operator) => operator.enabled)
+          .map(getOperatorId);
+        const disabledOperatorsOutsideCurrentPage = disabledOperators.filter(
+          (operatorId) => !operatorIdsInCurrentPage.includes(operatorId)
+        );
+
+        setValue(
+          'disabledOperators',
+          getUniqueOperatorIds([
+            ...disabledOperatorsOutsideCurrentPage,
+            ...enabledFromApiInCurrentPage.filter(
+              (operatorId) =>
+                !selectedOperatorsInCurrentPage.includes(operatorId)
+            )
+          ])
+        );
+      } else if (disabledOperators.length > 0) {
+        setValue('disabledOperators', []);
+      }
     },
-    [handleSelectionChange]
+    [
+      userInfo,
+      enabledOperators,
+      operatorIdsInCurrentPage,
+      setValue,
+      edit,
+      operators,
+      disabledOperators
+    ]
   );
 
   const handleClearSelection = useCallback(() => {
     const currentDefaultOperator = userInfo?.mappedExternalUserId;
 
+    // Clearing preserves the default operator, if present, and marks every
+    // other selected operator as explicitly disabled for edit-mode payloads.
     const previouslySelected = enabledOperators.filter(
       (opId) => opId !== currentDefaultOperator
     );
@@ -174,16 +218,20 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
 
   const columns: Array<GridColDef> = [
     {
-      field: 'operator',
+      field: 'mappedExternalUserId',
       headerName: t('commons.operator'),
       flex: 1,
       type: 'string',
-      sortable: true
+      sortable: false,
+      renderCell: (params) =>
+        `${params.row.firstName} ${params.row.lastName || params.row.mappedExternalUserId}`
     }
   ];
 
   const totalSelected = enabledOperators.length;
-  const currentPageSelected = currentPageSelectedIds.length;
+  // Keep the alert aligned with what the user sees on the current page while
+  // still showing the total selection accumulated across server pages.
+  const currentPageSelected = selectedOperatorsInCurrentPage.length;
 
   return operatorsSelection === OperatorsSelection.SELECTED ? (
     <Box sx={{ mt: 2 }}>
@@ -216,17 +264,21 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
 
       <Box sx={{ bgcolor: theme.palette.grey[200], padding: 2 }}>
         <CustomDataGrid
+          key={gridKey}
           isRowSelectable={isRowSelectable}
           rows={operators}
           columns={columns}
-          getRowId={(row: OperatorData) => row.id}
+          getRowId={getOperatorId}
+          rowSelectionModel={selectedOperatorsInCurrentPage}
           disableColumnMenu
           disableColumnResize
           checkboxSelection
-          rowSelectionModel={currentPageSelectedIds}
           hideFooterSelectedRowCount
-          onRowSelectionModelChange={handleRowSelectionChange}
+          onRowSelectionModelChange={handleSelectionChange}
           totalPages={debtTypeOrgOperators.query?.data?.totalPages || 1}
+          totalElements={debtTypeOrgOperators.query?.data?.totalElements || 0}
+          keepNonExistentRowsSelected
+          tabIndex={0}
         />
       </Box>
     </Box>
