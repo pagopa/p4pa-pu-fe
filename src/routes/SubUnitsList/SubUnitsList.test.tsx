@@ -17,6 +17,10 @@ vi.mock('@core/hooks/useSearch', () => ({
   useSearch: vi.fn()
 }));
 
+vi.mock('@core/hooks/useSubunitsListFilters', () => ({
+  useSubUnitsFilters: () => ({ filters: [] })
+}));
+
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
   return {
@@ -30,11 +34,35 @@ vi.mock('@core/components/TitleComponent/TitleComponent', () => ({
   default: ({ title }: { title: string }) => <h1>{title}</h1>
 }));
 
-vi.mock('./components/SubUnitsFilters', () => ({
-  SubUnitsFilters: ({ clearFilters }: { clearFilters: () => void }) => (
-    <button data-testid="clear-filters" onClick={clearFilters}>
-      clear
-    </button>
+vi.mock('@core/components/FilterContainer/FilterContainer', () => ({
+  COMPONENT_TYPE: {
+    textField: 'textField',
+    select: 'select',
+    button: 'button',
+    dateRange: 'dateRange',
+    amount: 'amount'
+  },
+  default: ({
+    values,
+    onChange,
+    onSubmit
+  }: {
+    values: Record<string, unknown>;
+    onChange: (id: string, value: unknown) => void;
+    onSubmit: () => void;
+  }) => (
+    <div>
+      <span data-testid="filter-values">{JSON.stringify(values)}</span>
+      <button
+        data-testid="change-filter"
+        onClick={() => onChange('subUnitCode', 'XYZ')}
+      >
+        change
+      </button>
+      <button data-testid="submit-filters" onClick={onSubmit}>
+        submit
+      </button>
+    </div>
   )
 }));
 
@@ -58,9 +86,7 @@ describe('SubUnitsList', () => {
     };
 
     vi.mocked(useNavigate).mockReturnValue(mockNavigate);
-    vi.mocked(useParams).mockReturnValue({
-      organizationId: '33'
-    });
+    vi.mocked(useParams).mockReturnValue({ organizationId: '33' });
     vi.mocked(useSearch).mockReturnValue({
       applyFilters: mockApplyFilters
     } as unknown as ReturnType<typeof useSearch>);
@@ -70,9 +96,7 @@ describe('SubUnitsList', () => {
   });
 
   it('redirects to the error page when organizationId is not a number', () => {
-    vi.mocked(useParams).mockReturnValue({
-      organizationId: 'abc'
-    });
+    vi.mocked(useParams).mockReturnValue({ organizationId: 'abc' });
 
     render(<SubUnitsList />);
 
@@ -116,13 +140,18 @@ describe('SubUnitsList', () => {
     );
   });
 
-  it('clears the hash and re-applies empty filters when clearFilters runs', () => {
+  it('seeds filter values from the URL hash and applies edited values on submit', () => {
     window.location.hash = '#subUnitCode=ABC';
+
     render(<SubUnitsList />);
 
-    fireEvent.click(screen.getByTestId('clear-filters'));
+    expect(screen.getByTestId('filter-values')).toHaveTextContent(
+      JSON.stringify({ subUnitCode: 'ABC' })
+    );
 
-    expect(window.location.hash).toBe('');
-    expect(mockApplyFilters).toHaveBeenCalledWith({});
+    fireEvent.click(screen.getByTestId('change-filter'));
+    fireEvent.click(screen.getByTestId('submit-filters'));
+
+    expect(mockApplyFilters).toHaveBeenCalledWith({ subUnitCode: 'XYZ' });
   });
 });
