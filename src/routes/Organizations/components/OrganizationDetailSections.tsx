@@ -32,7 +32,7 @@ type LinkRowProps = {
 const LinkRow = ({ label, value = '-', linkLabel, to }: LinkRowProps) => (
   <Stack direction="row" alignItems="center" justifyContent="space-between">
     <Row label={label} value={value} />
-    <Link to={to} target="_blank" style={{ textDecoration: 'none' }}>
+    <Link to={to} style={{ textDecoration: 'none' }}>
       <Stack direction="row" alignItems="center" gap={0.5}>
         <Typography variant="body2" fontWeight={600} color="primary">
           {linkLabel}
@@ -96,7 +96,8 @@ export const Management = ({
     debtPositionTypeOrgCount,
     operatorsCount,
     orgName,
-    organizationId
+    organizationId,
+    orgSubUnitCount
   }
 }: InfoProps) => {
   const { t } = useTranslation();
@@ -120,13 +121,14 @@ export const Management = ({
           orgName
         })}
       />
-      {/* TODO: add route when available */}
-      {/* <LinkRow */}
-      {/*   label={t('organizations.management.subUnits')} */}
-      {/*   value={organizationDetailData?.orgTypeCode} */}
-      {/*   linkLabel={t('organizations.management.subUnitsLink')} */}
-      {/*   to="" */}
-      {/* /> */}
+      <LinkRow
+        label={t('organizations.management.subUnits')}
+        value={orgSubUnitCount}
+        linkLabel={t('organizations.management.subUnitsLink')}
+        to={generatePath(PageRoutes.ORGANIZATIONS_SUB_UNITS, {
+          organizationId
+        })}
+      />
     </SectionCard>
   );
 };

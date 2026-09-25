@@ -696,6 +696,8 @@
     "reloadSecretKO": "Non è stato possibile rigenerare la Secret key"
   },
   "commons": {
+    "creationDate": "Data di creazione",
+    "toDetail": "Vai al dettaglio",
     "404": "404: risorsa non disponibile",
     "menu": "Menu",
     "openMenu": "Apri menu",
@@ -1027,6 +1029,7 @@
       "IMPORT_FLOWS": "Importa flusso",
       "ORGANIZATIONS": "Enti gestiti",
       "ORGANIZATIONS_DETAIL": "Anagrafica ente",
+      "ORGANIZATIONS_SUB_UNITS": "Sottounità",
       "ORG_SIL_SERVICE": "Org Sil Service",
       "ORG_SIL_SERVICE_DETAIL": "Dettaglio Org Sil Service",
       "PRIVACYPOLICY": "Privacy Policy",
@@ -2428,6 +2431,23 @@
       "success": "Ente abilitato correttamente.",
       "error": "Non è stato possibile abilitare l'Ente",
       "emptyFields": "Non è stato possibile abilitare l'Ente. È necessario che i campi obbligatori siano compilati"
+    }
+  },
+  "subunits": {
+    "status": {
+      "ACTIVE": "Attiva",
+      "CANCELLED": "Disattivata"
+    },
+    "list": {
+      "filters": {
+        "subUnitCode": "Cerca per codice univoco",
+        "subUnitType": "Cerca per struttura"
+      },
+      "title": "Sottounità {{orgName}}",
+      "description": "Puoi gestire le sottounità dell’ente.",
+      "subUnitCode": "Codice univoco",
+      "subUnitType": "Struttura",
+      "subUnitName": "Denominazione"
     }
   },
   "registry": {
