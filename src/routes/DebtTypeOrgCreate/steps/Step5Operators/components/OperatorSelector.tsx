@@ -55,9 +55,18 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
 
   const query = getDebtPositionTypeOrgOperators(organizationId);
 
+  // On a browser reload the route param can resolve on a later render than
+  // this component's mount, so guard against sending NaN/undefined ids.
+  const parsedDebtPositionTypeOrgId = Number(debtPositionTypeOrgId);
+  const isValidDebtPositionTypeOrgId =
+    !!debtPositionTypeOrgId && !Number.isNaN(parsedDebtPositionTypeOrgId);
+
   const debtTypeOrgOperators = useSearch({
     filters: {
-      debtPositionTypeOrgId: edit ? Number(debtPositionTypeOrgId) : undefined
+      debtPositionTypeOrgId:
+        edit && isValidDebtPositionTypeOrgId
+          ? parsedDebtPositionTypeOrgId
+          : undefined
     },
     query
   });

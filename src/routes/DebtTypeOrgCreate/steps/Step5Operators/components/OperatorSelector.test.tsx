@@ -467,5 +467,19 @@ describe('OperatorSelector component integration', () => {
         })
       );
     });
+
+    it('does not send a NaN debtPositionTypeOrgId when the route param is not yet resolved (browser reload race)', () => {
+      // Simulates a hard browser reload: edit mode mounts before useParams
+      // resolves the debtPositionTypeOrgId segment from the URL.
+      mockedUseParams.mockReturnValue({});
+
+      renderWithProviders({ edit: true });
+
+      expect(mockedUseSearch).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: { debtPositionTypeOrgId: undefined }
+        })
+      );
+    });
   });
 });
