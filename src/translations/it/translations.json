@@ -2443,7 +2443,7 @@
         "subUnitCode": "Cerca per codice univoco",
         "subUnitType": "Cerca per struttura"
       },
-      "title": "Sottounità di {{orgName}}",
+      "title": "Sottounità {{orgName}}",
       "description": "Puoi gestire le sottounità dell’ente.",
       "subUnitCode": "Codice univoco",
       "subUnitType": "Struttura",

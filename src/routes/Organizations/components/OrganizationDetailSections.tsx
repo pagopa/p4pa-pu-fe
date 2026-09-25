@@ -126,8 +126,7 @@ export const Management = ({
         value={orgSubUnitCount}
         linkLabel={t('organizations.management.subUnitsLink')}
         to={generatePath(PageRoutes.ORGANIZATIONS_SUB_UNITS, {
-          organizationId,
-          orgName
+          organizationId
         })}
       />
     </SectionCard>

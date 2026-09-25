@@ -57,12 +57,12 @@ export const organizationsRoutes = [
       },
       {
         id: 'ORGANIZATIONS_SUB_UNITS',
+        path: `:organizationId/subunits`,
         element: (
           <AdminRouteGuard>
             <SubUnitsList />
           </AdminRouteGuard>
         ),
-        path: `:organizationId/:orgName/subunits`,
         handle: {
           backButton: false,
           custom: true

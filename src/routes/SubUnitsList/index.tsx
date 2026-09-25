@@ -20,7 +20,7 @@ export const SubUnitsList = () => {
 
   const form = useForm({ defaultValues: initialFilters });
 
-  const { organizationId: urlOrganizationId, orgName } = useParams();
+  const { organizationId: urlOrganizationId } = useParams();
   const organizationId = Number(urlOrganizationId);
 
   if (isNaN(organizationId)) {
@@ -41,16 +41,16 @@ export const SubUnitsList = () => {
         pathname: generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
           organizationId
         }),
-        label: orgName,
+        label: urlOrganizationId,
         id: 'ORGANIZATIONS_DETAIL'
       },
       {
         pathname: '#',
-        label: t('subunits.list.title', { orgName }),
+        label: t('subunits.list.title', { orgName: urlOrganizationId }),
         id: 'SUBUNITS_LIST'
       }
     ]);
-  }, [t, orgName, organizationId]);
+  }, [t, urlOrganizationId, organizationId]);
 
   const clearFilters = () => {
     window.location.hash = '';
@@ -66,7 +66,7 @@ export const SubUnitsList = () => {
     <Stack gap={5}>
       <Stack>
         <TitleComponent
-          title={t('subunits.list.title', { orgName })}
+          title={t('subunits.list.title', { orgName: urlOrganizationId })}
           description={t('subunits.list.description')}
         />
       </Stack>

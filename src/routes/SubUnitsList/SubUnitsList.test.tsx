@@ -59,8 +59,7 @@ describe('SubUnitsList', () => {
 
     vi.mocked(useNavigate).mockReturnValue(mockNavigate);
     vi.mocked(useParams).mockReturnValue({
-      organizationId: '33',
-      orgName: 'Test Org'
+      organizationId: '33'
     });
     vi.mocked(useSearch).mockReturnValue({
       applyFilters: mockApplyFilters
@@ -72,8 +71,7 @@ describe('SubUnitsList', () => {
 
   it('redirects to the error page when organizationId is not a number', () => {
     vi.mocked(useParams).mockReturnValue({
-      organizationId: 'abc',
-      orgName: 'Test Org'
+      organizationId: 'abc'
     });
 
     render(<SubUnitsList />);
@@ -111,7 +109,7 @@ describe('SubUnitsList', () => {
           pathname: generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
             organizationId: 33
           }),
-          label: 'Test Org'
+          label: '33'
         }),
         expect.objectContaining({ id: 'SUBUNITS_LIST' })
       ])
