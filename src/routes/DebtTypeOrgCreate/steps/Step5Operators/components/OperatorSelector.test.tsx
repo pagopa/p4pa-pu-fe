@@ -417,7 +417,9 @@ describe('OperatorSelector component integration', () => {
 
     renderWithProviders({ edit: true });
 
-    expect(screen.queryByRole('button', { name: 'commons.deleteSelection' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'commons.deleteSelection' })
+    ).not.toBeInTheDocument();
     expect(screen.getByRole('grid')).toBeInTheDocument();
   });
 
@@ -460,6 +462,20 @@ describe('OperatorSelector component integration', () => {
       mockedUseParams.mockReturnValue({});
 
       renderWithProviders({ edit: false });
+
+      expect(mockedUseSearch).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: { debtPositionTypeOrgId: undefined }
+        })
+      );
+    });
+
+    it('does not send a NaN debtPositionTypeOrgId when the route param is not yet resolved (browser reload race)', () => {
+      // Simulates a hard browser reload: edit mode mounts before useParams
+      // resolves the debtPositionTypeOrgId segment from the URL.
+      mockedUseParams.mockReturnValue({});
+
+      renderWithProviders({ edit: true });
 
       expect(mockedUseSearch).toHaveBeenCalledWith(
         expect.objectContaining({
