@@ -1,8 +1,10 @@
-import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { ErrorBoundary } from './ErrorBoundary';
 
-const dispatchError = (message: string, error: Error | null = new Error(message)) => {
+const dispatchError = (
+  message: string,
+  error: Error | null = new Error(message)
+) => {
   const event = new ErrorEvent('error', { message, error });
   window.dispatchEvent(event);
 };
@@ -13,7 +15,9 @@ const dispatchRejection = (reason: unknown) => {
     promise: Promise<unknown>;
   };
   Object.defineProperty(event, 'reason', { value: reason });
-  Object.defineProperty(event, 'promise', { value: Promise.reject(reason).catch(() => undefined) });
+  Object.defineProperty(event, 'promise', {
+    value: Promise.reject(reason).catch(() => undefined)
+  });
   window.dispatchEvent(event);
 };
 
@@ -62,7 +66,9 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
 
-    dispatchRejection(new Error('ResizeObserver loop completed with undelivered notifications.'));
+    dispatchRejection(
+      new Error('ResizeObserver loop completed with undelivered notifications.')
+    );
 
     expect(screen.getByText('child')).toBeInTheDocument();
     expect(screen.queryByText('fallback')).not.toBeInTheDocument();

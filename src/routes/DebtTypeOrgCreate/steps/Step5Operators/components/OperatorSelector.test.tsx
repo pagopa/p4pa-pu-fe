@@ -417,7 +417,9 @@ describe('OperatorSelector component integration', () => {
 
     renderWithProviders({ edit: true });
 
-    expect(screen.queryByRole('button', { name: 'commons.deleteSelection' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'commons.deleteSelection' })
+    ).not.toBeInTheDocument();
     expect(screen.getByRole('grid')).toBeInTheDocument();
   });
 
