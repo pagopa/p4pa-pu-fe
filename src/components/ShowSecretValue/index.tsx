@@ -14,6 +14,8 @@ import { copyToClipboard } from '../../utils/clipboard';
 import { ContentCopy } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 
+export const SECRET_MASK = '••••••••••••••••••••••••••';
+
 type ShowSecretValueProps = {
   label: string;
   secretValue?: string;
@@ -79,7 +81,7 @@ const ShowSecretValue = ({ label, secretValue }: ShowSecretValueProps) => {
                 </Typography>
               ) : (
                 <Typography pl={2} overflow={'hidden'}>
-                  ••••••••••••••••••••••••••
+                  {SECRET_MASK}
                 </Typography>
               )}
 

@@ -107,4 +107,12 @@ describe('OrganizationDetail Page', () => {
       screen.queryByTestId('enable-organization-button')
     ).not.toBeInTheDocument();
   });
+
+  it('shows the manage integrations button', () => {
+    render(<OrganizationDetail />);
+
+    expect(
+      screen.getByTestId('manage-integrations-button')
+    ).toBeInTheDocument();
+  });
 });

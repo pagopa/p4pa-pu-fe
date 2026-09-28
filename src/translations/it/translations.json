@@ -1027,6 +1027,7 @@
       "IMPORT_FLOWS": "Importa flusso",
       "ORGANIZATIONS": "Enti gestiti",
       "ORGANIZATIONS_DETAIL": "Anagrafica ente",
+      "ORGANIZATIONS_INTEGRATIONS": "Gestisci chiavi",
       "ORG_SIL_SERVICE": "Org Sil Service",
       "ORG_SIL_SERVICE_DETAIL": "Dettaglio Org Sil Service",
       "PRIVACYPOLICY": "Privacy Policy",
@@ -2413,6 +2414,30 @@
       "title": "Anagrafica"
     },
     "manageIntegrations": "Gestisci integrazioni",
+    "integrations": {
+      "description": "Gestisci le integrazioni ai prodotti e servizi dell'ente e delle sue sottounità.",
+      "pagoPaProducts": "Prodotti PagoPA",
+      "pdndServices": "E-service PDND",
+      "pdndClients": "Client PDND",
+      "name": "Nome",
+      "ioNotifications": "Notifiche invio messaggio",
+      "active": "Attivo",
+      "inactive": "Non attivo",
+      "apiKey": "API Key",
+      "hiddenApiKey": "API Key nascosta",
+      "purposeId": "Purpose ID",
+      "clientId": "Client ID",
+      "emptyTitle": "Qui vedrai le tue integrazioni",
+      "emptyDescription": "Aggiungi una nuova integrazione a un prodotto o servizio",
+      "add": "Aggiungi integrazione",
+      "show": "Mostra",
+      "showItem": "Mostra {{name}}",
+      "keyTypes": {
+        "IO": "IO",
+        "SEND": "SEND",
+        "GENERATE_NOTICE": "Stampa avvisi"
+      }
+    },
     "management": {
       "title": "Gestioni",
       "debtTypes": "Tipi di dovuto associati",

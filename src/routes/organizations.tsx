@@ -4,6 +4,7 @@ import {
 } from '../components/RouteGuard/RouteGuard';
 import Organizations from './Organizations/Organizations';
 import { OrganizationDetail } from './Organizations/OrganizationDetail';
+import { OrganizationIntegrations } from './Organizations/OrganizationIntegrations';
 import OrganizationEditWizard from './Organizations/OrganizationEditWizard/OrganizationEditWizard';
 
 export const organizationsRoutes = [
@@ -39,6 +40,20 @@ export const organizationsRoutes = [
           sidebar: {
             visible: false
           }
+        }
+      },
+      {
+        id: 'ORGANIZATIONS_INTEGRATIONS',
+        element: (
+          <AdminRouteGuard>
+            <OrganizationIntegrations />
+          </AdminRouteGuard>
+        ),
+        path: `:organizationId/integrations`,
+        handle: {
+          backButton: false,
+          hideBreadcrumbs: false,
+          custom: true
         }
       },
       {
