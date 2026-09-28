@@ -149,7 +149,15 @@
         "message_other": "All'utente <strong>{{operatorName}}</strong> verranno assegnati <strong>{{count}}</strong> tipi di dovuto, sui quali potrà gestire e operare.",
         "button": "Associa"
       }
-    }
+    },
+    "subUnit": "Sottunità",
+    "affiliateSubUnit": "Associa sottunità",
+    "subCode": "Codice univoco",
+    "subType": "Struttura",
+    "subName": "Denominazione",
+    "subCreationDate":"Data creazione",
+    "subStatus": "Stato"
+
   },
   "a11y": {
     "navigation": {

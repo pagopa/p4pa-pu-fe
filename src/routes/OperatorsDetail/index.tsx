@@ -22,6 +22,8 @@ import { useBreadcrumbs } from './hooks/useBreadcrumbs';
 import { DebtPositionTypeOrgDTO } from '../../../generated/core/data-contracts';
 import { removeDebtPositionTypeOrgFromOperator } from '../../api/debtPositionTypeOrgOperators';
 import { useStore } from '../../store/GlobalStore';
+import { getPagedOrgSubUnits } from '@core/api/subunits';
+import SubUnitDataGrid from './components/SubUnitDataGrid';
 
 export const OperatorDetail = () => {
   const { t } = useTranslation();
@@ -56,6 +58,12 @@ export const OperatorDetail = () => {
   );
 
   useBreadcrumbs(query);
+
+  const querySubUnit = getPagedOrgSubUnits(organizationId);
+
+  const {
+    query: { data: dataSubUnit }
+  } = useSearch({ query: querySubUnit, filters: {} });
 
   const {
     query: { isError, error, data },
@@ -237,6 +245,52 @@ export const OperatorDetail = () => {
             onDelete={onDelete}
             isSameOrg={isSameOrg}
           />
+        </Grid>
+      </Grid>
+
+      <Grid container marginTop={4}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            mb: 2
+          }}
+        >
+          <Typography variant="h6">
+            {t('OperatorDetail.subUnit')}
+          </Typography>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<Add />}
+            onClick={onAffiliateClick}
+          >
+            {t('OperatorDetail.affiliateSubUnit')}
+          </Button>
+        </Box>
+        <Grid
+          container
+          direction="row"
+          my={2}
+          sx={{
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
+        </Grid>
+        <Grid
+          container
+          p={2}
+          height="100%"
+          sx={{
+            bgcolor: theme.palette.grey[200],
+            overflow: 'auto'
+          }}
+        >
+          <SubUnitDataGrid
+            data={dataSubUnit} />
         </Grid>
       </Grid>
     </>
