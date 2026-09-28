@@ -3,6 +3,7 @@ import {
   SuperAdminRouteGuard
 } from '../components/RouteGuard/RouteGuard';
 import { OrganizationDetail } from './Organizations/OrganizationDetail';
+import { OrganizationIntegrations } from './Organizations/OrganizationIntegrations';
 import OrganizationEditWizard from './Organizations/OrganizationEditWizard/OrganizationEditWizard';
 import Organizations from './Organizations/Organizations';
 import { SubUnitsList } from './SubUnitsList';
@@ -40,6 +41,20 @@ export const organizationsRoutes = [
           sidebar: {
             visible: false
           }
+        }
+      },
+      {
+        id: 'ORGANIZATIONS_INTEGRATIONS',
+        element: (
+          <AdminRouteGuard>
+            <OrganizationIntegrations />
+          </AdminRouteGuard>
+        ),
+        path: `:organizationId/integrations`,
+        handle: {
+          backButton: false,
+          hideBreadcrumbs: false,
+          custom: true
         }
       },
       {

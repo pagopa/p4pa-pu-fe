@@ -6,7 +6,13 @@ import {
   OrganizationsFilteredRequest
 } from './mappings';
 import { parseAndLog } from '../../utils/loaders';
-import { organizationDetailSchema } from '../../../generated/core/zod-schema';
+import {
+  organizationApiKeySchema,
+  organizationDetailSchema,
+  pdndClientNoSecretDTOSchema,
+  pdndServiceViewSchema
+} from '../../../generated/core/zod-schema';
+import { z } from 'zod';
 import { OrganizationUpdateDTO } from '@generated/core/client';
 
 export const getOrganizationsByBrokerIdAndFilters = () =>
@@ -55,5 +61,40 @@ export const updateOrganization = () =>
         organizationId,
         organizationData
       );
+    }
+  });
+
+export const getOrganizationApiKeys = (organizationId: number) =>
+  useQuery({
+    queryKey: ['organizationApiKeys', organizationId],
+    queryFn: async () => {
+      const { data } =
+        await utils.apiClient.bff.getOrganizationApiKeys(organizationId);
+      parseAndLog(z.array(organizationApiKeySchema), data);
+      return data;
+    }
+  });
+
+export const getPdndServices = (organizationId: number) =>
+  useQuery({
+    queryKey: ['pdndServices', organizationId],
+    queryFn: async () => {
+      const { data } =
+        await utils.apiClient.bff.getPdndServices(organizationId);
+      parseAndLog(z.array(pdndServiceViewSchema), data);
+      return data;
+    }
+  });
+
+export const getPdndClients = (organizationId: number) =>
+  useQuery({
+    queryKey: ['pdndClients', organizationId],
+    queryFn: async () => {
+      const { data } =
+        await utils.apiClient.bff.getPdndClientsByOrgSubUnitCode(
+          organizationId
+        );
+      parseAndLog(z.array(pdndClientNoSecretDTOSchema), data);
+      return data;
     }
   });

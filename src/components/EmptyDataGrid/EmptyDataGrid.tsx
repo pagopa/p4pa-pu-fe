@@ -18,10 +18,14 @@ type EmptyDataGridProps = {
 
 const EmptyDataGrid: React.FC<EmptyDataGridProps> = ({
   title,
+  description,
+  icon,
   action,
   customStyles = {}
 }) => {
   const theme = useTheme();
+  // icon/description switch to the stacked (full empty state) layout
+  const stacked = Boolean(icon || description);
 
   return (
     <Box
@@ -36,7 +40,9 @@ const EmptyDataGrid: React.FC<EmptyDataGridProps> = ({
           bgcolor: 'white',
           padding: 2,
           display: 'flex',
-          flexDirection: 'row',
+          flexDirection: stacked ? 'column' : 'row',
+          gap: stacked ? 1 : 0,
+          py: stacked ? 3 : 2,
           alignItems: 'center',
           justifyContent: 'center',
           borderRadius: 1,
@@ -45,9 +51,19 @@ const EmptyDataGrid: React.FC<EmptyDataGridProps> = ({
           ...customStyles.content
         }}
       >
-        <Typography variant="body2" color="textSecondary">
+        {icon}
+        <Typography
+          variant="body2"
+          fontWeight={stacked ? 600 : undefined}
+          color="textSecondary"
+        >
           {title}
         </Typography>
+        {description && (
+          <Typography variant="body2" color="textSecondary">
+            {description}
+          </Typography>
+        )}
 
         {action && (
           <Button
