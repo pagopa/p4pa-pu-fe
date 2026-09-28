@@ -24,12 +24,11 @@ const OrganizationsDatagrid = ({
   const navigate = useNavigate();
 
   const handleRowClick = (
-    params: OrganizationWithDebtPositionTypeOrgAndOperatorsCount | undefined
+    org: OrganizationWithDebtPositionTypeOrgAndOperatorsCount
   ) => {
-    if (!params) return;
     navigate(
       generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
-        organizationId: params.organizationId
+        organizationId: org.organizationId
       })
     );
   };

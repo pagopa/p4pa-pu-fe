@@ -88,11 +88,14 @@ export const getDefaultDateRange = () => {
   };
 };
 
-export function formatDate(dateString?: string): string {
+export function formatDate(
+  dateString?: string,
+  formatStr = 'dd/MM/yyyy'
+): string {
   if (!dateString) return '';
   try {
     const date = parseISO(dateString);
-    return format(date, 'dd/MM/yyyy', { locale: it });
+    return format(date, formatStr, { locale: it });
   } catch (error) {
     console.error('Error formatting date:', error);
     return '';

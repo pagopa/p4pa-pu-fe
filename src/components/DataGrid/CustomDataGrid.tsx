@@ -13,6 +13,7 @@ import utils from '../../utils';
 import { useHashParamsListener } from '../../hooks/useHashParamsListener';
 import { useTranslation } from 'react-i18next';
 import { HiddenDiv } from '../HiddenDiv';
+import { itIT } from '@mui/x-data-grid/locales';
 const StyledDataGrid = styled(DataGrid)({
   border: 'none !important',
   '& .MuiDataGrid-columnHeader': {
@@ -32,6 +33,8 @@ export type CustomDataGridProps<T extends GridValidRowModel> = {
   pageSizeOptions?: Array<number>;
   initialSortModel?: GridSortModel;
   totalPages: number;
+  totalElements?: number;
+  tabIndex?: number;
 } & Omit<
   DataGridProps,
   | 'pagination'
@@ -49,6 +52,8 @@ const CustomDataGrid = <T extends GridValidRowModel>({
   pageSizeOptions = [5, 10, 20],
   initialSortModel = [],
   totalPages = 1,
+  totalElements,
+  tabIndex = -1,
   ...restProps
 }: CustomDataGridProps<T>) => {
   // Read from URL hash params directly
@@ -191,6 +196,7 @@ const CustomDataGrid = <T extends GridValidRowModel>({
         columns={columns}
         pagination
         paginationMode="server"
+        rowCount={totalElements}
         sortingMode="server"
         sortModel={sortModel}
         onSortModelChange={handleSortModelChange}
@@ -199,7 +205,7 @@ const CustomDataGrid = <T extends GridValidRowModel>({
         slotProps={{
           root: {
             id: 'data-results-table',
-            tabIndex: -1
+            tabIndex: tabIndex
           }
         }}
         slots={{
@@ -215,6 +221,7 @@ const CustomDataGrid = <T extends GridValidRowModel>({
           )
         }}
         localeText={{
+          ...itIT.components.MuiDataGrid.defaultProps.localeText,
           noRowsLabel: t('commons.noRows')
         }}
         {...restProps}
