@@ -9,7 +9,7 @@ import { appState } from '@core/store/AppStateStore';
 import { PageRoutes } from '..';
 import { SubUnitsList } from '.';
 
-vi.mock('@core/api/subunits', () => ({
+vi.mock('@core/api/orgSubUnit', () => ({
   getPagedOrgSubUnits: vi.fn()
 }));
 
