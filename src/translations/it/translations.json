@@ -164,7 +164,8 @@
     "deleteDialogSubUnit": {
       "title": "Sei sicuro di voler rimuovere la sottunità?",
       "message": "Denominazione sottunità che verrà rimossa: <strong>{{subUnitName}}</strong>"
-    }
+    },
+    "subUnitEmptyData": "Nessuna sottunità associata"
   },
   "a11y": {
     "navigation": {

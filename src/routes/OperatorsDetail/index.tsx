@@ -296,7 +296,6 @@ export const OperatorDetail = () => {
             variant="outlined"
             color="primary"
             startIcon={<Add />}
-            onClick={onAffiliateClick}
           >
             {t('OperatorDetail.affiliateSubUnit')}
           </Button>
