@@ -718,6 +718,7 @@
   },
   "commons": {
     "404": "404: risorsa non disponibile",
+    "name": "Nome e cognome",
     "creationDate": "Data di creazione",
     "toDetail": "Vai al dettaglio",
     "menu": "Menu",
@@ -2484,6 +2485,28 @@
       "emptyFields": "Non è stato possibile abilitare l'Ente. È necessario che i campi obbligatori siano compilati"
     }
   },
+  "subunits": {
+    "status": {
+      "ACTIVE": "Attiva",
+      "CANCELLED": "Disattivata"
+    },
+    "detail": {
+      "disableSubUnit": "Disattiva sub-unit",
+      "operators": "Operatori associati",
+      "linkOperator": "Associa operatore"
+    },
+    "list": {
+      "filters": {
+        "subUnitCode": "Cerca per codice univoco",
+        "subUnitType": "Cerca per struttura"
+      },
+      "title": "Sottounità {{orgName}}",
+      "description": "Puoi gestire le sottounità dell’ente.",
+      "subUnitCode": "Codice univoco",
+      "subUnitType": "Struttura",
+      "subUnitName": "Denominazione"
+    }
+  },
   "registry": {
     "detail": {
       "eventDetailTitle": "Dettaglio evento",
@@ -2624,23 +2647,6 @@
   "statistics": {
     "urlNotAvailable": "URL non disponibile",
     "urlGenerationFailed": "La generazione dell'URL di accesso non è andata a buon fine"
-  },
-  "subunits": {
-    "status": {
-      "ACTIVE": "Attiva",
-      "CANCELLED": "Disattivata"
-    },
-    "list": {
-      "filters": {
-        "subUnitCode": "Cerca per codice univoco",
-        "subUnitType": "Cerca per struttura"
-      },
-      "title": "Sottounità {{orgName}}",
-      "description": "Puoi gestire le sottounità dell’ente.",
-      "subUnitCode": "Codice univoco",
-      "subUnitType": "Struttura",
-      "subUnitName": "Denominazione"
-    }
   },
   "taxonomy": {
     "search": "Cerca tassonomia",
