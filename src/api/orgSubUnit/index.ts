@@ -84,34 +84,6 @@ export const deleteOrgSubUnitFromOperator = (
     }
   });
 
-// TODO: add filters when available
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type SubUnitsOperatorsFilters = {};
-
-export type SubUnitOperatorsFilteredRequest =
-  FilteredRequest<SubUnitsOperatorsFilters>;
-
-export const getOrgSubUnitOperators = (
-  organizationId: number,
-  subUnitCode: string
-) =>
-  useMutation({
-    mutationKey: ['getOrgSubUnitOperators', organizationId, subUnitCode],
-    mutationFn: async (query: SubUnitOperatorsFilteredRequest) => {
-      const { pagination, sort } = query;
-      const { data: response } =
-        await utils.apiClient.bff.getOrgSubUnitOperators(
-          organizationId,
-          subUnitCode,
-          {
-            ...pagination,
-            sort
-          }
-        );
-      return response;
-    }
-  });
-
 export const updateOrgSubUnitStatus = (
   organizationId: number,
   subUnitCode: string
@@ -162,5 +134,47 @@ export const getOrgSubUnitById = (
         subUnitCode
       );
       return response;
+    }
+  });
+
+// TODO: add filters when available
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export type SubUnitsOperatorsFilters = {};
+
+export type SubUnitOperatorsFilteredRequest =
+  FilteredRequest<SubUnitsOperatorsFilters>;
+
+export const getOrgSubUnitOperators = (
+  organizationId: number,
+  subUnitCode: string
+) =>
+  useMutation({
+    mutationKey: ['getOrgSubUnitOperators', organizationId, subUnitCode],
+    mutationFn: async (query: SubUnitOperatorsFilteredRequest) => {
+      const { pagination, sort } = query;
+      const { data: response } =
+        await utils.apiClient.bff.getOrgSubUnitOperators(
+          organizationId,
+          subUnitCode,
+          {
+            ...pagination,
+            sort
+          }
+        );
+      return response;
+    }
+  });
+
+export const deleteOrgSubUnitById = (
+  organizationId: number,
+  subUnitCode: string
+) =>
+  useMutation({
+    mutationKey: ['deleteOrgSubUnitById', organizationId, subUnitCode],
+    mutationFn: async () => {
+      await utils.apiClient.bff.deleteOrgSubUnitById(
+        organizationId,
+        subUnitCode
+      );
     }
   });
