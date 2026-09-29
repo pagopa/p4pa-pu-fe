@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Grid, Typography, useTheme, Box, Button } from '@mui/material';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import FilterContainer, {
   COMPONENT_TYPE
@@ -19,7 +19,10 @@ import DetailContainer, {
 } from '../../components/DetailContainer/DetailContainer';
 import { useDebtPositionTypesByOrg } from '../../hooks/useDebtPositionTypesByOrg';
 import { useBreadcrumbs } from './hooks/useBreadcrumbs';
-import { DebtPositionTypeOrgDTO } from '../../../generated/core/data-contracts';
+import {
+  DebtPositionTypeOrgDTO,
+  OrgSubUnit
+} from '../../../generated/core/data-contracts';
 import { removeDebtPositionTypeOrgFromOperator } from '../../api/debtPositionTypeOrgOperators';
 import { useStore } from '../../store/GlobalStore';
 import { getPagedOrgSubUnits } from '@core/api/orgSubUnit';
@@ -62,7 +65,8 @@ export const OperatorDetail = () => {
   const querySubUnit = getPagedOrgSubUnits(organizationId);
 
   const {
-    query: { data: dataSubUnit }
+    query: { data: dataSubUnit },
+    applyFilters: applyFiltersSubUnit
   } = useSearch({ query: querySubUnit, filters: {} });
 
   const {
@@ -151,6 +155,35 @@ export const OperatorDetail = () => {
     } else {
       utils.notify.emit(t('errors.generic'));
     }
+  };
+
+  const deleteSubUnit = (subUnitCode: string) =>
+    utils.apiClient.bff.deleteOrgSubUnitById(organizationId, subUnitCode);
+
+  const onDeleteSubUnit = (row: OrgSubUnit) => {
+    utils.dialog.open({
+      ['data-testid']: 'delete-dialog-sub-unit',
+      title: t('OperatorDetail.deleteDialogSubUnit.title'),
+      message: (
+        <Trans
+          i18nKey="OperatorDetail.deleteDialogSubUnit.message"
+          values={{ subUnitName: row.subUnitName }}
+        />
+      ),
+      confirmLabel: t('commons.onlyRemove'),
+      cancelLabel: t('commons.close'),
+      onConfirm: async () => {
+        try {
+          await deleteSubUnit(row.subUnitCode);
+          applyFiltersSubUnit({});
+        } catch (error) {
+          console.error(error);
+          utils.notify.emit(t('errors.generic'));
+        }
+        utils.dialog.close();
+      },
+      onClose: () => utils.dialog.close()
+    });
   };
 
   if (deleteMutation.isError) {
@@ -286,7 +319,7 @@ export const OperatorDetail = () => {
             overflow: 'auto'
           }}
         >
-          <SubUnitDataGrid organizationId={organizationId} data={dataSubUnit} />
+          <SubUnitDataGrid data={dataSubUnit} onDelete={onDeleteSubUnit} />
         </Grid>
       </Grid>
     </>

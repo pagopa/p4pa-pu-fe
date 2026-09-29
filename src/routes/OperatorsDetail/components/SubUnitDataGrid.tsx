@@ -1,4 +1,4 @@
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import { OrgSubUnit, PagedOrgSubUnit } from '../../../../generated/core/client';
 import { GridColDef } from '@mui/x-data-grid';
@@ -9,42 +9,11 @@ import { Button, Chip } from '@mui/material';
 
 type PagedOrgSubUnitDataGridProps = {
   data?: PagedOrgSubUnit;
-  organizationId: number;
+  onDelete: (row: OrgSubUnit) => void;
 };
 
-const SubUnitDataGrid = ({
-  data,
-  organizationId
-}: PagedOrgSubUnitDataGridProps) => {
+const SubUnitDataGrid = ({ data, onDelete }: PagedOrgSubUnitDataGridProps) => {
   const { t } = useTranslation();
-
-  const deleteSubUnit = (subUnitCode: string) =>
-    utils.apiClient.bff.deleteOrgSubUnitById(organizationId, subUnitCode);
-
-  const onDelete = (row: OrgSubUnit) => {
-    utils.dialog.open({
-      ['data-testid']: 'delete-dialog-sub-unit',
-      title: t('OperatorDetail.deleteDialogSubUnit.title'),
-      message: (
-        <Trans
-          i18nKey="OperatorDetail.deleteDialogSubUnit.message"
-          values={{ subUnitName: row.subUnitName }}
-        />
-      ),
-      confirmLabel: t('commons.onlyRemove'),
-      cancelLabel: t('commons.close'),
-      onConfirm: async () => {
-        try {
-          await deleteSubUnit(row.subUnitCode);
-        } catch (error) {
-          console.error(error);
-          utils.notify.emit(t('errors.generic'));
-        }
-        utils.dialog.close();
-      },
-      onClose: () => utils.dialog.close()
-    });
-  };
 
   const columns: Array<GridColDef<OrgSubUnit>> = [
     {
