@@ -290,6 +290,7 @@ export const OperatorDetail = () => {
           }}
         >
           <SubUnitDataGrid
+            organizationId={organizationId}
             data={dataSubUnit} />
         </Grid>
       </Grid>

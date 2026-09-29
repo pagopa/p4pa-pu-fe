@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import {
   OrgSubUnit,
@@ -6,15 +6,47 @@ import {
 } from '../../../../generated/core/client';
 import { GridColDef } from '@mui/x-data-grid';
 import EmptyDetailContainer from '../../../components/DebtPositionsInstallmentDetail/EmptyDetailContainer';
+import { RemoveCircleOutline } from '@mui/icons-material';
+import utils from '@core/utils';
 
 type PagedOrgSubUnitDataGridProps = {
   data?: PagedOrgSubUnit;
+  organizationId: number;
 };
 
 const SubUnitDataGrid = ({
   data,
+  organizationId,
 }: PagedOrgSubUnitDataGridProps) => {
   const { t } = useTranslation();
+
+  const deleteSubUnit = (subUnitCode: string) => utils.apiClient.bff.deleteOrgSubUnitById(organizationId, subUnitCode);
+
+
+  const onDelete = (row: OrgSubUnit) => {
+    utils.dialog.open({
+      ['data-testid']: 'delete-dialog',
+      title: t('OperatorDetail.deleteDialogSubUnit.title'),
+      message: (
+        <Trans
+          i18nKey="OperatorDetail.deleteDialogSubUnit.message"
+          values={{ subUnitName: row.subUnitName }}
+        />
+      ),
+      confirmLabel: t('commons.onlyRemove'),
+      cancelLabel: t('commons.close'),
+      onConfirm: async () => {
+        try {
+          await deleteSubUnit(row.subUnitCode);
+        } catch (error) {
+          console.error(error);
+          utils.notify.emit(t('errors.generic'));
+        }
+        utils.dialog.close();
+      },
+      onClose: () => utils.dialog.close()
+    });
+  };
 
   const columns: Array<GridColDef<OrgSubUnit>> = [
     {
@@ -47,12 +79,30 @@ const SubUnitDataGrid = ({
       flex: 1,
       type: 'string'
     },
+    {
+      field: 'action',
+      headerName: '',
+      flex: 0.5,
+      sortable: false,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: (params) => (
+        <>
+        {t('commons.remove')}
+          <RemoveCircleOutline
+          onClick={() => onDelete(params.row)}
+            fontSize="small"
+            color="error"
+          />
+        </>
+      )
+    }
   ];
 
   if (data?.content?.length === 0) {
     return (
       <EmptyDetailContainer
-        description={t('OperatorDetail.emptyData')}
+        description={t('OperatorDetail.subUnitEmptyData')}
         sx={{ width: '100%' }}
       />
     );

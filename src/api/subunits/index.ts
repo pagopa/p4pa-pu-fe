@@ -31,3 +31,15 @@ export const getPagedOrgSubUnits = (organizationId: number) =>
       return response;
     }
   });
+
+export const deleteOrgSubUnitById = (organizationId: number, subUnitCode: string) =>
+  useMutation({
+    mutationKey: ['deleteOrgSubUnitById', organizationId, subUnitCode],
+    mutationFn: async () => {
+      const { data: response } = await utils.apiClient.bff.deleteOrgSubUnitById(
+        organizationId,
+        subUnitCode
+      );
+      return response;
+    }
+  });
