@@ -57,7 +57,7 @@ const SubUnitDataGrid = ({ data, onDelete }: PagedOrgSubUnitDataGridProps) => {
     {
       field: 'action',
       headerName: '',
-      flex: 0.5,
+      flex: 1,
       sortable: false,
       align: 'right',
       headerAlign: 'right',
