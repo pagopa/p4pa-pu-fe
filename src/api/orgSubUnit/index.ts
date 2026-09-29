@@ -9,6 +9,7 @@ export type SubUnitsFilters = {
   subUnitCode?: string;
   status?: OrgSubUnitStatus;
   subUnitType?: SubUnitType;
+  mappedExternalUserId?: string;
 };
 
 export type SubUnitsFilteredRequest = FilteredRequest<SubUnitsFilters>;

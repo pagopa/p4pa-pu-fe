@@ -67,7 +67,7 @@ export const OperatorDetail = () => {
   const {
     query: { data: dataSubUnit },
     applyFilters: applyFiltersSubUnit
-  } = useSearch({ query: querySubUnit, filters: {} });
+  } = useSearch({ query: querySubUnit, filters: { mappedExternalUserId } });
 
   const {
     query: { isError, error, data },
@@ -175,7 +175,7 @@ export const OperatorDetail = () => {
       onConfirm: async () => {
         try {
           await deleteSubUnit(row.subUnitCode);
-          applyFiltersSubUnit({});
+          applyFiltersSubUnit({ mappedExternalUserId });
         } catch (error) {
           console.error(error);
           utils.notify.emit(t('errors.generic'));
