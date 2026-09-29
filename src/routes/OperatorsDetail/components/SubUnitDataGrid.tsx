@@ -1,13 +1,11 @@
 import { Trans, useTranslation } from 'react-i18next';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
-import {
-  OrgSubUnit,
-  PagedOrgSubUnit,
-} from '../../../../generated/core/client';
+import { OrgSubUnit, PagedOrgSubUnit } from '../../../../generated/core/client';
 import { GridColDef } from '@mui/x-data-grid';
 import EmptyDetailContainer from '../../../components/DebtPositionsInstallmentDetail/EmptyDetailContainer';
 import { RemoveCircleOutline } from '@mui/icons-material';
 import utils from '@core/utils';
+import { Button, Chip } from '@mui/material';
 
 type PagedOrgSubUnitDataGridProps = {
   data?: PagedOrgSubUnit;
@@ -16,16 +14,16 @@ type PagedOrgSubUnitDataGridProps = {
 
 const SubUnitDataGrid = ({
   data,
-  organizationId,
+  organizationId
 }: PagedOrgSubUnitDataGridProps) => {
   const { t } = useTranslation();
 
-  const deleteSubUnit = (subUnitCode: string) => utils.apiClient.bff.deleteOrgSubUnitById(organizationId, subUnitCode);
-
+  const deleteSubUnit = (subUnitCode: string) =>
+    utils.apiClient.bff.deleteOrgSubUnitById(organizationId, subUnitCode);
 
   const onDelete = (row: OrgSubUnit) => {
     utils.dialog.open({
-      ['data-testid']: 'delete-dialog',
+      ['data-testid']: 'delete-dialog-sub-unit',
       title: t('OperatorDetail.deleteDialogSubUnit.title'),
       message: (
         <Trans
@@ -71,13 +69,21 @@ const SubUnitDataGrid = ({
       field: 'creationDate',
       headerName: t('OperatorDetail.subCreationDate'),
       flex: 1,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => utils.formatters.formatDate(params.value)
     },
     {
       field: 'status',
       headerName: t('OperatorDetail.subStatus'),
       flex: 1,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => (
+        <Chip
+          color="info"
+          size="small"
+          label={t(`OperatorDetail.subUnitStatus.${params.value}`)}
+        />
+      )
     },
     {
       field: 'action',
@@ -87,14 +93,13 @@ const SubUnitDataGrid = ({
       align: 'right',
       headerAlign: 'right',
       renderCell: (params) => (
-        <>
-        {t('commons.remove')}
-          <RemoveCircleOutline
+        <Button
+          endIcon={<RemoveCircleOutline />}
           onClick={() => onDelete(params.row)}
-            fontSize="small"
-            color="error"
-          />
-        </>
+          color="error"
+        >
+          {t('commons.remove')}
+        </Button>
       )
     }
   ];
@@ -112,9 +117,7 @@ const SubUnitDataGrid = ({
     <CustomDataGrid
       rows={data?.content || []}
       columns={columns}
-      getRowId={(row: OrgSubUnit) =>
-        row.subUnitCode
-      }
+      getRowId={(row: OrgSubUnit) => row.subUnitCode}
       disableColumnMenu
       disableColumnResize
       totalPages={data?.totalPages || 1}

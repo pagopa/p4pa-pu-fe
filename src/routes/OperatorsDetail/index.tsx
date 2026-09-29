@@ -22,7 +22,7 @@ import { useBreadcrumbs } from './hooks/useBreadcrumbs';
 import { DebtPositionTypeOrgDTO } from '../../../generated/core/data-contracts';
 import { removeDebtPositionTypeOrgFromOperator } from '../../api/debtPositionTypeOrgOperators';
 import { useStore } from '../../store/GlobalStore';
-import { getPagedOrgSubUnits } from '@core/api/subunits';
+import { getPagedOrgSubUnits } from '@core/api/orgSubUnit';
 import SubUnitDataGrid from './components/SubUnitDataGrid';
 
 export const OperatorDetail = () => {
@@ -258,9 +258,7 @@ export const OperatorDetail = () => {
             mb: 2
           }}
         >
-          <Typography variant="h6">
-            {t('OperatorDetail.subUnit')}
-          </Typography>
+          <Typography variant="h6">{t('OperatorDetail.subUnit')}</Typography>
           <Button
             variant="outlined"
             color="primary"
@@ -278,8 +276,7 @@ export const OperatorDetail = () => {
             alignItems: 'center',
             justifyContent: 'space-between'
           }}
-        >
-        </Grid>
+        ></Grid>
         <Grid
           container
           p={2}
@@ -289,9 +286,7 @@ export const OperatorDetail = () => {
             overflow: 'auto'
           }}
         >
-          <SubUnitDataGrid
-            organizationId={organizationId}
-            data={dataSubUnit} />
+          <SubUnitDataGrid organizationId={organizationId} data={dataSubUnit} />
         </Grid>
       </Grid>
     </>

@@ -1,5 +1,7 @@
 import { FilteredRequest } from '@core/models/Filters';
 import utils from '@core/utils';
+import { parseAndLog } from '@core/utils/loaders';
+import { pagedOrgSubUnitSchema } from '@generated/core/zod-schema';
 import { OrgSubUnitStatus, SubUnitType } from '@generated/core/data-contracts';
 import { useMutation } from '@tanstack/react-query';
 
@@ -28,11 +30,15 @@ export const getPagedOrgSubUnits = (organizationId: number) =>
         organizationId,
         query
       );
+      parseAndLog(pagedOrgSubUnitSchema, response);
       return response;
     }
   });
 
-export const deleteOrgSubUnitById = (organizationId: number, subUnitCode: string) =>
+export const deleteOrgSubUnitById = (
+  organizationId: number,
+  subUnitCode: string
+) =>
   useMutation({
     mutationKey: ['deleteOrgSubUnitById', organizationId, subUnitCode],
     mutationFn: async () => {
