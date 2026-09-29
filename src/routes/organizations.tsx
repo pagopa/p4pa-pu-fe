@@ -7,6 +7,7 @@ import { OrganizationIntegrations } from './Organizations/OrganizationIntegratio
 import OrganizationEditWizard from './Organizations/OrganizationEditWizard/OrganizationEditWizard';
 import Organizations from './Organizations/Organizations';
 import { SubUnitsList } from './SubUnitsList';
+import { SubUnitDetail } from './SubUnitDetail';
 
 export const organizationsRoutes = [
   {
@@ -76,6 +77,19 @@ export const organizationsRoutes = [
         element: (
           <AdminRouteGuard>
             <SubUnitsList />
+          </AdminRouteGuard>
+        ),
+        handle: {
+          backButton: false,
+          custom: true
+        }
+      },
+      {
+        id: 'SUB_UNIT_DETAIL',
+        path: `:organizationId/subunits/:subUnitCode`,
+        element: (
+          <AdminRouteGuard>
+            <SubUnitDetail />
           </AdminRouteGuard>
         ),
         handle: {

@@ -14,9 +14,16 @@ export type SubUnitsFilters = {
 
 export type SubUnitsFilteredRequest = FilteredRequest<SubUnitsFilters>;
 
-export const getOperatorOrgSubUnits = (organizationId: number, mappedExternalUserId: string,) =>
+export const getOperatorOrgSubUnits = (
+  organizationId: number,
+  mappedExternalUserId: string
+) =>
   useMutation({
-    mutationKey: ['getOperatorOrgSubUnits', organizationId, mappedExternalUserId],
+    mutationKey: [
+      'getOperatorOrgSubUnits',
+      organizationId,
+      mappedExternalUserId
+    ],
     mutationFn: async ({
       filters,
       pagination,
@@ -27,11 +34,12 @@ export const getOperatorOrgSubUnits = (organizationId: number, mappedExternalUse
         ...pagination,
         sort
       };
-      const { data: response } = await utils.apiClient.bff.getOperatorOrgSubUnits(
-        organizationId,
-        mappedExternalUserId,
-        query
-      );
+      const { data: response } =
+        await utils.apiClient.bff.getOperatorOrgSubUnits(
+          organizationId,
+          mappedExternalUserId,
+          query
+        );
       parseAndLog(pagedOrgSubUnitSchema, response);
       return response;
     }
@@ -40,19 +48,15 @@ export const getOperatorOrgSubUnits = (organizationId: number, mappedExternalUse
 export const getPagedOrgSubUnits = (organizationId: number) =>
   useMutation({
     mutationKey: ['getPagedOrgSubUnits', organizationId],
-    mutationFn: async ({
-      filters,
-      pagination,
-      sort
-    }: SubUnitsFilteredRequest) => {
-      const query = {
-        ...filters,
-        ...pagination,
-        sort
-      };
+    mutationFn: async (query: SubUnitsFilteredRequest) => {
+      const { filters, pagination, sort } = query;
       const { data: response } = await utils.apiClient.bff.getPagedOrgSubUnits(
         organizationId,
-        query
+        {
+          ...filters,
+          ...pagination,
+          sort
+        }
       );
       parseAndLog(pagedOrgSubUnitSchema, response);
       return response;
@@ -61,16 +65,63 @@ export const getPagedOrgSubUnits = (organizationId: number) =>
 
 export const deleteOrgSubUnitFromOperator = (
   organizationId: number,
-  mappedExternalUserId: string,
+  mappedExternalUserId: string
 ) =>
   useMutation({
-    mutationKey: ['deleteOrgSubUnitFromOperator', organizationId, mappedExternalUserId],
-    mutationFn: async (  subUnitCode: string) => {
-      const { data: response } = await utils.apiClient.bff.deleteOrgSubUnitFromOperator(
+    mutationKey: [
+      'deleteOrgSubUnitFromOperator',
+      organizationId,
+      mappedExternalUserId
+    ],
+    mutationFn: async (subUnitCode: string) => {
+      const { data: response } =
+        await utils.apiClient.bff.deleteOrgSubUnitFromOperator(
+          organizationId,
+          mappedExternalUserId,
+          subUnitCode
+        );
+      return response;
+    }
+  });
+
+// TODO: add filters when available
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export type SubUnitsOperatorsFilters = {};
+
+export type SubUnitOperatorsFilteredRequest =
+  FilteredRequest<SubUnitsOperatorsFilters>;
+
+export const getOrgSubUnitOperators = (
+  organizationId: number,
+  subUnitCode: string
+) =>
+  useMutation({
+    mutationKey: ['getOrgSubUnitOperators', organizationId, subUnitCode],
+    mutationFn: async (query: SubUnitOperatorsFilteredRequest) => {
+      const { pagination, sort } = query;
+      const { data: response } =
+        await utils.apiClient.bff.getOrgSubUnitOperators(
+          organizationId,
+          subUnitCode,
+          {
+            ...pagination,
+            sort
+          }
+        );
+      return response;
+    }
+  });
+
+export const deleteOrgSubUnitById = (
+  organizationId: number,
+  subUnitCode: string
+) =>
+  useMutation({
+    mutationKey: ['deleteOrgSubUnitById', organizationId, subUnitCode],
+    mutationFn: async () => {
+      await utils.apiClient.bff.deleteOrgSubUnitById(
         organizationId,
-        mappedExternalUserId,
         subUnitCode
       );
-      return response;
     }
   });

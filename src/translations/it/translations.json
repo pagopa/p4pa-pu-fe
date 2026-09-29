@@ -717,6 +717,7 @@
     "reloadSecretKO": "Non è stato possibile rigenerare la Secret key"
   },
   "commons": {
+    "name": "Nome e cognome",
     "creationDate": "Data di creazione",
     "toDetail": "Vai al dettaglio",
     "404": "404: risorsa non disponibile",
@@ -2483,6 +2484,11 @@
     "status": {
       "ACTIVE": "Attiva",
       "CANCELLED": "Disattivata"
+    },
+    "detail": {
+      "disableSubUnit": "Disattiva sub-unit",
+      "operators": "Operatori associati",
+      "linkOperator": "Associa operatore"
     },
     "list": {
       "filters": {
