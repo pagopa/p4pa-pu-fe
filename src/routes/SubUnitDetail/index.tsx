@@ -33,8 +33,7 @@ export const SubUnitDetail = () => {
 
   const organizationId = Number(urlOrganizationId);
   const subUnitCode = String(urlSubUnitCode);
-
-  if (isNaN(organizationId) || !subUnitCode) {
+  if (isNaN(organizationId) || !urlSubUnitCode) {
     navigate(PageRoutes.RESPONSES_ERROR);
   }
 
