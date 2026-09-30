@@ -4,21 +4,39 @@ import {
   Menu,
   MenuItem,
   ListItemIcon,
-  ListItemText
+  ListItemText,
+  styled
 } from '@mui/material';
 import MoreVert from '@mui/icons-material/MoreVert';
 import { useTranslation } from 'react-i18next';
 
-type MenuItemProps = {
+type variant = 'default' | 'error';
+
+export type MenuItemProps = {
   icon: React.ReactNode;
   label: string;
   action: () => void;
+  variant?: variant;
 };
 
 type ActionMenuProps = {
   rowId: number | string;
   menuItems: Array<MenuItemProps>;
 };
+
+const StyledMenuItem = styled(MenuItem, {
+  shouldForwardProp: (prop) => prop !== 'variant'
+})<{ variant?: variant }>(({ theme, variant }) => ({
+  ...(variant === 'error' && {
+    color: theme.palette.error.main,
+    '& .MuiListItemIcon-root': {
+      color: theme.palette.error.main
+    },
+    '& .MuiListItemText-root': {
+      color: theme.palette.error.main
+    }
+  })
+}));
 
 const ActionMenu: React.FC<ActionMenuProps> = ({ rowId, menuItems }) => {
   const { t } = useTranslation();
@@ -56,8 +74,9 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ rowId, menuItems }) => {
         }}
       >
         {menuItems.map((item, index) => (
-          <MenuItem
+          <StyledMenuItem
             key={`${rowId}-${index}`}
+            variant={item.variant}
             onClick={() => {
               item.action();
               handleClose();
@@ -65,7 +84,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ rowId, menuItems }) => {
           >
             <ListItemIcon>{item.icon}</ListItemIcon>
             <ListItemText>{item.label}</ListItemText>
-          </MenuItem>
+          </StyledMenuItem>
         ))}
       </Menu>
     </>
