@@ -14,6 +14,15 @@ vi.mock('@core/api/orgSubUnit', () => ({
   deleteSingleOperatorFromOrgSubUnit: vi.fn()
 }));
 
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+    useParams: vi.fn()
+  };
+});
+
 vi.mock('@core/components/ActionMenu/ActionMenu', () => ({
   default: ({
     rowId,
