@@ -1,4 +1,4 @@
-import { getPagedOrgSubUnits, SubUnitsFilters } from '@core/api/subunits';
+import { getPagedOrgSubUnits, SubUnitsFilters } from '@core/api/orgSubUnit';
 import { useSearch } from '@core/hooks/useSearch';
 import utils from '@core/utils';
 import { Stack } from '@mui/material';

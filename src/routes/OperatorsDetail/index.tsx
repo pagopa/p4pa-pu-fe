@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Grid, Typography, useTheme, Box, Button } from '@mui/material';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import FilterContainer, {
   COMPONENT_TYPE
@@ -19,24 +19,31 @@ import DetailContainer, {
 } from '../../components/DetailContainer/DetailContainer';
 import { useDebtPositionTypesByOrg } from '../../hooks/useDebtPositionTypesByOrg';
 import { useBreadcrumbs } from './hooks/useBreadcrumbs';
-import { DebtPositionTypeOrgDTO } from '../../../generated/core/data-contracts';
+import {
+  DebtPositionTypeOrgDTO,
+  OrgSubUnit,
+  SubUnitType
+} from '../../../generated/core/data-contracts';
 import { removeDebtPositionTypeOrgFromOperator } from '../../api/debtPositionTypeOrgOperators';
 import { useStore } from '../../store/GlobalStore';
+import { getOperatorOrgSubUnits, deleteOrgSubUnitFromOperator } from '@core/api/orgSubUnit';
+import SubUnitDataGrid from './components/SubUnitDataGrid';
 
 export const OperatorDetail = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
   const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
-  const deleteMutation = removeDebtPositionTypeOrgFromOperator();
 
   const {
     organizationId: paramOrganizationId,
     mappedExternalUserId,
     orgName
   } = useParams();
-
   const organizationId = Number(paramOrganizationId);
+
+  const deleteMutation = removeDebtPositionTypeOrgFromOperator();
+  const deleteSubUnitMutation = deleteOrgSubUnitFromOperator(organizationId, mappedExternalUserId as string);
 
   const {
     state: { organizationId: organizationIdStored }
@@ -49,6 +56,7 @@ export const OperatorDetail = () => {
   });
 
   const [filters, setFilters] = useState(initialFilters);
+  const [filtersSubUnit, setFiltersSubUnit] = useState(initialFilters);
 
   const query = useOperatorDetailSearch(
     organizationId,
@@ -56,6 +64,13 @@ export const OperatorDetail = () => {
   );
 
   useBreadcrumbs(query);
+
+  const querySubUnit = getOperatorOrgSubUnits(organizationId, mappedExternalUserId as string);
+
+  const {
+    query: { data: dataSubUnit },
+    applyFilters: applyFiltersSubUnit
+  } = useSearch({ query: querySubUnit, filters: filtersSubUnit });
 
   const {
     query: { isError, error, data },
@@ -129,6 +144,35 @@ export const OperatorDetail = () => {
     }
   ];
 
+  const filterItemsSubUnit = [
+    {
+      id: 'subUnitName',
+      type: COMPONENT_TYPE.textField,
+      label: t('OperatorDetail.subUnitFilters.subUnitName'),
+      adornment: <Search />,
+      gridWidth: 4
+    },
+    {
+      id: 'subUnitCode',
+      type: COMPONENT_TYPE.textField,
+      label: t('OperatorDetail.subUnitFilters.subUnitCode'),
+      adornment: <Search />,
+      gridWidth: 3
+    },
+    {
+      id: 'subUnitType',
+      type: COMPONENT_TYPE.select,
+      label: t('OperatorDetail.subUnitFilters.subUnitType'),
+      gridWidth: 4,
+      options: [{ label: SubUnitType.AOO, value: SubUnitType.AOO }, { label: SubUnitType.UO, value: SubUnitType.UO }]
+    },
+    {
+      type: COMPONENT_TYPE.button,
+      label: t('commons.filters.filterResults'),
+      gridWidth: 1
+    }
+  ];
+
   const onDelete = ({
     organizationId,
     debtPositionTypeOrgId
@@ -145,6 +189,32 @@ export const OperatorDetail = () => {
     }
   };
 
+  const onDeleteSubUnit = (row: OrgSubUnit) => {
+    utils.dialog.open({
+      ['data-testid']: 'delete-dialog-sub-unit',
+      title: t('OperatorDetail.deleteDialogSubUnit.title'),
+      message: (
+        <Trans
+          i18nKey="OperatorDetail.deleteDialogSubUnit.message"
+          values={{ subUnitName: row.subUnitName }}
+        />
+      ),
+      confirmLabel: t('commons.onlyRemove'),
+      cancelLabel: t('commons.close'),
+      onConfirm: async () => {
+        try {
+          await deleteSubUnitMutation.mutateAsync(row.subUnitCode);
+          applyFiltersSubUnit(filtersSubUnit);
+        } catch (error) {
+          console.error(error);
+          utils.notify.emit(t('errors.generic'));
+        }
+        utils.dialog.close();
+      },
+      onClose: () => utils.dialog.close()
+    });
+  };
+
   if (deleteMutation.isError) {
     utils.notify.emit(t('errors.generic'));
   }
@@ -153,6 +223,13 @@ export const OperatorDetail = () => {
     setFilters((prevFilters) => ({
       ...prevFilters,
       [id]: value
+    }));
+  };
+
+  const handleFilterChangeSubUnit = (id: string, value: FilterFieldValue) => {
+    setFiltersSubUnit((prevFilters) => ({
+      ...prevFilters,
+      [id]: value,
     }));
   };
 
@@ -237,6 +314,54 @@ export const OperatorDetail = () => {
             onDelete={onDelete}
             isSameOrg={isSameOrg}
           />
+        </Grid>
+      </Grid>
+
+      <Grid container marginTop={4}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            mb: 2
+          }}
+        >
+          <Typography variant="h6">{t('OperatorDetail.subUnit')}</Typography>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<Add />}
+          >
+            {t('OperatorDetail.affiliateSubUnit')}
+          </Button>
+        </Box>
+        <Grid
+          container
+          direction="row"
+          my={2}
+          sx={{
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
+          <FilterContainer
+            onChange={handleFilterChangeSubUnit}
+            values={filtersSubUnit}
+            items={filterItemsSubUnit}
+            onSubmit={() => applyFiltersSubUnit(filtersSubUnit)}
+          />
+        </Grid>
+        <Grid
+          container
+          p={2}
+          height="100%"
+          sx={{
+            bgcolor: theme.palette.grey[200],
+            overflow: 'auto'
+          }}
+        >
+          <SubUnitDataGrid data={dataSubUnit} onDelete={onDeleteSubUnit} />
         </Grid>
       </Grid>
     </>

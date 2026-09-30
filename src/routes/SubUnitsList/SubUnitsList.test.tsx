@@ -3,13 +3,13 @@ import { fireEvent } from '@testing-library/react';
 import { render, screen } from '../../__tests__/renderers';
 import { generatePath, useNavigate, useParams } from 'react-router';
 
-import { getPagedOrgSubUnits } from '@core/api/subunits';
+import { getPagedOrgSubUnits } from '@core/api/orgSubUnit';
 import { useSearch } from '@core/hooks/useSearch';
 import { appState } from '@core/store/AppStateStore';
 import { PageRoutes } from '..';
 import { SubUnitsList } from '.';
 
-vi.mock('@core/api/subunits', () => ({
+vi.mock('@core/api/orgSubUnit', () => ({
   getPagedOrgSubUnits: vi.fn()
 }));
 
