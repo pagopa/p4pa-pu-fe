@@ -15,7 +15,7 @@ variables:
   NODE_VERSION: '22.12.0'
   vmImageNameDefault: 'ubuntu-latest'
   blob_container_path: 'piattaformaunitaria'
-  
+
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/uat') }}:
     environment: 'UAT'
     azure_subscription: '$(UAT_AZURE_SUBSCRIPTION)'
@@ -82,7 +82,7 @@ stages:
         displayName: Build
         steps:
           - template: local-templates/node-job-setup.yaml
-    
+
           - script: |
               cd "$(Build.SourcesDirectory)/src/extra"
               set -euo pipefail
@@ -119,6 +119,7 @@ stages:
           - script: |
               export OPENAPI_URL=$(openapi_url)
               export OPENAPI_FILESHARE_URL=$(openapi_fileshare_url)
+              export NODE_OPTIONS="--max-old-space-size=6144"
               yarn build
             displayName: 'yarn build'
 
