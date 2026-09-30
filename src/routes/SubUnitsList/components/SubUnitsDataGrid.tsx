@@ -42,17 +42,17 @@ export const SubUnitsDataGrid = ({
   const columns: Array<GridColDef<OrgSubUnit>> = [
     {
       field: 'subUnitCode',
-      headerName: t('subunits.list.subUnitCode'),
+      headerName: t('subunits.subUnitCode'),
       flex: 1
     },
     {
       field: 'subUnitType',
-      headerName: t('subunits.list.subUnitType'),
+      headerName: t('subunits.subUnitType'),
       flex: 1
     },
     {
       field: 'subUnitName',
-      headerName: t('subunits.list.subUnitName'),
+      headerName: t('subunits.subUnitName'),
       flex: 1
     },
     {
