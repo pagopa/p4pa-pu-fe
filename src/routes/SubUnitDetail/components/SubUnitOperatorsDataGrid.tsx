@@ -14,6 +14,7 @@ import ActionMenu, {
 import CustomDataGrid from '@core/components/DataGrid/CustomDataGrid';
 import GenericDialog from '@core/components/GenericDialog/GenericDialog';
 import { deleteSingleOperatorFromOrgSubUnit } from '@core/api/orgSubUnit';
+import utils from '@core/utils';
 
 type SubUnitsDataGridProps = {
   data: PagedOrgSubUnitOperators;
@@ -52,11 +53,20 @@ export const SubUnitOperatorsDataGrid = ({
   });
 
   const onDeleteOperator = async () => {
-    if (!selectedOperator) return;
-    await deleteOperatorApi.mutateAsync(selectedOperator.mappedExternalUserId);
-    setDeleteDialogState(false);
-    setSelectedOperator(undefined);
-    onDelete();
+    if (selectedOperator) {
+      try {
+        await deleteOperatorApi.mutateAsync(
+          selectedOperator.mappedExternalUserId
+        );
+        onDelete();
+      } catch {
+        utils.notify.emit(t('errors.generic'));
+      } finally {
+        setDeleteDialogState(false);
+        setSelectedOperator(undefined);
+      }
+    }
+    utils.notify.emit(t('errors.generic'));
   };
 
   const columns: Array<GridColDef<OrgSubUnitOperator>> = [

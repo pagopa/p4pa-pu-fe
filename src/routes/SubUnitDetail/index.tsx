@@ -54,6 +54,18 @@ export const SubUnitDetail = () => {
     onActionClick: () => setDisableDialogState(true)
   };
 
+  const onDisableSubUnit = async () => {
+    try {
+      await deleteSubUnitApi.mutateAsync();
+      subUnitQuery.refetch();
+    } catch {
+      utils.notify.emit(t('errors.generic'));
+    } finally {
+      setDisableDialogState(false);
+      filteredSearch.applyFilters(initialFilters);
+    }
+  };
+
   // TODO: add action when available
   // const linkOperatorAction: ActionMenuItem = {
   //   buttonText: t('subunits.detail.linkOperator'),
@@ -96,11 +108,7 @@ export const SubUnitDetail = () => {
         message={t('subunits.detail.disable.message')}
         open={disableDialogState}
         onClose={() => setDisableDialogState(false)}
-        onConfirm={() => {
-          deleteSubUnitApi.mutateAsync();
-          setDisableDialogState(false);
-          filteredSearch.applyFilters(initialFilters);
-        }}
+        onConfirm={onDisableSubUnit}
         confirmLabel={t('commons.confirm')}
         cancelLabel={t('commons.cancel')}
       />
