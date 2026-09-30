@@ -85,7 +85,14 @@ const CustomDataGrid = <T extends GridValidRowModel>({
 
   useEffect(() => {
     if (totalPages && rows.length > 0) {
-      announce(t('a11y.grid.filtersApplied', { count: totalPages }));
+      announce(
+        t('a11y.grid.filtersApplied', {
+          count: totalPages,
+          totalResults: totalElements
+            ? `, ${totalElements} risultati totali`
+            : ''
+        })
+      );
     }
   }, [totalPages]);
 

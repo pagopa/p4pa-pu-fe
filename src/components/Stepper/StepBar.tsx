@@ -75,7 +75,7 @@ export const StepBar = ({ activeStep, steps }: StepBarProps) => {
             sx={{ listStyle: 'none' }}
           >
             <Stack alignItems="center">
-              <StepLabel>{label}</StepLabel>
+              <StepLabel aria-hidden="true">{label}</StepLabel>
               {optional ? (
                 <Typography variant="caption" aria-hidden="true">
                   {t('commons.optional')}

@@ -256,7 +256,7 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
             </Button>
           }
         >
-          <Box component="span" sx={{ fontWeight: 'medium' }}>
+          <Box sx={{ fontWeight: 'medium' }}>
             ({totalSelected}){' '}
             {t('commons.selectedOperator', { count: totalSelected })}
             {totalSelected > currentPageSelected && (
@@ -264,7 +264,13 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
                 component="span"
                 sx={{ fontStyle: 'italic', ml: 1, color: 'text.secondary' }}
               >
-                ({currentPageSelected} {t('commons.inThisPage')})
+                <Box component="span" aria-hidden="true">
+                  (
+                </Box>
+                {currentPageSelected} {t('commons.inThisPage')}
+                <Box component="span" aria-hidden="true">
+                  )
+                </Box>
               </Box>
             )}
           </Box>

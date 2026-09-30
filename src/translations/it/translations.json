@@ -162,8 +162,8 @@
       "sortCleared": "Ordinamento rimosso",
       "pageChanged": "Pagina {{newPage}} di {{totalPages}}",
       "pageSizeChanged": "Risultati per pagina: {{pageSize}}",
-      "filtersApplied_one": "Tabella aggiornata con {{count}} pagina",
-      "filtersApplied_other": "Tabella aggiornata con {{count}} pagine",
+      "filtersApplied_one": "Tabella aggiornata con {{count}} pagina {{totalResults}}",
+      "filtersApplied_other": "Tabella aggiornata con {{count}} pagine {{totalResults}}",
       "noResults": "Nessun risultato trovato",
       "pageSize": "Risultati per pagina",
       "pagination": {
@@ -696,9 +696,9 @@
     "reloadSecretKO": "Non è stato possibile rigenerare la Secret key"
   },
   "commons": {
+    "404": "404: risorsa non disponibile",
     "creationDate": "Data di creazione",
     "toDetail": "Vai al dettaglio",
-    "404": "404: risorsa non disponibile",
     "menu": "Menu",
     "openMenu": "Apri menu",
     "closeMenu": "Chiudi menu",
@@ -1658,6 +1658,7 @@
     }
   },
   "debtTypeOrgCreate": {
+    "formLabel": "Form dati",
     "edit": {
       "title": "Modifica Tipo dovuto",
       "success": {
@@ -2458,23 +2459,6 @@
       "emptyFields": "Non è stato possibile abilitare l'Ente. È necessario che i campi obbligatori siano compilati"
     }
   },
-  "subunits": {
-    "status": {
-      "ACTIVE": "Attiva",
-      "CANCELLED": "Disattivata"
-    },
-    "list": {
-      "filters": {
-        "subUnitCode": "Cerca per codice univoco",
-        "subUnitType": "Cerca per struttura"
-      },
-      "title": "Sottounità {{orgName}}",
-      "description": "Puoi gestire le sottounità dell’ente.",
-      "subUnitCode": "Codice univoco",
-      "subUnitType": "Struttura",
-      "subUnitName": "Denominazione"
-    }
-  },
   "registry": {
     "detail": {
       "eventDetailTitle": "Dettaglio evento",
@@ -2615,6 +2599,23 @@
   "statistics": {
     "urlNotAvailable": "URL non disponibile",
     "urlGenerationFailed": "La generazione dell'URL di accesso non è andata a buon fine"
+  },
+  "subunits": {
+    "status": {
+      "ACTIVE": "Attiva",
+      "CANCELLED": "Disattivata"
+    },
+    "list": {
+      "filters": {
+        "subUnitCode": "Cerca per codice univoco",
+        "subUnitType": "Cerca per struttura"
+      },
+      "title": "Sottounità {{orgName}}",
+      "description": "Puoi gestire le sottounità dell’ente.",
+      "subUnitCode": "Codice univoco",
+      "subUnitType": "Struttura",
+      "subUnitName": "Denominazione"
+    }
   },
   "taxonomy": {
     "search": "Cerca tassonomia",
