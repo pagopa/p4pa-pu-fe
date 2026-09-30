@@ -161,6 +161,11 @@
       "ACTIVE": "Attiva",
       "CANCELLED": "Disattiva"
     },
+    "subUnitFilters": {
+      "subUnitName": "Cerca per Denominazione",
+      "subUnitCode": "Cerca per Codice univoco",
+      "subUnitType": "Filtra per Struttura"
+    },
     "deleteDialogSubUnit": {
       "title": "Sei sicuro di voler rimuovere la sottunità?",
       "message": "Denominazione sottunità che verrà rimossa: <strong>{{subUnitName}}</strong>"

@@ -21,7 +21,8 @@ import { useDebtPositionTypesByOrg } from '../../hooks/useDebtPositionTypesByOrg
 import { useBreadcrumbs } from './hooks/useBreadcrumbs';
 import {
   DebtPositionTypeOrgDTO,
-  OrgSubUnit
+  OrgSubUnit,
+  SubUnitType
 } from '../../../generated/core/data-contracts';
 import { removeDebtPositionTypeOrgFromOperator } from '../../api/debtPositionTypeOrgOperators';
 import { useStore } from '../../store/GlobalStore';
@@ -54,6 +55,7 @@ export const OperatorDetail = () => {
   });
 
   const [filters, setFilters] = useState(initialFilters);
+  const [filtersSubUnit, setFiltersSubUnit] = useState(initialFilters);
 
   const query = useOperatorDetailSearch(
     organizationId,
@@ -141,6 +143,35 @@ export const OperatorDetail = () => {
     }
   ];
 
+  const filterItemsSubUnit = [
+    {
+      id: 'subUnitName',
+      type: COMPONENT_TYPE.textField,
+      label: t('OperatorDetail.subUnitFilters.subUnitName'),
+      adornment: <Search />,
+      gridWidth: 4
+    },
+    {
+      id: 'subUnitCode',
+      type: COMPONENT_TYPE.textField,
+      label: t('OperatorDetail.subUnitFilters.subUnitCode'),
+      adornment: <Search />,
+      gridWidth: 3
+    },
+    {
+      id: 'subUnitType',
+      type: COMPONENT_TYPE.select,
+      label: t('OperatorDetail.subUnitFilters.subUnitType'),
+      gridWidth: 4,
+      options: [{ label: SubUnitType.AOO, value: SubUnitType.AOO }, { label: SubUnitType.UO, value: SubUnitType.UO }]
+    },
+    {
+      type: COMPONENT_TYPE.button,
+      label: t('commons.filters.filterResults'),
+      gridWidth: 1
+    }
+  ];
+
   const onDelete = ({
     organizationId,
     debtPositionTypeOrgId
@@ -194,6 +225,14 @@ export const OperatorDetail = () => {
     setFilters((prevFilters) => ({
       ...prevFilters,
       [id]: value
+    }));
+  };
+
+  const handleFilterChangeSubUnit = (id: string, value: FilterFieldValue) => {
+    setFiltersSubUnit((prevFilters) => ({
+      ...prevFilters,
+      [id]: value,
+      mappedExternalUserId: mappedExternalUserId
     }));
   };
 
@@ -308,7 +347,14 @@ export const OperatorDetail = () => {
             alignItems: 'center',
             justifyContent: 'space-between'
           }}
-        ></Grid>
+        >
+          <FilterContainer
+            onChange={handleFilterChangeSubUnit}
+            values={filtersSubUnit}
+            items={filterItemsSubUnit}
+            onSubmit={() => applyFiltersSubUnit(filtersSubUnit)}
+          />
+        </Grid>
         <Grid
           container
           p={2}
