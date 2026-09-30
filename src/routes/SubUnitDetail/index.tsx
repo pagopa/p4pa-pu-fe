@@ -54,12 +54,12 @@ export const SubUnitDetail = () => {
     onActionClick: () => setDisableDialogState(true)
   };
 
-  const linkOperatorAction: ActionMenuItem = {
-    buttonText: t('subunits.detail.linkOperator'),
-    variant: 'outlined',
-    // TODO: add action when available
-    onActionClick: () => null
-  };
+  // TODO: add action when available
+  // const linkOperatorAction: ActionMenuItem = {
+  //   buttonText: t('subunits.detail.linkOperator'),
+  //   variant: 'outlined',
+  //   onActionClick: () => null
+  // };
 
   // TODO: replace with current filters
   const onDeleteOperator = () => filteredSearch.applyFilters(initialFilters);
@@ -126,7 +126,7 @@ export const SubUnitDetail = () => {
           <TitleComponent
             variant="h4"
             title={t('subunits.detail.operators')}
-            callToAction={[linkOperatorAction]}
+            //callToAction={[linkOperatorAction]}
           />
           <SubUnitOperatorsDataGrid
             data={query?.data as PagedOrgSubUnitOperators}
