@@ -117,12 +117,11 @@ stages:
               vite_resources_url: '$(resources_url)'
 
           - script: |
+              export OPENAPI_URL=$(openapi_url)
+              export OPENAPI_FILESHARE_URL=$(openapi_fileshare_url)
+              export NODE_OPTIONS="--max-old-space-size=6144"
               yarn build
             displayName: 'yarn build'
-            env:
-              OPENAPI_URL: '$(openapi_url)'
-              OPENAPI_FILESHARE_URL: '$(openapi_fileshare_url)'
-              NODE_OPTIONS: '--max-old-space-size=6144'
 
           - publish: dist
             artifact: Bundle
