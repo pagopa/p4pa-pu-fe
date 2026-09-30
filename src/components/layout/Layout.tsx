@@ -1,9 +1,7 @@
 import {
-  Alert,
   Button,
   Container,
   Grid,
-  Snackbar,
   Stack,
   Theme,
   useMediaQuery
@@ -25,6 +23,7 @@ import GenericDialog from '../GenericDialog/GenericDialog';
 import '../../style.css';
 import { RouteChangeAnnouncement } from '../RouteChangeAnnouncement';
 import { PageRoutes } from '../../routes';
+import { MISnackbar } from '@pagopa/mui-italia';
 
 const defaultRouteHandle: RouteHandleObject = {
   backButton: true,
@@ -89,18 +88,13 @@ export function Layout() {
         {...utils.dialog.status.dialogPayload.value}
         open={utils.dialog.status.isDialogVisible.value}
       />
-      <Snackbar
-        autoHideDuration={6000}
+      <MISnackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        description={utils.notify.status.payload.value?.text || 'unkown error'}
         onClose={utils.notify.dismiss}
+        severity={utils.notify.status.payload.value?.severity || 'error'}
         open={utils.notify.status.isVisible.value}
-      >
-        <Alert
-          severity={utils.notify.status.payload.value?.severity}
-          variant="outlined"
-        >
-          {utils.notify.status.payload.value?.text}
-        </Alert>
-      </Snackbar>
+      />
       <Container maxWidth={false} disableGutters>
         <Grid
           container
