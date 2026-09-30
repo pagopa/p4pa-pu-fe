@@ -719,6 +719,7 @@
   "commons": {
     "404": "404: risorsa non disponibile",
     "name": "Nome e cognome",
+    "registry": "Anagrafica",
     "creationDate": "Data di creazione",
     "toDetail": "Vai al dettaglio",
     "menu": "Menu",
@@ -2486,12 +2487,23 @@
     }
   },
   "subunits": {
+    "subUnitCode": "Codice univoco",
+    "subUnitType": "Struttura",
+    "subUnitName": "Denominazione",
     "status": {
       "ACTIVE": "Attiva",
       "CANCELLED": "Disattivata"
     },
     "detail": {
       "disableSubUnit": "Disattiva sub-unit",
+      "disable": {
+        "title": "Vuoi disattivare {{subUnitCode}}?",
+        "message": "Potrai riattivarla in un secondo momento."
+      },
+      "deleteOperator": {
+        "title": "Vuoi rimuovere l'operatore {{operatorName}} da {{subUnitCode}}?",
+        "message": "Potrai aggiungere di nuovo l’operatore in un secondo momento."
+      },
       "operators": "Operatori associati",
       "linkOperator": "Associa operatore"
     },
@@ -2501,10 +2513,7 @@
         "subUnitType": "Cerca per struttura"
       },
       "title": "Sottounità {{orgName}}",
-      "description": "Puoi gestire le sottounità dell’ente.",
-      "subUnitCode": "Codice univoco",
-      "subUnitType": "Struttura",
-      "subUnitName": "Denominazione"
+      "description": "Puoi gestire le sottounità dell’ente."
     }
   },
   "registry": {

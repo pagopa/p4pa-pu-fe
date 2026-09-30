@@ -4,13 +4,12 @@ import {
   TypographyOwnProps,
   Button,
   ButtonProps,
-  ChipOwnProps,
-  Chip,
   useTheme,
   IconButton,
   SxProps,
   Theme
 } from '@mui/material';
+import { MIChip, MIChipProps } from '@pagopa/mui-italia';
 import React, { useEffect, useId } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -40,7 +39,7 @@ type TitleComponentProps = {
   description?: string;
   chip?: {
     label: string;
-    color: ChipOwnProps['color'];
+    color: MIChipProps['color'];
   };
   callToAction?: Array<ActionMenuItem | React.ReactNode>;
   accessibleTitle?: string;
@@ -211,12 +210,7 @@ const TitleComponent = ({
           </Typography>
 
           {chip && (
-            <Chip
-              id={statusChipId}
-              label={chip.label}
-              color={chip.color}
-              sx={{ ml: 2, flexShrink: 0 }}
-            />
+            <MIChip color={chip.color} id={statusChipId} label={chip.label} />
           )}
         </Box>
 

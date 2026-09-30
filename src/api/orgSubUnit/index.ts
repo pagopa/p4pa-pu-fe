@@ -3,7 +3,7 @@ import utils from '@core/utils';
 import { parseAndLog } from '@core/utils/loaders';
 import { pagedOrgSubUnitSchema } from '@generated/core/zod-schema';
 import { OrgSubUnitStatus, SubUnitType } from '@generated/core/data-contracts';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 export type SubUnitsFilters = {
   subUnitCode?: string;
@@ -112,16 +112,52 @@ export const getOrgSubUnitOperators = (
     }
   });
 
-export const deleteOrgSubUnitById = (
+export const disableSubUnit = (organizationId: number, subUnitCode: string) =>
+  useMutation({
+    mutationKey: ['disableSubUnit', organizationId, subUnitCode],
+    mutationFn: async () => {
+      await utils.apiClient.bff.updateOrgSubUnitStatus(
+        organizationId,
+        subUnitCode,
+        {
+          status: OrgSubUnitStatus.CANCELLED
+        }
+      );
+    }
+  });
+
+export const deleteSingleOperatorFromOrgSubUnit = (
   organizationId: number,
   subUnitCode: string
 ) =>
   useMutation({
-    mutationKey: ['deleteOrgSubUnitById', organizationId, subUnitCode],
-    mutationFn: async () => {
-      await utils.apiClient.bff.deleteOrgSubUnitById(
+    mutationKey: [
+      'deleteSingleOperatorFromOrgSubUnit',
+      organizationId,
+      subUnitCode
+    ],
+    mutationFn: async (mappedExternalUserId: string) => {
+      await utils.apiClient.bff.deleteOperatorsFromOrgSubUnit(
+        organizationId,
+        subUnitCode,
+        {
+          mappedExternalUserIds: [mappedExternalUserId]
+        }
+      );
+    }
+  });
+
+export const getOrgSubUnitById = (
+  organizationId: number,
+  subUnitCode: string
+) =>
+  useQuery({
+    queryKey: ['getOrgSubUnitById', organizationId, subUnitCode],
+    queryFn: async () => {
+      const { data: response } = await utils.apiClient.bff.getOrgSubUnitById(
         organizationId,
         subUnitCode
       );
+      return response;
     }
   });
