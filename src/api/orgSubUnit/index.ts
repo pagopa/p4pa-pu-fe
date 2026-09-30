@@ -165,16 +165,52 @@ export const getOrgSubUnitOperators = (
     }
   });
 
-export const deleteOrgSubUnitById = (
+export const disableSubUnit = (organizationId: number, subUnitCode: string) =>
+  useMutation({
+    mutationKey: ['disableSubUnit', organizationId, subUnitCode],
+    mutationFn: async () => {
+      await utils.apiClient.bff.updateOrgSubUnitStatus(
+        organizationId,
+        subUnitCode,
+        {
+          status: OrgSubUnitStatus.CANCELLED
+        }
+      );
+    }
+  });
+
+export const deleteSingleOperatorFromOrgSubUnit = (
   organizationId: number,
   subUnitCode: string
 ) =>
   useMutation({
-    mutationKey: ['deleteOrgSubUnitById', organizationId, subUnitCode],
-    mutationFn: async () => {
-      await utils.apiClient.bff.deleteOrgSubUnitById(
+    mutationKey: [
+      'deleteSingleOperatorFromOrgSubUnit',
+      organizationId,
+      subUnitCode
+    ],
+    mutationFn: async (mappedExternalUserId: string) => {
+      await utils.apiClient.bff.deleteOperatorsFromOrgSubUnit(
+        organizationId,
+        subUnitCode,
+        {
+          mappedExternalUserIds: [mappedExternalUserId]
+        }
+      );
+    }
+  });
+
+export const getOrgSubUnitById = (
+  organizationId: number,
+  subUnitCode: string
+) =>
+  useQuery({
+    queryKey: ['getOrgSubUnitById', organizationId, subUnitCode],
+    queryFn: async () => {
+      const { data: response } = await utils.apiClient.bff.getOrgSubUnitById(
         organizationId,
         subUnitCode
       );
+      return response;
     }
   });
