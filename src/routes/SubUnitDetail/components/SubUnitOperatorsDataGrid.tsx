@@ -53,20 +53,21 @@ export const SubUnitOperatorsDataGrid = ({
   });
 
   const onDeleteOperator = async () => {
-    if (selectedOperator) {
-      try {
-        await deleteOperatorApi.mutateAsync(
-          selectedOperator.mappedExternalUserId
-        );
-        onDelete();
-      } catch {
-        utils.notify.emit(t('errors.generic'));
-      } finally {
-        setDeleteDialogState(false);
-        setSelectedOperator(undefined);
-      }
+    if (!selectedOperator) {
+      utils.notify.emit(t('errors.generic'));
+      return;
     }
-    utils.notify.emit(t('errors.generic'));
+    try {
+      await deleteOperatorApi.mutateAsync(
+        selectedOperator.mappedExternalUserId
+      );
+      onDelete();
+    } catch {
+      utils.notify.emit(t('errors.generic'));
+    } finally {
+      setDeleteDialogState(false);
+      setSelectedOperator(undefined);
+    }
   };
 
   const columns: Array<GridColDef<OrgSubUnitOperator>> = [
