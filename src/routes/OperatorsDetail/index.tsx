@@ -26,7 +26,7 @@ import {
 } from '../../../generated/core/data-contracts';
 import { removeDebtPositionTypeOrgFromOperator } from '../../api/debtPositionTypeOrgOperators';
 import { useStore } from '../../store/GlobalStore';
-import { getPagedOrgSubUnits } from '@core/api/orgSubUnit';
+import { getOperatorOrgSubUnits, deleteOrgSubUnitFromOperator } from '@core/api/orgSubUnit';
 import SubUnitDataGrid from './components/SubUnitDataGrid';
 
 export const OperatorDetail = () => {
@@ -34,15 +34,16 @@ export const OperatorDetail = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
-  const deleteMutation = removeDebtPositionTypeOrgFromOperator();
 
   const {
     organizationId: paramOrganizationId,
     mappedExternalUserId,
     orgName
   } = useParams();
-
   const organizationId = Number(paramOrganizationId);
+
+  const deleteMutation = removeDebtPositionTypeOrgFromOperator();
+  const deleteSubUnitMutation = deleteOrgSubUnitFromOperator(organizationId, mappedExternalUserId as string);
 
   const {
     state: { organizationId: organizationIdStored }
@@ -64,12 +65,12 @@ export const OperatorDetail = () => {
 
   useBreadcrumbs(query);
 
-  const querySubUnit = getPagedOrgSubUnits(organizationId);
+  const querySubUnit = getOperatorOrgSubUnits(organizationId, mappedExternalUserId as string);
 
   const {
     query: { data: dataSubUnit },
     applyFilters: applyFiltersSubUnit
-  } = useSearch({ query: querySubUnit, filters: { mappedExternalUserId } });
+  } = useSearch({ query: querySubUnit, filters: filtersSubUnit });
 
   const {
     query: { isError, error, data },
@@ -188,9 +189,6 @@ export const OperatorDetail = () => {
     }
   };
 
-  const deleteSubUnit = (subUnitCode: string) =>
-    utils.apiClient.bff.deleteOrgSubUnitById(organizationId, subUnitCode);
-
   const onDeleteSubUnit = (row: OrgSubUnit) => {
     utils.dialog.open({
       ['data-testid']: 'delete-dialog-sub-unit',
@@ -205,8 +203,8 @@ export const OperatorDetail = () => {
       cancelLabel: t('commons.close'),
       onConfirm: async () => {
         try {
-          await deleteSubUnit(row.subUnitCode);
-          applyFiltersSubUnit({ mappedExternalUserId });
+          await deleteSubUnitMutation.mutateAsync(row.subUnitCode);
+          applyFiltersSubUnit(filtersSubUnit);
         } catch (error) {
           console.error(error);
           utils.notify.emit(t('errors.generic'));
@@ -232,7 +230,6 @@ export const OperatorDetail = () => {
     setFiltersSubUnit((prevFilters) => ({
       ...prevFilters,
       [id]: value,
-      mappedExternalUserId: mappedExternalUserId
     }));
   };
 

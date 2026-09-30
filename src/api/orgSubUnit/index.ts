@@ -14,6 +14,29 @@ export type SubUnitsFilters = {
 
 export type SubUnitsFilteredRequest = FilteredRequest<SubUnitsFilters>;
 
+export const getOperatorOrgSubUnits = (organizationId: number, mappedExternalUserId: string,) =>
+  useMutation({
+    mutationKey: ['getOperatorOrgSubUnits', organizationId, mappedExternalUserId],
+    mutationFn: async ({
+      filters,
+      pagination,
+      sort
+    }: SubUnitsFilteredRequest) => {
+      const query = {
+        ...filters,
+        ...pagination,
+        sort
+      };
+      const { data: response } = await utils.apiClient.bff.getOperatorOrgSubUnits(
+        organizationId,
+        mappedExternalUserId,
+        query
+      );
+      parseAndLog(pagedOrgSubUnitSchema, response);
+      return response;
+    }
+  });
+
 export const getPagedOrgSubUnits = (organizationId: number) =>
   useMutation({
     mutationKey: ['getPagedOrgSubUnits', organizationId],
@@ -36,15 +59,16 @@ export const getPagedOrgSubUnits = (organizationId: number) =>
     }
   });
 
-export const deleteOrgSubUnitById = (
+export const deleteOrgSubUnitFromOperator = (
   organizationId: number,
-  subUnitCode: string
+  mappedExternalUserId: string,
 ) =>
   useMutation({
-    mutationKey: ['deleteOrgSubUnitById', organizationId, subUnitCode],
-    mutationFn: async () => {
-      const { data: response } = await utils.apiClient.bff.deleteOrgSubUnitById(
+    mutationKey: ['deleteOrgSubUnitFromOperator', organizationId, mappedExternalUserId],
+    mutationFn: async (  subUnitCode: string) => {
+      const { data: response } = await utils.apiClient.bff.deleteOrgSubUnitFromOperator(
         organizationId,
+        mappedExternalUserId,
         subUnitCode
       );
       return response;
