@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { GridColDef } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import CancelIcon from '@mui/icons-material/Cancel';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForwardIos';
 
 import {
   OrgSubUnitOperator,
@@ -15,6 +16,8 @@ import CustomDataGrid from '@core/components/DataGrid/CustomDataGrid';
 import GenericDialog from '@core/components/GenericDialog/GenericDialog';
 import { deleteSingleOperatorFromOrgSubUnit } from '@core/api/orgSubUnit';
 import utils from '@core/utils';
+import { generatePath, useNavigate } from 'react-router';
+import { PageRoutes } from '@core/routes';
 
 type SubUnitsDataGridProps = {
   data: PagedOrgSubUnitOperators;
@@ -31,6 +34,8 @@ export const SubUnitOperatorsDataGrid = ({
 }: SubUnitsDataGridProps) => {
   const { t } = useTranslation();
   const [deleteDialogState, setDeleteDialogState] = useState(false);
+  const navigate = useNavigate();
+
   const [selectedOperator, setSelectedOperator] = useState<
     OrgSubUnitOperator | undefined
   >(undefined);
@@ -49,6 +54,19 @@ export const SubUnitOperatorsDataGrid = ({
     action: () => {
       setSelectedOperator(operator);
       setDeleteDialogState(true);
+    }
+  });
+
+  const detailAction = (operator: OrgSubUnitOperator): MenuItemProps => ({
+    label: t('commons.detail'),
+    icon: <ArrowForwardIcon />,
+    action: () => {
+      navigate(
+        generatePath(PageRoutes.OPERATOR_DETAIL, {
+          organizationId,
+          mappedExternalUserId: operator.mappedExternalUserId
+        })
+      );
     }
   });
 
@@ -101,7 +119,7 @@ export const SubUnitOperatorsDataGrid = ({
       renderCell: ({ row }) => (
         <ActionMenu
           rowId={row.mappedExternalUserId}
-          menuItems={[deleteOperatorAction(row)]}
+          menuItems={[deleteOperatorAction(row), detailAction(row)]}
         />
       )
     }
