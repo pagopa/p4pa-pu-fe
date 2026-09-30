@@ -12,8 +12,8 @@ import ActionMenu, {
   MenuItemProps
 } from '@core/components/ActionMenu/ActionMenu';
 import CustomDataGrid from '@core/components/DataGrid/CustomDataGrid';
-import { deleteSingleOperatorFromOrgSubUnit } from '@core/api/subunits';
 import GenericDialog from '@core/components/GenericDialog/GenericDialog';
+import { deleteSingleOperatorFromOrgSubUnit } from '@core/api/orgSubUnit';
 
 type SubUnitsDataGridProps = {
   data: PagedOrgSubUnitOperators;
