@@ -156,7 +156,7 @@ describe('TitleComponent', () => {
       ...defaultProps,
       chip: {
         label: 'Test Chip',
-        color: 'primary' as const
+        color: 'success' as const
       }
     };
     render(<TitleComponent {...props} />);
