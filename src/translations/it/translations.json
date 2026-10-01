@@ -718,6 +718,7 @@
   },
   "commons": {
     "404": "404: risorsa non disponibile",
+    "done": "Fatto!",
     "name": "Nome e cognome",
     "registry": "Anagrafica",
     "creationDate": "Data di creazione",

@@ -62,7 +62,7 @@ export const SubUnitCreate = () => {
       navigate(
         generatePath(PageRoutes.ORGANIZATIONS_SUB_UNITS, { organizationId })
       );
-      utils.notify.emit('created', 'success');
+      utils.notify.emit(t('commons.done'), 'success');
     } catch (error) {
       if (error instanceof AxiosError && error.response?.status === 409) {
         form.setError('subUnitCode', {
