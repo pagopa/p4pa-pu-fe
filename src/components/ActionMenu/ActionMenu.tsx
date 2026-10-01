@@ -10,7 +10,7 @@ import {
 import MoreVert from '@mui/icons-material/MoreVert';
 import { useTranslation } from 'react-i18next';
 
-type variant = 'default' | 'error';
+type variant = 'default' | 'error' | 'main';
 
 export type MenuItemProps = {
   icon: React.ReactNode;
@@ -34,6 +34,15 @@ const StyledMenuItem = styled(MenuItem, {
     },
     '& .MuiListItemText-root': {
       color: theme.palette.error.main
+    }
+  }),
+  ...(variant === 'main' && {
+    color: theme.palette.error.main,
+    '& .MuiListItemIcon-root': {
+      color: theme.palette.primary.main
+    },
+    '& .MuiListItemText-root': {
+      color: theme.palette.primary.main
     }
   })
 }));

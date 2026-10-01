@@ -59,10 +59,11 @@ export const SubUnitOperatorsDataGrid = ({
 
   const detailAction = (operator: OrgSubUnitOperator): MenuItemProps => ({
     label: t('commons.detail'),
+    variant: 'main',
     icon: <ArrowForwardIcon />,
     action: () => {
       navigate(
-        generatePath(PageRoutes.OPERATOR_DETAIL, {
+        generatePath(PageRoutes.OPERATORS_DETAIL, {
           organizationId,
           mappedExternalUserId: operator.mappedExternalUserId
         })
