@@ -93,7 +93,7 @@ export const updateOrgSubUnitStatus = (
   subUnitCode: string
 ) =>
   useMutation({
-    mutationKey: ['disableSubUnit', organizationId, subUnitCode],
+    mutationKey: ['updateOrgSubUnitStatus', organizationId, subUnitCode],
     mutationFn: async (status: OrgSubUnitStatus) => {
       await utils.apiClient.bff.updateOrgSubUnitStatus(
         organizationId,
@@ -102,42 +102,6 @@ export const updateOrgSubUnitStatus = (
           status
         }
       );
-    }
-  });
-
-export const deleteSingleOperatorFromOrgSubUnit = (
-  organizationId: number,
-  subUnitCode: string
-) =>
-  useMutation({
-    mutationKey: [
-      'deleteSingleOperatorFromOrgSubUnit',
-      organizationId,
-      subUnitCode
-    ],
-    mutationFn: async (mappedExternalUserId: string) => {
-      await utils.apiClient.bff.deleteOperatorsFromOrgSubUnit(
-        organizationId,
-        subUnitCode,
-        {
-          mappedExternalUserIds: [mappedExternalUserId]
-        }
-      );
-    }
-  });
-
-export const getOrgSubUnitById = (
-  organizationId: number,
-  subUnitCode: string
-) =>
-  useQuery({
-    queryKey: ['getOrgSubUnitById', organizationId, subUnitCode],
-    queryFn: async () => {
-      const { data: response } = await utils.apiClient.bff.getOrgSubUnitById(
-        organizationId,
-        subUnitCode
-      );
-      return response;
     }
   });
 
@@ -166,20 +130,6 @@ export const getOrgSubUnitOperators = (
           }
         );
       return response;
-    }
-  });
-
-export const disableSubUnit = (organizationId: number, subUnitCode: string) =>
-  useMutation({
-    mutationKey: ['disableSubUnit', organizationId, subUnitCode],
-    mutationFn: async () => {
-      await utils.apiClient.bff.updateOrgSubUnitStatus(
-        organizationId,
-        subUnitCode,
-        {
-          status: OrgSubUnitStatus.CANCELLED
-        }
-      );
     }
   });
 
