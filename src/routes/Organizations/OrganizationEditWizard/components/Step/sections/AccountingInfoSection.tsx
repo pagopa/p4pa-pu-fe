@@ -1,7 +1,7 @@
 import {
   Box,
-  FormControlLabel,
   Grid,
+  Stack,
   Switch,
   TextField,
   Typography
@@ -122,20 +122,19 @@ export const AccountingInfoSection = ({
             name="flagTreasury"
             control={control}
             render={({ field }) => (
-              <FormControlLabel
-                control={
-                  <Switch
-                    {...field}
-                    checked={field.value}
-                    disabled={data.flagTreasury.readonly}
-                    data-testid="flag-treasury-switch"
-                  />
-                }
-                label={t(
-                  'organizationEditWizard.step2.integratedCashJournal.label'
-                )}
-                sx={{ mt: 1 }}
-              />
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Switch
+                  {...field}
+                  checked={field.value}
+                  disabled={data.flagTreasury.readonly}
+                  data-testid="flag-treasury-switch"
+                />
+                <Typography>
+                  {t(
+                    'organizationEditWizard.step2.integratedCashJournal.label'
+                  )}
+                </Typography>
+              </Stack>
             )}
           />
         </Grid>
