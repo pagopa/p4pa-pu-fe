@@ -8,6 +8,7 @@ import OrganizationEditWizard from './Organizations/OrganizationEditWizard/Organ
 import Organizations from './Organizations/Organizations';
 import { SubUnitsList } from './SubUnitsList';
 import { SubUnitDetail } from './SubUnitDetail';
+import { SubUnitCreate } from './SubUnitCreate';
 
 export const organizationsRoutes = [
   {
@@ -95,6 +96,23 @@ export const organizationsRoutes = [
         handle: {
           backButton: false,
           custom: true
+        }
+      },
+      {
+        id: 'SUB_UNIT_CREATE',
+        path: `:organizationId/subunits/create`,
+        element: (
+          <AdminRouteGuard>
+            <SubUnitCreate />
+          </AdminRouteGuard>
+        ),
+        handle: {
+          backButton: true,
+          backButtonText: 'commons.exit',
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
         }
       }
     ]

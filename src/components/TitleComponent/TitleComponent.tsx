@@ -165,7 +165,7 @@ const TitleComponent = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: 2,
+          marginBottom: 1,
           minWidth: 0
         }}
       >
@@ -177,7 +177,6 @@ const TitleComponent = ({
             minWidth: 0,
             flex: 1,
             gap: 2,
-            overflow: 'hidden',
             mr: 2
           }}
         >
@@ -185,7 +184,6 @@ const TitleComponent = ({
           <Typography
             variant={variant}
             sx={{
-              overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
               display: 'block',

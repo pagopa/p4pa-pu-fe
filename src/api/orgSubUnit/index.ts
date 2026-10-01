@@ -2,7 +2,11 @@ import { FilteredRequest } from '@core/models/Filters';
 import utils from '@core/utils';
 import { parseAndLog } from '@core/utils/loaders';
 import { pagedOrgSubUnitSchema } from '@generated/core/zod-schema';
-import { OrgSubUnitStatus, SubUnitType } from '@generated/core/data-contracts';
+import {
+  OrgSubUnitRequestBody,
+  OrgSubUnitStatus,
+  SubUnitType
+} from '@generated/core/data-contracts';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 export type SubUnitsFilters = {
@@ -210,6 +214,18 @@ export const getOrgSubUnitById = (
       const { data: response } = await utils.apiClient.bff.getOrgSubUnitById(
         organizationId,
         subUnitCode
+      );
+      return response;
+    }
+  });
+
+export const createOrgSubUnit = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['createOrgSubUnit', organizationId],
+    mutationFn: async (data: OrgSubUnitRequestBody) => {
+      const { data: response } = await utils.apiClient.bff.createOrgSubUnit(
+        organizationId,
+        data
       );
       return response;
     }

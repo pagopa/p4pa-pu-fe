@@ -155,7 +155,7 @@
     "subCode": "Codice univoco",
     "subType": "Struttura",
     "subName": "Denominazione",
-    "subCreationDate":"Data creazione",
+    "subCreationDate": "Data creazione",
     "subStatus": "Stato",
     "subUnitStatus": {
       "ACTIVE": "Attiva",
@@ -2494,6 +2494,28 @@
       "ACTIVE": "Attiva",
       "CANCELLED": "Disattivata"
     },
+    "create": {
+      "title": "Aggiungi una nuova sottounità",
+      "description": "Compila i campi richiesti per attivare una nuova sub-unit.",
+      "wizard": {
+        "title": "Configurazione della sottounità",
+        "subtitle": "Dopo la creazione, potrai sempre disabilitare una sottounità.",
+        "alertMessage": "* Campo obbligatorio"
+      },
+      "section": "Informazioni generali",
+      "subUnitCode": {
+        "placeholder": "Inserisci il codice univoco",
+        "required": "Il campo codice univoco é obbligatorio"
+      },
+      "subUnitType": {
+        "placeholder": "Inserisci la struttura",
+        "required": "Il campo struttura é obbligatorio"
+      },
+      "subUnitName": {
+        "placeholder": "Inserisci la denominazione",
+        "required": "Il campo denominazione é obbligatorio"
+      }
+    },
     "detail": {
       "disable": {
         "title": "Vuoi disattivare {{subUnitCode}}?",
@@ -2518,7 +2540,8 @@
         "subUnitType": "Cerca per struttura"
       },
       "title": "Sottounità {{orgName}}",
-      "description": "Puoi gestire le sottounità dell’ente."
+      "description": "Puoi gestire le sottounità dell’ente.",
+      "create": "Aggiungi sottounità"
     }
   },
   "registry": {
