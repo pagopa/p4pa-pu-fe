@@ -2,7 +2,11 @@ import { FilteredRequest } from '@core/models/Filters';
 import utils from '@core/utils';
 import { parseAndLog } from '@core/utils/loaders';
 import { pagedOrgSubUnitSchema } from '@generated/core/zod-schema';
-import { OrgSubUnitStatus, SubUnitType } from '@generated/core/data-contracts';
+import {
+  OrgSubUnitRequestBody,
+  OrgSubUnitStatus,
+  SubUnitType
+} from '@generated/core/data-contracts';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 export type SubUnitsFilters = {
@@ -84,6 +88,23 @@ export const deleteOrgSubUnitFromOperator = (
     }
   });
 
+export const updateOrgSubUnitStatus = (
+  organizationId: number,
+  subUnitCode: string
+) =>
+  useMutation({
+    mutationKey: ['updateOrgSubUnitStatus', organizationId, subUnitCode],
+    mutationFn: async (status: OrgSubUnitStatus) => {
+      await utils.apiClient.bff.updateOrgSubUnitStatus(
+        organizationId,
+        subUnitCode,
+        {
+          status
+        }
+      );
+    }
+  });
+
 // TODO: add filters when available
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export type SubUnitsOperatorsFilters = {};
@@ -109,23 +130,6 @@ export const getOrgSubUnitOperators = (
           }
         );
       return response;
-    }
-  });
-
-export const updateOrgSubUnitStatus = (
-  organizationId: number,
-  subUnitCode: string
-) =>
-  useMutation({
-    mutationKey: ['disableSubUnit', organizationId, subUnitCode],
-    mutationFn: async (status: OrgSubUnitStatus) => {
-      await utils.apiClient.bff.updateOrgSubUnitStatus(
-        organizationId,
-        subUnitCode,
-        {
-          status
-        }
-      );
     }
   });
 
@@ -160,6 +164,18 @@ export const getOrgSubUnitById = (
       const { data: response } = await utils.apiClient.bff.getOrgSubUnitById(
         organizationId,
         subUnitCode
+      );
+      return response;
+    }
+  });
+
+export const createOrgSubUnit = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['createOrgSubUnit', organizationId],
+    mutationFn: async (data: OrgSubUnitRequestBody) => {
+      const { data: response } = await utils.apiClient.bff.createOrgSubUnit(
+        organizationId,
+        data
       );
       return response;
     }

@@ -1,18 +1,24 @@
-import { getPagedOrgSubUnits, SubUnitsFilters } from '@core/api/orgSubUnit';
-import { useSearch } from '@core/hooks/useSearch';
-import utils from '@core/utils';
 import { Stack } from '@mui/material';
+import { useCallback, useEffect, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { SubUnitsDataGrid } from './components/SubUnitsDataGrid';
-import { PagedOrgSubUnit } from '@generated/core/data-contracts';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import { PageRoutes } from '..';
-import TitleComponent from '@core/components/TitleComponent/TitleComponent';
-import { setCustomBreadcrumbsItems } from '@core/store/AppStateStore';
-import { useCallback, useEffect, useState } from 'react';
+import AddIcon from '@mui/icons-material/Add';
+
+import { PagedOrgSubUnit } from '@generated/core/data-contracts';
+
+import { getPagedOrgSubUnits, SubUnitsFilters } from '@core/api/orgSubUnit';
 import FilterContainer from '@core/components/FilterContainer/FilterContainer';
+import TitleComponent, {
+  ActionMenuItem
+} from '@core/components/TitleComponent/TitleComponent';
+import { useSearch } from '@core/hooks/useSearch';
 import { useSubUnitsFilters } from '@core/hooks/useSubunitsListFilters';
+import { setCustomBreadcrumbsItems } from '@core/store/AppStateStore';
+import utils from '@core/utils';
+
+import { PageRoutes } from '..';
+import { SubUnitsDataGrid } from './components/SubUnitsDataGrid';
 
 export const SubUnitsList = () => {
   const { t } = useTranslation();
@@ -67,12 +73,25 @@ export const SubUnitsList = () => {
     ]);
   }, [t, urlOrganizationId, organizationId]);
 
+  const createSubUnitAction: ActionMenuItem = {
+    buttonText: t('subunits.list.create'),
+    icon: <AddIcon />,
+    onActionClick: () => {
+      navigate(
+        generatePath(PageRoutes.SUB_UNIT_CREATE, {
+          organizationId
+        })
+      );
+    }
+  };
+
   return (
     <Stack gap={5}>
       <Stack>
         <TitleComponent
           title={t('subunits.list.title', { orgName: urlOrganizationId })}
           description={t('subunits.list.description')}
+          callToAction={[createSubUnitAction]}
         />
       </Stack>
       <Stack component="section" gap={3}>
