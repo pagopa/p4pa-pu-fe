@@ -149,7 +149,28 @@
         "message_other": "All'utente <strong>{{operatorName}}</strong> verranno assegnati <strong>{{count}}</strong> tipi di dovuto, sui quali potrà gestire e operare.",
         "button": "Associa"
       }
-    }
+    },
+    "subUnit": "Sottunità",
+    "affiliateSubUnit": "Associa sottunità",
+    "subCode": "Codice univoco",
+    "subType": "Struttura",
+    "subName": "Denominazione",
+    "subCreationDate":"Data creazione",
+    "subStatus": "Stato",
+    "subUnitStatus": {
+      "ACTIVE": "Attiva",
+      "CANCELLED": "Disattiva"
+    },
+    "subUnitFilters": {
+      "subUnitName": "Cerca per Denominazione",
+      "subUnitCode": "Cerca per Codice univoco",
+      "subUnitType": "Filtra per Struttura"
+    },
+    "deleteDialogSubUnit": {
+      "title": "Sei sicuro di voler rimuovere la sottunità?",
+      "message": "Denominazione sottunità che verrà rimossa: <strong>{{subUnitName}}</strong>"
+    },
+    "subUnitEmptyData": "Nessuna sottunità associata"
   },
   "a11y": {
     "navigation": {

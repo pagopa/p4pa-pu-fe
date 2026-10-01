@@ -146,7 +146,7 @@ describe('OperatorDetail Component', () => {
       applyFilters: filteredMock
     });
     render(<OperatorDetail />);
-    const button = screen.getByText('commons.filters.filterResults');
+    const button = screen.getAllByText('commons.filters.filterResults')[0];
     fireEvent.click(button);
     expect(filteredMock).toHaveBeenCalled();
   });
