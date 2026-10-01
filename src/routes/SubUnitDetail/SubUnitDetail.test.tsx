@@ -5,9 +5,9 @@ import { generatePath, useNavigate, useParams } from 'react-router';
 
 import utils from '@core/utils';
 import {
-  disableSubUnit,
   getOrgSubUnitById,
-  getOrgSubUnitOperators
+  getOrgSubUnitOperators,
+  updateOrgSubUnitStatus
 } from '@core/api/orgSubUnit';
 import { useSearch } from '@core/hooks/useSearch';
 import { appState } from '@core/store/AppStateStore';
@@ -15,7 +15,7 @@ import { PageRoutes } from '..';
 import { SubUnitDetail } from '.';
 
 vi.mock('@core/api/orgSubUnit', () => ({
-  disableSubUnit: vi.fn(),
+  updateOrgSubUnitStatus: vi.fn(),
   getOrgSubUnitById: vi.fn(),
   getOrgSubUnitOperators: vi.fn()
 }));
@@ -41,7 +41,11 @@ vi.mock('@core/components/TitleComponent/TitleComponent', () => ({
   }: {
     title: string;
     chip?: { label: string; color: string };
-    callToAction?: Array<{ buttonText: string; onActionClick: () => void }>;
+    callToAction?: Array<{
+      buttonText: string;
+      color?: string;
+      onActionClick: () => void;
+    }>;
   }) => (
     <div>
       <h1>{title}</h1>
@@ -51,7 +55,11 @@ vi.mock('@core/components/TitleComponent/TitleComponent', () => ({
         </span>
       )}
       {callToAction?.map((action) => (
-        <button key={action.buttonText} onClick={action.onActionClick}>
+        <button
+          key={action.buttonText}
+          data-color={action.color}
+          onClick={action.onActionClick}
+        >
           {action.buttonText}
         </button>
       ))}
@@ -74,11 +82,11 @@ vi.mock('@core/components/GenericDialog/GenericDialog', () => ({
     cancelLabel: string;
   }) =>
     open ? (
-      <div data-testid="disable-dialog">
-        <button data-testid="confirm-disable" onClick={onConfirm}>
+      <div data-testid="status-dialog">
+        <button data-testid="confirm-status-change" onClick={onConfirm}>
           {confirmLabel}
         </button>
-        <button data-testid="cancel-disable" onClick={onClose}>
+        <button data-testid="cancel-status-change" onClick={onClose}>
           {cancelLabel}
         </button>
       </div>
@@ -131,9 +139,9 @@ describe('SubUnitDetail', () => {
     vi.mocked(useSearch).mockReturnValue({
       applyFilters: mockApplyFilters
     } as unknown as ReturnType<typeof useSearch>);
-    vi.mocked(disableSubUnit).mockReturnValue({
+    vi.mocked(updateOrgSubUnitStatus).mockReturnValue({
       mutateAsync: mockMutateAsync
-    } as unknown as ReturnType<typeof disableSubUnit>);
+    } as unknown as ReturnType<typeof updateOrgSubUnitStatus>);
     vi.mocked(getOrgSubUnitById).mockReturnValue({
       data: { status: 'ACTIVE', subUnitCode: 'SU1' },
       refetch: mockRefetch
@@ -154,10 +162,10 @@ describe('SubUnitDetail', () => {
     expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR);
   });
 
-  it('redirects to the error page when subUnitCode is an empty string', () => {
+  it('redirects to the error page when subUnitCode is missing from the URL', () => {
     vi.mocked(useParams).mockReturnValue({
       organizationId: '33',
-      subUnitCode: ''
+      subUnitCode: undefined
     });
 
     render(<SubUnitDetail />);
@@ -170,7 +178,7 @@ describe('SubUnitDetail', () => {
 
     expect(getOrgSubUnitById).toHaveBeenCalledWith(33, 'SU1');
     expect(getOrgSubUnitOperators).toHaveBeenCalledWith(33, 'SU1');
-    expect(disableSubUnit).toHaveBeenCalledWith(33, 'SU1');
+    expect(updateOrgSubUnitStatus).toHaveBeenCalledWith(33, 'SU1');
   });
 
   it.each([
@@ -227,22 +235,45 @@ describe('SubUnitDetail', () => {
     );
   });
 
-  it('disables the sub unit, refetches, and reapplies filters on confirm', async () => {
+  it('disables an ACTIVE sub unit (-> CANCELLED), refetches, and reapplies filters on confirm', async () => {
     mockMutateAsync.mockResolvedValue({});
     render(<SubUnitDetail />);
 
-    fireEvent.click(screen.getByText('subunits.detail.disableSubUnit'));
-    fireEvent.click(screen.getByTestId('confirm-disable'));
+    const action = screen.getByText('subunits.detail.disable.action');
+    expect(action).toHaveAttribute('data-color', 'error');
+    fireEvent.click(action);
+    fireEvent.click(screen.getByTestId('confirm-status-change'));
 
     await waitFor(() => {
-      expect(mockMutateAsync).toHaveBeenCalled();
+      expect(mockMutateAsync).toHaveBeenCalledWith('CANCELLED');
       expect(mockRefetch).toHaveBeenCalled();
       expect(mockApplyFilters).toHaveBeenCalledWith({});
     });
-    expect(screen.queryByTestId('disable-dialog')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('status-dialog')).not.toBeInTheDocument();
   });
 
-  it('notifies on error when disabling fails, but still closes the dialog and reapplies filters', async () => {
+  it('enables a non-ACTIVE sub unit (-> ACTIVE), refetches, and reapplies filters on confirm', async () => {
+    vi.mocked(getOrgSubUnitById).mockReturnValue({
+      data: { status: 'CANCELLED', subUnitCode: 'SU1' },
+      refetch: mockRefetch
+    } as unknown as ReturnType<typeof getOrgSubUnitById>);
+    mockMutateAsync.mockResolvedValue({});
+
+    render(<SubUnitDetail />);
+
+    const action = screen.getByText('subunits.detail.enable.action');
+    expect(action).toHaveAttribute('data-color', 'primary');
+    fireEvent.click(action);
+    fireEvent.click(screen.getByTestId('confirm-status-change'));
+
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledWith('ACTIVE');
+      expect(mockRefetch).toHaveBeenCalled();
+      expect(mockApplyFilters).toHaveBeenCalledWith({});
+    });
+  });
+
+  it('notifies on error when the status update fails, but still closes the dialog and reapplies filters', async () => {
     mockMutateAsync.mockRejectedValue(new Error('fail'));
     const notifySpy = vi
       .spyOn(utils.notify, 'emit')
@@ -250,14 +281,14 @@ describe('SubUnitDetail', () => {
 
     render(<SubUnitDetail />);
 
-    fireEvent.click(screen.getByText('subunits.detail.disableSubUnit'));
-    fireEvent.click(screen.getByTestId('confirm-disable'));
+    fireEvent.click(screen.getByText('subunits.detail.disable.action'));
+    fireEvent.click(screen.getByTestId('confirm-status-change'));
 
     await waitFor(() => {
       expect(notifySpy).toHaveBeenCalledWith('errors.generic');
       expect(mockApplyFilters).toHaveBeenCalledWith({});
     });
-    expect(screen.queryByTestId('disable-dialog')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('status-dialog')).not.toBeInTheDocument();
   });
 
   it('reapplies filters when an operator is deleted', () => {

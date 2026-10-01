@@ -112,15 +112,18 @@ export const getOrgSubUnitOperators = (
     }
   });
 
-export const disableSubUnit = (organizationId: number, subUnitCode: string) =>
+export const updateOrgSubUnitStatus = (
+  organizationId: number,
+  subUnitCode: string
+) =>
   useMutation({
     mutationKey: ['disableSubUnit', organizationId, subUnitCode],
-    mutationFn: async () => {
+    mutationFn: async (status: OrgSubUnitStatus) => {
       await utils.apiClient.bff.updateOrgSubUnitStatus(
         organizationId,
         subUnitCode,
         {
-          status: OrgSubUnitStatus.CANCELLED
+          status
         }
       );
     }

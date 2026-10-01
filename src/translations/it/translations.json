@@ -2495,10 +2495,15 @@
       "CANCELLED": "Disattivata"
     },
     "detail": {
-      "disableSubUnit": "Disattiva sub-unit",
       "disable": {
         "title": "Vuoi disattivare {{subUnitCode}}?",
-        "message": "Potrai riattivarla in un secondo momento."
+        "message": "Potrai riattivarla in un secondo momento.",
+        "action": "Disattiva sub-unit"
+      },
+      "enable": {
+        "title": "Vuoi abilitare {{subUnitCode}}?",
+        "message": "Potrai disattivarla in un secondo momento.",
+        "action": "Abilita sub-unit"
       },
       "deleteOperator": {
         "title": "Vuoi rimuovere l'operatore {{operatorName}} da {{subUnitCode}}?",
