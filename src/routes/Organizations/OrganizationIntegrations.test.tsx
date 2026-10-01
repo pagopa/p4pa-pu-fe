@@ -19,6 +19,9 @@ vi.mock('../../api/organizations', () => ({
   getPdndServices: vi.fn(),
   getPdndClients: vi.fn()
 }));
+vi.mock('./SubUnitIntegrations', () => ({
+  SubUnitIntegrations: () => <div data-testid="sub-unit-integrations" />
+}));
 
 const mockQuery = <T,>(fn: T, data: unknown) =>
   vi.mocked(fn as () => unknown).mockReturnValue({ data });
@@ -75,6 +78,7 @@ describe('OrganizationIntegrations', () => {
     );
 
     expect(screen.queryByText('SEND service')).not.toBeInTheDocument();
+    expect(screen.getByTestId('sub-unit-integrations')).toBeInTheDocument();
   });
 
   it('shows the empty state when there are no integrations', () => {

@@ -28,6 +28,7 @@ import { SECRET_MASK } from '../../components/ShowSecretValue';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { setCustomBreadcrumbsItems } from '../../store/AppStateStore';
 import { OrganizationApiKeyType } from '../../../generated/core/data-contracts';
+import { SubUnitIntegrations } from './SubUnitIntegrations';
 
 type Field = {
   label: string;
@@ -209,7 +210,7 @@ export const OrganizationIntegrations = () => {
         ]}
       />
 
-      <Stack gap={3} mt={1}>
+      <Stack gap={3} mt={3}>
         <Tabs
           value={tab}
           onChange={(_, value: number) => setTab(value)}
@@ -262,6 +263,7 @@ export const OrganizationIntegrations = () => {
               />
             </Stack>
           )}
+          {tab === 1 && <SubUnitIntegrations />}
         </Box>
       </Stack>
     </Stack>
