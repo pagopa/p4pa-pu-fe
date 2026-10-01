@@ -59,7 +59,10 @@ export const StepBar = ({ activeStep, steps }: StepBarProps) => {
       sx={{
         listStyle: 'none',
         padding: 0,
-        margin: 0
+        margin: 0,
+        '& .MuiStepIcon-root': {
+          overflow: 'visible'
+        }
       }}
     >
       {steps.map(({ label, optional }, index) => {
