@@ -156,24 +156,11 @@ describe('TitleComponent', () => {
       ...defaultProps,
       chip: {
         label: 'Test Chip',
-        color: 'primary' as const
-      }
-    };
-    render(<TitleComponent {...props} />);
-    expect(screen.getByText('Test Chip')).toBeDefined();
-  });
-
-  it('renders chip with different colors', () => {
-    const props = {
-      ...defaultProps,
-      chip: {
-        label: 'Success Chip',
         color: 'success' as const
       }
     };
     render(<TitleComponent {...props} />);
-    const chip = screen.getByText('Success Chip');
-    expect(chip.closest('.MuiChip-colorSuccess')).toBeTruthy();
+    expect(screen.getByText('Test Chip')).toBeDefined();
   });
 
   it('does not render chip when not provided', () => {

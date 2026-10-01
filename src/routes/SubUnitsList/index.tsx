@@ -16,13 +16,13 @@ import { useSubUnitsFilters } from '@core/hooks/useSubunitsListFilters';
 
 export const SubUnitsList = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
 
   const [filterValues, setFilterValues] =
     useState<SubUnitsFilters>(initialFilters);
 
   const { filters: filterItems } = useSubUnitsFilters();
-  const navigate = useNavigate();
 
   const handleFilterChange = useCallback((id: string, value: unknown) => {
     setFilterValues((prev) => ({
@@ -82,7 +82,10 @@ export const SubUnitsList = () => {
           onChange={handleFilterChange}
           onSubmit={applyFilters}
         />
-        <SubUnitsDataGrid data={query?.data as PagedOrgSubUnit} />
+        <SubUnitsDataGrid
+          data={query?.data as PagedOrgSubUnit}
+          organizationId={organizationId}
+        />
       </Stack>
     </Stack>
   );

@@ -718,6 +718,8 @@
   },
   "commons": {
     "404": "404: risorsa non disponibile",
+    "name": "Nome e cognome",
+    "registry": "Anagrafica",
     "creationDate": "Data di creazione",
     "toDetail": "Vai al dettaglio",
     "menu": "Menu",
@@ -2484,6 +2486,41 @@
       "emptyFields": "Non è stato possibile abilitare l'Ente. È necessario che i campi obbligatori siano compilati"
     }
   },
+  "subunits": {
+    "subUnitCode": "Codice univoco",
+    "subUnitType": "Struttura",
+    "subUnitName": "Denominazione",
+    "status": {
+      "ACTIVE": "Attiva",
+      "CANCELLED": "Disattivata"
+    },
+    "detail": {
+      "disable": {
+        "title": "Vuoi disattivare {{subUnitCode}}?",
+        "message": "Potrai riattivarla in un secondo momento.",
+        "action": "Disattiva sub-unit"
+      },
+      "enable": {
+        "title": "Vuoi abilitare {{subUnitCode}}?",
+        "message": "Potrai disattivarla in un secondo momento.",
+        "action": "Abilita sub-unit"
+      },
+      "deleteOperator": {
+        "title": "Vuoi rimuovere l'operatore {{operatorName}} da {{subUnitCode}}?",
+        "message": "Potrai aggiungere di nuovo l’operatore in un secondo momento."
+      },
+      "operators": "Operatori associati",
+      "linkOperator": "Associa operatore"
+    },
+    "list": {
+      "filters": {
+        "subUnitCode": "Cerca per codice univoco",
+        "subUnitType": "Cerca per struttura"
+      },
+      "title": "Sottounità {{orgName}}",
+      "description": "Puoi gestire le sottounità dell’ente."
+    }
+  },
   "registry": {
     "detail": {
       "eventDetailTitle": "Dettaglio evento",
@@ -2624,23 +2661,6 @@
   "statistics": {
     "urlNotAvailable": "URL non disponibile",
     "urlGenerationFailed": "La generazione dell'URL di accesso non è andata a buon fine"
-  },
-  "subunits": {
-    "status": {
-      "ACTIVE": "Attiva",
-      "CANCELLED": "Disattivata"
-    },
-    "list": {
-      "filters": {
-        "subUnitCode": "Cerca per codice univoco",
-        "subUnitType": "Cerca per struttura"
-      },
-      "title": "Sottounità {{orgName}}",
-      "description": "Puoi gestire le sottounità dell’ente.",
-      "subUnitCode": "Codice univoco",
-      "subUnitType": "Struttura",
-      "subUnitName": "Denominazione"
-    }
   },
   "taxonomy": {
     "search": "Cerca tassonomia",

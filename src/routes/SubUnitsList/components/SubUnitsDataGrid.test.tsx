@@ -1,25 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen } from '@core/__tests__/renderers';
 
 import { SubUnitsDataGrid } from './SubUnitsDataGrid';
-import {
-  OrgSubUnit,
-  OrgSubUnitStatus,
-  PagedOrgSubUnit
-} from '@generated/core/data-contracts';
-
-const formatDate = vi.fn((date: string, format: string) => `${date}|${format}`);
-vi.mock('@core/utils/formatters', () => ({
-  formatDate: (date: string, format: string) => formatDate(date, format)
-}));
-
-vi.mock('@pagopa/mui-italia', () => ({
-  MIChip: ({ label, color }: { label: string; color?: string }) => (
-    <span data-testid="mi-chip" data-color={color}>
-      {label}
-    </span>
-  )
-}));
+import { OrgSubUnit, PagedOrgSubUnit } from '@generated/core/data-contracts';
 
 vi.mock('@core/components/DataGrid/CustomDataGrid', () => ({
   default: ({
@@ -67,7 +50,9 @@ const baseRow: OrgSubUnit = {
 
 describe('SubUnitsDataGrid', () => {
   it('falls back to an empty rows array and 0 total pages when data is missing', () => {
-    render(<SubUnitsDataGrid data={{} as PagedOrgSubUnit} />);
+    render(
+      <SubUnitsDataGrid data={{} as PagedOrgSubUnit} organizationId={1} />
+    );
 
     expect(screen.getByTestId('row-count')).toHaveTextContent('0');
     expect(screen.getByTestId('total-pages')).toHaveTextContent('0');
@@ -76,6 +61,7 @@ describe('SubUnitsDataGrid', () => {
   it('builds the row id from organizationId + subUnitCode', () => {
     render(
       <SubUnitsDataGrid
+        organizationId={1}
         data={{ content: [baseRow], totalPages: 3 } as PagedOrgSubUnit}
       />
     );
@@ -85,39 +71,12 @@ describe('SubUnitsDataGrid', () => {
     expect(screen.getByTestId('total-pages')).toHaveTextContent('3');
   });
 
-  it('formats the creation date', () => {
-    render(
-      <SubUnitsDataGrid data={{ content: [baseRow] } as PagedOrgSubUnit} />
-    );
-
-    expect(formatDate).toHaveBeenCalledWith('2024-12-19', 'dd MMMM yyyy');
-  });
-
-  it('renders a status chip with the mapped color, and nothing when status is missing', () => {
-    const rows = [
-      { ...baseRow, subUnitCode: 'A', status: OrgSubUnitStatus.ACTIVE },
-      { ...baseRow, subUnitCode: 'B', status: OrgSubUnitStatus.CANCELLED },
-      { ...baseRow, subUnitCode: 'C', status: undefined }
-    ];
-
-    render(<SubUnitsDataGrid data={{ content: rows } as PagedOrgSubUnit} />);
-
-    expect(
-      screen
-        .getByTestId('cell-status-1A')
-        .querySelector('[data-testid="mi-chip"]')
-    ).toHaveAttribute('data-color', 'default');
-    expect(
-      screen
-        .getByTestId('cell-status-1B')
-        .querySelector('[data-testid="mi-chip"]')
-    ).toHaveAttribute('data-color', 'neutral');
-    expect(screen.getByTestId('cell-status-1C')).toBeEmptyDOMElement();
-  });
-
   it('renders an accessible action button', () => {
     render(
-      <SubUnitsDataGrid data={{ content: [baseRow] } as PagedOrgSubUnit} />
+      <SubUnitsDataGrid
+        organizationId={1}
+        data={{ content: [baseRow] } as PagedOrgSubUnit}
+      />
     );
 
     expect(

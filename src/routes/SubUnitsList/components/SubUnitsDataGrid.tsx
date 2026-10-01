@@ -11,33 +11,48 @@ import {
 } from '@generated/core/data-contracts';
 import { formatDate } from '@core/utils/formatters';
 import { MIChip, MIChipProps } from '@pagopa/mui-italia';
+import { generatePath, useNavigate } from 'react-router';
+import { PageRoutes } from '@core/routes';
 
 type SubUnitsDataGridProps = {
   data: PagedOrgSubUnit;
+  organizationId: number;
 };
 
-export const SubUnitsDataGrid = ({ data }: SubUnitsDataGridProps) => {
+export const SubUnitsDataGrid = ({
+  data,
+  organizationId
+}: SubUnitsDataGridProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const colorMap: Record<OrgSubUnitStatus, MIChipProps['color']> = {
     [OrgSubUnitStatus.ACTIVE]: 'default',
     [OrgSubUnitStatus.CANCELLED]: 'neutral'
   };
 
+  const toDetail = (subUnitCode: string) =>
+    navigate(
+      generatePath(PageRoutes.SUB_UNIT_DETAIL, {
+        organizationId,
+        subUnitCode
+      })
+    );
+
   const columns: Array<GridColDef<OrgSubUnit>> = [
     {
       field: 'subUnitCode',
-      headerName: t('subunits.list.subUnitCode'),
+      headerName: t('subunits.subUnitCode'),
       flex: 1
     },
     {
       field: 'subUnitType',
-      headerName: t('subunits.list.subUnitType'),
+      headerName: t('subunits.subUnitType'),
       flex: 1
     },
     {
       field: 'subUnitName',
-      headerName: t('subunits.list.subUnitName'),
+      headerName: t('subunits.subUnitName'),
       flex: 1
     },
     {
@@ -65,8 +80,12 @@ export const SubUnitsDataGrid = ({ data }: SubUnitsDataGridProps) => {
       sortable: false,
       headerName: '',
       flex: 0.2,
-      renderCell: () => (
-        <IconButton size="small" aria-label={t('commons.toDetail')}>
+      renderCell: ({ row: { subUnitCode } }) => (
+        <IconButton
+          size="small"
+          aria-label={t('commons.toDetail')}
+          onClick={() => toDetail(subUnitCode)}
+        >
           <ChevronRightIcon fontSize="small" />
         </IconButton>
       )
