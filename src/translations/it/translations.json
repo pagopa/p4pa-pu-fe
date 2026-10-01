@@ -2497,6 +2497,11 @@
     "create": {
       "title": "Aggiungi una nuova sottounità",
       "description": "Compila i campi richiesti per attivare una nuova sub-unit.",
+      "duplicatedCode": {
+        "title": "Sottounità già presente",
+        "message": "Inserisci un nuovo codice univoco per continuare.",
+        "action": "Ho capito"
+      },
       "wizard": {
         "title": "Configurazione della sottounità",
         "subtitle": "Dopo la creazione, potrai sempre disabilitare una sottounità.",
@@ -2505,7 +2510,8 @@
       "section": "Informazioni generali",
       "subUnitCode": {
         "placeholder": "Inserisci il codice univoco",
-        "required": "Il campo codice univoco é obbligatorio"
+        "required": "Il campo codice univoco é obbligatorio",
+        "duplicated": "Inserisci un nuovo codice univoco"
       },
       "subUnitType": {
         "placeholder": "Inserisci la struttura",

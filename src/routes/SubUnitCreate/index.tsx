@@ -17,6 +17,7 @@ import WizardStepButtons from '@core/components/Wizard/WizardStepButtons';
 import WizardStepWrapper from '@core/components/Wizard/WizardStepWrapper';
 import utils from '@core/utils';
 import { PageRoutes } from '..';
+import { MIAlert } from '@pagopa/mui-italia';
 
 const subUnitSchema = z.object({
   subUnitCode: z.string({
@@ -49,27 +50,35 @@ export const SubUnitCreate = () => {
     mode: 'onTouched'
   });
 
-  const onSubmit: SubmitHandler<SubUnitFormData> = async (
-    data: SubUnitFormData
-  ) => {
+  const isDuplicated = form.formState.errors.subUnitCode?.type === 'server';
+
+  const onSubmit: SubmitHandler<SubUnitFormData> = async (data) => {
     try {
-      const request = {
+      await create.mutateAsync({
         ...data,
         organizationId,
         status: OrgSubUnitStatus.ACTIVE
-      };
-      await create.mutateAsync(request);
+      });
       navigate(
         generatePath(PageRoutes.ORGANIZATIONS_SUB_UNITS, { organizationId })
       );
       utils.notify.emit('created', 'success');
     } catch (error) {
       if (error instanceof AxiosError && error.response?.status === 409) {
-        utils.notify.emit('name exists');
+        form.setError('subUnitCode', {
+          type: 'server',
+          message: 'subunits.create.duplicatedCode.message'
+        });
       } else {
         navigate(PageRoutes.RESPONSES_ERROR);
       }
     }
+  };
+
+  const onCancel = () => {
+    navigate(
+      generatePath(PageRoutes.ORGANIZATIONS_SUB_UNITS, { organizationId })
+    );
   };
 
   const typeOptions: SelectOptions = Object.values(SubUnitType).map((type) => ({
@@ -86,6 +95,22 @@ export const SubUnitCreate = () => {
           description={t('subunits.create.description')}
         />
       </Box>
+      {isDuplicated && (
+        <MIAlert
+          title={t('subunits.create.duplicatedCode.title')}
+          severity="error"
+          sx={{ mb: 4 }}
+          action={{
+            label: t('subunits.create.duplicatedCode.action'),
+            onClick: () => {
+              form.clearErrors('subUnitCode');
+            }
+          }}
+          data-testid="duplicated-code-alert"
+        >
+          {t('subunits.create.duplicatedCode.message')}
+        </MIAlert>
+      )}
       <WizardStepWrapper
         title={t('subunits.create.wizard.title')}
         subtitle={t('subunits.create.wizard.subtitle')}
@@ -125,7 +150,7 @@ export const SubUnitCreate = () => {
       </WizardStepWrapper>
       <WizardStepButtons
         onNext={form.handleSubmit(onSubmit)}
-        onBack={() => null}
+        onBack={onCancel}
         nextLabel="commons.confirm"
         backLabel="commons.back"
         disableNext={create.isPending}
