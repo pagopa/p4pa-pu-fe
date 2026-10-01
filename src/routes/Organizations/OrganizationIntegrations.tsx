@@ -210,7 +210,7 @@ export const OrganizationIntegrations = () => {
         ]}
       />
 
-      <Stack gap={3} mt={1}>
+      <Stack gap={3} mt={3}>
         <Tabs
           value={tab}
           onChange={(_, value: number) => setTab(value)}
