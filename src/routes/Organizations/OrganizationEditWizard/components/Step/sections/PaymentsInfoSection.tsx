@@ -8,7 +8,8 @@ import {
   Switch,
   TextField,
   Typography,
-  Divider
+  Divider,
+  Stack
 } from '@mui/material';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import { Controller, Control, FieldErrors } from 'react-hook-form';
@@ -128,20 +129,19 @@ export const PaymentsInfoSection = ({
             name="additionalLanguage"
             control={control}
             render={({ field }) => (
-              <FormControlLabel
-                control={
-                  <Switch
-                    {...field}
-                    checked={field.value}
-                    disabled={data.additionalLanguage.readonly}
-                    data-testid="additional-language-switch"
-                  />
-                }
-                label={t(
-                  'organizationEditWizard.step2.additionalLanguage.label'
-                )}
-                sx={{ mt: 1 }}
-              />
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Switch
+                  {...field}
+                  checked={field.value}
+                  disabled={data.additionalLanguage.readonly}
+                  data-testid="additional-language-switch"
+                />
+                <Typography>
+                  {t(
+                    'organizationEditWizard.step2.additionalLanguage.label'
+                  )}
+                </Typography>
+              </Stack>
             )}
           />
         </Grid>

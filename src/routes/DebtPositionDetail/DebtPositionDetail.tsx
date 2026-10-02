@@ -3,8 +3,6 @@ import {
   Typography,
   Accordion,
   AccordionSummary,
-  ChipOwnProps,
-  ChipProps,
   Divider,
   Menu,
   MenuItem,
@@ -19,7 +17,7 @@ import {
   KeyboardArrowDown,
   MoreVert
 } from '@mui/icons-material';
-import { theme } from '@pagopa/mui-italia';
+import { MIChipProps, theme } from '@pagopa/mui-italia';
 import DetailContainer, {
   DetailData
 } from '../../components/DetailContainer/DetailContainer';
@@ -54,7 +52,7 @@ import { isTechnicalDebtPosition } from '../../utils/debtpositions';
 export type PaymentOptionDisplayData = {
   title: string;
   tag: string;
-  chip: { label: string; color: ChipOwnProps['color'] };
+  chip: { label: string; color: MIChipProps['color'] };
   details: Array<DetailData>;
   installments: Array<InstallmentRow>;
 };
@@ -66,7 +64,7 @@ type InstallmentRow = {
   amount: number;
   expirationDate: string;
   status: string;
-  chip: { label: string; color: ChipOwnProps['color'] } | undefined;
+  chip: { label: string; color: MIChipProps['color'] } | undefined;
 };
 
 type DialogConfig = {
@@ -89,7 +87,7 @@ const DebtPositionDetail = () => {
 
   const stateColors: Record<
     InstallmentStatus | DebtPositionStatus | PaymentOptionStatus,
-    ChipProps['color']
+    MIChipProps['color']
   > = {
     CANCELLED: 'error',
     DRAFT: 'default',
@@ -371,7 +369,7 @@ const DebtPositionDetail = () => {
 
   const getStatusChipProps = (
     status: string
-  ): { label: string; color: ChipOwnProps['color'] } => {
+  ): { label: string; color: MIChipProps['color'] } => {
     const isValidStatus = Object.keys(stateColors).includes(status);
 
     if (!isValidStatus) {

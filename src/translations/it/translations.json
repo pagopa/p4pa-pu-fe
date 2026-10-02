@@ -149,7 +149,28 @@
         "message_other": "All'utente <strong>{{operatorName}}</strong> verranno assegnati <strong>{{count}}</strong> tipi di dovuto, sui quali potrà gestire e operare.",
         "button": "Associa"
       }
-    }
+    },
+    "subUnit": "Sottunità",
+    "affiliateSubUnit": "Associa sottunità",
+    "subCode": "Codice univoco",
+    "subType": "Struttura",
+    "subName": "Denominazione",
+    "subCreationDate": "Data creazione",
+    "subStatus": "Stato",
+    "subUnitStatus": {
+      "ACTIVE": "Attiva",
+      "CANCELLED": "Disattiva"
+    },
+    "subUnitFilters": {
+      "subUnitName": "Cerca per Denominazione",
+      "subUnitCode": "Cerca per Codice univoco",
+      "subUnitType": "Filtra per Struttura"
+    },
+    "deleteDialogSubUnit": {
+      "title": "Sei sicuro di voler rimuovere la sottunità?",
+      "message": "Denominazione sottunità che verrà rimossa: <strong>{{subUnitName}}</strong>"
+    },
+    "subUnitEmptyData": "Nessuna sottunità associata"
   },
   "a11y": {
     "navigation": {
@@ -162,8 +183,8 @@
       "sortCleared": "Ordinamento rimosso",
       "pageChanged": "Pagina {{newPage}} di {{totalPages}}",
       "pageSizeChanged": "Risultati per pagina: {{pageSize}}",
-      "filtersApplied_one": "Tabella aggiornata con {{count}} pagina",
-      "filtersApplied_other": "Tabella aggiornata con {{count}} pagine",
+      "filtersApplied_one": "Tabella aggiornata con {{count}} pagina {{totalResults}}",
+      "filtersApplied_other": "Tabella aggiornata con {{count}} pagine {{totalResults}}",
       "noResults": "Nessun risultato trovato",
       "pageSize": "Risultati per pagina",
       "pagination": {
@@ -697,6 +718,11 @@
   },
   "commons": {
     "404": "404: risorsa non disponibile",
+    "done": "Fatto!",
+    "name": "Nome e cognome",
+    "registry": "Anagrafica",
+    "creationDate": "Data di creazione",
+    "toDetail": "Vai al dettaglio",
     "menu": "Menu",
     "openMenu": "Apri menu",
     "closeMenu": "Chiudi menu",
@@ -1027,6 +1053,8 @@
       "IMPORT_FLOWS": "Importa flusso",
       "ORGANIZATIONS": "Enti gestiti",
       "ORGANIZATIONS_DETAIL": "Anagrafica ente",
+      "ORGANIZATIONS_INTEGRATIONS": "Gestisci chiavi",
+      "ORGANIZATIONS_SUB_UNITS": "Sottounità",
       "ORG_SIL_SERVICE": "Org Sil Service",
       "ORG_SIL_SERVICE_DETAIL": "Dettaglio Org Sil Service",
       "PRIVACYPOLICY": "Privacy Policy",
@@ -1654,6 +1682,7 @@
     }
   },
   "debtTypeOrgCreate": {
+    "formLabel": "Form dati",
     "edit": {
       "title": "Modifica Tipo dovuto",
       "success": {
@@ -2406,12 +2435,41 @@
     "logoPlaceholder": "Logo placeholder",
     "enableOrg": "Abilita ente",
     "editOrg": "Modifica ente",
-    "alertTitle": "Completa i dati per attivare l'ente",
-    "alertBody": "È necessario compilare i seguenti campi obbligatori: {{emptyFields}}.",
+    "alertTitle": "Mancano alcune informazioni importanti",
+    "alertBody": "Completa queste informazioni per poter operare senza interruzioni: {{emptyFields}}",
+    "alertButton": "Completa informazioni",
     "registry": {
       "title": "Anagrafica"
     },
     "manageIntegrations": "Gestisci integrazioni",
+    "integrations": {
+      "description": "Gestisci le integrazioni ai prodotti e servizi dell'ente e delle sue sottounità.",
+      "pagoPaProducts": "Prodotti PagoPA",
+      "pdndServices": "E-service PDND",
+      "pdndClients": "Client PDND",
+      "name": "Nome",
+      "ioNotifications": "Notifiche invio messaggio",
+      "active": "Attivo",
+      "inactive": "Non attivo",
+      "apiKey": "API Key",
+      "hiddenApiKey": "API Key nascosta",
+      "purposeId": "Purpose ID",
+      "clientId": "Client ID",
+      "subUnit": "Sottounità",
+      "subUnitName": "Denominazione",
+      "serviceType": "Tipologia",
+      "searchSubUnit": "Cerca per sottounità",
+      "emptyTitle": "Qui vedrai le tue integrazioni",
+      "emptyDescription": "Aggiungi una nuova integrazione a un prodotto o servizio",
+      "add": "Aggiungi integrazione",
+      "show": "Mostra",
+      "showItem": "Mostra {{name}}",
+      "keyTypes": {
+        "IO": "IO",
+        "SEND": "SEND",
+        "GENERATE_NOTICE": "Stampa avvisi"
+      }
+    },
     "management": {
       "title": "Gestioni",
       "debtTypes": "Tipi di dovuto associati",
@@ -2427,6 +2485,70 @@
       "success": "Ente abilitato correttamente.",
       "error": "Non è stato possibile abilitare l'Ente",
       "emptyFields": "Non è stato possibile abilitare l'Ente. È necessario che i campi obbligatori siano compilati"
+    }
+  },
+  "subunits": {
+    "subUnitCode": "Codice univoco",
+    "subUnitType": "Struttura",
+    "subUnitName": "Denominazione",
+    "status": {
+      "ACTIVE": "Attiva",
+      "CANCELLED": "Disattivata"
+    },
+    "create": {
+      "title": "Aggiungi una nuova sottounità",
+      "description": "Compila i campi richiesti per attivare una nuova sub-unit.",
+      "duplicatedCode": {
+        "title": "Sottounità già presente",
+        "message": "Inserisci un nuovo codice univoco per continuare.",
+        "action": "Ho capito"
+      },
+      "wizard": {
+        "title": "Configurazione della sottounità",
+        "subtitle": "Dopo la creazione, potrai sempre disabilitare una sottounità.",
+        "alertMessage": "* Campo obbligatorio"
+      },
+      "section": "Informazioni generali",
+      "subUnitCode": {
+        "placeholder": "Inserisci il codice univoco",
+        "required": "Il campo codice univoco é obbligatorio",
+        "duplicated": "Inserisci un nuovo codice univoco"
+      },
+      "subUnitType": {
+        "placeholder": "Inserisci la struttura",
+        "required": "Il campo struttura é obbligatorio"
+      },
+      "subUnitName": {
+        "placeholder": "Inserisci la denominazione",
+        "required": "Il campo denominazione é obbligatorio"
+      }
+    },
+    "detail": {
+      "disable": {
+        "title": "Vuoi disattivare {{subUnitCode}}?",
+        "message": "Potrai riattivarla in un secondo momento.",
+        "action": "Disattiva sub-unit"
+      },
+      "enable": {
+        "title": "Vuoi abilitare {{subUnitCode}}?",
+        "message": "Potrai disattivarla in un secondo momento.",
+        "action": "Abilita sub-unit"
+      },
+      "deleteOperator": {
+        "title": "Vuoi rimuovere l'operatore {{operatorName}} da {{subUnitCode}}?",
+        "message": "Potrai aggiungere di nuovo l’operatore in un secondo momento."
+      },
+      "operators": "Operatori associati",
+      "linkOperator": "Associa operatore"
+    },
+    "list": {
+      "filters": {
+        "subUnitCode": "Cerca per codice univoco",
+        "subUnitType": "Cerca per struttura"
+      },
+      "title": "Sottounità {{orgName}}",
+      "description": "Puoi gestire le sottounità dell’ente.",
+      "create": "Aggiungi sottounità"
     }
   },
   "registry": {

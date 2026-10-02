@@ -1,64 +1,65 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
+import type { OrganizationDetail } from '../../../../generated/core/data-contracts';
 import { render, screen } from '../../../__tests__/renderers';
-import OrganizationDetailAlert from './OrganizationDetailAlert';
-import {
-  OrganizationStatus,
-  OrganizationAdditionalLanguage
-} from '../../../../generated/core/client';
+import { OrganizationDetailAlert } from './OrganizationDetailAlert';
 
-describe('OrganizationDetailAlert Component', () => {
-  const dataMock = {
-    organizationId: 123,
-    flagTreasury: false,
-    ipaCode: 'IPA_TEST_2',
-    orgFiscalCode: '99999999982',
-    orgName: 'Ente P4PA intermediato 2',
-    orgTypeCode: '03',
-    orgEmail: 'enteditest2@email.it',
-    postalIban: '',
-    orgLogo: 'data:image',
-    segregationCode: '01',
-    cbillInterBankCode: '',
-    status: OrganizationStatus.DRAFT,
-    additionalLanguage: OrganizationAdditionalLanguage.EN,
-    startDate: '2024-12-19',
-    brokerId: 1,
-    ioApiKey: '6ba7',
-    sendApiKey: '6ea5',
-    generateNoticeApiKey: '406622f',
-    flagNotifyIo: true,
-    flagNotifyOutcomePush: false,
-    flagPaymentNotification: false,
-    pdndEnabled: false,
-    debtPositionTypeOrgCount: 21,
-    operatorsCount: 5
-  };
+const baseOrganizationDetail = {
+  iban: 'IT60X0542811101000000123456',
+  orgLogo: 'data:image',
+  segregationCode: '01'
+} as OrganizationDetail;
 
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('renders Alert with a waning on missed IBAN', async () => {
+describe('OrganizationDetailAlert', () => {
+  it('renders nothing when all mandatory fields are present', () => {
     render(
       <OrganizationDetailAlert
-        editFunction={vi.fn()}
-        organizationDetailData={dataMock}
+        organizationDetailData={baseOrganizationDetail}
+        onEdit={vi.fn()}
       />
     );
 
-    expect(screen.getByText('organizations.alertBody')).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('org-empty-fields-error')
+    ).not.toBeInTheDocument();
   });
 
-  it('renders Alert without anything cause no fields missing', async () => {
-    const completeDataMock = { ...dataMock, iban: '111' };
+  it('renders the alert listing each missing mandatory field', () => {
+    const dataWithMissingFields = {
+      ...baseOrganizationDetail,
+      iban: '',
+      orgLogo: undefined,
+      segregationCode: ' - '
+    };
+
     render(
       <OrganizationDetailAlert
-        editFunction={vi.fn()}
-        organizationDetailData={completeDataMock}
+        organizationDetailData={dataWithMissingFields}
+        onEdit={vi.fn()}
       />
     );
 
-    const alert = screen.queryByTestId('org-empty-fields-error');
-    expect(alert).not.toBeInTheDocument();
+    expect(screen.getByTestId('org-empty-fields-error')).toBeInTheDocument();
+    expect(
+      screen.getByText('organizations.alertBody', { exact: false })
+    ).toBeInTheDocument();
+  });
+
+  it('calls onEdit when the edit button is clicked', async () => {
+    const user = userEvent.setup();
+    const onEdit = vi.fn();
+
+    render(
+      <OrganizationDetailAlert
+        organizationDetailData={{ ...baseOrganizationDetail, iban: '' }}
+        onEdit={onEdit}
+      />
+    );
+
+    await user.click(
+      screen.getByRole('button', { name: 'organizations.alertButton' })
+    );
+
+    expect(onEdit).toHaveBeenCalledTimes(1);
   });
 });

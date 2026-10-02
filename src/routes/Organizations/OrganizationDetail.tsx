@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import EditIcon from '@mui/icons-material/Edit';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 import { PageRoutes } from '..';
 import {
@@ -68,9 +69,12 @@ export const OrganizationDetail = () => {
   };
 
   const isSuperAdmin = utils.roles.useIsSuperAdmin();
+  const { status } = organizationDetailData || {};
 
   const canShowEdit =
-    organizationDetailData?.status === OrganizationStatus.DRAFT && isSuperAdmin;
+    organizationDetailData &&
+    isSuperAdmin &&
+    status === OrganizationStatus.DRAFT;
 
   const update = updateOrganization();
 
@@ -143,16 +147,21 @@ export const OrganizationDetail = () => {
       >
         {t('commons.edit')}
       </Button>
-      {/* TODO: add when real route is available */}
-      {/* <Button */}
-      {/*   key="manage-integrations" */}
-      {/*   variant="contained" */}
-      {/*   startIcon={<SettingsIcon />} */}
-      {/*   onClick={handleManageIntegrationsClick} */}
-      {/*   data-testid="manage-integrations-button" */}
-      {/* > */}
-      {/*   {t('organizations.manageIntegrations')} */}
-      {/* </Button> */}
+      <Button
+        key="manage-integrations"
+        variant="contained"
+        startIcon={<SettingsIcon />}
+        onClick={() =>
+          navigate(
+            generatePath(PageRoutes.ORGANIZATIONS_INTEGRATIONS, {
+              organizationId: getOrganizationId
+            })
+          )
+        }
+        data-testid="manage-integrations-button"
+      >
+        {t('organizations.manageIntegrations')}
+      </Button>
     </Stack>
   );
 
@@ -173,7 +182,7 @@ export const OrganizationDetail = () => {
 
       {canShowEdit && (
         <OrganizationDetailAlert
-          editFunction={handleEditClick}
+          onEdit={handleEditClick}
           organizationDetailData={organizationDetailData}
         />
       )}
