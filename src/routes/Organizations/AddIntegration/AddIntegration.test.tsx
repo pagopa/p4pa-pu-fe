@@ -4,6 +4,14 @@ import { type Control, useController } from 'react-hook-form';
 
 import { AddIntegration } from '.';
 
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router')>();
+  return {
+    ...actual,
+    useNavigate: vi.fn()
+  };
+});
+
 vi.mock('@core/components/TitleComponent/TitleComponent', () => ({
   default: ({ title }: { title: string }) => <h1>{title}</h1>
 }));

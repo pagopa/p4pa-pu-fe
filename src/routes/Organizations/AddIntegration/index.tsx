@@ -8,6 +8,7 @@ import TitleComponent from '@core/components/TitleComponent/TitleComponent';
 import WizardStepButtons from '@core/components/Wizard/WizardStepButtons';
 import WizardStepWrapper from '@core/components/Wizard/WizardStepWrapper';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 
 enum IntegrationType {
   E_SERVICE = 'e-service',
@@ -25,6 +26,7 @@ type AddIntegrationFormData = z.infer<typeof addIntegrationSchema>;
 
 export const AddIntegration = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const { control, handleSubmit } = useForm<AddIntegrationFormData>({
     resolver: zodResolver(addIntegrationSchema),
@@ -34,6 +36,10 @@ export const AddIntegration = () => {
       flagIntegrationType: '' as IntegrationType
     }
   });
+
+  const onBack = () => {
+    navigate(-1);
+  };
 
   const onSubmit = (data: AddIntegrationFormData) => {
     // TODO: Handle form submission
@@ -89,7 +95,7 @@ export const AddIntegration = () => {
         />
       </WizardStepWrapper>
       <WizardStepButtons
-        onBack={() => null}
+        onBack={onBack}
         onNext={handleSubmit(onSubmit)}
         nextLabel={t('commons.confirm')}
         backLabel={t('commons.cancel')}
