@@ -18,7 +18,7 @@ import { ErrorMessage } from './ErrorMessage';
 
 export type RadioOption<T extends FieldValues> = {
   value: PathValue<T, Path<T>>;
-  label: string;
+  label: string | React.ReactNode;
 };
 
 export type _ControlledRadioGroupProps<T extends FieldValues> =

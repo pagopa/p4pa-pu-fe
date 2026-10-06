@@ -29,6 +29,7 @@ import {
   _ControlledAmountField,
   _ControlledAmountFieldProps
 } from './_ControlledAmountField';
+import { _RadioLabel } from './_RadioLabel';
 
 export const FormComponent = {
   AmountField: _AmountField,
@@ -43,7 +44,8 @@ export const FormComponent = {
   ControlledAmountField: _ControlledAmountField,
   DateRange: _DateRange,
   Select: _Select,
-  TextField: _TextField
+  TextField: _TextField,
+  RadioLabel: _RadioLabel
 };
 
 export type {

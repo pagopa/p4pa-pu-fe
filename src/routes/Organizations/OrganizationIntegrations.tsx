@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { generatePath, useParams } from 'react-router';
+import { generatePath, useNavigate, useParams } from 'react-router';
 
 import { PageRoutes } from '..';
 import {
@@ -96,6 +96,8 @@ const Section = ({ title, items }: { title: string; items: Array<Item> }) =>
 
 export const OrganizationIntegrations = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
   const organizationId = Number(useParams().organizationId);
   const [tab, setTab] = useState(0);
 
@@ -194,6 +196,10 @@ export const OrganizationIntegrations = () => {
   const isEmpty =
     productItems.length + serviceItems.length + clientItems.length === 0;
 
+  const addIntegrationAction = () => {
+    navigate(generatePath(PageRoutes.ADD_INTEGRATION, { organizationId }));
+  };
+
   return (
     <Stack pb={5}>
       <TitleComponent
@@ -204,8 +210,7 @@ export const OrganizationIntegrations = () => {
             buttonText: t('organizations.integrations.add'),
             icon: <AddIcon />,
             dataTestId: 'add-integration-button',
-            // not wired yet
-            onActionClick: () => undefined
+            onActionClick: addIntegrationAction
           }
         ]}
       />

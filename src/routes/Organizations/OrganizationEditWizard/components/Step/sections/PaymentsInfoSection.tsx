@@ -137,9 +137,7 @@ export const PaymentsInfoSection = ({
                   data-testid="additional-language-switch"
                 />
                 <Typography>
-                  {t(
-                    'organizationEditWizard.step2.additionalLanguage.label'
-                  )}
+                  {t('organizationEditWizard.step2.additionalLanguage.label')}
                 </Typography>
               </Stack>
             )}
