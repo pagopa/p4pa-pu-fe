@@ -276,24 +276,29 @@ describe('ClassificationExportPage', () => {
   });
 
   describe('Form Interactions', () => {
-    it('should handle text field inputs correctly', () => {
+    it('should handle text field inputs across form sections', () => {
       render(<ClassificationExportPage />);
 
       const textFields = [
-        'commons.iuv',
-        'classificationsExport.sections.notice.remittanceInformation',
-        'classificationsExport.sections.notice.applicant',
-        'commons.iud',
-        'commons.iuf',
-        'classificationsExport.sections.treasury.accountRegistryCode'
+        'notice-section-iuv',
+        'notice-section-remittanceInformation',
+        'notice-section-applicant',
+        'notice-section-iud',
+        'notice-section-iuf',
+        'treasury-section-accountRegistryCode'
       ];
 
-      textFields.forEach((fieldLabel) => {
-        const field = screen.getByLabelText(fieldLabel);
+      textFields.forEach((testId) => {
+        const field = screen.getByTestId(testId).querySelector('input');
         expect(field).toBeInTheDocument();
+        if (!field) {
+          throw new Error(`Input not found for ${testId}`);
+        }
 
-        fireEvent.change(field, { target: { value: `test-${fieldLabel}` } });
-        expect(field).toHaveValue(`test-${fieldLabel}`);
+        fireEvent.focus(field);
+        fireEvent.change(field, { target: { value: `test-${testId}` } });
+        fireEvent.blur(field);
+        expect(field).toHaveValue(`test-${testId}`);
       });
     });
 
@@ -607,28 +612,6 @@ describe('ClassificationExportPage', () => {
       });
     });
 
-    it('should test all form sections are interactive', () => {
-      render(<ClassificationExportPage />);
-
-      const inputFields = [
-        'commons.iuv',
-        'classificationsExport.sections.notice.remittanceInformation',
-        'classificationsExport.sections.notice.applicant',
-        'commons.iud',
-        'commons.iuf',
-        'classificationsExport.sections.treasury.accountRegistryCode'
-      ];
-
-      inputFields.forEach((fieldLabel) => {
-        const field = screen.getByLabelText(fieldLabel);
-
-        fireEvent.focus(field);
-        fireEvent.change(field, { target: { value: 'test-data' } });
-        fireEvent.blur(field);
-
-        expect(field).toBeInTheDocument();
-      });
-    });
   });
 
   describe('Callback Coverage and Validation', () => {

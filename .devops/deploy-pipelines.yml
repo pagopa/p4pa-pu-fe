@@ -12,7 +12,7 @@ trigger:
 pr: none
 
 variables:
-  NODE_VERSION: '22.12.0'
+  NODE_OPTIONS: '--max-old-space-size=4096'
   vmImageNameDefault: 'ubuntu-latest'
   blob_container_path: 'piattaformaunitaria'
 
@@ -119,7 +119,6 @@ stages:
           - script: |
               export OPENAPI_URL=$(openapi_url)
               export OPENAPI_FILESHARE_URL=$(openapi_fileshare_url)
-              export NODE_OPTIONS="--max-old-space-size=6144"
               yarn build
             displayName: 'yarn build'
 
@@ -148,10 +147,11 @@ stages:
               inlineScript: |
                 az storage blob sync --container '$web' --account-name $(storage_account) --source '$(Pipeline.Workspace)/Bundle' --destination '$(blob_container_path)/'
 
-          - task: AzureCLI@1
+          - task: AzureCLI@2
             displayName: 'Purge CDN endpoint'
             inputs:
               azureSubscription: '$(AZURE_SUBSCRIPTION)'
+              scriptType: 'bash'
               scriptLocation: inlineScript
               inlineScript: |
                 az afd endpoint purge -g $(resource_group) --endpoint-name $(cdn_endpoint) --profile-name $(cdn_profile) --domains $(cdn_domains)  --content-paths "/" "/$(blob_container_path)" "/$(blob_container_path)/*"
