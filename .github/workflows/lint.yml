@@ -3,21 +3,26 @@ on:
   pull_request:
     branches:
       - develop
+      - main
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: '--max-old-space-size=4096'
     steps:
-      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: 20.18.0
+          node-version-file: .node-version
+          cache: yarn
+          cache-dependency-path: yarn.lock
       - name: run lint
         run: |
           corepack enable
-          yarn install
+          yarn install --immutable
           yarn generate
-          yarn lint --fix
+          yarn lint
         env:
           OPENAPI_URL: ${{ vars.OPENAPI_URL }}
           OPENAPI_FILESHARE_URL: ${{ vars.OPENAPI_FILESHARE_URL }}
