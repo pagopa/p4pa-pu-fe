@@ -30,6 +30,7 @@ export type _ControlledRadioGroupProps<T extends FieldValues> =
     options: Array<RadioOption<T>>;
     disabled?: boolean;
     required?: boolean;
+    divider?: React.ReactNode;
     formControlLabelProps?: Partial<FormControlLabelProps>;
   };
 
@@ -64,14 +65,17 @@ export const _ControlledRadioGroup = <T extends FieldValues>({
             {label}
           </FormLabel>
           <RadioGroup {...field} {...props} aria-labelledby={`${name}-label`}>
-            {options.map(({ value, label }) => (
-              <FormControlLabel
-                key={value}
-                value={value}
-                control={<Radio />}
-                label={label}
-                {...formControlLabelProps}
-              />
+            {options.map(({ value, label }, index) => (
+              <>
+                {props.divider && index > 0 ? props.divider : null}
+                <FormControlLabel
+                  key={value}
+                  value={value}
+                  control={<Radio />}
+                  label={label}
+                  {...formControlLabelProps}
+                />
+              </>
             ))}
           </RadioGroup>
 

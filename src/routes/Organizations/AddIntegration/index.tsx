@@ -9,6 +9,7 @@ import WizardStepButtons from '@core/components/Wizard/WizardStepButtons';
 import WizardStepWrapper from '@core/components/Wizard/WizardStepWrapper';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import Divider from '@mui/material/Divider';
 
 enum IntegrationType {
   E_SERVICE = 'e-service',
@@ -62,8 +63,13 @@ export const AddIntegration = () => {
         <FormComponent.ControlledRadioGroup
           formControlLabelProps={{
             labelPlacement: 'start',
-            sx: { width: '100%', mx: 0, justifyContent: 'space-between' }
+            sx: {
+              width: '100%',
+              mx: 0,
+              justifyContent: 'space-between'
+            }
           }}
+          divider={<Divider sx={{ my: 1 }} />}
           name="flagIntegrationType"
           data-testid="flagNotifyOutcomePush"
           control={control}
