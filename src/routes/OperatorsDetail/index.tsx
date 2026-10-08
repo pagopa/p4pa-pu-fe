@@ -70,12 +70,12 @@ export const OperatorDetail = () => {
   const {
     query: { data: dataSubUnit },
     applyFilters: applyFiltersSubUnit
-  } = useSearch({ query: querySubUnit, filters: filtersSubUnit });
+  } = useSearch({ query: querySubUnit, filters: filtersSubUnit, id: 'subUnits' });
 
   const {
     query: { isError, error, data },
     applyFilters
-  } = useSearch({ query, filters });
+  } = useSearch({ query, filters, id: 'operators' });
 
   if (isError) {
     console.error('Error loading operator details:', error);

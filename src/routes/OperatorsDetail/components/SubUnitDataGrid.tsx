@@ -90,6 +90,7 @@ const SubUnitDataGrid = ({ data, onDelete }: PagedOrgSubUnitDataGridProps) => {
       disableColumnMenu
       disableColumnResize
       totalPages={data?.totalPages || 1}
+      id="subUnits"
     />
   );
 };

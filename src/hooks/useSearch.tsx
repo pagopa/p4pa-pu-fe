@@ -25,13 +25,13 @@ export function useSearch<
   T extends Record<string, unknown>,
   TData = unknown,
   TError = unknown
->({ filters, query }: UseSearchProps<T, TData, TError>) {
+>({ filters, query, id }: UseSearchProps<T, TData, TError> & { id?: string }) {
   const {
     page: hashPage = 1,
     size = 10,
     sortDirection,
     sortField
-  } = useHashParamsListener() as {
+  } = useHashParamsListener(id) as {
     page: number;
     size: number;
     sortDirection: string;
