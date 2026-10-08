@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import utils from '../utils';
 
-function decodeHash<T>(id: string): T {
+export function decodeHash<T>(id?: string): T {
   const rawHash = window.location.hash.startsWith('#')
     ? window.location.hash.substring(1)
     : window.location.hash;

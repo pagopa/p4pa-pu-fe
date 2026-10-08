@@ -74,6 +74,7 @@ export type FilterItem = TypeUnion & {
 };
 
 type FilterContainerProps = {
+  id?: string;
   items: Array<FilterItem>;
   values?: BaseFilterValues;
   onChange?: (id: string, value: FilterFieldValue) => void;
@@ -85,15 +86,16 @@ const RenderComponent = ({
   item,
   values,
   onChange,
-  shouldBeSubmit
+  shouldBeSubmit,
+  id = ''
 }: {
   item: FilterItem;
   values?: BaseFilterValues;
   onChange?: (id: string, value: FilterFieldValue) => void;
   shouldBeSubmit?: boolean;
+  id?: string
 }) => {
-  const fieldId = item.id || item.label.replace(/\s+/g, '').toLowerCase();
-
+  const fieldId = `${id}${item.id || item.label.replace(/\s+/g, '').toLowerCase()}`;
   switch (item.type) {
     case COMPONENT_TYPE.textField: {
       const textItem = item as SearchField;
@@ -274,7 +276,8 @@ const FilterContainer = ({
   values,
   onChange,
   sx,
-  onSubmit
+  onSubmit,
+  id = ''
 }: FilterContainerProps) => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -294,6 +297,7 @@ const FilterContainer = ({
             sx={{ display: 'flex', alignItems: 'start', width: '100%' }}
           >
             <RenderComponent
+              id={id}
               item={item}
               values={values}
               onChange={onChange}

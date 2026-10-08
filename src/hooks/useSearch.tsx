@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { UseMutationResult } from '@tanstack/react-query';
 import utils from '../utils';
-import { useHashParamsListener } from './useHashParamsListener';
+import { decodeHash, useHashParamsListener } from './useHashParamsListener';
 import { trimStringValues } from '../utils/textUtils';
 
 export type SearchVariables<T> = {
@@ -25,12 +25,12 @@ export function useSearch<
   T extends Record<string, unknown>,
   TData = unknown,
   TError = unknown
->({ filters, query, id }: UseSearchProps<T, TData, TError> & { id?: string }) {
+>({ filters, query, id = '' }: UseSearchProps<T, TData, TError> & { id?: string }) {
   const {
     page: hashPage = 1,
     size = 10,
     sortDirection,
-    sortField
+    sortField,
   } = useHashParamsListener(id) as {
     page: number;
     size: number;
@@ -45,7 +45,11 @@ export function useSearch<
 
   useEffect(() => {
     query.mutateAsync({
-      filters,
+      filters: Object.fromEntries(
+        Object.entries(filters)
+        .filter(([key]) => key.startsWith(id))
+        .map(([key, value]) => [key.replace(id, ''), value]) 
+      ) as T,
       pagination: { size, page },
       sort
     });
@@ -54,16 +58,21 @@ export function useSearch<
   // Handle filter application: resetting pagination and sort model
   const applyFilters = (appliedFilters: T) => {
     const trimmedFilters = trimStringValues(appliedFilters);
-
+    const result = decodeHash() as T;
     const params = utils.URI.encode({
       ...trimmedFilters,
-      page: null,
-      size: null,
-      sort: null
+      ...result,
+      [`${id}page`]: null,
+      [`${id}size`]: null,
+      [`${id}sort`]: null,
     });
     utils.URI.set(params, { replace: true });
     query.mutateAsync({
-      filters: trimmedFilters,
+      filters: Object.fromEntries(
+        Object.entries(trimmedFilters)
+        .filter(([key]) => key.startsWith(id))
+        .map(([key, value]) => [key.replace(id, ''), value]) 
+      ) as T,
       pagination: { size: 10, page: 0 },
       sort: []
     });

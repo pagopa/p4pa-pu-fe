@@ -29,6 +29,9 @@ import { useStore } from '../../store/GlobalStore';
 import { getOperatorOrgSubUnits, deleteOrgSubUnitFromOperator } from '@core/api/orgSubUnit';
 import SubUnitDataGrid from './components/SubUnitDataGrid';
 
+const OPERATORS_ID = 'operators';
+const SUB_UNITS_ID = 'subUnits';
+
 export const OperatorDetail = () => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -56,8 +59,8 @@ export const OperatorDetail = () => {
   });
 
   const [filters, setFilters] = useState(initialFilters);
-  const [filtersSubUnit, setFiltersSubUnit] = useState(initialFilters);
-
+  console.log('filters:', filters);
+  
   const query = useOperatorDetailSearch(
     organizationId,
     mappedExternalUserId as string
@@ -68,17 +71,17 @@ export const OperatorDetail = () => {
   const querySubUnit = getOperatorOrgSubUnits(organizationId, mappedExternalUserId as string);
 
   const {
-    query: { data: dataSubUnit },
+    query: { isError: isErrorSubUnit, error: errorSubUnit, data: dataSubUnit },
     applyFilters: applyFiltersSubUnit
-  } = useSearch({ query: querySubUnit, filters: filtersSubUnit, id: 'subUnits' });
+  } = useSearch({ query: querySubUnit, filters, id: SUB_UNITS_ID });
 
   const {
     query: { isError, error, data },
     applyFilters
-  } = useSearch({ query, filters, id: 'operators' });
+  } = useSearch({ query, filters, id: OPERATORS_ID });
 
-  if (isError) {
-    console.error('Error loading operator details:', error);
+  if (isError || isErrorSubUnit) {
+    console.error('Error loading data', error, errorSubUnit);
     navigate(PageRoutes.RESPONSES_ERROR);
   }
 
@@ -204,7 +207,7 @@ export const OperatorDetail = () => {
       onConfirm: async () => {
         try {
           await deleteSubUnitMutation.mutateAsync(row.subUnitCode);
-          applyFiltersSubUnit(filtersSubUnit);
+          applyFiltersSubUnit(filters);
         } catch (error) {
           console.error(error);
           utils.notify.emit(t('errors.generic'));
@@ -223,13 +226,6 @@ export const OperatorDetail = () => {
     setFilters((prevFilters) => ({
       ...prevFilters,
       [id]: value
-    }));
-  };
-
-  const handleFilterChangeSubUnit = (id: string, value: FilterFieldValue) => {
-    setFiltersSubUnit((prevFilters) => ({
-      ...prevFilters,
-      [id]: value,
     }));
   };
 
@@ -297,6 +293,7 @@ export const OperatorDetail = () => {
             values={filters}
             items={filterItems}
             onSubmit={() => applyFilters(filters)}
+            id={OPERATORS_ID}
           />
         </Grid>
         <Grid
@@ -346,10 +343,11 @@ export const OperatorDetail = () => {
           }}
         >
           <FilterContainer
-            onChange={handleFilterChangeSubUnit}
-            values={filtersSubUnit}
+            onChange={handleFilterChange}
+            values={filters}
             items={filterItemsSubUnit}
-            onSubmit={() => applyFiltersSubUnit(filtersSubUnit)}
+            onSubmit={() => applyFiltersSubUnit(filters)}
+            id={SUB_UNITS_ID}
           />
         </Grid>
         <Grid
