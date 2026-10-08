@@ -8,6 +8,7 @@ import {
 import {
   FormControl,
   FormControlLabel,
+  FormControlLabelProps,
   FormHelperText,
   FormLabel,
   Radio,
@@ -29,6 +30,7 @@ export type _ControlledRadioGroupProps<T extends FieldValues> =
     options: Array<RadioOption<T>>;
     disabled?: boolean;
     required?: boolean;
+    formControlLabelProps?: Partial<FormControlLabelProps>;
   };
 
 export const _ControlledRadioGroup = <T extends FieldValues>({
@@ -38,6 +40,7 @@ export const _ControlledRadioGroup = <T extends FieldValues>({
   options,
   disabled,
   required,
+  formControlLabelProps,
   ...props
 }: _ControlledRadioGroupProps<T>) => {
   return (
@@ -51,6 +54,7 @@ export const _ControlledRadioGroup = <T extends FieldValues>({
           component="fieldset"
           error={!!fieldState.error}
           disabled={disabled}
+          sx={{ width: '100%' }}
         >
           <FormLabel
             component="legend"
@@ -66,6 +70,7 @@ export const _ControlledRadioGroup = <T extends FieldValues>({
                 value={value}
                 control={<Radio />}
                 label={label}
+                {...formControlLabelProps}
               />
             ))}
           </RadioGroup>

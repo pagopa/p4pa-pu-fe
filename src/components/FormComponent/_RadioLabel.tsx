@@ -8,13 +8,7 @@ export const _RadioLabel = ({
   description?: string;
 }) => (
   <Stack my={2}>
-    <Typography fontSize="16px" fontWeight={600}>
-      {label}
-    </Typography>
-    {description && (
-      <Typography fontSize="14px" fontWeight={400}>
-        {description}
-      </Typography>
-    )}
+    <Typography fontWeight={600}>{label}</Typography>
+    {description && <Typography variant="caption">{description}</Typography>}
   </Stack>
 );

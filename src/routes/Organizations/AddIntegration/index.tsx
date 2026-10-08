@@ -55,11 +55,15 @@ export const AddIntegration = () => {
       <Typography variant="body1" color="error" sx={{ marginBottom: 2 }}>
         {t('commons.requiredFieldDescription')}
       </Typography>
-      <WizardStepWrapper>
+      <WizardStepWrapper p={2}>
         <Typography variant="h6" component="h2" mb={2}>
           {t('integrations.add.section')}
         </Typography>
         <FormComponent.ControlledRadioGroup
+          formControlLabelProps={{
+            labelPlacement: 'start',
+            sx: { width: '100%', mx: 0, justifyContent: 'space-between' }
+          }}
           name="flagIntegrationType"
           data-testid="flagNotifyOutcomePush"
           control={control}
