@@ -3,6 +3,7 @@ import { useSearch, SearchVariables } from './useSearch';
 import { UseMutationResult } from '@tanstack/react-query';
 
 vi.mock('./useHashParamsListener', () => ({
+  decodeHash: vi.fn(() => ({})),
   useHashParamsListener: vi.fn(() => ({
     page: 1,
     size: 10,
