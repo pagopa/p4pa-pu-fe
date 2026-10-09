@@ -77,7 +77,7 @@ export function useSearch<
       sort: []
     });
 
-    const resultsTable = document.getElementById('data-results-table');
+    const resultsTable = document.getElementById(`${id}data-results-table`);
     const resultsFocusable =
       resultsTable?.getElementsByClassName('MuiDataGrid-main');
     (resultsFocusable?.[0] as HTMLElement)?.focus();

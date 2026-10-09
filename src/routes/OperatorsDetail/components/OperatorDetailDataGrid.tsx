@@ -14,13 +14,15 @@ type OperatorDetailDataGridProps = {
   onDelete: (row: DebtPositionTypeOrgDTO) => void;
   operatorName: string;
   isSameOrg: boolean;
+  id: string;
 };
 
 const OperatorDetailDataGrid = ({
   data,
   onDelete: propsOnDelete,
   operatorName,
-  isSameOrg
+  isSameOrg,
+  id
 }: OperatorDetailDataGridProps) => {
   const { t } = useTranslation();
 
@@ -100,7 +102,7 @@ const OperatorDetailDataGrid = ({
       disableColumnMenu
       disableColumnResize
       totalPages={data?.totalPages || 1}
-      id="operators"
+      id={id}
     />
   );
 };

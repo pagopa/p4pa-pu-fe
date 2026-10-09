@@ -29,8 +29,8 @@ import { useStore } from '../../store/GlobalStore';
 import { getOperatorOrgSubUnits, deleteOrgSubUnitFromOperator } from '@core/api/orgSubUnit';
 import SubUnitDataGrid from './components/SubUnitDataGrid';
 
-const OPERATORS_ID = 'operators';
-const SUB_UNITS_ID = 'subUnits';
+const OPERATORS_ID = 'op';
+const SUB_UNITS_ID = 'sub';
 
 export const OperatorDetail = () => {
   const { t } = useTranslation();
@@ -59,8 +59,7 @@ export const OperatorDetail = () => {
   });
 
   const [filters, setFilters] = useState(initialFilters);
-  console.log('filters:', filters);
-  
+
   const query = useOperatorDetailSearch(
     organizationId,
     mappedExternalUserId as string
@@ -310,6 +309,7 @@ export const OperatorDetail = () => {
             operatorName={operatorName}
             onDelete={onDelete}
             isSameOrg={isSameOrg}
+            id={OPERATORS_ID}
           />
         </Grid>
       </Grid>
@@ -359,7 +359,7 @@ export const OperatorDetail = () => {
             overflow: 'auto'
           }}
         >
-          <SubUnitDataGrid data={dataSubUnit} onDelete={onDeleteSubUnit} />
+          <SubUnitDataGrid data={dataSubUnit} onDelete={onDeleteSubUnit} id={SUB_UNITS_ID} />
         </Grid>
       </Grid>
     </>

@@ -213,7 +213,7 @@ const CustomDataGrid = <T extends GridValidRowModel>({
         aria-label={t('commons.tableResults')}
         slotProps={{
           root: {
-            id: 'data-results-table',
+            id: `${id}data-results-table`,
             tabIndex: tabIndex
           }
         }}
