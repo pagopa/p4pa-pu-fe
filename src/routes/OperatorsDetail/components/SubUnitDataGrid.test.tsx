@@ -85,6 +85,7 @@ describe('SubUnitDataGrid', () => {
   it('renders the empty state when the response has no rows', () => {
     render(
       <SubUnitDataGrid
+        id=""
         data={
           {
             content: [],
@@ -107,6 +108,7 @@ describe('SubUnitDataGrid', () => {
   it('renders rows, translated headers, total pages, and row ids', () => {
     render(
       <SubUnitDataGrid
+        id=""
         data={{ content: [sampleRow], totalPages: 3 } as PagedOrgSubUnit}
         onDelete={mockOnDelete}
       />
@@ -137,6 +139,7 @@ describe('SubUnitDataGrid', () => {
   it('formats the creation date and renders the translated status chip', () => {
     render(
       <SubUnitDataGrid
+        id=""
         data={{ content: [sampleRow], totalPages: 1 } as PagedOrgSubUnit}
         onDelete={mockOnDelete}
       />
@@ -154,6 +157,7 @@ describe('SubUnitDataGrid', () => {
   it('calls onDelete with the selected row', () => {
     render(
       <SubUnitDataGrid
+        id=""
         data={{ content: [sampleRow], totalPages: 1 } as PagedOrgSubUnit}
         onDelete={mockOnDelete}
       />
@@ -165,7 +169,7 @@ describe('SubUnitDataGrid', () => {
   });
 
   it('uses an empty rows array when data is undefined', () => {
-    render(<SubUnitDataGrid onDelete={mockOnDelete} />);
+    render(<SubUnitDataGrid id="" onDelete={mockOnDelete} />);
 
     expect(screen.getByTestId('custom-data-grid')).toBeInTheDocument();
     expect(screen.getByTestId('total-pages')).toHaveTextContent('1');

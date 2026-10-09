@@ -107,6 +107,7 @@ describe('OperatorDetailDataGrid', () => {
   it('renders column headers correctly', () => {
     render(
       <OperatorDetailDataGrid
+        id=""
         isSameOrg={true}
         data={sampleData}
         onDelete={mockOnDelete}
@@ -129,6 +130,7 @@ describe('OperatorDetailDataGrid', () => {
   it('renders rows correctly', () => {
     render(
       <OperatorDetailDataGrid
+        id=""
         isSameOrg={true}
         data={sampleData}
         onDelete={mockOnDelete}
@@ -162,6 +164,7 @@ describe('OperatorDetailDataGrid', () => {
   it('renders EmptyDetailContainer with correct description when no data', () => {
     render(
       <OperatorDetailDataGrid
+        id=""
         data={{
           content: [],
           totalPages: 0,
@@ -183,6 +186,7 @@ describe('OperatorDetailDataGrid', () => {
   it('renders EmptyDetailContainer when data is undefined', () => {
     render(
       <OperatorDetailDataGrid
+        id=""
         onDelete={mockOnDelete}
         operatorName={operatorName}
         isSameOrg={true}
@@ -196,6 +200,7 @@ describe('OperatorDetailDataGrid', () => {
   it('opens delete dialog when delete button is clicked', () => {
     render(
       <OperatorDetailDataGrid
+        id=""
         data={sampleData}
         onDelete={mockOnDelete}
         operatorName={operatorName}
@@ -220,6 +225,7 @@ describe('OperatorDetailDataGrid', () => {
   it('calls onDelete and closes dialog when delete is confirmed', () => {
     render(
       <OperatorDetailDataGrid
+        id=""
         data={sampleData}
         onDelete={mockOnDelete}
         operatorName={operatorName}
@@ -244,6 +250,7 @@ describe('OperatorDetailDataGrid', () => {
   it('closes dialog when delete is cancelled', () => {
     render(
       <OperatorDetailDataGrid
+        id=""
         data={sampleData}
         onDelete={mockOnDelete}
         operatorName={operatorName}
@@ -268,6 +275,7 @@ describe('OperatorDetailDataGrid', () => {
   it('uses correct getRowId for rows', () => {
     render(
       <OperatorDetailDataGrid
+        id=""
         data={sampleData}
         onDelete={mockOnDelete}
         operatorName={operatorName}
@@ -296,6 +304,7 @@ describe('OperatorDetailDataGrid', () => {
 
     render(
       <OperatorDetailDataGrid
+        id=""
         data={dataWithoutId}
         onDelete={mockOnDelete}
         operatorName={operatorName}
