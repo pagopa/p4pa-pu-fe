@@ -60,8 +60,8 @@ export function useSearch<
     const trimmedFilters = trimStringValues(appliedFilters);
     const result = decodeHash() as T;
     const params = utils.URI.encode({
-      ...trimmedFilters,
       ...result,
+      ...trimmedFilters,
       [`${id}page`]: null,
       [`${id}size`]: null,
       [`${id}sort`]: null,
