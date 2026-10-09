@@ -5,14 +5,15 @@ import {
   Box,
   Button,
   Chip,
-  Grid,
   Paper,
   Stack,
   Tab,
   Tabs,
-  Typography
+  Tooltip,
+  Typography,
+  TypographyProps
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 
@@ -27,72 +28,226 @@ import EmptyDataGrid from '../../components/EmptyDataGrid/EmptyDataGrid';
 import { SECRET_MASK } from '../../components/ShowSecretValue';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { setCustomBreadcrumbsItems } from '../../store/AppStateStore';
-import { OrganizationApiKeyType } from '../../../generated/core/data-contracts';
+import {
+  OrganizationApiKey,
+  PdndClientNoSecretDTO,
+  PdndServiceView
+} from '../../../generated/core/data-contracts';
 import { SubUnitIntegrations } from './SubUnitIntegrations';
+import { ApiKeyDialog } from './dialogs/ApiKeyDialog';
 
-type Field = {
+const I18N_PREFIX = { keyPrefix: 'organizations.integrations' };
+
+const Field = ({
+  label,
+  width,
+  variant = 'body2',
+  children
+}: {
   label: string;
-  value: React.ReactNode;
-  gridWidth: number;
-  mono?: boolean;
-};
-type Item = { key: string; name: string; fields: Array<Field> };
+  width?: string;
+  variant?: TypographyProps['variant'];
+  children: ReactNode;
+}) => (
+  <Stack sx={{ flex: width ? `0 0 ${width}` : '0 1 auto', minWidth: 0 }}>
+    <Typography component="dt" variant="caption" color="text.secondary">
+      {label}
+    </Typography>
+    <Tooltip
+      title={typeof children == 'string' ? children : ''}
+      placement="top-start"
+    >
+      <Typography
+        component="dd"
+        variant={variant}
+        fontWeight={variant === 'body2' ? 600 : undefined}
+        noWrap
+        sx={{ m: 0 }}
+      >
+        {children}
+      </Typography>
+    </Tooltip>
+  </Stack>
+);
 
-const IntegrationCard = ({
+const Row = ({
   name,
-  fields
+  onShow,
+  children
 }: {
   name: string;
-  fields: Array<Field>;
+  onShow: () => void;
+  children: ReactNode;
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(undefined, I18N_PREFIX);
   return (
-    <Paper
-      elevation={0}
-      sx={{ px: 3.75, py: 3, display: 'flex', alignItems: 'center', gap: 2 }}
-    >
-      <Grid container spacing={2} alignItems="center">
-        {fields.map(({ label, value, gridWidth, mono }) => (
-          <Grid item xs={gridWidth} key={label} minWidth={0}>
-            <Typography variant="caption" color="text.secondary">
-              {label}
-            </Typography>
-            <Typography
-              variant="body2"
-              component="div"
-              fontWeight={mono ? 400 : 600}
-              fontFamily={mono ? 'monospace' : undefined}
-              noWrap
-              // full value on hover when truncated with ellipsis
-              title={typeof value === 'string' ? value : undefined}
-            >
-              {value}
-            </Typography>
-          </Grid>
-        ))}
-      </Grid>
-      <Button
-        variant="text"
-        endIcon={<ArrowForwardIcon />}
-        aria-label={t('organizations.integrations.showItem', { name })}
-      >
-        {t('organizations.integrations.show')}
-      </Button>
+    <Paper elevation={0} sx={{ p: 3 }}>
+      <Stack direction="row" alignItems="center" gap={10}>
+        <Stack
+          component="dl"
+          direction="row"
+          justifyContent="space-between"
+          gap={2}
+          sx={{ flex: 1, minWidth: 0, m: 0 }}
+        >
+          {children}
+        </Stack>
+        <Button
+          variant="text"
+          endIcon={<ArrowForwardIcon />}
+          aria-label={t('showItem', { name })}
+          onClick={onShow}
+        >
+          {t('show')}
+        </Button>
+      </Stack>
     </Paper>
   );
 };
 
-const Section = ({ title, items }: { title: string; items: Array<Item> }) =>
-  items.length > 0 && (
-    <Stack gap={2} component="section">
-      <Typography variant="h5" component="h2">
+const Section = ({
+  title,
+  children
+}: {
+  title: string;
+  children: ReactNode;
+}) => {
+  const headingId = useId();
+  return (
+    <Stack component="section" aria-labelledby={headingId} gap={2}>
+      <Typography id={headingId} variant="h5" component="h2">
         {title}
       </Typography>
-      {items.map(({ key, name, fields }) => (
-        <IntegrationCard key={key} name={name} fields={fields} />
-      ))}
+      {children}
     </Stack>
   );
+};
+
+export const ApiKeysSection = ({
+  apiKeys
+}: {
+  apiKeys: Array<OrganizationApiKey>;
+}) => {
+  const { t } = useTranslation(undefined, I18N_PREFIX);
+  const [selected, setSelected] = useState<OrganizationApiKey>();
+  if (apiKeys.length === 0) return null;
+
+  return (
+    <Section title={t('pagoPaProducts')}>
+      {apiKeys.map((apiKey) => {
+        const name = t(`keyTypes.${apiKey.keyType}`);
+        return (
+          <Row
+            key={apiKey.keyType}
+            name={name}
+            onShow={() => setSelected(apiKey)}
+          >
+            <Field label={t('name')} width={'50%'}>
+              {name}
+            </Field>
+            {apiKey.flagActive !== undefined && (
+              <Field label={t('ioNotifications')}>
+                <Chip
+                  size="small"
+                  color={apiKey.flagActive ? 'primary' : 'default'}
+                  sx={{ '& .MuiChip-label': { fontWeight: 600 } }}
+                  label={t(apiKey.flagActive ? 'active' : 'inactive')}
+                />
+              </Field>
+            )}
+            <Field label={t('apiKey')}>
+              <span role="img" aria-label={t('hiddenApiKey')}>
+                {SECRET_MASK}
+              </span>
+            </Field>
+          </Row>
+        );
+      })}
+      {selected && (
+        <ApiKeyDialog
+          open
+          apiKey={selected}
+          onClose={() => setSelected(undefined)}
+        />
+      )}
+    </Section>
+  );
+};
+
+export const ServicesSection = ({
+  services
+}: {
+  services: Array<PdndServiceView>;
+}) => {
+  const { t } = useTranslation(undefined, I18N_PREFIX);
+  const [selected, setSelected] = useState<PdndServiceView>();
+  if (services.length === 0) return null;
+
+  return (
+    <Section title={t('pdndServices')}>
+      {services.map((service) => (
+        <Row
+          key={`${service.serviceType}-${service.purposeId}`}
+          name={service.serviceName}
+          onShow={() => setSelected(service)}
+        >
+          <Field label={t('name')} width={'25%'}>
+            {service.serviceName}
+          </Field>
+          <Field label={t('purposeId')} variant="monospaced">
+            {service.purposeId || '-'}
+          </Field>
+          <Field label={t('clientId')} variant="monospaced">
+            {service.clientId}
+          </Field>
+        </Row>
+      ))}
+      {/* {selected && ( */}
+      {/*   <PdndSendServiceDialog */}
+      {/*     open */}
+      {/*     service={selected} */}
+      {/*     onClose={() => setSelected(undefined)} */}
+      {/*   /> */}
+      {/* )} */}
+    </Section>
+  );
+};
+
+export const ClientsSection = ({
+  clients
+}: {
+  clients: Array<PdndClientNoSecretDTO>;
+}) => {
+  const { t } = useTranslation(undefined, I18N_PREFIX);
+  const [selected, setSelected] = useState<PdndClientNoSecretDTO>();
+  if (clients.length === 0) return null;
+
+  return (
+    <Section title={t('pdndClients')}>
+      {clients.map((client) => (
+        <Row
+          key={client.clientId}
+          name={client.clientName}
+          onShow={() => setSelected(client)}
+        >
+          <Field label={t('name')} width={'25%'}>
+            {client.clientName}
+          </Field>
+          <Field label={t('clientId')} variant="monospaced">
+            {client.clientId}
+          </Field>
+        </Row>
+      ))}
+      {/* {selected && ( */}
+      {/*   <PdndClientDialog */}
+      {/*     open */}
+      {/*     client={selected} */}
+      {/*     onClose={() => setSelected(undefined)} */}
+      {/*   /> */}
+      {/* )} */}
+    </Section>
+  );
+};
 
 export const OrganizationIntegrations = () => {
   const { t } = useTranslation();
@@ -105,96 +260,27 @@ export const OrganizationIntegrations = () => {
   const { data: apiKeys = [] } = getOrganizationApiKeys(organizationId);
   const { data: services = [] } = getPdndServices(organizationId);
   const { data: clients = [] } = getPdndClients(organizationId);
+  const isEmpty = apiKeys.length + services.length + clients.length === 0;
+
+  const orgName = organization?.orgName;
 
   useEffect(() => {
-    if (!organization) return;
+    if (!orgName) return;
     setCustomBreadcrumbsItems([
       { pathname: PageRoutes.ORGANIZATIONS_INDEX, id: 'ORGANIZATIONS' },
       {
         pathname: generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
           organizationId
         }),
-        label: organization.orgName,
+        label: orgName,
         id: 'ORGANIZATIONS_DETAIL'
       },
       { pathname: '', id: 'ORGANIZATIONS_INTEGRATIONS' }
     ]);
-  }, [organization, organizationId]);
+  }, [orgName, organizationId]);
 
-  const nameLabel = t('organizations.integrations.name');
-  const clientIdLabel = t('organizations.integrations.clientId');
-
-  const productItems: Array<Item> = apiKeys.map(({ keyType }) => {
-    const name = t(`organizations.integrations.keyTypes.${keyType}`);
-    const isIO = keyType === OrganizationApiKeyType.IO;
-    return {
-      key: keyType,
-      name,
-      fields: [
-        // without the IO notifications column the name takes its space
-        { label: nameLabel, value: name, gridWidth: isIO ? 5 : 8 },
-        ...(isIO
-          ? [
-              {
-                label: t('organizations.integrations.ioNotifications'),
-                gridWidth: 3,
-                value: (
-                  <Chip
-                    size="small"
-                    color={organization?.flagNotifyIo ? 'primary' : 'default'}
-                    sx={{ '& .MuiChip-label': { fontWeight: 600 } }}
-                    label={
-                      organization?.flagNotifyIo
-                        ? t('organizations.integrations.active')
-                        : t('organizations.integrations.inactive')
-                    }
-                  />
-                )
-              }
-            ]
-          : []),
-        {
-          label: t('organizations.integrations.apiKey'),
-          gridWidth: 4,
-          value: (
-            <span
-              role="img"
-              aria-label={t('organizations.integrations.hiddenApiKey')}
-            >
-              {SECRET_MASK}
-            </span>
-          )
-        }
-      ]
-    };
-  });
-
-  const serviceItems: Array<Item> = services.map((s) => ({
-    key: `${s.serviceType}-${s.purposeId}`,
-    name: s.serviceName,
-    fields: [
-      { label: nameLabel, value: s.serviceName, gridWidth: 3 },
-      {
-        label: t('organizations.integrations.purposeId'),
-        value: s.purposeId || '-',
-        gridWidth: 4,
-        mono: true
-      },
-      { label: clientIdLabel, value: s.clientId, gridWidth: 5, mono: true }
-    ]
-  }));
-
-  const clientItems: Array<Item> = clients.map((c) => ({
-    key: c.clientId,
-    name: c.clientName,
-    fields: [
-      { label: nameLabel, value: c.clientName, gridWidth: 7 },
-      { label: clientIdLabel, value: c.clientId, gridWidth: 5, mono: true }
-    ]
-  }));
-
-  const isEmpty =
-    productItems.length + serviceItems.length + clientItems.length === 0;
+  // not wired yet
+  const addIntegration = () => undefined;
 
   const addIntegrationAction = () => {
     navigate(generatePath(PageRoutes.ADD_INTEGRATION, { organizationId }));
@@ -224,7 +310,7 @@ export const OrganizationIntegrations = () => {
           sx={{ borderBottom: 1, borderColor: 'divider' }}
         >
           <Tab
-            label={organization?.orgName ?? ''}
+            label={orgName ?? ''}
             id="integrations-tab-0"
             aria-controls="integrations-tabpanel-0"
           />
@@ -245,27 +331,17 @@ export const OrganizationIntegrations = () => {
               icon={<TuneIcon color="primary" fontSize="large" />}
               title={t('organizations.integrations.emptyTitle')}
               description={t('organizations.integrations.emptyDescription')}
-              // not wired yet
               action={{
                 label: t('organizations.integrations.add'),
-                onClick: () => undefined
+                onClick: addIntegration
               }}
             />
           )}
           {tab === 0 && !isEmpty && (
             <Stack gap={5}>
-              <Section
-                title={t('organizations.integrations.pagoPaProducts')}
-                items={productItems}
-              />
-              <Section
-                title={t('organizations.integrations.pdndServices')}
-                items={serviceItems}
-              />
-              <Section
-                title={t('organizations.integrations.pdndClients')}
-                items={clientItems}
-              />
+              <ApiKeysSection apiKeys={apiKeys} />
+              <ServicesSection services={services} />
+              <ClientsSection clients={clients} />
             </Stack>
           )}
           {tab === 1 && <SubUnitIntegrations />}
