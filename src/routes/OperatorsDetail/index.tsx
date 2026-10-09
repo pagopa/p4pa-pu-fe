@@ -26,8 +26,14 @@ import {
 } from '../../../generated/core/data-contracts';
 import { removeDebtPositionTypeOrgFromOperator } from '../../api/debtPositionTypeOrgOperators';
 import { useStore } from '../../store/GlobalStore';
-import { getOperatorOrgSubUnits, deleteOrgSubUnitFromOperator } from '@core/api/orgSubUnit';
+import {
+  getOperatorOrgSubUnits,
+  deleteOrgSubUnitFromOperator
+} from '@core/api/orgSubUnit';
 import SubUnitDataGrid from './components/SubUnitDataGrid';
+
+const OPERATORS_ID = 'op';
+const SUB_UNITS_ID = 'sub';
 
 export const OperatorDetail = () => {
   const { t } = useTranslation();
@@ -43,7 +49,10 @@ export const OperatorDetail = () => {
   const organizationId = Number(paramOrganizationId);
 
   const deleteMutation = removeDebtPositionTypeOrgFromOperator();
-  const deleteSubUnitMutation = deleteOrgSubUnitFromOperator(organizationId, mappedExternalUserId as string);
+  const deleteSubUnitMutation = deleteOrgSubUnitFromOperator(
+    organizationId,
+    mappedExternalUserId as string
+  );
 
   const {
     state: { organizationId: organizationIdStored }
@@ -56,7 +65,6 @@ export const OperatorDetail = () => {
   });
 
   const [filters, setFilters] = useState(initialFilters);
-  const [filtersSubUnit, setFiltersSubUnit] = useState(initialFilters);
 
   const query = useOperatorDetailSearch(
     organizationId,
@@ -65,20 +73,23 @@ export const OperatorDetail = () => {
 
   useBreadcrumbs(query);
 
-  const querySubUnit = getOperatorOrgSubUnits(organizationId, mappedExternalUserId as string);
+  const querySubUnit = getOperatorOrgSubUnits(
+    organizationId,
+    mappedExternalUserId as string
+  );
 
   const {
-    query: { data: dataSubUnit },
+    query: { isError: isErrorSubUnit, error: errorSubUnit, data: dataSubUnit },
     applyFilters: applyFiltersSubUnit
-  } = useSearch({ query: querySubUnit, filters: filtersSubUnit });
+  } = useSearch({ query: querySubUnit, filters, id: SUB_UNITS_ID });
 
   const {
     query: { isError, error, data },
     applyFilters
-  } = useSearch({ query, filters });
+  } = useSearch({ query, filters, id: OPERATORS_ID });
 
-  if (isError) {
-    console.error('Error loading operator details:', error);
+  if (isError || isErrorSubUnit) {
+    console.error('Error loading data', error, errorSubUnit);
     navigate(PageRoutes.RESPONSES_ERROR);
   }
 
@@ -164,7 +175,10 @@ export const OperatorDetail = () => {
       type: COMPONENT_TYPE.select,
       label: t('OperatorDetail.subUnitFilters.subUnitType'),
       gridWidth: 4,
-      options: [{ label: SubUnitType.AOO, value: SubUnitType.AOO }, { label: SubUnitType.UO, value: SubUnitType.UO }]
+      options: [
+        { label: SubUnitType.AOO, value: SubUnitType.AOO },
+        { label: SubUnitType.UO, value: SubUnitType.UO }
+      ]
     },
     {
       type: COMPONENT_TYPE.button,
@@ -204,7 +218,7 @@ export const OperatorDetail = () => {
       onConfirm: async () => {
         try {
           await deleteSubUnitMutation.mutateAsync(row.subUnitCode);
-          applyFiltersSubUnit(filtersSubUnit);
+          applyFiltersSubUnit(filters);
         } catch (error) {
           console.error(error);
           utils.notify.emit(t('errors.generic'));
@@ -223,13 +237,6 @@ export const OperatorDetail = () => {
     setFilters((prevFilters) => ({
       ...prevFilters,
       [id]: value
-    }));
-  };
-
-  const handleFilterChangeSubUnit = (id: string, value: FilterFieldValue) => {
-    setFiltersSubUnit((prevFilters) => ({
-      ...prevFilters,
-      [id]: value,
     }));
   };
 
@@ -297,6 +304,7 @@ export const OperatorDetail = () => {
             values={filters}
             items={filterItems}
             onSubmit={() => applyFilters(filters)}
+            id={OPERATORS_ID}
           />
         </Grid>
         <Grid
@@ -313,6 +321,7 @@ export const OperatorDetail = () => {
             operatorName={operatorName}
             onDelete={onDelete}
             isSameOrg={isSameOrg}
+            id={OPERATORS_ID}
           />
         </Grid>
       </Grid>
@@ -328,11 +337,7 @@ export const OperatorDetail = () => {
           }}
         >
           <Typography variant="h6">{t('OperatorDetail.subUnit')}</Typography>
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<Add />}
-          >
+          <Button variant="outlined" color="primary" startIcon={<Add />}>
             {t('OperatorDetail.affiliateSubUnit')}
           </Button>
         </Box>
@@ -346,10 +351,11 @@ export const OperatorDetail = () => {
           }}
         >
           <FilterContainer
-            onChange={handleFilterChangeSubUnit}
-            values={filtersSubUnit}
+            onChange={handleFilterChange}
+            values={filters}
             items={filterItemsSubUnit}
-            onSubmit={() => applyFiltersSubUnit(filtersSubUnit)}
+            onSubmit={() => applyFiltersSubUnit(filters)}
+            id={SUB_UNITS_ID}
           />
         </Grid>
         <Grid
@@ -361,7 +367,11 @@ export const OperatorDetail = () => {
             overflow: 'auto'
           }}
         >
-          <SubUnitDataGrid data={dataSubUnit} onDelete={onDeleteSubUnit} />
+          <SubUnitDataGrid
+            data={dataSubUnit}
+            onDelete={onDeleteSubUnit}
+            id={SUB_UNITS_ID}
+          />
         </Grid>
       </Grid>
     </>

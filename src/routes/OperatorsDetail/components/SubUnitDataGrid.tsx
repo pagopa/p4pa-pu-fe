@@ -10,9 +10,14 @@ import { Button, Chip } from '@mui/material';
 type PagedOrgSubUnitDataGridProps = {
   data?: PagedOrgSubUnit;
   onDelete: (row: OrgSubUnit) => void;
+  id: string;
 };
 
-const SubUnitDataGrid = ({ data, onDelete }: PagedOrgSubUnitDataGridProps) => {
+const SubUnitDataGrid = ({
+  data,
+  onDelete,
+  id
+}: PagedOrgSubUnitDataGridProps) => {
   const { t } = useTranslation();
 
   const columns: Array<GridColDef<OrgSubUnit>> = [
@@ -90,6 +95,7 @@ const SubUnitDataGrid = ({ data, onDelete }: PagedOrgSubUnitDataGridProps) => {
       disableColumnMenu
       disableColumnResize
       totalPages={data?.totalPages || 1}
+      id={id}
     />
   );
 };
