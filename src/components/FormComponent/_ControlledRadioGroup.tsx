@@ -8,6 +8,7 @@ import {
 import {
   FormControl,
   FormControlLabel,
+  FormControlLabelProps,
   FormHelperText,
   FormLabel,
   Radio,
@@ -18,7 +19,7 @@ import { ErrorMessage } from './ErrorMessage';
 
 export type RadioOption<T extends FieldValues> = {
   value: PathValue<T, Path<T>>;
-  label: string;
+  label: string | React.ReactNode;
 };
 
 export type _ControlledRadioGroupProps<T extends FieldValues> =
@@ -29,6 +30,8 @@ export type _ControlledRadioGroupProps<T extends FieldValues> =
     options: Array<RadioOption<T>>;
     disabled?: boolean;
     required?: boolean;
+    divider?: React.ReactNode;
+    formControlLabelProps?: Partial<FormControlLabelProps>;
   };
 
 export const _ControlledRadioGroup = <T extends FieldValues>({
@@ -38,6 +41,7 @@ export const _ControlledRadioGroup = <T extends FieldValues>({
   options,
   disabled,
   required,
+  formControlLabelProps,
   ...props
 }: _ControlledRadioGroupProps<T>) => {
   return (
@@ -51,6 +55,7 @@ export const _ControlledRadioGroup = <T extends FieldValues>({
           component="fieldset"
           error={!!fieldState.error}
           disabled={disabled}
+          sx={{ width: '100%' }}
         >
           <FormLabel
             component="legend"
@@ -60,13 +65,17 @@ export const _ControlledRadioGroup = <T extends FieldValues>({
             {label}
           </FormLabel>
           <RadioGroup {...field} {...props} aria-labelledby={`${name}-label`}>
-            {options.map(({ value, label }) => (
-              <FormControlLabel
-                key={value}
-                value={value}
-                control={<Radio />}
-                label={label}
-              />
+            {options.map(({ value, label }, index) => (
+              <>
+                {props.divider && index > 0 ? props.divider : null}
+                <FormControlLabel
+                  key={value}
+                  value={value}
+                  control={<Radio />}
+                  label={label}
+                  {...formControlLabelProps}
+                />
+              </>
             ))}
           </RadioGroup>
 

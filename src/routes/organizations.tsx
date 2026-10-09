@@ -9,6 +9,7 @@ import Organizations from './Organizations/Organizations';
 import { SubUnitsList } from './SubUnitsList';
 import { SubUnitDetail } from './SubUnitDetail';
 import { SubUnitCreate } from './SubUnitCreate';
+import { AddIntegration } from './Organizations/AddIntegration';
 
 export const organizationsRoutes = [
   {
@@ -57,6 +58,23 @@ export const organizationsRoutes = [
           backButton: false,
           hideBreadcrumbs: false,
           custom: true
+        }
+      },
+      {
+        id: 'ADD_INTEGRATION',
+        element: (
+          <AdminRouteGuard>
+            <AddIntegration />
+          </AdminRouteGuard>
+        ),
+        path: `:organizationId/integrations/add`,
+        handle: {
+          backButton: true,
+          backButtonText: 'commons.exit',
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
         }
       },
       {

@@ -2416,6 +2416,24 @@
       }
     }
   },
+  "integrations": {
+    "add": {
+      "title": "Crea una nuova integrazione",
+      "subtitle": "Dopo la creazione, potrai sempre modificare o eliminare l’integrazione.",
+      "section": "Seleziona il tipo di integrazione",
+      "pagoPaProduct": {
+        "label": "Prodotto PagoPA",
+        "description": "IO, Stampa avvisi"
+      },
+      "eService": {
+        "label": "E-service PDND",
+        "description": "SEND"
+      },
+      "pdndClient": {
+        "label": "Client PDND"
+      }
+    }
+  },
   "organizations": {
     "detail": "Dettaglio dell'ente: {{orgName}}",
     "name": "Nome o ragione sociale",
