@@ -93,7 +93,7 @@ const RenderComponent = ({
   values?: BaseFilterValues;
   onChange?: (id: string, value: FilterFieldValue) => void;
   shouldBeSubmit?: boolean;
-  id?: string
+  id?: string;
 }) => {
   const fieldId = `${id}${item.id || item.label.replace(/\s+/g, '').toLowerCase()}`;
   switch (item.type) {

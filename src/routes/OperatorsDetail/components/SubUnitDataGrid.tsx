@@ -13,7 +13,11 @@ type PagedOrgSubUnitDataGridProps = {
   id: string;
 };
 
-const SubUnitDataGrid = ({ data, onDelete, id }: PagedOrgSubUnitDataGridProps) => {
+const SubUnitDataGrid = ({
+  data,
+  onDelete,
+  id
+}: PagedOrgSubUnitDataGridProps) => {
   const { t } = useTranslation();
 
   const columns: Array<GridColDef<OrgSubUnit>> = [

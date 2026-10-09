@@ -1,11 +1,4 @@
-import {
-  Box,
-  Grid,
-  Stack,
-  Switch,
-  TextField,
-  Typography
-} from '@mui/material';
+import { Box, Grid, Stack, Switch, TextField, Typography } from '@mui/material';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { Controller, Control, FieldErrors } from 'react-hook-form';
 import { theme } from '@pagopa/mui-italia';

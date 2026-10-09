@@ -26,7 +26,10 @@ import {
 } from '../../../generated/core/data-contracts';
 import { removeDebtPositionTypeOrgFromOperator } from '../../api/debtPositionTypeOrgOperators';
 import { useStore } from '../../store/GlobalStore';
-import { getOperatorOrgSubUnits, deleteOrgSubUnitFromOperator } from '@core/api/orgSubUnit';
+import {
+  getOperatorOrgSubUnits,
+  deleteOrgSubUnitFromOperator
+} from '@core/api/orgSubUnit';
 import SubUnitDataGrid from './components/SubUnitDataGrid';
 
 const OPERATORS_ID = 'op';
@@ -46,7 +49,10 @@ export const OperatorDetail = () => {
   const organizationId = Number(paramOrganizationId);
 
   const deleteMutation = removeDebtPositionTypeOrgFromOperator();
-  const deleteSubUnitMutation = deleteOrgSubUnitFromOperator(organizationId, mappedExternalUserId as string);
+  const deleteSubUnitMutation = deleteOrgSubUnitFromOperator(
+    organizationId,
+    mappedExternalUserId as string
+  );
 
   const {
     state: { organizationId: organizationIdStored }
@@ -67,7 +73,10 @@ export const OperatorDetail = () => {
 
   useBreadcrumbs(query);
 
-  const querySubUnit = getOperatorOrgSubUnits(organizationId, mappedExternalUserId as string);
+  const querySubUnit = getOperatorOrgSubUnits(
+    organizationId,
+    mappedExternalUserId as string
+  );
 
   const {
     query: { isError: isErrorSubUnit, error: errorSubUnit, data: dataSubUnit },
@@ -166,7 +175,10 @@ export const OperatorDetail = () => {
       type: COMPONENT_TYPE.select,
       label: t('OperatorDetail.subUnitFilters.subUnitType'),
       gridWidth: 4,
-      options: [{ label: SubUnitType.AOO, value: SubUnitType.AOO }, { label: SubUnitType.UO, value: SubUnitType.UO }]
+      options: [
+        { label: SubUnitType.AOO, value: SubUnitType.AOO },
+        { label: SubUnitType.UO, value: SubUnitType.UO }
+      ]
     },
     {
       type: COMPONENT_TYPE.button,
@@ -325,11 +337,7 @@ export const OperatorDetail = () => {
           }}
         >
           <Typography variant="h6">{t('OperatorDetail.subUnit')}</Typography>
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<Add />}
-          >
+          <Button variant="outlined" color="primary" startIcon={<Add />}>
             {t('OperatorDetail.affiliateSubUnit')}
           </Button>
         </Box>
@@ -359,7 +367,11 @@ export const OperatorDetail = () => {
             overflow: 'auto'
           }}
         >
-          <SubUnitDataGrid data={dataSubUnit} onDelete={onDeleteSubUnit} id={SUB_UNITS_ID} />
+          <SubUnitDataGrid
+            data={dataSubUnit}
+            onDelete={onDeleteSubUnit}
+            id={SUB_UNITS_ID}
+          />
         </Grid>
       </Grid>
     </>

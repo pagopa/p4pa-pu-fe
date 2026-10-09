@@ -97,7 +97,7 @@ const CustomDataGrid = <T extends GridValidRowModel>({
       );
     }
   }, [totalPages]);
-  
+
   const getSizeFromHash = () => {
     const size = hashSize ? Number(hashSize) : initialPageSize;
     return isNaN(size) || size < 1 ? initialPageSize : size;

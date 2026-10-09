@@ -11,21 +11,25 @@ export function decodeHash<T>(id?: string): T {
       return decodedHash as T;
     } else {
       return Object.fromEntries(
-        Object.entries(decodedHash)
-        .map(([key, value]) => [key.replace(id, ''), value]) 
+        Object.entries(decodedHash).map(([key, value]) => [
+          key.replace(id, ''),
+          value
+        ])
       ) as T;
     }
   } catch {
     return {} as T; // Return empty object in case of parse errors
   }
-};
+}
 
 /**
  * Hook that listens to window hash changes and returns the decoded hash parameters as an object.
  */
 export const useHashParamsListener = <
   T extends Record<string, unknown> = Record<string, unknown>
->(id = '') => {
+>(
+  id = ''
+) => {
   const [hashParams, setHashParams] = useState<T>(decodeHash(id));
 
   useEffect(() => {

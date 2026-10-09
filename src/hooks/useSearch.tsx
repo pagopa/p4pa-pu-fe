@@ -25,12 +25,16 @@ export function useSearch<
   T extends Record<string, unknown>,
   TData = unknown,
   TError = unknown
->({ filters, query, id = '' }: UseSearchProps<T, TData, TError> & { id?: string }) {
+>({
+  filters,
+  query,
+  id = ''
+}: UseSearchProps<T, TData, TError> & { id?: string }) {
   const {
     page: hashPage = 1,
     size = 10,
     sortDirection,
-    sortField,
+    sortField
   } = useHashParamsListener(id) as {
     page: number;
     size: number;
@@ -47,8 +51,8 @@ export function useSearch<
     query.mutateAsync({
       filters: Object.fromEntries(
         Object.entries(filters)
-        .filter(([key]) => key.startsWith(id))
-        .map(([key, value]) => [key.replace(id, ''), value]) 
+          .filter(([key]) => key.startsWith(id))
+          .map(([key, value]) => [key.replace(id, ''), value])
       ) as T,
       pagination: { size, page },
       sort
@@ -64,14 +68,14 @@ export function useSearch<
       ...trimmedFilters,
       [`${id}page`]: null,
       [`${id}size`]: null,
-      [`${id}sort`]: null,
+      [`${id}sort`]: null
     });
     utils.URI.set(params, { replace: true });
     query.mutateAsync({
       filters: Object.fromEntries(
         Object.entries(trimmedFilters)
-        .filter(([key]) => key.startsWith(id))
-        .map(([key, value]) => [key.replace(id, ''), value]) 
+          .filter(([key]) => key.startsWith(id))
+          .map(([key, value]) => [key.replace(id, ''), value])
       ) as T,
       pagination: { size: 10, page: 0 },
       sort: []
