@@ -6,19 +6,20 @@ import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 
 import { PageRoutes } from '../..';
-import {
-  getOrganizationApiKeys,
-  getOrganizationDetail,
-  getPdndClients,
-  getPdndServices
-} from '../../../api/organizations';
+import { getOrganizationDetail } from '../../../api/organizations';
 import EmptyDataGrid from '../../../components/EmptyDataGrid/EmptyDataGrid';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 import { setCustomBreadcrumbsItems } from '../../../store/AppStateStore';
 import { SubUnitIntegrations } from '../SubUnitIntegrations';
-import { ApiKeysSection } from './components/ApiKeysSection';
-import { ClientsSection } from './components/ClientsSection';
-import { ServicesSection } from './components/ServiceSection';
+import { ApiKeysSection } from './components/Sections/ApiKeysSection';
+import { ClientsSection } from './components/Sections/ClientsSection';
+import { ServicesSection } from './components/Sections/ServiceSection';
+
+import {
+  getOrganizationApiKeys,
+  getPdndServices,
+  getPdndClients
+} from '@core/api/integrations';
 
 export const I18N_PREFIX = { keyPrefix: 'organizations.integrations' };
 
@@ -30,10 +31,15 @@ export const OrganizationIntegrations = () => {
   const [tab, setTab] = useState(0);
 
   const { data: organization } = getOrganizationDetail(organizationId);
+
   const { data: apiKeys = [], ...organizationApiKeys } =
     getOrganizationApiKeys(organizationId);
-  const { data: services = [] } = getPdndServices(organizationId);
+
+  const { data: services = [], ...pdndServices } =
+    getPdndServices(organizationId);
+
   const { data: clients = [] } = getPdndClients(organizationId);
+
   const isEmpty = apiKeys.length + services.length + clients.length === 0;
 
   const orgName = organization?.orgName;
@@ -115,7 +121,11 @@ export const OrganizationIntegrations = () => {
                 organizationId={organizationId}
                 onDelete={organizationApiKeys.refetch}
               />
-              <ServicesSection services={services} />
+              <ServicesSection
+                services={services}
+                organizationId={organizationId}
+                onDelete={pdndServices.refetch}
+              />
               <ClientsSection clients={clients} />
             </Stack>
           )}

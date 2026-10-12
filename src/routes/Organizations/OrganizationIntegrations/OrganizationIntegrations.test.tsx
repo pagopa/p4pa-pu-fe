@@ -1,20 +1,22 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { generatePath, useNavigate, useParams } from 'react-router';
-import { render, screen } from '../../../__tests__/renderers';
-import {
-  getOrganizationApiKeys,
-  getOrganizationDetail,
-  getPdndClients,
-  getPdndServices
-} from '../../../api/organizations';
-import { appState } from '../../../store/AppStateStore';
-import { PageRoutes } from '../..';
-import { OrganizationIntegrations } from '.';
+
 import {
   OrganizationApiKeyType,
   PdndServiceType
 } from '../../../../generated/core/data-contracts';
+
+import { render, screen } from '../../../__tests__/renderers';
+import { getOrganizationDetail } from '../../../api/organizations';
+import { appState } from '../../../store/AppStateStore';
+import { PageRoutes } from '../..';
+import { OrganizationIntegrations } from '.';
+import {
+  getOrganizationApiKeys,
+  getPdndServices,
+  getPdndClients
+} from '@core/api/integrations';
 
 vi.mock('../../../api/organizations', () => ({
   getOrganizationDetail: vi.fn(),

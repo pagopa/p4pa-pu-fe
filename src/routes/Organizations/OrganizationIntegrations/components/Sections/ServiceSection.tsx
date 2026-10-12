@@ -1,16 +1,21 @@
 import { PdndServiceView } from '@generated/core/client';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { I18N_PREFIX } from '..';
-import { Section, Row, Field } from './Containers';
+import { I18N_PREFIX } from '../..';
+import { Section, Row, Field } from '../Containers';
+import { PdndSendServiceDialog } from '../Dialogs/ServiceDialog';
 
 export const ServicesSection = ({
-  services
+  services,
+  organizationId,
+  onDelete
 }: {
   services: Array<PdndServiceView>;
+  organizationId: number;
+  onDelete: () => void;
 }) => {
   const { t } = useTranslation(undefined, I18N_PREFIX);
-  const [, setSelected] = useState<PdndServiceView>();
+  const [selected, setSelected] = useState<PdndServiceView>();
   if (services.length === 0) return null;
 
   return (
@@ -32,13 +37,15 @@ export const ServicesSection = ({
           </Field>
         </Row>
       ))}
-      {/* {selected && ( */}
-      {/*   <PdndSendServiceDialog */}
-      {/*     open */}
-      {/*     service={selected} */}
-      {/*     onClose={() => setSelected(undefined)} */}
-      {/*   /> */}
-      {/* )} */}
+      {selected && (
+        <PdndSendServiceDialog
+          open
+          service={selected}
+          organizationId={organizationId}
+          onClose={() => setSelected(undefined)}
+          onDelete={onDelete}
+        />
+      )}
     </Section>
   );
 };

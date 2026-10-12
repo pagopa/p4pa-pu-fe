@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ApiKeyDialog } from './ApiKeyDialog';
-import {
-  deleteOrganizationApiKey,
-  getOrganizationApiKey
-} from '@core/api/organizations';
 import { OrganizationApiKey } from '@generated/core/data-contracts';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
 import utils from '@core/utils';
 import { fireEvent, render, waitFor, screen } from '@core/__tests__/renderers';
+import {
+  getOrganizationApiKey,
+  deleteOrganizationApiKey
+} from '@core/api/integrations';
 
 vi.mock('@core/api/organizations', () => ({
   deleteOrganizationApiKey: vi.fn(),
