@@ -611,7 +611,6 @@ describe('ClassificationExportPage', () => {
         expect(mockValidateForm).toHaveBeenCalled();
       });
     });
-
   });
 
   describe('Callback Coverage and Validation', () => {
