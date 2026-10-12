@@ -53,9 +53,6 @@ export const OrganizationIntegrations = () => {
     ]);
   }, [orgName, organizationId]);
 
-  // not wired yet
-  const addIntegration = () => undefined;
-
   const addIntegrationAction = () => {
     navigate(generatePath(PageRoutes.ADD_INTEGRATION, { organizationId }));
   };
@@ -107,7 +104,7 @@ export const OrganizationIntegrations = () => {
               description={t('organizations.integrations.emptyDescription')}
               action={{
                 label: t('organizations.integrations.add'),
-                onClick: addIntegration
+                onClick: addIntegrationAction
               }}
             />
           )}
