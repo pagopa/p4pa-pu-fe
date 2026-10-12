@@ -1,10 +1,8 @@
-import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopyOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined';
 import {
-  Box,
   Button,
   Dialog,
   DialogActions,
@@ -17,38 +15,54 @@ import {
 } from '@mui/material';
 import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
 
-import { SECRET_MASK } from '../../../components/ShowSecretValue';
-import { OrganizationApiKey } from '../../../../generated/core/data-contracts';
+import { OrganizationApiKey } from '@generated/core/data-contracts';
+
+import {
+  deleteOrganizationApiKey,
+  getOrganizationApiKey
+} from '@core/api/organizations';
+import utils from '@core/utils';
+import { SECRET_MASK } from '@core/components/ShowSecretValue';
 
 type Props = {
   apiKey: OrganizationApiKey;
+  organizationId: number;
   open: boolean;
   onClose: () => void;
+  onDelete: () => void;
 };
 
-export const ApiKeyDialog = ({ apiKey, open, onClose }: Props) => {
+export const ApiKeyDialog = ({
+  apiKey,
+  organizationId,
+  open,
+  onClose,
+  onDelete
+}: Props) => {
   const { t } = useTranslation();
-  const organizationId = Number(useParams().organizationId);
   const titleId = useId();
   const descriptionId = useId();
   const [isVisible, setIsVisible] = useState(false);
 
-  const keyValue = '';
+  const { data } = getOrganizationApiKey(organizationId, apiKey.keyType);
 
-  const { mutate: deleteApiKey, isPending } = {
-    mutate: (_, { onSuccess }) => null,
-    isPending: false
+  const deleteApiKey = deleteOrganizationApiKey(organizationId, apiKey.keyType);
+
+  const handleDelete = async () => {
+    try {
+      await deleteApiKey.mutateAsync();
+      utils.notify.emit('commons.done', 'success');
+      onDelete();
+    } catch {
+      utils.notify.emit('errors.generic');
+    } finally {
+      onClose();
+    }
   };
 
-  const handleDelete = () =>
-    deleteApiKey(
-      { organizationId, keyType: apiKey.keyType },
-      { onSuccess: onClose }
-    );
-
-  const handleCopy = () => void navigator.clipboard.writeText(keyValue);
+  const handleCopy = () =>
+    void navigator.clipboard.writeText(data?.apiKey || '');
 
   return (
     <Dialog
@@ -58,17 +72,19 @@ export const ApiKeyDialog = ({ apiKey, open, onClose }: Props) => {
       maxWidth="xs"
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
+      sx={{ padding: 3 }}
     >
-      <DialogTitle id={titleId} sx={{ pr: 7 }}>
-        {t(`keyTypes.${apiKey.keyType}`)}
+      <DialogTitle id={titleId} gap={1}>
+        <Typography variant="h6">
+          {t(`integrations.keyTypes.${apiKey.keyType}`)}
+        </Typography>
+        <Typography id={descriptionId} variant="body2">
+          {t('integrations.apiKeyDialog.description')}
+        </Typography>
       </DialogTitle>
 
       <DialogContent>
         <Stack gap={2}>
-          <Typography id={descriptionId}>
-            {t('apiKeyDialog.description')}
-          </Typography>
-
           {/* TODO: activation toggle */}
 
           <Divider />
@@ -79,10 +95,14 @@ export const ApiKeyDialog = ({ apiKey, open, onClose }: Props) => {
               justifyContent="space-between"
               alignItems="center"
             >
-              <Typography variant="subtitle1">{t('apiKey')}</Typography>
+              <Typography variant="subtitle2">
+                {t('integrations.apiKeyDialog.apiKey')}
+              </Typography>
               <IconButton
                 aria-label={t(
-                  isVisible ? 'apiKeyDialog.hide' : 'apiKeyDialog.show'
+                  isVisible
+                    ? 'integrations.apiKeyDialog.hide'
+                    : 'integrations.apiKeyDialog.show'
                 )}
                 onClick={() => setIsVisible((visible) => !visible)}
               >
@@ -101,10 +121,10 @@ export const ApiKeyDialog = ({ apiKey, open, onClose }: Props) => {
               gap={1}
             >
               <Typography variant="monospaced" component="span" ml={1}>
-                {isVisible ? keyValue : SECRET_MASK}
+                {isVisible ? data?.apiKey : SECRET_MASK}
               </Typography>
               <IconButton
-                aria-label={t('apiKeyDialog.copy')}
+                aria-label={t('integrations.apiKeyDialog.copy')}
                 onClick={handleCopy}
               >
                 <ContentCopyIcon color="primary" />
@@ -118,7 +138,7 @@ export const ApiKeyDialog = ({ apiKey, open, onClose }: Props) => {
         <Button
           color="error"
           startIcon={<DeleteOutlineIcon />}
-          disabled={isPending}
+          disabled={deleteApiKey.isPending}
           onClick={handleDelete}
         >
           {t('commons.delete')}

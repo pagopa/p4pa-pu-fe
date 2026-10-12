@@ -1,27 +1,40 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '../../__tests__/renderers';
 import userEvent from '@testing-library/user-event';
+import { generatePath, useNavigate, useParams } from 'react-router';
+import { render, screen } from '../../../__tests__/renderers';
 import {
   getOrganizationApiKeys,
   getOrganizationDetail,
   getPdndClients,
   getPdndServices
-} from '../../api/organizations';
-import { OrganizationIntegrations } from './OrganizationIntegrations';
+} from '../../../api/organizations';
+import { appState } from '../../../store/AppStateStore';
+import { PageRoutes } from '../..';
+import { OrganizationIntegrations } from '.';
 import {
   OrganizationApiKeyType,
   PdndServiceType
-} from '../../../generated/core/data-contracts';
+} from '../../../../generated/core/data-contracts';
 
-vi.mock('../../api/organizations', () => ({
+vi.mock('../../../api/organizations', () => ({
   getOrganizationDetail: vi.fn(),
   getOrganizationApiKeys: vi.fn(),
   getPdndServices: vi.fn(),
   getPdndClients: vi.fn()
 }));
-vi.mock('./SubUnitIntegrations', () => ({
+vi.mock('../SubUnitIntegrations', () => ({
   SubUnitIntegrations: () => <div data-testid="sub-unit-integrations" />
 }));
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+    useParams: vi.fn()
+  };
+});
+
+const mockNavigate = vi.fn();
 
 const mockQuery = <T,>(fn: T, data: unknown) =>
   vi.mocked(fn as () => unknown).mockReturnValue({ data });
@@ -29,9 +42,18 @@ const mockQuery = <T,>(fn: T, data: unknown) =>
 describe('OrganizationIntegrations', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockQuery(getOrganizationDetail, { orgName: 'Ente', flagNotifyIo: true });
+    appState.value = {
+      loading: false,
+      customBreadcrumbsItems: [],
+      ready: false
+    };
+
+    vi.mocked(useNavigate).mockReturnValue(mockNavigate);
+    vi.mocked(useParams).mockReturnValue({ organizationId: '33' });
+
+    mockQuery(getOrganizationDetail, { orgName: 'Ente' });
     mockQuery(getOrganizationApiKeys, [
-      { keyType: OrganizationApiKeyType.IO },
+      { keyType: OrganizationApiKeyType.IO, flagActive: true },
       { keyType: OrganizationApiKeyType.GENERATE_NOTICE }
     ]);
     mockQuery(getPdndServices, [
@@ -63,7 +85,6 @@ describe('OrganizationIntegrations', () => {
     expect(screen.getByText('SEND service')).toBeInTheDocument();
     expect(screen.getByText('purp_1')).toBeInTheDocument();
     expect(screen.getByText('Client C')).toBeInTheDocument();
-    expect(screen.getByTestId('add-integration-button')).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'Ente' })).toBeInTheDocument();
     expect(
       screen.getByRole('tab', { name: 'organizations.management.subUnits' })
@@ -93,5 +114,44 @@ describe('OrganizationIntegrations', () => {
     expect(
       screen.queryByText('organizations.integrations.pagoPaProducts')
     ).not.toBeInTheDocument();
+  });
+
+  it('navigates to the add integration page', async () => {
+    render(<OrganizationIntegrations />);
+
+    await userEvent.click(screen.getByTestId('add-integration-button'));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      generatePath(PageRoutes.ADD_INTEGRATION, { organizationId: 33 })
+    );
+  });
+
+  it('sets breadcrumbs once the organization name is available', () => {
+    render(<OrganizationIntegrations />);
+
+    expect(appState.value.customBreadcrumbsItems).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: 'ORGANIZATIONS',
+          pathname: PageRoutes.ORGANIZATIONS_INDEX
+        }),
+        expect.objectContaining({
+          id: 'ORGANIZATIONS_DETAIL',
+          pathname: generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
+            organizationId: 33
+          }),
+          label: 'Ente'
+        }),
+        expect.objectContaining({ id: 'ORGANIZATIONS_INTEGRATIONS' })
+      ])
+    );
+  });
+
+  it('does not set breadcrumbs while the organization is not loaded', () => {
+    mockQuery(getOrganizationDetail, undefined);
+
+    render(<OrganizationIntegrations />);
+
+    expect(appState.value.customBreadcrumbsItems).toEqual([]);
   });
 });
