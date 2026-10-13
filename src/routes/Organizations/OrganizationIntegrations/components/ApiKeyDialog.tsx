@@ -11,6 +11,7 @@ import {
   Divider,
   IconButton,
   Stack,
+  Switch,
   Typography
 } from '@mui/material';
 import { useId, useState } from 'react';
@@ -24,6 +25,7 @@ import {
 } from '@core/api/organizations';
 import utils from '@core/utils';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
+import { KeyTypeEnum } from '@generated/core/client';
 
 type Props = {
   apiKey: OrganizationApiKey;
@@ -45,47 +47,74 @@ export const ApiKeyDialog = ({
   const descriptionId = useId();
   const [isVisible, setIsVisible] = useState(false);
 
-  const { data } = getOrganizationApiKey(organizationId, apiKey.keyType);
+  const { data: organizationApiKey } = getOrganizationApiKey(
+    organizationId,
+    apiKey.keyType
+  );
 
   const deleteApiKey = deleteOrganizationApiKey(organizationId, apiKey.keyType);
 
   const handleDelete = async () => {
     try {
       await deleteApiKey.mutateAsync();
-      utils.notify.emit('commons.done', 'success');
+      utils.notify.emit(t('commons.done'), 'success');
       onDelete();
     } catch {
-      utils.notify.emit('errors.generic');
+      utils.notify.emit(t('errors.generic'));
     } finally {
       onClose();
     }
   };
 
-  const handleCopy = () =>
-    void navigator.clipboard.writeText(data?.apiKey || '');
+  const handleCopy = () => {
+    void navigator.clipboard.writeText(organizationApiKey?.apiKey || '');
+    utils.notify.emit(t('commons.copied'), 'info');
+  };
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
       fullWidth
-      maxWidth="xs"
+      maxWidth="sm"
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
       sx={{ padding: 3 }}
     >
       <DialogTitle id={titleId} gap={1}>
-        <Typography variant="h6">
+        <Typography variant="h6" component="h2">
           {t(`integrations.keyTypes.${apiKey.keyType}`)}
         </Typography>
-        <Typography id={descriptionId} variant="body2">
+        <Typography id={descriptionId} variant="body2" color="text.secondary">
           {t('integrations.apiKeyDialog.description')}
         </Typography>
       </DialogTitle>
 
       <DialogContent>
         <Stack gap={2}>
-          {/* TODO: activation toggle */}
+          {organizationApiKey?.keyType == KeyTypeEnum.IO && (
+            <Stack>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography variant="subtitle1">
+                  {t('integrations.apiKeyDialog.notifications')}
+                </Typography>
+                <Switch
+                  disabled
+                  value="notifications"
+                  checked={organizationApiKey?.serviceEnabled}
+                />
+              </Stack>
+              <Typography variant="caption" color="text.secondary">
+                {organizationApiKey?.serviceEnabled
+                  ? t('commons.status.ACTIVE')
+                  : t('commons.status.INACTIVE')}
+              </Typography>
+            </Stack>
+          )}
 
           <Divider />
 
@@ -121,7 +150,7 @@ export const ApiKeyDialog = ({
               gap={1}
             >
               <Typography variant="monospaced" component="span" ml={1}>
-                {isVisible ? data?.apiKey : SECRET_MASK}
+                {isVisible ? organizationApiKey?.apiKey : SECRET_MASK}
               </Typography>
               <IconButton
                 aria-label={t('integrations.apiKeyDialog.copy')}
