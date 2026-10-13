@@ -30,7 +30,13 @@ vi.mock('@core/utils/dialog', () => ({
 vi.mock('@core/utils/notify', () => ({ default: { emit: vi.fn() } }));
 
 vi.mock('@core/components/TitleComponent/TitleComponent', () => ({
-  default: ({ title, description }: { title: string; description?: string }) => (
+  default: ({
+    title,
+    description
+  }: {
+    title: string;
+    description?: string;
+  }) => (
     <div>
       <h1>{title}</h1>
       {description && <p>{description}</p>}
@@ -72,24 +78,15 @@ vi.mock('@core/components/GridSelector', () => ({
     onSelectionChange: (selectedIds: Array<string>) => void;
   }) => (
     <div>
-      {data.map((row) => {
-        const selected = selectedIds.includes(row.subUnitCode);
-        return (
-          <button
-            key={row.subUnitCode}
-            aria-pressed={selected}
-            onClick={() =>
-              onSelectionChange(
-                selected
-                  ? selectedIds.filter((id) => id !== row.subUnitCode)
-                  : [...selectedIds, row.subUnitCode]
-              )
-            }
-          >
-            {row.subUnitName}
-          </button>
-        );
-      })}
+      {data.map((row) => (
+        <button
+          key={row.subUnitCode}
+          aria-pressed={selectedIds.includes(row.subUnitCode)}
+          onClick={() => onSelectionChange([row.subUnitCode])}
+        >
+          {row.subUnitName}
+        </button>
+      ))}
     </div>
   )
 }));
@@ -130,7 +127,7 @@ describe('OperatorSubunitAssign', () => {
     );
     vi.mocked(useAddOrgSubUnitsToOperator).mockReturnValue({
       mutateAsync: mockMutateAsync
-    } as ReturnType<typeof useAddOrgSubUnitsToOperator>);
+    } as unknown as ReturnType<typeof useAddOrgSubUnitsToOperator>);
     vi.mocked(useSearch).mockReturnValue({
       query: {
         data: {
@@ -145,21 +142,16 @@ describe('OperatorSubunitAssign', () => {
         }
       },
       applyFilters: mockApplyFilters
-    } as ReturnType<typeof useSearch>);
+    } as unknown as ReturnType<typeof useSearch>);
   });
 
   it('renders the assign page and initializes its API hooks', () => {
     render(<OperatorSubunitAssign />);
 
-    expect(
-      screen.getByText('subunits.assignPage.title')
-    ).toBeInTheDocument();
+    expect(screen.getByText('subunits.assignPage.title')).toBeInTheDocument();
     expect(screen.getByText('Finance Office')).toBeInTheDocument();
     expect(getAssignableOrgSubUnits).toHaveBeenCalledWith(123, 'operator-1');
-    expect(useAddOrgSubUnitsToOperator).toHaveBeenCalledWith(
-      123,
-      'operator-1'
-    );
+    expect(useAddOrgSubUnitsToOperator).toHaveBeenCalledWith(123, 'operator-1');
   });
 
   it('applies filters and navigates back', () => {
@@ -215,7 +207,9 @@ describe('OperatorSubunitAssign', () => {
   });
 
   it('notifies when the assignment mutation fails', async () => {
-    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
     mockMutateAsync.mockRejectedValue(new Error('Assignment failed'));
     render(<OperatorSubunitAssign />);
 

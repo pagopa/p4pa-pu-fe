@@ -353,9 +353,7 @@ describe('orgSubUnit API hooks', () => {
     });
 
     it('propagates API errors', async () => {
-      mockAddOrgSubUnitsToOperator.mockRejectedValue(
-        new Error('API Error')
-      );
+      mockAddOrgSubUnitsToOperator.mockRejectedValue(new Error('API Error'));
 
       const { result } = renderHook(() =>
         useAddOrgSubUnitsToOperator(123, 'operator-1')
