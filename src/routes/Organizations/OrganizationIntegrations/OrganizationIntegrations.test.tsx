@@ -2,12 +2,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { render, screen } from '../../../__tests__/renderers';
-import { getOrganizationDetail } from '@core/api/organizations';
+import { getOrganizationDetail } from '../../../api/organizations';
 import {
   getOrganizationApiKeys,
   getPdndClients,
   getPdndServices
 } from '@core/api/integrations';
+import { useHashParamsListener } from '@core/hooks/useHashParamsListener';
+import utils from '@core/utils';
 import { appState } from '../../../store/AppStateStore';
 import { PageRoutes } from '../..';
 import { OrganizationIntegrations } from '.';
@@ -16,7 +18,7 @@ import {
   PdndServiceType
 } from '../../../../generated/core/data-contracts';
 
-vi.mock('@core/api/organizations', () => ({
+vi.mock('../../../api/organizations', () => ({
   getOrganizationDetail: vi.fn()
 }));
 vi.mock('@core/api/integrations', () => ({
@@ -24,8 +26,27 @@ vi.mock('@core/api/integrations', () => ({
   getPdndServices: vi.fn(),
   getPdndClients: vi.fn()
 }));
-vi.mock('../SubUnitIntegrations', () => ({
+vi.mock('@core/hooks/useHashParamsListener', () => ({
+  useHashParamsListener: vi.fn()
+}));
+vi.mock('./components/SubUnitIntegrations', () => ({
   SubUnitIntegrations: () => <div data-testid="sub-unit-integrations" />
+}));
+vi.mock('../../../components/EmptyDataGrid/EmptyDataGrid', () => ({
+  default: ({
+    title,
+    action
+  }: {
+    title: string;
+    action: { label: string; onClick: () => void };
+  }) => (
+    <div>
+      <p>{title}</p>
+      <button data-testid="empty-state-action" onClick={action.onClick}>
+        {action.label}
+      </button>
+    </div>
+  )
 }));
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
@@ -41,6 +62,17 @@ const mockNavigate = vi.fn();
 const mockQuery = <T,>(fn: T, data: unknown) =>
   vi.mocked(fn as () => unknown).mockReturnValue({ data });
 
+const mockTab = (tab?: string) =>
+  vi
+    .mocked(useHashParamsListener)
+    .mockReturnValue(
+      (tab ? { tab } : {}) as ReturnType<typeof useHashParamsListener>
+    );
+
+const addIntegrationPath = generatePath(PageRoutes.ADD_INTEGRATION, {
+  organizationId: 33
+});
+
 describe('OrganizationIntegrations', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -52,6 +84,7 @@ describe('OrganizationIntegrations', () => {
 
     vi.mocked(useNavigate).mockReturnValue(mockNavigate);
     vi.mocked(useParams).mockReturnValue({ organizationId: '33' });
+    mockTab();
 
     mockQuery(getOrganizationDetail, { orgName: 'Ente' });
     mockQuery(getOrganizationApiKeys, [
@@ -93,21 +126,33 @@ describe('OrganizationIntegrations', () => {
     ).toBeInTheDocument();
   });
 
-  it('hides the organization integrations on the sub-units tab', async () => {
+  it('shows the sub-units tab content when the tab hash param is 1', () => {
+    mockTab('1');
+
     render(<OrganizationIntegrations />);
 
+    expect(screen.getByTestId('sub-unit-integrations')).toBeInTheDocument();
+    expect(screen.queryByText('SEND service')).not.toBeInTheDocument();
+  });
+
+  it('writes the selected tab to the URL hash', async () => {
+    const setSpy = vi
+      .spyOn(utils.URI, 'set')
+      .mockImplementation(() => undefined);
+
+    render(<OrganizationIntegrations />);
     await userEvent.click(
       screen.getByRole('tab', { name: 'organizations.management.subUnits' })
     );
 
-    expect(screen.queryByText('SEND service')).not.toBeInTheDocument();
-    expect(screen.getByTestId('sub-unit-integrations')).toBeInTheDocument();
+    expect(setSpy).toHaveBeenCalledWith('tab=1');
   });
 
   it('shows the empty state when there are no integrations', () => {
     mockQuery(getOrganizationApiKeys, []);
     mockQuery(getPdndServices, []);
     mockQuery(getPdndClients, []);
+
     render(<OrganizationIntegrations />);
 
     expect(
@@ -118,14 +163,23 @@ describe('OrganizationIntegrations', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('navigates to the add integration page', async () => {
+  it('navigates to the add integration page from the header button', async () => {
     render(<OrganizationIntegrations />);
 
     await userEvent.click(screen.getByTestId('add-integration-button'));
 
-    expect(mockNavigate).toHaveBeenCalledWith(
-      generatePath(PageRoutes.ADD_INTEGRATION, { organizationId: 33 })
-    );
+    expect(mockNavigate).toHaveBeenCalledWith(addIntegrationPath);
+  });
+
+  it('navigates to the add integration page from the empty state', async () => {
+    mockQuery(getOrganizationApiKeys, []);
+    mockQuery(getPdndServices, []);
+    mockQuery(getPdndClients, []);
+
+    render(<OrganizationIntegrations />);
+    await userEvent.click(screen.getByTestId('empty-state-action'));
+
+    expect(mockNavigate).toHaveBeenCalledWith(addIntegrationPath);
   });
 
   it('sets breadcrumbs once the organization name is available', () => {

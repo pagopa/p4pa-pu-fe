@@ -4,12 +4,14 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { OrganizationApiKeyType } from '@generated/core/client';
 import {
   organizationApiKeySchema,
+  pagedPdndServiceViewSchema,
   pdndClientNoSecretDTOSchema,
   pdndServiceViewSchema
 } from '@generated/core/zod-schema';
 
 import utils from '@core/utils';
 import { parseAndLog } from '@core/utils/loaders';
+import { FilteredRequest } from '@core/models/Filters';
 
 export const getOrganizationApiKeys = (organizationId: number) =>
   useQuery({
@@ -63,6 +65,31 @@ export const getPdndServices = (organizationId: number) =>
       const { data } =
         await utils.apiClient.bff.getPdndServices(organizationId);
       parseAndLog(z.array(pdndServiceViewSchema), data);
+      return data;
+    }
+  });
+
+type SubUnitPdndServiceFilters = {
+  subUnitCode?: string;
+  subUnitName?: string;
+};
+
+type getOrgSubUnitsPdndServicesRequest =
+  FilteredRequest<SubUnitPdndServiceFilters>;
+
+export const getOrgSubUnitsPdndServices = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['getOrgSubUnitPdndServices', organizationId],
+    mutationFn: async (request: getOrgSubUnitsPdndServicesRequest) => {
+      const { data } = await utils.apiClient.bff.getOrgSubUnitsPdndServices(
+        organizationId,
+        {
+          ...request.filters,
+          ...request.pagination,
+          sort: request.sort
+        }
+      );
+      parseAndLog(pagedPdndServiceViewSchema, data);
       return data;
     }
   });

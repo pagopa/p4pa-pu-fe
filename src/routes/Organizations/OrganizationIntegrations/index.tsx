@@ -1,7 +1,7 @@
 import AddIcon from '@mui/icons-material/Add';
 import TuneIcon from '@mui/icons-material/Tune';
 import { Box, Stack, Tab, Tabs } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 
@@ -10,25 +10,28 @@ import { getOrganizationDetail } from '../../../api/organizations';
 import EmptyDataGrid from '../../../components/EmptyDataGrid/EmptyDataGrid';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 import { setCustomBreadcrumbsItems } from '../../../store/AppStateStore';
-import { SubUnitIntegrations } from '../SubUnitIntegrations';
 import { ApiKeysSection } from './components/Sections/ApiKeysSection';
 import { ClientsSection } from './components/Sections/ClientsSection';
 import { ServicesSection } from './components/Sections/ServiceSection';
+import { SubUnitIntegrations } from './components/SubUnitIntegrations';
 
 import {
   getOrganizationApiKeys,
-  getPdndServices,
-  getPdndClients
+  getPdndClients,
+  getPdndServices
 } from '@core/api/integrations';
+import { useHashParamsListener } from '@core/hooks/useHashParamsListener';
+import utils from '@core/utils';
 
 export const I18N_PREFIX = { keyPrefix: 'organizations.integrations' };
 
 export const OrganizationIntegrations = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-
   const organizationId = Number(useParams().organizationId);
-  const [tab, setTab] = useState(0);
+
+  const tab = Number(useHashParamsListener<Record<string, unknown>>().tab) || 0;
+  const setTab = (tab: number) => utils.URI.set(`tab=${tab}`);
 
   const { data: organization } = getOrganizationDetail(organizationId);
 
