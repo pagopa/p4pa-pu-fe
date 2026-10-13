@@ -6,8 +6,10 @@ import { pagedOrgSubUnitSchema } from '../../../generated/core/zod-schema';
 import utils from '../../utils';
 import {
   deleteOrgSubUnitFromOperator,
+  getAssignableOrgSubUnits,
   getOperatorOrgSubUnits,
-  getPagedOrgSubUnits
+  getPagedOrgSubUnits,
+  useAddOrgSubUnitsToOperator
 } from './index';
 import * as loaders from '../../utils/loaders';
 
@@ -17,7 +19,9 @@ vi.mock('../../utils', () => ({
       bff: {
         getOperatorOrgSubUnits: vi.fn(),
         getPagedOrgSubUnits: vi.fn(),
-        deleteOrgSubUnitFromOperator: vi.fn()
+        deleteOrgSubUnitFromOperator: vi.fn(),
+        getOperatorAssignableOrgSubUnits: vi.fn(),
+        addOrgSubUnitsToOperator: vi.fn()
       }
     }
   }
@@ -35,6 +39,12 @@ const mockGetPagedOrgSubUnits = vi.mocked(
 );
 const mockDeleteOrgSubUnitFromOperator = vi.mocked(
   utils.apiClient.bff.deleteOrgSubUnitFromOperator
+);
+const mockGetOperatorAssignableOrgSubUnits = vi.mocked(
+  utils.apiClient.bff.getOperatorAssignableOrgSubUnits
+);
+const mockAddOrgSubUnitsToOperator = vi.mocked(
+  utils.apiClient.bff.addOrgSubUnitsToOperator
 );
 const mockParseAndLog = vi.mocked(loaders.parseAndLog);
 
@@ -220,6 +230,142 @@ describe('orgSubUnit API hooks', () => {
           await result.current.mutateAsync('SUB-001');
         })
       ).rejects.toThrow('Delete failed');
+    });
+  });
+
+  describe('getAssignableOrgSubUnits', () => {
+    it('calls the API with the organization, operator, filters, pagination, and sort', async () => {
+      const response = { content: [], totalPages: 1 };
+      mockGetOperatorAssignableOrgSubUnits.mockResolvedValue({
+        data: response
+      } as AxiosResponse);
+
+      const organizationId = 123;
+      const mappedExternalUserId = 'operator-1';
+      const request = {
+        filters: { subUnitCode: 'SUB-001' },
+        pagination: { page: 1, size: 10 },
+        sort: ['subUnitCode']
+      };
+
+      const { result } = renderHook(() =>
+        getAssignableOrgSubUnits(organizationId, mappedExternalUserId)
+      );
+
+      await act(async () => {
+        await result.current.mutateAsync(request);
+      });
+
+      expect(mockGetOperatorAssignableOrgSubUnits).toHaveBeenCalledWith(
+        organizationId,
+        mappedExternalUserId,
+        { ...request.filters, ...request.pagination, sort: request.sort }
+      );
+    });
+
+    it('returns the API response data', async () => {
+      const response = { content: [], totalPages: 1 };
+      mockGetOperatorAssignableOrgSubUnits.mockResolvedValue({
+        data: response
+      } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        getAssignableOrgSubUnits(123, 'operator-1')
+      );
+      let mutationResult: unknown;
+
+      await act(async () => {
+        mutationResult = await result.current.mutateAsync({
+          filters: {},
+          pagination: { page: 0, size: 10 },
+          sort: []
+        });
+      });
+
+      expect(mutationResult).toEqual(response);
+    });
+
+    it('propagates API errors', async () => {
+      mockGetOperatorAssignableOrgSubUnits.mockRejectedValue(
+        new Error('API Error')
+      );
+
+      const { result } = renderHook(() =>
+        getAssignableOrgSubUnits(123, 'operator-1')
+      );
+
+      await expect(
+        act(async () => {
+          await result.current.mutateAsync({
+            filters: {},
+            pagination: { page: 0, size: 10 },
+            sort: []
+          });
+        })
+      ).rejects.toThrow('API Error');
+    });
+  });
+
+  describe('useAddOrgSubUnitsToOperator', () => {
+    it('calls the API with the organization, operator, and request body', async () => {
+      const response = { success: true };
+      mockAddOrgSubUnitsToOperator.mockResolvedValue({
+        data: response
+      } as AxiosResponse);
+
+      const organizationId = 123;
+      const mappedExternalUserId = 'operator-1';
+      const request = { orgSubUnitCodes: ['SUB-001', 'SUB-002'] };
+
+      const { result } = renderHook(() =>
+        useAddOrgSubUnitsToOperator(organizationId, mappedExternalUserId)
+      );
+
+      await act(async () => {
+        await result.current.mutateAsync(request);
+      });
+
+      expect(mockAddOrgSubUnitsToOperator).toHaveBeenCalledWith(
+        organizationId,
+        mappedExternalUserId,
+        request
+      );
+    });
+
+    it('returns the API response data', async () => {
+      const response = { success: true };
+      mockAddOrgSubUnitsToOperator.mockResolvedValue({
+        data: response
+      } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        useAddOrgSubUnitsToOperator(123, 'operator-1')
+      );
+      let mutationResult: unknown;
+
+      await act(async () => {
+        mutationResult = await result.current.mutateAsync({
+          orgSubUnitCodes: ['SUB-001']
+        });
+      });
+
+      expect(mutationResult).toEqual(response);
+    });
+
+    it('propagates API errors', async () => {
+      mockAddOrgSubUnitsToOperator.mockRejectedValue(
+        new Error('API Error')
+      );
+
+      const { result } = renderHook(() =>
+        useAddOrgSubUnitsToOperator(123, 'operator-1')
+      );
+
+      await expect(
+        act(async () => {
+          await result.current.mutateAsync({ orgSubUnitCodes: ['SUB-001'] });
+        })
+      ).rejects.toThrow('API Error');
     });
   });
 });

@@ -5,6 +5,7 @@ import { AdminRouteGuard } from '../components/RouteGuard/RouteGuard';
 import OperatorDetail from './OperatorsDetail';
 import MyOrganization from './OperatorsList/MyOrganization/MyOrganization';
 import { OperatorAffiliate } from './OperatorAffiliate';
+import { OperatorSubunitAssign } from './OperatorSubunitAssign';
 
 export const operatorsRoutes: Array<RouteObject> = [
   {
@@ -35,15 +36,33 @@ export const operatorsRoutes: Array<RouteObject> = [
         } as RouteHandleObject
       },
       {
-        id: 'OPERATORS_DETAIL',
-        // orgName is an optional param
-        path: 'detail/:organizationId/:orgName?/:mappedExternalUserId',
-        element: <OperatorDetail />,
-        handle: {
-          backButton: true,
-          hideBreadcrumbs: false,
-          custom: true
-        } as RouteHandleObject
+        id: 'OPERATORS_DETAIL_PARENT',
+        path: 'detail/:organizationId/:orgName?/:mappedExternalUserId/',
+        children: [
+          {
+            index: true,
+            id: 'OPERATORS_DETAIL',
+            element: <OperatorDetail />,
+            handle: {
+              backButton: true,
+              hideBreadcrumbs: true,
+              custom: true
+            } as RouteHandleObject
+          },
+          {
+            id: 'OPERATOR_SUBUNIT_ASSIGN',
+            path: 'subunit-assign/:operatorName?',
+            element: <OperatorSubunitAssign />,
+            handle: {
+              backButton: true,
+              backButtonText: 'commons.exit',
+              hideBreadcrumbs: true,
+              sidebar: {
+                visible: false
+              }
+            } as RouteHandleObject
+          }
+        ]
       },
       {
         id: 'OPERATORS_AFFILIATE',

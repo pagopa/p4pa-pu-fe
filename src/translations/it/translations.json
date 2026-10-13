@@ -2513,6 +2513,25 @@
       "ACTIVE": "Attiva",
       "CANCELLED": "Disattivata"
     },
+    "assignPage": {
+      "title": "Associa sottounità",
+      "description": "Seleziona una o più sottounità da associare all’operatore {{operatorName}}.",
+      "searchBysubUnitCode": "Cerca per codice univoco",
+      "searchBysubUnitName": "Cerca per denominazione",
+      "countLabel": "Selezionate {{count}} sottounità",
+      "dialog": {
+        "title": "Sei sicuro di voler associare le sottounità selezionate?",
+        "message": "Una volta confermato, le sottounità selezionate saranno associate all’operatore {{operatorName}}.",
+        "noSelection": "Nessuna sottounità selezionata"
+      },
+      "success": {
+        "title_one": "{{count}} sottounità associata correttamente all'utente {{operatorName}}",
+        "title_other": "{{count}} sottounità associate correttamente all'utente {{operatorName}}",
+        "description_one": "La trovi nel dettaglio dell'operatore, dove puoi gestirlo in qualsiasi momento.",
+        "description_other": "Le trovi nel dettaglio dell'operatore, dove puoi gestirle in qualsiasi momento.",
+        "buttonLabel": "Vai al dettaglio operatore"
+      }
+    },
     "create": {
       "title": "Aggiungi una nuova sottounità",
       "description": "Compila i campi richiesti per attivare una nuova sub-unit.",
