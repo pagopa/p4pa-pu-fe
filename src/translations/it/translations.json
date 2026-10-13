@@ -2417,6 +2417,18 @@
     }
   },
   "integrations": {
+    "keyTypes": {
+      "GENERATE_NOTICE": "Stampa Avvisi",
+      "IO": "IO",
+      "SEND": "SEND"
+    },
+    "apiKeyDialog": {
+      "description": "Ecco i dettagli dell’integrazione.",
+      "apiKey": "API KEY",
+      "hide": "Nascondi chiave",
+      "show": "Mostra chiave",
+      "copy": "Copia la chiave"
+    },
     "add": {
       "title": "Crea una nuova integrazione",
       "subtitle": "Dopo la creazione, potrai sempre modificare o eliminare l’integrazione.",

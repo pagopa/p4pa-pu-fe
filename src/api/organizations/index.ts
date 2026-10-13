@@ -13,7 +13,10 @@ import {
   pdndServiceViewSchema
 } from '../../../generated/core/zod-schema';
 import { z } from 'zod';
-import { OrganizationUpdateDTO } from '@generated/core/client';
+import {
+  OrganizationApiKeyType,
+  OrganizationUpdateDTO
+} from '@generated/core/client';
 
 export const getOrganizationsByBrokerIdAndFilters = () =>
   useMutation({
@@ -72,6 +75,40 @@ export const getOrganizationApiKeys = (organizationId: number) =>
         await utils.apiClient.bff.getOrganizationApiKeys(organizationId);
       parseAndLog(z.array(organizationApiKeySchema), data);
       return data;
+    }
+  });
+
+export const getOrganizationApiKey = (
+  organizationId: number,
+  keyType: OrganizationApiKeyType,
+  query?: { subUnitCode?: string }
+) =>
+  useQuery({
+    queryKey: ['organizationApiKey', organizationId, keyType],
+    queryFn: async () => {
+      const { data } = await utils.apiClient.bff.getOrganizationApiKey(
+        organizationId,
+        keyType,
+        query
+      );
+      parseAndLog(organizationApiKeySchema, data);
+      return data;
+    }
+  });
+
+export const deleteOrganizationApiKey = (
+  organizationId: number,
+  keyType: OrganizationApiKeyType,
+  query?: { subUnitCode?: string }
+) =>
+  useMutation({
+    mutationKey: ['deleteOrganizationApiKey', organizationId, keyType],
+    mutationFn: async () => {
+      await utils.apiClient.bff.deleteOrganizationApiKey(
+        organizationId,
+        keyType,
+        query
+      );
     }
   });
 
