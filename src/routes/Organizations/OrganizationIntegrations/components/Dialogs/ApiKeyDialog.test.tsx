@@ -10,7 +10,7 @@ import {
   deleteOrganizationApiKey
 } from '@core/api/integrations';
 
-vi.mock('@core/api/organizations', () => ({
+vi.mock('@core/api/integrations', () => ({
   deleteOrganizationApiKey: vi.fn(),
   getOrganizationApiKey: vi.fn()
 }));
