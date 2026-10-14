@@ -1,6 +1,6 @@
 import TitleComponent from '@core/components/TitleComponent/TitleComponent';
 import { useSearch } from '@core/hooks/useSearch';
-import { useNavigate, useParams } from 'react-router';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import {
   getAssignableOrgSubUnits,
   useAddOrgSubUnitsToOperator
@@ -114,6 +114,15 @@ export const OperatorSubunitAssign = () => {
     }
   };
 
+  const handleExit = () => {
+    navigate(
+      generatePath(PageRoutes.OPERATORS_DETAIL, {
+        organizationId: String(organizationId),
+        mappedExternalUserId: mappedExternalUserId ?? ''
+      })
+    );
+  };
+
   const columns: Array<GridColDef<OrgSubUnit>> = [
     {
       field: 'subUnitCode',
@@ -153,7 +162,7 @@ export const OperatorSubunitAssign = () => {
     {
       type: COMPONENT_TYPE.button,
       label: t('commons.filters.filterResults'),
-      gridWidth: 1,
+      gridWidth: 2,
       onClick: () => applyFilters(filters)
     }
   ];
@@ -172,6 +181,7 @@ export const OperatorSubunitAssign = () => {
         onChange={handleFilterChange}
         values={filters}
         items={filterItems}
+        sx={{ mt: 1, mb: 3 }}
       />
       <GridSelector<OrgSubUnit, string>
         show={true}
@@ -190,7 +200,7 @@ export const OperatorSubunitAssign = () => {
         clearButtonLabel={t('commons.deleteSelection')}
       />
       <WizardStepButtons
-        onBack={() => navigate(-1)}
+        onBack={handleExit}
         onNext={handleSubmit}
         nextLabel={t('commons.affiliate')}
       />
