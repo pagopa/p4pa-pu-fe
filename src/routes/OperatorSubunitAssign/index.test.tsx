@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { useNavigate, useParams } from 'react-router';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import {
   getAssignableOrgSubUnits,
   useAddOrgSubUnitsToOperator
@@ -161,7 +161,12 @@ describe('OperatorSubunitAssign', () => {
     expect(mockApplyFilters).toHaveBeenCalled();
 
     fireEvent.click(screen.getByText('back'));
-    expect(mockNavigate).toHaveBeenCalledWith(-1);
+    expect(mockNavigate).toHaveBeenCalledWith(
+      generatePath(PageRoutes.OPERATORS_DETAIL, {
+        organizationId: '123',
+        mappedExternalUserId: 'operator-1'
+      })
+    );
   });
 
   it('notifies when submitting without a selection', () => {
