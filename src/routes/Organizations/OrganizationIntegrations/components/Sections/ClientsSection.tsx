@@ -1,8 +1,8 @@
 import { PdndClientNoSecretDTO } from '@generated/core/client';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { I18N_PREFIX } from '..';
-import { Section, Row, Field } from './Containers';
+import { I18N_PREFIX } from '../..';
+import { Section, Row, Field } from '../Containers';
 
 export const ClientsSection = ({
   clients

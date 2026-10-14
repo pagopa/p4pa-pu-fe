@@ -5,7 +5,7 @@ import { ApiKeysSection } from './ApiKeysSection';
 import { OrganizationApiKey } from '@generated/core/client';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
 
-vi.mock('./ApiKeyDialog', () => ({
+vi.mock('../Dialogs/ApiKeyDialog', () => ({
   ApiKeyDialog: ({
     apiKey,
     organizationId,
@@ -56,9 +56,9 @@ describe('ApiKeysSection', () => {
 
     expect(screen.getByText(/keyTypes\.IO$/)).toBeInTheDocument();
     expect(screen.getByText(/keyTypes\.SEND$/)).toBeInTheDocument();
-    expect(screen.getAllByRole('img', { name: /hiddenApiKey$/ })).toHaveLength(
-      2
-    );
+    expect(
+      screen.getAllByRole('img', { name: /hiddenApiKey$/ })
+    ).toHaveLength(2);
     expect(screen.getAllByText(SECRET_MASK)).toHaveLength(2);
   });
 

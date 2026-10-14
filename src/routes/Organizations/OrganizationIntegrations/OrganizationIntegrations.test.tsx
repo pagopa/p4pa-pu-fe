@@ -2,12 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { render, screen } from '../../../__tests__/renderers';
+import { getOrganizationDetail } from '@core/api/organizations';
 import {
   getOrganizationApiKeys,
-  getOrganizationDetail,
   getPdndClients,
   getPdndServices
-} from '../../../api/organizations';
+} from '@core/api/integrations';
 import { appState } from '../../../store/AppStateStore';
 import { PageRoutes } from '../..';
 import { OrganizationIntegrations } from '.';
@@ -16,8 +16,10 @@ import {
   PdndServiceType
 } from '../../../../generated/core/data-contracts';
 
-vi.mock('../../../api/organizations', () => ({
-  getOrganizationDetail: vi.fn(),
+vi.mock('@core/api/organizations', () => ({
+  getOrganizationDetail: vi.fn()
+}));
+vi.mock('@core/api/integrations', () => ({
   getOrganizationApiKeys: vi.fn(),
   getPdndServices: vi.fn(),
   getPdndClients: vi.fn()

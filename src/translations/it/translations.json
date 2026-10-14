@@ -2422,8 +2422,15 @@
       "IO": "IO",
       "SEND": "SEND"
     },
+    "dialogDescription": "Ecco i dettagli dell’integrazione.",
+    "serviceDialog": {
+      "clientName": "Client name",
+      "purposeId": "Purpose ID",
+      "clientId": "Client ID",
+      "copyPurposeId": "Copia Purpose ID",
+      "copyClientId": "Copia Client ID"
+    },
     "apiKeyDialog": {
-      "description": "Ecco i dettagli dell’integrazione.",
       "apiKey": "API KEY",
       "hide": "Nascondi chiave",
       "show": "Mostra chiave",
