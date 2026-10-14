@@ -41,9 +41,7 @@ export const BaseDialog = ({
       sx={{ padding: 3 }}
     >
       <DialogTitle id={titleId} gap={1}>
-        <Typography variant="h6" component="h2">
-          {title}
-        </Typography>
+        {title}
         {description && (
           <Typography id={descriptionId} variant="body2" color="text.secondary">
             {description}

@@ -1,23 +1,37 @@
+import { useParams } from 'react-router';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Button, Stack, Typography } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import CustomDataGrid from '../../components/DataGrid/CustomDataGrid';
+import { PdndServiceView } from '@generated/core/data-contracts';
+
+import { getOrgSubUnitsPdndServices } from '@core/api/integrations';
+import CustomDataGrid from '@core/components/DataGrid/CustomDataGrid';
 import FilterContainer, {
   COMPONENT_TYPE,
   FilterItem
-} from '../../components/FilterContainer/FilterContainer';
-import { PdndServiceView } from '../../../generated/core/data-contracts';
+} from '@core/components/FilterContainer/FilterContainer';
+import { useSearch } from '@core/hooks/useSearch';
+import { PdndSendServiceDialog } from './Dialogs/ServiceDialog';
 
 type Filters = { subUnitCode?: string };
 
-// not wired yet: the sub-unit e-services API is still to be built
 export const SubUnitIntegrations = () => {
   const { t } = useTranslation();
   const [values, setValues] = useState<Filters>({});
-  const rows: Array<PdndServiceView> = [];
+  const [selected, setSelected] = useState<PdndServiceView>();
+
+  const { organizationId: urlOrganizationId } = useParams();
+  const organizationId = Number(urlOrganizationId);
+
+  const query = getOrgSubUnitsPdndServices(organizationId);
+
+  const pdndServices = useSearch({
+    query,
+    filters: values
+  });
 
   const filterItems: Array<FilterItem> = [
     {
@@ -39,6 +53,7 @@ export const SubUnitIntegrations = () => {
       field: 'subUnitCode',
       headerName: t('organizations.integrations.subUnit'),
       flex: 1,
+      sortable: false,
       renderCell: ({ value }) => (
         <Typography variant="body2" fontFamily="monospace" component="span">
           {value}
@@ -48,7 +63,8 @@ export const SubUnitIntegrations = () => {
     {
       field: 'subUnitName',
       headerName: t('organizations.integrations.subUnitName'),
-      flex: 1
+      flex: 1,
+      sortable: false
     },
     {
       field: 'serviceType',
@@ -67,10 +83,10 @@ export const SubUnitIntegrations = () => {
       display: 'flex',
       align: 'center',
       renderCell: ({ row }) => (
-        // not wired yet
         <Button
           variant="text"
           endIcon={<ArrowForwardIcon />}
+          onClick={() => setSelected(row)}
           aria-label={t('organizations.integrations.showItem', {
             name: row.subUnitName ?? row.subUnitCode
           })}
@@ -83,27 +99,33 @@ export const SubUnitIntegrations = () => {
 
   return (
     <Stack gap={5}>
+      {selected && (
+        <PdndSendServiceDialog
+          open
+          service={selected}
+          organizationId={organizationId}
+          onClose={() => setSelected(undefined)}
+          onDelete={() => pdndServices.applyFilters(values)}
+        />
+      )}
       <FilterContainer
         items={filterItems}
         values={values}
         onChange={(id, value) =>
           setValues((prev) => ({ ...prev, [id]: value as string }))
         }
-        // not wired yet
-        onSubmit={() => undefined}
+        onSubmit={() => pdndServices.applyFilters(values)}
       />
       <Stack gap={3} component="section">
         <Typography variant="h5" component="h2">
           {t('organizations.integrations.pdndServices')}
         </Typography>
         <CustomDataGrid
-          rows={rows}
+          rows={query?.data?.content ?? []}
           getRowId={(row: PdndServiceView) => row.purposeId ?? row.clientId}
           columns={columns}
           totalPages={0}
           disableColumnMenu
-          disableColumnResize
-          disableColumnSorting
         />
       </Stack>
     </Stack>
