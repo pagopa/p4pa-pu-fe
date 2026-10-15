@@ -7,6 +7,7 @@ import utils from '../../utils';
 import {
   deleteOrgSubUnitFromOperator,
   getAssignableOrgSubUnits,
+  getOrgSubUnitNotRelatedOperators,
   getOperatorOrgSubUnits,
   getPagedOrgSubUnits,
   useAddOrgSubUnitsToOperator
@@ -21,7 +22,8 @@ vi.mock('../../utils', () => ({
         getPagedOrgSubUnits: vi.fn(),
         deleteOrgSubUnitFromOperator: vi.fn(),
         getOperatorAssignableOrgSubUnits: vi.fn(),
-        addOrgSubUnitsToOperator: vi.fn()
+        addOrgSubUnitsToOperator: vi.fn(),
+        getOrgSubUnitNotRelatedOperators: vi.fn()
       }
     }
   }
@@ -45,6 +47,9 @@ const mockGetOperatorAssignableOrgSubUnits = vi.mocked(
 );
 const mockAddOrgSubUnitsToOperator = vi.mocked(
   utils.apiClient.bff.addOrgSubUnitsToOperator
+);
+const mockGetOrgSubUnitNotRelatedOperators = vi.mocked(
+  utils.apiClient.bff.getOrgSubUnitNotRelatedOperators
 );
 const mockParseAndLog = vi.mocked(loaders.parseAndLog);
 
@@ -362,6 +367,79 @@ describe('orgSubUnit API hooks', () => {
       await expect(
         act(async () => {
           await result.current.mutateAsync({ orgSubUnitCodes: ['SUB-001'] });
+        })
+      ).rejects.toThrow('API Error');
+    });
+  });
+
+  describe('getOrgSubUnitNotRelatedOperators', () => {
+    it('calls the API with the organization, sub-unit, filters, pagination, and sort', async () => {
+      const response = { content: [], totalPages: 1 };
+      mockGetOrgSubUnitNotRelatedOperators.mockResolvedValue({
+        data: response
+      } as AxiosResponse);
+
+      const organizationId = 123;
+      const subUnitCode = 'SUB-001';
+      const request = {
+        filters: { lastName: 'Smith', fiscalCode: 'SMTH01' },
+        pagination: { page: 1, size: 10 },
+        sort: ['lastName']
+      };
+
+      const { result } = renderHook(() =>
+        getOrgSubUnitNotRelatedOperators(organizationId, subUnitCode)
+      );
+
+      await act(async () => {
+        await result.current.mutateAsync(request);
+      });
+
+      expect(mockGetOrgSubUnitNotRelatedOperators).toHaveBeenCalledWith(
+        organizationId,
+        subUnitCode,
+        { ...request.filters, ...request.pagination, sort: request.sort }
+      );
+    });
+
+    it('returns the API response data', async () => {
+      const response = { content: [], totalPages: 1 };
+      mockGetOrgSubUnitNotRelatedOperators.mockResolvedValue({
+        data: response
+      } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        getOrgSubUnitNotRelatedOperators(123, 'SUB-001')
+      );
+      let mutationResult: unknown;
+
+      await act(async () => {
+        mutationResult = await result.current.mutateAsync({
+          filters: {},
+          pagination: { page: 0, size: 10 },
+          sort: []
+        });
+      });
+
+      expect(mutationResult).toEqual(response);
+    });
+
+    it('propagates API errors', async () => {
+      mockGetOrgSubUnitNotRelatedOperators.mockRejectedValue(
+        new Error('API Error')
+      );
+
+      const { result } = renderHook(() =>
+        getOrgSubUnitNotRelatedOperators(123, 'SUB-001')
+      );
+
+      await expect(
+        act(async () => {
+          await result.current.mutateAsync({
+            filters: {},
+            pagination: { page: 0, size: 10 },
+            sort: []
+          });
         })
       ).rejects.toThrow('API Error');
     });

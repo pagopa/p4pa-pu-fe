@@ -730,7 +730,7 @@
     "affiliate": "Associa",
     "confirm": "Conferma",
     "configure": "Configura",
-    "id": "id",
+    "id": "ID",
     "role": "Ruolo",
     "info": "Informazioni",
     "infoSingular": "Informazione",
@@ -2532,6 +2532,20 @@
     "status": {
       "ACTIVE": "Attiva",
       "CANCELLED": "Disattivata"
+    },
+    "assignOperators": {
+      "title": "Associa operatore",
+      "description": "Seleziona una o più operatori da associare alla sottounità {{subUnitCode}}.",
+      "searchByLastName": "Cerca per cognome",
+      "searchByFiscalCode": "Cerca per codice fiscale",
+      "countLabel_one": "Selezionato {{count}} operatore",
+      "countLabel_other": "Selezionati {{count}} operatori",
+       "dialog": {
+        "title": "Conferma associazione",
+          "message_one": "{{count}} operatore sarà associato alla sottounità <strong>{{subUnitCode}}</strong>.",
+          "message_other": "{{count}} operatori saranno associati alla sottounità <strong>{{subUnitCode}}</strong>.",
+        "noSelection": "Nessun operatore selezionato"
+      }
     },
     "assignPage": {
       "title": "Associa sottounità",
