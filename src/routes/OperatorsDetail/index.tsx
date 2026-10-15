@@ -251,6 +251,16 @@ export const OperatorDetail = () => {
     );
   };
 
+  const onAssignSubUnitClick = () => {
+    navigate(
+      generatePath(PageRoutes.OPERATOR_SUBUNIT_ASSIGN, {
+        organizationId: String(organizationId),
+        orgName: orgName ?? '',
+        mappedExternalUserId: mappedExternalUserId ?? '',
+        operatorName
+      })
+    );
+  };
   return (
     <>
       <TitleComponent
@@ -337,7 +347,12 @@ export const OperatorDetail = () => {
           }}
         >
           <Typography variant="h6">{t('OperatorDetail.subUnit')}</Typography>
-          <Button variant="outlined" color="primary" startIcon={<Add />}>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<Add />}
+            onClick={onAssignSubUnitClick}
+          >
             {t('OperatorDetail.affiliateSubUnit')}
           </Button>
         </Box>

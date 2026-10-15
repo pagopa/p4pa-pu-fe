@@ -24,7 +24,7 @@ vi.mock('./hooks/useBreadcrumbs', () => ({
 }));
 
 // Import after mocks
-import { useParams, useNavigate } from 'react-router';
+import { generatePath, useParams, useNavigate } from 'react-router';
 import { useDebtPositionTypesByOrg } from '../../hooks/useDebtPositionTypesByOrg';
 import { useOperatorDetailSearch } from '../../api/organizationOperators';
 import { useSearch } from '../../hooks/useSearch';
@@ -47,7 +47,8 @@ describe('OperatorDetail Component', () => {
     // Setup react-router mocks
     mockUseParams.mockReturnValue({
       organizationId: '123',
-      mappedExternalUserId: 'abc-xyz'
+      mappedExternalUserId: 'abc-xyz',
+      orgName: 'Test Organization'
     });
     mockUseNavigate.mockReturnValue(mockNavigate);
 
@@ -118,6 +119,21 @@ describe('OperatorDetail Component', () => {
     ).toBeInTheDocument();
     expect(screen.getByLabelText('commons.searchForCode')).toBeInTheDocument();
     expect(screen.getByText('OperatorDetail.code')).toBeInTheDocument();
+  });
+
+  it('navigates to sub-unit assignment when clicking the assign button', () => {
+    render(<OperatorDetail />);
+
+    fireEvent.click(screen.getByText('OperatorDetail.affiliateSubUnit'));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      generatePath(PageRoutes.OPERATOR_SUBUNIT_ASSIGN, {
+        organizationId: '123',
+        orgName: 'Test Organization',
+        mappedExternalUserId: 'abc-xyz',
+        operatorName: 'John Doe'
+      })
+    );
   });
 
   it('navigates to error page if there are api errors', () => {

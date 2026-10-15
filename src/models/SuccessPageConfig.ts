@@ -272,6 +272,18 @@ export const SuccessPageConfig: SuccessOpts = {
       }
     ]
   },
+  'subunits-assigned': {
+    title: 'subunits.assignPage.success.title',
+    description: 'subunits.assignPage.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'subunits.assignPage.success.buttonLabel',
+        customNavigation: 'OPERATORS_DETAIL'
+      }
+    ]
+  },
   'client-sil-delete-success': {
     title: 'clientSil.successPage.title',
     description: 'clientSil.successPage.description',

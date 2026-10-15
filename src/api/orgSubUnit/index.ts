@@ -180,3 +180,58 @@ export const createOrgSubUnit = (organizationId: number) =>
       return response;
     }
   });
+
+export type AssignableOrgSubunitsQuery = Omit<
+  Parameters<typeof utils.apiClient.bff.getOperatorAssignableOrgSubUnits>[2],
+  'page' | 'size' | 'sort'
+>;
+
+export const getAssignableOrgSubUnits = (
+  organizationId: number,
+  mappedExternalUserId: string
+) =>
+  useMutation({
+    mutationKey: [
+      'getAssignableOrgSubUnits',
+      organizationId,
+      mappedExternalUserId
+    ],
+    mutationFn: async (args: FilteredRequest<AssignableOrgSubunitsQuery>) => {
+      const query = {
+        ...args.filters,
+        ...args.pagination,
+        sort: args.sort
+      };
+      const { data } =
+        await utils.apiClient.bff.getOperatorAssignableOrgSubUnits(
+          organizationId,
+          mappedExternalUserId,
+          query
+        );
+      return data;
+    }
+  });
+
+type AddOrgSubUnitsToOperatorQuery = Parameters<
+  typeof utils.apiClient.bff.addOrgSubUnitsToOperator
+>[2];
+
+export const useAddOrgSubUnitsToOperator = (
+  organizationId: number,
+  mappedExternalUserId: string
+) =>
+  useMutation({
+    mutationKey: [
+      'useAddOrgSubUnitsToOperator',
+      organizationId,
+      mappedExternalUserId
+    ],
+    mutationFn: async (query: AddOrgSubUnitsToOperatorQuery) => {
+      const { data } = await utils.apiClient.bff.addOrgSubUnitsToOperator(
+        organizationId,
+        mappedExternalUserId,
+        query
+      );
+      return data;
+    }
+  });
