@@ -717,6 +717,8 @@
     "reloadSecretKO": "Non è stato possibile rigenerare la Secret key"
   },
   "commons": {
+    "copy_female": "Copia la {{label}}",
+    "copy_male": "Copia il {{label}}",
     "404": "404: risorsa non disponibile",
     "done": "Fatto!",
     "name": "Nome e cognome",
@@ -2423,6 +2425,11 @@
       "SEND": "SEND"
     },
     "dialogDescription": "Ecco i dettagli dell’integrazione.",
+    "clientDialog": {
+      "clientId": "ID del client",
+      "kid": "ID della chiave (KID)",
+      "publicKey": "Chiave pubblica"
+    },
     "serviceDialog": {
       "clientName": "Client name",
       "purposeId": "Purpose ID",
