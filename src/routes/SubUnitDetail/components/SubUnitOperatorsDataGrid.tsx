@@ -92,12 +92,14 @@ export const SubUnitOperatorsDataGrid = ({
   const columns: Array<GridColDef<OrgSubUnitOperator>> = [
     {
       field: 'mappedExternalUserId',
+      sortable: false,
       headerName: t('commons.id').toUpperCase(),
       flex: 1
     },
     {
-      field: 'operatorName',
+      field: 'lastName',
       headerName: t('commons.name'),
+      sortable: false,
       flex: 1,
       renderCell: ({ row }) => {
         const name = `${row.firstName ?? ''} ${row.lastName ?? ''}`;
@@ -107,6 +109,7 @@ export const SubUnitOperatorsDataGrid = ({
     },
     {
       field: 'fiscalCode',
+      sortable: false,
       headerName: t('commons.fiscalCode'),
       flex: 1,
       renderCell: ({ value }) => value || ' _ '

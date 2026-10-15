@@ -143,10 +143,10 @@ describe('SubUnitOperatorsDataGrid', () => {
   it('renders the operator name, or a placeholder when both names are missing', () => {
     renderGrid([operatorWithName, operatorWithoutName]);
 
-    expect(screen.getByTestId('cell-operatorName-U1')).toHaveTextContent(
+    expect(screen.getByTestId('cell-lastName-U1')).toHaveTextContent(
       'Mario Rossi'
     );
-    expect(screen.getByTestId('cell-operatorName-U2')).toHaveTextContent('_');
+    expect(screen.getByTestId('cell-lastName-U2')).toHaveTextContent('_');
   });
 
   it('deletes the selected operator and calls onDelete on success, without notifying', async () => {
