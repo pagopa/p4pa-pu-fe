@@ -9,6 +9,6 @@ export const copyToClipboard = async (
   setTimeout(() => onCopied(false), 2000); // Reset after 2 seconds
 };
 
-export const copyWithFeedback = (value: string, feedback: string) => () => {
+export const copyWithFeedback = (value: string, feedback: string) => {
   copyToClipboard(value, () => notify.emit(feedback, 'success'));
 };

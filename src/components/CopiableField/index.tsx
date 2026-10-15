@@ -8,17 +8,19 @@ type CopiableFieldProps = {
   label: string;
   value: string;
   copyLabel?: string;
+  labelPrefix?: string;
 };
 
 export const CopiableField = ({
   label,
   value,
-  copyLabel
+  labelPrefix = 'commons.copy_female'
 }: CopiableFieldProps) => {
   const { t } = useTranslation();
 
-  const copy = (value: string, label: string) =>
+  const copy = (value: string, label: string) => {
     copyWithFeedback(value, `${label} ${t('commons.copied')}`);
+  };
 
   return (
     <Stack
@@ -34,17 +36,18 @@ export const CopiableField = ({
         <Typography
           variant="body1"
           fontWeight={600}
-          color={'text.primary'}
+          color={'primary.dark'}
           sx={{ wordBreak: 'break-all' }}
         >
           {value}
         </Typography>
       </Stack>
       <IconButton
-        aria-label={t(copyLabel || 'commons.copy_female', label)}
+        size="small"
+        aria-label={t(labelPrefix, { label })}
         onClick={() => copy(value, label)}
       >
-        <ContentCopyIcon color="primary" />
+        <ContentCopyIcon fontSize="small" color="primary" />
       </IconButton>
     </Stack>
   );

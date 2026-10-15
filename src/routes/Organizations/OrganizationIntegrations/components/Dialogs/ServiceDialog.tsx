@@ -9,6 +9,7 @@ import { deletePdndService } from '@core/api/integrations';
 import { useEffect } from 'react';
 import notify from '@core/utils/notify';
 import { CopiableField } from '@core/components/CopiableField';
+import { Field } from '../Containers';
 
 type ServiceDialogProps = {
   service: PdndServiceView;
@@ -69,10 +70,9 @@ export const PdndSendServiceDialog = ({
       }
     >
       <Stack gap={2}>
-        <CopiableField
-          label={t('integrations.serviceDialog.clientName')}
-          value={service.clientName}
-        />
+        <Field label={t('integrations.serviceDialog.clientName')}>
+          {service.clientName}
+        </Field>
 
         {service.purposeId && (
           <>
@@ -80,7 +80,7 @@ export const PdndSendServiceDialog = ({
             <CopiableField
               label={t('integrations.serviceDialog.purposeId')}
               value={service.purposeId}
-              copyLabel={t('integrations.serviceDialog.copyPurposeId')}
+              labelPrefix="commons.copy_male"
             />
           </>
         )}

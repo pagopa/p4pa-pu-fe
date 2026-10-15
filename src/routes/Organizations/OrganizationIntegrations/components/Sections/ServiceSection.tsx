@@ -20,6 +20,15 @@ export const ServicesSection = ({
 
   return (
     <Section title={t('pdndServices')}>
+      {selected && (
+        <PdndSendServiceDialog
+          open
+          service={selected}
+          organizationId={organizationId}
+          onClose={() => setSelected(undefined)}
+          onDelete={onDelete}
+        />
+      )}
       {services.map((service) => (
         <Row
           key={`${service.serviceType}-${service.purposeId}`}
@@ -37,15 +46,6 @@ export const ServicesSection = ({
           </Field>
         </Row>
       ))}
-      {selected && (
-        <PdndSendServiceDialog
-          open
-          service={selected}
-          organizationId={organizationId}
-          onClose={() => setSelected(undefined)}
-          onDelete={onDelete}
-        />
-      )}
     </Section>
   );
 };

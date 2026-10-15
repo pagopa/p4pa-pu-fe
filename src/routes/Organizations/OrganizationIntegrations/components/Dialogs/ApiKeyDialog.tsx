@@ -1,7 +1,7 @@
 import ContentCopyIcon from '@mui/icons-material/ContentCopyOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined';
+import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
 import {
   Button,
   Divider,
@@ -10,20 +10,21 @@ import {
   Switch,
   Typography
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { OrganizationApiKey } from '@generated/core/data-contracts';
 
-import utils from '@core/utils';
-import { SECRET_MASK } from '@core/components/ShowSecretValue';
-import { KeyTypeEnum } from '@generated/core/client';
-import { BaseDialog } from '@core/components/BaseDialog';
 import {
-  getOrganizationApiKey,
-  deleteOrganizationApiKey
+  deleteOrganizationApiKey,
+  getOrganizationApiKey
 } from '@core/api/integrations';
+import { BaseDialog } from '@core/components/BaseDialog';
+import { SECRET_MASK } from '@core/components/ShowSecretValue';
+import utils from '@core/utils';
 import { copyWithFeedback } from '@core/utils/clipboard';
+import notify from '@core/utils/notify';
+import { KeyTypeEnum } from '@generated/core/client';
 
 type ApiKeyDialogProps = {
   apiKey: OrganizationApiKey;
@@ -43,12 +44,20 @@ export const ApiKeyDialog = ({
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
 
-  const { data: organizationApiKey } = getOrganizationApiKey(
+  const { data: organizationApiKey, isSuccess } = getOrganizationApiKey(
     organizationId,
     apiKey.keyType
   );
 
+  useEffect(() => {
+    if (!organizationApiKey?.apiKey && isSuccess) {
+      setIsVisible(false);
+      notify.emit(t('errors.generic'));
+    }
+  }, [open]);
+
   const deleteApiKey = deleteOrganizationApiKey(organizationId, apiKey.keyType);
+  const parsedApiKey = String(organizationApiKey?.apiKey);
 
   const handleDelete = async () => {
     try {
@@ -62,7 +71,9 @@ export const ApiKeyDialog = ({
     }
   };
 
-  const copy = (value: string) => copyWithFeedback(value, t('commons.copied'));
+  const copy = (value: string) => {
+    copyWithFeedback(value, t('commons.copied'));
+  };
 
   return (
     <BaseDialog
@@ -81,24 +92,22 @@ export const ApiKeyDialog = ({
         </Button>
       }
     >
-      <Stack gap={2}>
+      <Stack gap={1}>
         {organizationApiKey?.keyType == KeyTypeEnum.IO && (
-          <Stack>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
+          <Stack gap={0.8} py={1.5}>
+            <Typography
+              variant="subtitle2"
+              lineHeight={0}
+              color="text.secondary"
             >
-              <Typography variant="subtitle1">
-                {t('integrations.apiKeyDialog.notifications')}
-              </Typography>
-              <Switch
-                disabled
-                value="notifications"
-                checked={organizationApiKey?.serviceEnabled}
-              />
-            </Stack>
-            <Typography variant="caption" color="text.secondary">
+              {t('integrations.apiKeyDialog.notifications')}
+            </Typography>
+            <Typography
+              variant="body2"
+              color="text.dark"
+              fontWeight={600}
+              letterSpacing={0}
+            >
               {organizationApiKey?.serviceEnabled
                 ? t('commons.status.ACTIVE')
                 : t('commons.status.INACTIVE')}
@@ -118,6 +127,7 @@ export const ApiKeyDialog = ({
               {t('integrations.apiKeyDialog.apiKey')}
             </Typography>
             <IconButton
+              size="small"
               aria-label={t(
                 isVisible
                   ? 'integrations.apiKeyDialog.hide'
@@ -126,9 +136,9 @@ export const ApiKeyDialog = ({
               onClick={() => setIsVisible((visible) => !visible)}
             >
               {isVisible ? (
-                <VisibilityOffIcon color="primary" />
+                <VisibilityOffIcon fontSize="small" color="primary" />
               ) : (
-                <VisibilityIcon color="primary" />
+                <VisibilityIcon fontSize="small" color="primary" />
               )}
             </IconButton>
           </Stack>
@@ -137,16 +147,19 @@ export const ApiKeyDialog = ({
             direction="row"
             justifyContent="space-between"
             alignItems="center"
+            p={1.5}
+            pr={0}
             gap={1}
           >
-            <Typography variant="monospaced" component="span" ml={1}>
-              {isVisible ? organizationApiKey?.apiKey : SECRET_MASK}
+            <Typography variant="monospaced" component="span">
+              {isVisible ? parsedApiKey : SECRET_MASK}
             </Typography>
             <IconButton
+              size="small"
               aria-label={t('integrations.apiKeyDialog.copy')}
-              onClick={copy(organizationApiKey?.apiKey || '')}
+              onClick={() => copy(parsedApiKey || '')}
             >
-              <ContentCopyIcon color="primary" />
+              <ContentCopyIcon fontSize="small" color="primary" />
             </IconButton>
           </Stack>
         </Stack>

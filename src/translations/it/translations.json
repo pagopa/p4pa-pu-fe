@@ -2438,7 +2438,7 @@
       "copyClientId": "Copia Client ID"
     },
     "apiKeyDialog": {
-      "apiKey": "API KEY",
+      "apiKey": "Chiave pubblica",
       "hide": "Nascondi chiave",
       "show": "Mostra chiave",
       "copy": "Copia la chiave",
