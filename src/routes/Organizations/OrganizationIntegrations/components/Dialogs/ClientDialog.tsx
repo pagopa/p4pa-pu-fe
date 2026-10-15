@@ -56,7 +56,7 @@ export const PdndClientDialog = ({
       open={open}
       onClose={onClose}
       title={client.clientName}
-      description={t('integrations.clientDescription')}
+      description={t('integrations.dialogDescription')}
       actions={
         <Button
           color="error"
