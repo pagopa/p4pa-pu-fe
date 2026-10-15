@@ -2,14 +2,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopyOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined';
 import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
-import {
-  Button,
-  Divider,
-  IconButton,
-  Stack,
-  Switch,
-  Typography
-} from '@mui/material';
+import { Button, Divider, IconButton, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -21,7 +14,6 @@ import {
 } from '@core/api/integrations';
 import { BaseDialog } from '@core/components/BaseDialog';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
-import utils from '@core/utils';
 import { copyWithFeedback } from '@core/utils/clipboard';
 import notify from '@core/utils/notify';
 import { KeyTypeEnum } from '@generated/core/client';
@@ -62,10 +54,10 @@ export const ApiKeyDialog = ({
   const handleDelete = async () => {
     try {
       await deleteApiKey.mutateAsync();
-      utils.notify.emit(t('commons.done'), 'success');
+      notify.emit(t('commons.done'), 'success');
       onDelete();
     } catch {
-      utils.notify.emit(t('errors.generic'));
+      notify.emit(t('errors.generic'));
     } finally {
       onClose();
     }

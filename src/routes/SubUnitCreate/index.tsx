@@ -18,6 +18,7 @@ import WizardStepWrapper from '@core/components/Wizard/WizardStepWrapper';
 import utils from '@core/utils';
 import { PageRoutes } from '..';
 import { MIAlert } from '@pagopa/mui-italia';
+import { useEffect } from 'react';
 
 const subUnitSchema = z.object({
   subUnitCode: z.string({
@@ -39,9 +40,12 @@ export const SubUnitCreate = () => {
   const { organizationId: urlOrganizationId } = useParams();
 
   const organizationId = Number(urlOrganizationId);
-  if (isNaN(organizationId)) {
-    navigate(PageRoutes.ERROR);
-  }
+
+  useEffect(() => {
+    if (isNaN(organizationId)) {
+      navigate(PageRoutes.ERROR);
+    }
+  }, [organizationId]);
 
   const create = createOrgSubUnit(organizationId);
 

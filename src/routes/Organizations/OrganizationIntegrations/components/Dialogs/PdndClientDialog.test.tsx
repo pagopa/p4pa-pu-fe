@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { PdndClientDialog } from './PdndClientDialog';
+import { PdndClientDialog } from './ClientDialog';
 import { deletePdndClient } from '@core/api/integrations';
 import { PdndClientNoSecretDTO } from '@generated/core/data-contracts';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';

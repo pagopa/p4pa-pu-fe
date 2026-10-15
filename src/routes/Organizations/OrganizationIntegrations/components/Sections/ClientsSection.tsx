@@ -5,7 +5,7 @@ import { PdndClientNoSecretDTO } from '@generated/core/client';
 
 import { I18N_PREFIX } from '../..';
 import { Field, Row, Section } from '../Containers';
-import { PdndClientDialog } from '../Dialogs/PdndClientDialog';
+import { PdndClientDialog } from '../Dialogs/ClientDialog';
 
 export const ClientsSection = ({
   clients,

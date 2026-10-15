@@ -40,9 +40,11 @@ export const SubUnitsList = () => {
   const { organizationId: urlOrganizationId } = useParams();
   const organizationId = Number(urlOrganizationId);
 
-  if (isNaN(organizationId)) {
-    navigate(PageRoutes.RESPONSES_ERROR);
-  }
+  useEffect(() => {
+    if (isNaN(organizationId)) {
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
+  }, [organizationId]);
 
   const query = getPagedOrgSubUnits(organizationId);
 

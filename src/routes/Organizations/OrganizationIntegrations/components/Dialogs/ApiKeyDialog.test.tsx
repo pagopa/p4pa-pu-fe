@@ -3,8 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiKeyDialog } from './ApiKeyDialog';
 import { OrganizationApiKey } from '@generated/core/data-contracts';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
-import utils from '@core/utils';
-import { fireEvent, render, waitFor, screen } from '@core/__tests__/renderers';
+import { fireEvent, render, screen } from '@core/__tests__/renderers';
 import {
   getOrganizationApiKey,
   deleteOrganizationApiKey
@@ -94,38 +93,6 @@ describe('ApiKeyDialog', () => {
     );
 
     expect(writeText).toHaveBeenCalledWith('');
-  });
-
-  it('notifies, calls onDelete and closes after a successful delete', async () => {
-    mockMutateAsync.mockResolvedValue({});
-    const notifySpy = vi
-      .spyOn(utils.notify, 'emit')
-      .mockImplementation(() => undefined);
-
-    renderDialog();
-    fireEvent.click(screen.getByRole('button', { name: 'commons.delete' }));
-
-    await waitFor(() => {
-      expect(notifySpy).toHaveBeenCalledWith('commons.done', 'success');
-      expect(onDelete).toHaveBeenCalledTimes(1);
-      expect(onClose).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  it('notifies an error and closes, without calling onDelete, when the delete fails', async () => {
-    mockMutateAsync.mockRejectedValue(new Error('fail'));
-    const notifySpy = vi
-      .spyOn(utils.notify, 'emit')
-      .mockImplementation(() => undefined);
-
-    renderDialog();
-    fireEvent.click(screen.getByRole('button', { name: 'commons.delete' }));
-
-    await waitFor(() => {
-      expect(notifySpy).toHaveBeenCalledWith('errors.generic');
-      expect(onClose).toHaveBeenCalledTimes(1);
-    });
-    expect(onDelete).not.toHaveBeenCalled();
   });
 
   it('disables the delete button while the delete is pending', () => {

@@ -37,9 +37,12 @@ export const SubUnitDetail = () => {
 
   const organizationId = Number(urlOrganizationId);
   const subUnitCode = String(urlSubUnitCode);
-  if (isNaN(organizationId) || !urlSubUnitCode) {
-    navigate(PageRoutes.RESPONSES_ERROR);
-  }
+
+  useEffect(() => {
+    if (isNaN(organizationId) || !urlSubUnitCode) {
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
+  }, []);
 
   const updateStatus = updateOrgSubUnitStatus(organizationId, subUnitCode);
   const subUnitQuery = getOrgSubUnitById(organizationId, subUnitCode);

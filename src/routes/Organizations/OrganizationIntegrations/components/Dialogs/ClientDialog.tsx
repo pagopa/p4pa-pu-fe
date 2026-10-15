@@ -77,7 +77,9 @@ export const PdndClientDialog = ({
         <Divider />
         <CopiableField
           label={t('integrations.clientDialog.kid')}
-          copyLabel={t('commons.copy_male', t('integrations.clientDialog.kid'))}
+          copyLabel={t('commons.copy_male', {
+            label: t('integrations.clientDialog.kid')
+          })}
           value={client.kid}
         />
 
