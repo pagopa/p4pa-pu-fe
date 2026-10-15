@@ -35,6 +35,7 @@ export type CustomDataGridProps<T extends GridValidRowModel> = {
   totalPages: number;
   totalElements?: number;
   tabIndex?: number;
+  id?: string;
 } & Omit<
   DataGridProps,
   | 'pagination'
@@ -54,6 +55,7 @@ const CustomDataGrid = <T extends GridValidRowModel>({
   totalPages = 1,
   totalElements,
   tabIndex = -1,
+  id = '',
   ...restProps
 }: CustomDataGridProps<T>) => {
   // Read from URL hash params directly
@@ -63,7 +65,7 @@ const CustomDataGrid = <T extends GridValidRowModel>({
     sortField: hashSort,
     sortDirection: hashSortDirection,
     ...hashParams
-  } = useHashParamsListener<Record<string, unknown>>();
+  } = useHashParamsListener<Record<string, unknown>>(id);
   const [announcement, setAnnouncement] = useState('');
   const resultsTableRef = useRef<HTMLDivElement | null>(null);
   const shouldFocusResultsRef = useRef(false);
@@ -144,15 +146,15 @@ const CustomDataGrid = <T extends GridValidRowModel>({
       const sort =
         newSortModel.length > 0
           ? {
-              sortField: newSortModel[0].field,
-              sortDirection: newSortModel[0].sort
+              [`${id}sortField`]: newSortModel[0].field,
+              [`${id}sortDirection`]: newSortModel[0].sort
             }
           : {};
 
       const paramsObj = {
         ...hashParams,
-        page: newPage,
-        size: newSize,
+        [`${id}page`]: newPage,
+        [`${id}size`]: newSize,
         ...sort
       };
 
@@ -198,20 +200,19 @@ const CustomDataGrid = <T extends GridValidRowModel>({
     <>
       <HiddenDiv message={announcement} />
       <StyledDataGrid
+        paginationMode="server"
+        sortingMode="server"
         ref={resultsTableRef}
         rows={rows}
         columns={columns}
         pagination
-        paginationMode="server"
-        rowCount={totalElements}
-        sortingMode="server"
         sortModel={sortModel}
         onSortModelChange={handleSortModelChange}
         hideFooterSelectedRowCount
         aria-label={t('commons.tableResults')}
         slotProps={{
           root: {
-            id: 'data-results-table',
+            id: `${id}data-results-table`,
             tabIndex: tabIndex
           }
         }}
@@ -232,6 +233,7 @@ const CustomDataGrid = <T extends GridValidRowModel>({
           noRowsLabel: t('commons.noRows')
         }}
         {...restProps}
+        rowCount={restProps.rowCount ?? totalElements ?? 0}
       />
     </>
   );

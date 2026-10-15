@@ -717,6 +717,8 @@
     "reloadSecretKO": "Non è stato possibile rigenerare la Secret key"
   },
   "commons": {
+    "copy_female": "Copia la {{label}}",
+    "copy_male": "Copia il {{label}}",
     "404": "404: risorsa non disponibile",
     "done": "Fatto!",
     "name": "Nome e cognome",
@@ -730,7 +732,7 @@
     "affiliate": "Associa",
     "confirm": "Conferma",
     "configure": "Configura",
-    "id": "id",
+    "id": "ID",
     "role": "Ruolo",
     "info": "Informazioni",
     "infoSingular": "Informazione",
@@ -2416,6 +2418,49 @@
       }
     }
   },
+  "integrations": {
+    "keyTypes": {
+      "GENERATE_NOTICE": "Stampa Avvisi",
+      "IO": "IO",
+      "SEND": "SEND"
+    },
+    "dialogDescription": "Ecco i dettagli dell’integrazione.",
+    "clientDialog": {
+      "clientId": "ID del client",
+      "kid": "ID della chiave (KID)",
+      "publicKey": "Chiave pubblica"
+    },
+    "serviceDialog": {
+      "clientName": "Client name",
+      "purposeId": "Purpose ID",
+      "clientId": "Client ID",
+      "copyPurposeId": "Copia Purpose ID",
+      "copyClientId": "Copia Client ID"
+    },
+    "apiKeyDialog": {
+      "apiKey": "Chiave pubblica",
+      "hide": "Nascondi chiave",
+      "show": "Mostra chiave",
+      "copy": "Copia la chiave",
+      "notifications": "Notifiche invio messaggio"
+    },
+    "add": {
+      "title": "Crea una nuova integrazione",
+      "subtitle": "Dopo la creazione, potrai sempre modificare o eliminare l’integrazione.",
+      "section": "Seleziona il tipo di integrazione",
+      "pagoPaProduct": {
+        "label": "Prodotto PagoPA",
+        "description": "IO, Stampa avvisi"
+      },
+      "eService": {
+        "label": "E-service PDND",
+        "description": "SEND"
+      },
+      "pdndClient": {
+        "label": "Client PDND"
+      }
+    }
+  },
   "organizations": {
     "detail": "Dettaglio dell'ente: {{orgName}}",
     "name": "Nome o ragione sociale",
@@ -2494,6 +2539,39 @@
     "status": {
       "ACTIVE": "Attiva",
       "CANCELLED": "Disattivata"
+    },
+    "assignOperators": {
+      "title": "Associa operatore",
+      "description": "Seleziona una o più operatori da associare alla sottounità {{subUnitCode}}.",
+      "searchByLastName": "Cerca per cognome",
+      "searchByFiscalCode": "Cerca per codice fiscale",
+      "countLabel_one": "Selezionato {{count}} operatore",
+      "countLabel_other": "Selezionati {{count}} operatori",
+       "dialog": {
+        "title": "Conferma associazione",
+          "message_one": "{{count}} operatore sarà associato alla sottounità <strong>{{subUnitCode}}</strong>.",
+          "message_other": "{{count}} operatori saranno associati alla sottounità <strong>{{subUnitCode}}</strong>.",
+        "noSelection": "Nessun operatore selezionato"
+      }
+    },
+    "assignPage": {
+      "title": "Associa sottounità",
+      "description": "Seleziona una o più sottounità da associare all’operatore {{operatorName}}.",
+      "searchBysubUnitCode": "Cerca per codice univoco",
+      "searchBysubUnitName": "Cerca per denominazione",
+      "countLabel": "Selezionate {{count}} sottounità",
+      "dialog": {
+        "title": "Sei sicuro di voler associare le sottounità selezionate?",
+        "message": "Una volta confermato, le sottounità selezionate saranno associate all’operatore {{operatorName}}.",
+        "noSelection": "Nessuna sottounità selezionata"
+      },
+      "success": {
+        "title_one": "{{count}} sottounità associata correttamente all'utente {{operatorName}}",
+        "title_other": "{{count}} sottounità associate correttamente all'utente {{operatorName}}",
+        "description_one": "La trovi nel dettaglio dell'operatore, dove puoi gestirlo in qualsiasi momento.",
+        "description_other": "Le trovi nel dettaglio dell'operatore, dove puoi gestirle in qualsiasi momento.",
+        "buttonLabel": "Vai al dettaglio operatore"
+      }
     },
     "create": {
       "title": "Aggiungi una nuova sottounità",

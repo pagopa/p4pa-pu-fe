@@ -247,6 +247,7 @@ const ClassificationExportPage = () => {
               required={false}
               noAdornment
               sx={{ mb: 2 }}
+              data-testid="notice-section-applicant"
             />
             {renderValidatedDateRange(
               'payment',

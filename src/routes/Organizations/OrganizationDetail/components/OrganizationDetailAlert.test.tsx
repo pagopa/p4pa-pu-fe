@@ -1,7 +1,9 @@
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import type { OrganizationDetail } from '../../../../generated/core/data-contracts';
-import { render, screen } from '../../../__tests__/renderers';
+
+import type { OrganizationDetail } from '@generated/core/data-contracts';
+
+import { render, screen } from '@core/__tests__/renderers';
 import { OrganizationDetailAlert } from './OrganizationDetailAlert';
 
 const baseOrganizationDetail = {

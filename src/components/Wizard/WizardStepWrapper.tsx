@@ -1,9 +1,9 @@
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, BoxProps, Grid, Typography } from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
 import { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type Props = {
+type Props = BoxProps & {
   title?: string;
   subtitle?: string;
   alertMessage?: string;
@@ -15,7 +15,8 @@ const WizardStepWrapper = ({
   subtitle,
   alertMessage,
   showRequiredFieldsMessage = false,
-  children
+  children,
+  ...rest
 }: PropsWithChildren<Props>) => {
   const { t } = useTranslation();
 
@@ -26,6 +27,7 @@ const WizardStepWrapper = ({
       p={3}
       gap={3}
       width="100%"
+      {...rest}
     >
       <Grid item lg={12} mb={2}>
         {title && (

@@ -24,6 +24,7 @@ import GenericDialog from '@core/components/GenericDialog/GenericDialog';
 import { useEffect, useState } from 'react';
 import { SubUnitSummary } from './components/SubUnitSummary';
 import { setCustomBreadcrumbsItems } from '@core/store/AppStateStore';
+import Add from '@mui/icons-material/Add';
 
 export const SubUnitDetail = () => {
   const { t } = useTranslation();
@@ -36,9 +37,12 @@ export const SubUnitDetail = () => {
 
   const organizationId = Number(urlOrganizationId);
   const subUnitCode = String(urlSubUnitCode);
-  if (isNaN(organizationId) || !urlSubUnitCode) {
-    navigate(PageRoutes.RESPONSES_ERROR);
-  }
+
+  useEffect(() => {
+    if (isNaN(organizationId) || !urlSubUnitCode) {
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
+  }, []);
 
   const updateStatus = updateOrgSubUnitStatus(organizationId, subUnitCode);
   const subUnitQuery = getOrgSubUnitById(organizationId, subUnitCode);
@@ -80,12 +84,21 @@ export const SubUnitDetail = () => {
     }
   };
 
-  // TODO: add action when available
-  // const linkOperatorAction: ActionMenuItem = {
-  //   buttonText: t('subunits.detail.linkOperator'),
-  //   variant: 'outlined',
-  //   onActionClick: () => null
-  // };
+  const handleSubunitAssignOperator = () => {
+    navigate(
+      generatePath(PageRoutes.SUB_UNIT_DETAIL_ASSIGN_OPERATORS, {
+        organizationId,
+        subUnitCode: subUnitCode
+      })
+    );
+  };
+
+  const linkOperatorAction: ActionMenuItem = {
+    buttonText: t('subunits.detail.linkOperator'),
+    variant: 'outlined',
+    icon: <Add />,
+    onActionClick: handleSubunitAssignOperator
+  };
 
   // TODO: replace with current filters
   const onDeleteOperator = () => filteredSearch.applyFilters(initialFilters);
@@ -148,7 +161,7 @@ export const SubUnitDetail = () => {
           <TitleComponent
             variant="h4"
             title={t('subunits.detail.operators')}
-            //callToAction={[linkOperatorAction]}
+            callToAction={[linkOperatorAction]}
           />
           <SubUnitOperatorsDataGrid
             data={query?.data as PagedOrgSubUnitOperators}

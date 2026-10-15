@@ -9,6 +9,8 @@ import Organizations from './Organizations/Organizations';
 import { SubUnitsList } from './SubUnitsList';
 import { SubUnitDetail } from './SubUnitDetail';
 import { SubUnitCreate } from './SubUnitCreate';
+import { AddIntegration } from './Organizations/AddIntegration';
+import { SubunitAssignOperator } from './SubunitAssignOperator';
 
 export const organizationsRoutes = [
   {
@@ -60,6 +62,23 @@ export const organizationsRoutes = [
         }
       },
       {
+        id: 'ADD_INTEGRATION',
+        element: (
+          <AdminRouteGuard>
+            <AddIntegration />
+          </AdminRouteGuard>
+        ),
+        path: `:organizationId/integrations/add`,
+        handle: {
+          backButton: true,
+          backButtonText: 'commons.exit',
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
+        }
+      },
+      {
         id: 'ORGANIZATIONS_DETAIL',
         element: (
           <AdminRouteGuard>
@@ -86,17 +105,40 @@ export const organizationsRoutes = [
         }
       },
       {
-        id: 'SUB_UNIT_DETAIL',
-        path: `:organizationId/subunits/:subUnitCode`,
-        element: (
-          <AdminRouteGuard>
-            <SubUnitDetail />
-          </AdminRouteGuard>
-        ),
-        handle: {
-          backButton: false,
-          custom: true
-        }
+        id: 'SUB_UNIT_DETAIL_PARENT',
+        path: `:organizationId/subunits/:subUnitCode/`,
+        children: [
+          {
+            id: 'SUB_UNIT_DETAIL',
+            index: true,
+            element: (
+              <AdminRouteGuard>
+                <SubUnitDetail />
+              </AdminRouteGuard>
+            ),
+            handle: {
+              backButton: false,
+              custom: true
+            }
+          },
+          {
+            id: 'SUB_UNIT_DETAIL_ASSIGN_OPERATORS',
+            path: `assign-operator`,
+            element: (
+              <AdminRouteGuard>
+                <SubunitAssignOperator />
+              </AdminRouteGuard>
+            ),
+            handle: {
+              backButton: true,
+              backButtonText: 'commons.exit',
+              hideBreadcrumbs: true,
+              sidebar: {
+                visible: false
+              }
+            }
+          }
+        ]
       },
       {
         id: 'SUB_UNIT_CREATE',
