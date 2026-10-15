@@ -1,8 +1,9 @@
 import { AlertTitle, Button, Box, Typography } from '@mui/material';
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { OrganizationDetail } from '../../../../generated/core/data-contracts';
 import { MIAlert } from '@pagopa/mui-italia/components/MIAlert';
+
+import { OrganizationDetail } from '@generated/core/data-contracts';
 
 type MandatoryField = Extract<
   keyof OrganizationDetail,

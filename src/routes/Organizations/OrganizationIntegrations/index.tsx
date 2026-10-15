@@ -13,7 +13,7 @@ import { setCustomBreadcrumbsItems } from '../../../store/AppStateStore';
 import { ApiKeysSection } from './components/Sections/ApiKeysSection';
 import { ClientsSection } from './components/Sections/ClientsSection';
 import { ServicesSection } from './components/Sections/ServiceSection';
-import { SubUnitIntegrations } from './components/SubUnitIntegrations';
+import { SubUnitIntegrations } from './components/Sections/SubUnitIntegrations';
 
 import {
   getOrganizationApiKeys,

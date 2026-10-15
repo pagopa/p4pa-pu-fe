@@ -3,7 +3,8 @@ import { Divider, Paper, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { generatePath, Link } from 'react-router';
 
-import { OrganizationDetail } from '../../../../generated/core/data-contracts';
+import { OrganizationDetail } from '@generated/core/data-contracts';
+
 import { PageRoutes } from '@core/routes';
 
 type RowProps = {

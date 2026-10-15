@@ -1,11 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useParams } from 'react-router';
 import userEvent from '@testing-library/user-event';
-import { render, screen } from '@core/__tests__/renderers';
 
-import { SubUnitIntegrations } from './SubUnitIntegrations';
+import { render, screen } from '@core/__tests__/renderers';
 import { getOrgSubUnitsPdndServices } from '@core/api/integrations';
 import { useSearch } from '@core/hooks/useSearch';
+
+import { SubUnitIntegrations } from './SubUnitIntegrations';
 
 vi.mock('@core/api/integrations', () => ({
   getOrgSubUnitsPdndServices: vi.fn()

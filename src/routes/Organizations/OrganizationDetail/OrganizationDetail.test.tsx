@@ -1,22 +1,21 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '../../__tests__/renderers';
-import { getOrganizationDetail } from '../../api/organizations';
-import { OrganizationDetail } from './OrganizationDetail';
-import utils from '../../utils';
-import type { OrganizationDetail as OrganizationDetailDTO } from '../../../generated/core/data-contracts';
+import { render, screen } from '@core/__tests__/renderers';
+import { getOrganizationDetail } from '@core/api/organizations';
+import utils from '@core/utils';
 import { OrganizationStatus } from '@generated/core/client';
+import { OrganizationDetail } from '.';
+import { OrganizationDetail as OrganizationDetailDTO } from '@generated/core/client';
 
-vi.mock('../../assets/appio.svg', () => ({ default: 'appio-svg-mock' }));
-vi.mock('../../assets/send.svg', () => ({ default: 'send-svg-mock' }));
+vi.mock('../../../assets/appio.svg', () => ({ default: 'appio-svg-mock' }));
+vi.mock('../../../assets/send.svg', () => ({ default: 'send-svg-mock' }));
 
-vi.mock('../../api/organizations', () => ({
+vi.mock('../../../api/organizations', () => ({
   getOrganizationDetail: vi.fn(),
   updateOrganization: vi.fn()
 }));
 
-vi.mock('../../utils', async () => {
+vi.mock('../../../utils', async () => {
   const actual = await vi.importActual<{ default: Record<string, unknown> }>(
-    '../../utils'
+    '../../../utils'
   );
   return {
     ...actual,

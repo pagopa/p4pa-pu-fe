@@ -14,7 +14,8 @@ import FilterContainer, {
   FilterItem
 } from '@core/components/FilterContainer/FilterContainer';
 import { useSearch } from '@core/hooks/useSearch';
-import { PdndSendServiceDialog } from './Dialogs/ServiceDialog';
+
+import { PdndSendServiceDialog } from '../Dialogs/ServiceDialog';
 
 type Filters = { subUnitCode?: string };
 

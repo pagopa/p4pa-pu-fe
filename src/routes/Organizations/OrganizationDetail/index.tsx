@@ -5,19 +5,22 @@ import { generatePath, useNavigate, useParams } from 'react-router';
 import EditIcon from '@mui/icons-material/Edit';
 import SettingsIcon from '@mui/icons-material/Settings';
 
-import { PageRoutes } from '..';
 import {
-  type OrganizationDetail as OrganizationDetailDTO,
-  OrganizationStatus
-} from '../../../generated/core/data-contracts';
+  OrganizationStatus,
+  type OrganizationDetail as OrganizationDetailDTO
+} from '@generated/core/client';
+
+import { OrgAvatar } from '@core/components/OrgAvatar';
 import {
   getOrganizationDetail,
   updateOrganization
-} from '../../api/organizations';
-import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { useLanguage } from '../../hooks/useLanguage';
-import { useStore } from '../../store/GlobalStore';
-import utils from '../../utils';
+} from '@core/api/organizations';
+import TitleComponent from '@core/components/TitleComponent/TitleComponent';
+import { useLanguage } from '@core/hooks/useLanguage';
+import { PageRoutes } from '@core/routes';
+import { useStore } from '@core/store/GlobalStore';
+import utils from '@core/utils';
+
 import { OrganizationDetailAlert } from './components/OrganizationDetailAlert';
 import {
   Accounting,
@@ -25,7 +28,6 @@ import {
   Payment,
   Registry
 } from './components/OrganizationDetailSections';
-import { OrgAvatar } from '@core/components/OrgAvatar';
 
 export const OrganizationDetail = () => {
   const { t } = useTranslation();
