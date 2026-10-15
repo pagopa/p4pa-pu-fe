@@ -24,12 +24,13 @@ vi.mock('../../../api/organizations', () => ({
 vi.mock('@core/api/integrations', () => ({
   getOrganizationApiKeys: vi.fn(),
   getPdndServices: vi.fn(),
-  getPdndClients: vi.fn()
+  getPdndClients: vi.fn(),
+  getOrgSubUnitsPdndServices: vi.fn()
 }));
 vi.mock('@core/hooks/useHashParamsListener', () => ({
   useHashParamsListener: vi.fn()
 }));
-vi.mock('./components/SubUnitIntegrations', () => ({
+vi.mock('./components/Sections/SubUnitIntegrations', () => ({
   SubUnitIntegrations: () => <div data-testid="sub-unit-integrations" />
 }));
 vi.mock('../../../components/EmptyDataGrid/EmptyDataGrid', () => ({

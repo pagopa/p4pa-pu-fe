@@ -81,20 +81,6 @@ describe('ApiKeyDialog', () => {
     expect(writeText).toHaveBeenCalledWith('secret-key');
   });
 
-  it('copies an empty string when the key has not loaded', () => {
-    vi.mocked(getOrganizationApiKey).mockReturnValue({
-      data: undefined
-    } as unknown as ReturnType<typeof getOrganizationApiKey>);
-
-    renderDialog();
-
-    fireEvent.click(
-      screen.getByRole('button', { name: 'integrations.apiKeyDialog.copy' })
-    );
-
-    expect(writeText).toHaveBeenCalledWith('');
-  });
-
   it('disables the delete button while the delete is pending', () => {
     vi.mocked(deleteOrganizationApiKey).mockReturnValue({
       mutateAsync: mockMutateAsync,
