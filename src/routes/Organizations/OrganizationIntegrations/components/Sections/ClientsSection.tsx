@@ -1,20 +1,35 @@
-import { PdndClientNoSecretDTO } from '@generated/core/client';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { PdndClientNoSecretDTO } from '@generated/core/client';
+
 import { I18N_PREFIX } from '../..';
-import { Section, Row, Field } from '../Containers';
+import { Field, Row, Section } from '../Containers';
+import { PdndClientDialog } from '../Dialogs/ClientDialog';
 
 export const ClientsSection = ({
-  clients
+  clients,
+  organizationId,
+  onDelete
 }: {
   clients: Array<PdndClientNoSecretDTO>;
+  organizationId: number;
+  onDelete: () => void;
 }) => {
   const { t } = useTranslation(undefined, I18N_PREFIX);
-  const [, setSelected] = useState<PdndClientNoSecretDTO>();
-  if (clients.length === 0) return null;
+  const [selected, setSelected] = useState<PdndClientNoSecretDTO>();
 
   return (
     <Section title={t('pdndClients')}>
+      {selected && (
+        <PdndClientDialog
+          open
+          client={selected}
+          organizationId={organizationId}
+          onClose={() => setSelected(undefined)}
+          onDelete={onDelete}
+        />
+      )}
       {clients.map((client) => (
         <Row
           key={client.clientId}
@@ -29,13 +44,6 @@ export const ClientsSection = ({
           </Field>
         </Row>
       ))}
-      {/* {selected && ( */}
-      {/*   <PdndClientDialog */}
-      {/*     open */}
-      {/*     client={selected} */}
-      {/*     onClose={() => setSelected(undefined)} */}
-      {/*   /> */}
-      {/* )} */}
     </Section>
   );
 };

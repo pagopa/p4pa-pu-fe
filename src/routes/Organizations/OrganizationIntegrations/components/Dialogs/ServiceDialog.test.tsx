@@ -4,6 +4,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { deletePdndService } from '@core/api/integrations';
 import { PdndServiceView } from '@generated/core/data-contracts';
 import notify from '@core/utils/notify';
+
 import { PdndSendServiceDialog } from './ServiceDialog';
 
 vi.mock('@core/api/integrations', () => ({
@@ -59,6 +60,7 @@ const renderDialog = (value = service) =>
 describe('PdndSendServiceDialog', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+
     vi.mocked(deletePdndService).mockReturnValue({
       mutateAsync: mockMutateAsync,
       isPending: false
@@ -74,7 +76,7 @@ describe('PdndSendServiceDialog', () => {
     expect(screen.getByText('client-a')).toBeInTheDocument();
   });
 
-  it('initializes the delete mutation with the organization and purpose ids', () => {
+  it('initializes the delete mutation with the organization and purpose IDs', () => {
     renderDialog();
 
     expect(deletePdndService).toHaveBeenCalledWith(33, 'purp_1');
@@ -82,11 +84,13 @@ describe('PdndSendServiceDialog', () => {
 
   it('notifies, calls onDelete and closes after a successful delete', async () => {
     mockMutateAsync.mockResolvedValue({});
+
     const notifySpy = vi
       .spyOn(notify, 'emit')
       .mockImplementation(() => undefined);
 
     renderDialog();
+
     fireEvent.click(screen.getByRole('button', { name: 'commons.delete' }));
 
     await waitFor(() => {
@@ -96,23 +100,26 @@ describe('PdndSendServiceDialog', () => {
     });
   });
 
-  it('notifies an error and closes, without calling onDelete, when the delete fails', async () => {
+  it('notifies an error and closes without calling onDelete when deletion fails', async () => {
     mockMutateAsync.mockRejectedValue(new Error('fail'));
+
     const notifySpy = vi
       .spyOn(notify, 'emit')
       .mockImplementation(() => undefined);
 
     renderDialog();
+
     fireEvent.click(screen.getByRole('button', { name: 'commons.delete' }));
 
     await waitFor(() => {
       expect(notifySpy).toHaveBeenCalledWith('errors.generic');
       expect(onClose).toHaveBeenCalledTimes(1);
     });
+
     expect(onDelete).not.toHaveBeenCalled();
   });
 
-  it('disables the delete button while the delete is pending', () => {
+  it('disables the delete button while deletion is pending', () => {
     vi.mocked(deletePdndService).mockReturnValue({
       mutateAsync: mockMutateAsync,
       isPending: true
@@ -125,17 +132,22 @@ describe('PdndSendServiceDialog', () => {
     ).toBeDisabled();
   });
 
-  it('notifies an error and closes when the service has no purposeId', () => {
-    const notifySpy = vi
-      .spyOn(notify, 'emit')
-      .mockImplementation(() => undefined);
+  it('uses an empty purpose ID and hides the purpose ID field when purposeId is missing', () => {
+    renderDialog({
+      ...service,
+      purposeId: undefined
+    });
 
-    renderDialog({ ...service, purposeId: undefined });
+    expect(deletePdndService).toHaveBeenCalledWith(33, '');
 
-    expect(notifySpy).toHaveBeenCalledWith('errors.generic');
-    expect(onClose).toHaveBeenCalledTimes(1);
     expect(
       screen.queryByText('integrations.serviceDialog.purposeId')
     ).not.toBeInTheDocument();
+
+    expect(screen.getByText('Client A')).toBeInTheDocument();
+    expect(screen.getByText('client-a')).toBeInTheDocument();
+
+    expect(onClose).not.toHaveBeenCalled();
+    expect(onDelete).not.toHaveBeenCalled();
   });
 });

@@ -1,11 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useParams } from 'react-router';
 import userEvent from '@testing-library/user-event';
-import { render, screen } from '@core/__tests__/renderers';
 
-import { SubUnitIntegrations } from './SubUnitIntegrations';
+import { render, screen } from '@core/__tests__/renderers';
 import { getOrgSubUnitsPdndServices } from '@core/api/integrations';
 import { useSearch } from '@core/hooks/useSearch';
+
+import { SubUnitIntegrations } from './SubUnitIntegrations';
 
 vi.mock('@core/api/integrations', () => ({
   getOrgSubUnitsPdndServices: vi.fn()
@@ -16,14 +17,22 @@ vi.mock('@core/hooks/useSearch', () => ({
 }));
 
 vi.mock('react-router', async () => {
-  const actual = await vi.importActual('react-router');
-  return { ...actual, useParams: vi.fn() };
+  const actual =
+    await vi.importActual<typeof import('react-router')>('react-router');
+
+  return {
+    ...actual,
+    useParams: vi.fn()
+  };
 });
 
 type Column = {
   field: string;
   headerName?: string;
-  renderCell?: (params: { row: unknown; value: unknown }) => React.ReactNode;
+  renderCell?: (params: {
+    row: Record<string, unknown>;
+    value: unknown;
+  }) => React.ReactNode;
 };
 
 vi.mock('@core/components/DataGrid/CustomDataGrid', () => ({
@@ -37,19 +46,23 @@ vi.mock('@core/components/DataGrid/CustomDataGrid', () => ({
     <table>
       <thead>
         <tr>
-          {columns.map((col) => (
-            <th key={col.field}>{col.headerName}</th>
+          {columns.map((column) => (
+            <th key={column.field}>{column.headerName}</th>
           ))}
         </tr>
       </thead>
+
       <tbody>
         {rows.map((row, index) => (
-          <tr key={index}>
-            {columns.map((col) => (
-              <td key={col.field}>
-                {col.renderCell
-                  ? col.renderCell({ row, value: row[col.field] })
-                  : (row[col.field] as React.ReactNode)}
+          <tr key={String(row.purposeId ?? row.clientId ?? index)}>
+            {columns.map((column) => (
+              <td key={column.field}>
+                {column.renderCell
+                  ? column.renderCell({
+                      row,
+                      value: row[column.field]
+                    })
+                  : (row[column.field] as React.ReactNode)}
               </td>
             ))}
           </tr>
@@ -59,11 +72,12 @@ vi.mock('@core/components/DataGrid/CustomDataGrid', () => ({
   )
 }));
 
-// Keep the real COMPONENT_TYPE export, which the component reads at render time.
+// Keep the real COMPONENT_TYPE export.
 vi.mock('@core/components/FilterContainer/FilterContainer', async () => {
-  const actual = await vi.importActual<Record<string, unknown>>(
-    '@core/components/FilterContainer/FilterContainer'
-  );
+  const actual = await vi.importActual<
+    typeof import('@core/components/FilterContainer/FilterContainer')
+  >('@core/components/FilterContainer/FilterContainer');
+
   return {
     ...actual,
     default: ({
@@ -77,12 +91,14 @@ vi.mock('@core/components/FilterContainer/FilterContainer', async () => {
     }) => (
       <div>
         <span data-testid="filter-values">{JSON.stringify(values)}</span>
+
         <button
           data-testid="change-filter"
           onClick={() => onChange('subUnitCode', 'SU1')}
         >
           change
         </button>
+
         <button data-testid="submit-filters" onClick={onSubmit}>
           submit
         </button>
@@ -91,7 +107,8 @@ vi.mock('@core/components/FilterContainer/FilterContainer', async () => {
   };
 });
 
-vi.mock('./Dialogs/ServiceDialog', () => ({
+// Match the component's actual import: ../Dialogs/ServiceDialog
+vi.mock('../Dialogs/ServiceDialog', () => ({
   PdndSendServiceDialog: ({
     service,
     organizationId,
@@ -111,6 +128,7 @@ vi.mock('./Dialogs/ServiceDialog', () => ({
       <button data-testid="close-dialog" onClick={onClose}>
         close
       </button>
+
       <button data-testid="delete-service" onClick={onDelete}>
         delete
       </button>
@@ -136,10 +154,15 @@ const mockServices = (content: Array<unknown>) =>
 describe('SubUnitIntegrations', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useParams).mockReturnValue({ organizationId: '33' });
+
+    vi.mocked(useParams).mockReturnValue({
+      organizationId: '33'
+    });
+
     vi.mocked(useSearch).mockReturnValue({
       applyFilters: mockApplyFilters
     } as unknown as ReturnType<typeof useSearch>);
+
     mockServices([service]);
   });
 
@@ -149,7 +172,7 @@ describe('SubUnitIntegrations', () => {
     expect(getOrgSubUnitsPdndServices).toHaveBeenCalledWith(33);
   });
 
-  it('renders the grid headers and the service rows', () => {
+  it('renders the grid headers and service rows', () => {
     render(<SubUnitIntegrations />);
 
     [
@@ -157,20 +180,19 @@ describe('SubUnitIntegrations', () => {
       'organizations.integrations.subUnitName',
       'organizations.integrations.serviceType',
       'organizations.integrations.clientId'
-    ].forEach((header) =>
+    ].forEach((header) => {
       expect(
         screen.getByRole('columnheader', { name: header })
-      ).toBeInTheDocument()
-    );
-    ['SU1', 'Sub Unit', 'SEND', 'client-a'].forEach((value) =>
-      expect(screen.getByText(value)).toBeInTheDocument()
-    );
+      ).toBeInTheDocument();
+    });
+
+    ['SU1', 'Sub Unit', 'SEND', 'client-a'].forEach((value) => {
+      expect(screen.getByText(value)).toBeInTheDocument();
+    });
   });
 
   it('renders only the header row when there are no services', () => {
-    vi.mocked(getOrgSubUnitsPdndServices).mockReturnValue({
-      data: undefined
-    } as unknown as ReturnType<typeof getOrgSubUnitsPdndServices>);
+    mockServices([]);
 
     render(<SubUnitIntegrations />);
 
@@ -178,35 +200,50 @@ describe('SubUnitIntegrations', () => {
   });
 
   it('applies the edited filters on submit', async () => {
+    const user = userEvent.setup();
+
     render(<SubUnitIntegrations />);
 
-    await userEvent.click(screen.getByTestId('change-filter'));
-    await userEvent.click(screen.getByTestId('submit-filters'));
+    await user.click(screen.getByTestId('change-filter'));
 
-    expect(mockApplyFilters).toHaveBeenCalledWith({ subUnitCode: 'SU1' });
+    expect(screen.getByTestId('filter-values')).toHaveTextContent(
+      JSON.stringify({ subUnitCode: 'SU1' })
+    );
+
+    await user.click(screen.getByTestId('submit-filters'));
+
+    expect(mockApplyFilters).toHaveBeenCalledWith({
+      subUnitCode: 'SU1'
+    });
   });
 
-  it('opens the dialog for the selected service and closes it on close', async () => {
+  it('opens the dialog for the selected service and closes it', async () => {
+    const user = userEvent.setup();
+
     render(<SubUnitIntegrations />);
 
     expect(screen.queryByTestId('service-dialog')).not.toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('button', { name: /showItem/ }));
+    await user.click(screen.getByRole('button', { name: /showItem/i }));
 
     const dialog = screen.getByTestId('service-dialog');
+
     expect(dialog).toHaveAttribute('data-purpose-id', 'purp_1');
     expect(dialog).toHaveAttribute('data-organization-id', '33');
 
-    await userEvent.click(screen.getByTestId('close-dialog'));
+    await user.click(screen.getByTestId('close-dialog'));
 
     expect(screen.queryByTestId('service-dialog')).not.toBeInTheDocument();
   });
 
-  it('reapplies the filters when a service is deleted', async () => {
+  it('reapplies the current filters when a service is deleted', async () => {
+    const user = userEvent.setup();
+
     render(<SubUnitIntegrations />);
 
-    await userEvent.click(screen.getByRole('button', { name: /showItem/ }));
-    await userEvent.click(screen.getByTestId('delete-service'));
+    await user.click(screen.getByRole('button', { name: /showItem/i }));
+
+    await user.click(screen.getByTestId('delete-service'));
 
     expect(mockApplyFilters).toHaveBeenCalledWith({});
   });

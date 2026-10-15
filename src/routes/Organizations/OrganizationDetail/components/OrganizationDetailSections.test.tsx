@@ -2,13 +2,14 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, generatePath } from 'react-router';
 
+import { OrganizationDetail } from '@generated/core/data-contracts';
+
 import {
   Registry,
   Management,
   Accounting,
   Payment
 } from './OrganizationDetailSections';
-import { OrganizationDetail } from '../../../../generated/core/data-contracts';
 import { PageRoutes } from '@core/routes';
 
 const baseOrganization = {

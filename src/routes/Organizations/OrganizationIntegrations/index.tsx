@@ -13,7 +13,7 @@ import { setCustomBreadcrumbsItems } from '../../../store/AppStateStore';
 import { ApiKeysSection } from './components/Sections/ApiKeysSection';
 import { ClientsSection } from './components/Sections/ClientsSection';
 import { ServicesSection } from './components/Sections/ServiceSection';
-import { SubUnitIntegrations } from './components/SubUnitIntegrations';
+import { SubUnitIntegrations } from './components/Sections/SubUnitIntegrations';
 
 import {
   getOrganizationApiKeys,
@@ -41,7 +41,7 @@ export const OrganizationIntegrations = () => {
   const { data: services = [], ...pdndServices } =
     getPdndServices(organizationId);
 
-  const { data: clients = [] } = getPdndClients(organizationId);
+  const { data: clients = [], ...pdndClients } = getPdndClients(organizationId);
 
   const isEmpty = apiKeys.length + services.length + clients.length === 0;
 
@@ -129,7 +129,11 @@ export const OrganizationIntegrations = () => {
                 organizationId={organizationId}
                 onDelete={pdndServices.refetch}
               />
-              <ClientsSection clients={clients} />
+              <ClientsSection
+                clients={clients}
+                organizationId={organizationId}
+                onDelete={pdndClients.refetch}
+              />
             </Stack>
           )}
           {tab === 1 && <SubUnitIntegrations />}

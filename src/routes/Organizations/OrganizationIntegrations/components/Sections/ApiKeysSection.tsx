@@ -22,6 +22,15 @@ export const ApiKeysSection = ({
 
   return (
     <Section title={t('pagoPaProducts')}>
+      {selected && (
+        <ApiKeyDialog
+          open
+          apiKey={selected}
+          organizationId={organizationId}
+          onClose={() => setSelected(undefined)}
+          onDelete={onDelete}
+        />
+      )}
       {apiKeys.map((apiKey) => {
         const name = t(`keyTypes.${apiKey.keyType}`);
         return (
@@ -51,15 +60,6 @@ export const ApiKeysSection = ({
           </Row>
         );
       })}
-      {selected && (
-        <ApiKeyDialog
-          open
-          apiKey={selected}
-          organizationId={organizationId}
-          onClose={() => setSelected(undefined)}
-          onDelete={onDelete}
-        />
-      )}
     </Section>
   );
 };
