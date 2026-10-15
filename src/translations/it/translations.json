@@ -2417,6 +2417,26 @@
     }
   },
   "integrations": {
+    "keyTypes": {
+      "GENERATE_NOTICE": "Stampa Avvisi",
+      "IO": "IO",
+      "SEND": "SEND"
+    },
+    "dialogDescription": "Ecco i dettagli dell’integrazione.",
+    "serviceDialog": {
+      "clientName": "Client name",
+      "purposeId": "Purpose ID",
+      "clientId": "Client ID",
+      "copyPurposeId": "Copia Purpose ID",
+      "copyClientId": "Copia Client ID"
+    },
+    "apiKeyDialog": {
+      "apiKey": "API KEY",
+      "hide": "Nascondi chiave",
+      "show": "Mostra chiave",
+      "copy": "Copia la chiave",
+      "notifications": "Notifiche invio messaggio"
+    },
     "add": {
       "title": "Crea una nuova integrazione",
       "subtitle": "Dopo la creazione, potrai sempre modificare o eliminare l’integrazione.",

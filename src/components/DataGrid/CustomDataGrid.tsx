@@ -200,13 +200,12 @@ const CustomDataGrid = <T extends GridValidRowModel>({
     <>
       <HiddenDiv message={announcement} />
       <StyledDataGrid
+        paginationMode="server"
+        sortingMode="server"
         ref={resultsTableRef}
         rows={rows}
         columns={columns}
         pagination
-        paginationMode="server"
-        rowCount={totalElements}
-        sortingMode="server"
         sortModel={sortModel}
         onSortModelChange={handleSortModelChange}
         hideFooterSelectedRowCount
@@ -234,6 +233,7 @@ const CustomDataGrid = <T extends GridValidRowModel>({
           noRowsLabel: t('commons.noRows')
         }}
         {...restProps}
+        rowCount={restProps.rowCount ?? totalElements ?? 0}
       />
     </>
   );
