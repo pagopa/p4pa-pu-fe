@@ -235,3 +235,56 @@ export const useAddOrgSubUnitsToOperator = (
       return data;
     }
   });
+
+export type OrgSubUnitNotRelatedOperatorsQuery = Omit<
+  Parameters<typeof utils.apiClient.bff.getOrgSubUnitNotRelatedOperators>[2],
+  'page' | 'size' | 'sort'
+>;
+
+export const getOrgSubUnitNotRelatedOperators = (
+  organizationId: number,
+  subUnitCode: string
+) =>
+  useMutation({
+    mutationKey: [
+      'getOrgSubUnitNotRelatedOperators',
+      organizationId,
+      subUnitCode
+    ],
+    mutationFn: async (
+      args: FilteredRequest<OrgSubUnitNotRelatedOperatorsQuery>
+    ) => {
+      const query = {
+        ...args.filters,
+        ...args.pagination,
+        sort: args.sort
+      };
+      const { data } =
+        await utils.apiClient.bff.getOrgSubUnitNotRelatedOperators(
+          organizationId,
+          subUnitCode,
+          query
+        );
+      return data;
+    }
+  });
+
+type OperatorsToOrgSubUnitQuery = Parameters<
+  typeof utils.apiClient.bff.addOperatorsToOrgSubUnit
+>[2];
+
+export const useAddOperatorsToOrgSubUnit = (
+  organizationId: number,
+  subUnitCode: string
+) =>
+  useMutation({
+    mutationKey: ['useAddOperatorsToOrgSubUnit', organizationId, subUnitCode],
+    mutationFn: async (query: OperatorsToOrgSubUnitQuery) => {
+      const { data } = await utils.apiClient.bff.addOperatorsToOrgSubUnit(
+        organizationId,
+        subUnitCode,
+        query
+      );
+      return data;
+    }
+  });
