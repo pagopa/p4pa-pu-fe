@@ -96,7 +96,8 @@
     "lint": "eslint --ignore-pattern 'scripts/*'",
     "prettify": "prettier --write \"./**/*.{ts,tsx}\"",
     "sort-translations": "node scripts/sort-translations.js",
-    "dependency-licenses": "license-checker --production --csv > dependency-licenses/licenses.csv"
+    "dependency-licenses": "license-checker --production --csv > dependency-licenses/licenses.csv",
+    "postinstall": "yarn dependency-licenses"
   },
   "type": "module",
   "version": "1.0.0",
