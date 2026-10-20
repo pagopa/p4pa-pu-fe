@@ -30,6 +30,8 @@ export type _ControlledRadioGroupProps<T extends FieldValues> =
     options: Array<RadioOption<T>>;
     disabled?: boolean;
     required?: boolean;
+    selectFirstOption?: boolean;
+    showErrorMessage?: boolean;
     divider?: React.ReactNode;
     formControlLabelProps?: Partial<FormControlLabelProps>;
   };
@@ -41,6 +43,8 @@ export const _ControlledRadioGroup = <T extends FieldValues>({
   options,
   disabled,
   required,
+  selectFirstOption = true,
+  showErrorMessage = true,
   formControlLabelProps,
   ...props
 }: _ControlledRadioGroupProps<T>) => {
@@ -48,7 +52,7 @@ export const _ControlledRadioGroup = <T extends FieldValues>({
     <Controller
       name={name}
       control={control}
-      defaultValue={options[0].value}
+      defaultValue={selectFirstOption ? options[0].value : undefined}
       render={({ field, fieldState }) => (
         <FormControl
           required={required}
@@ -64,7 +68,12 @@ export const _ControlledRadioGroup = <T extends FieldValues>({
           >
             {label}
           </FormLabel>
-          <RadioGroup {...field} {...props} aria-labelledby={`${name}-label`}>
+          <RadioGroup
+            {...field}
+            value={field.value ?? ''}
+            {...props}
+            aria-labelledby={`${name}-label`}
+          >
             {options.map(({ value, label }, index) => (
               <>
                 {props.divider && index > 0 ? props.divider : null}
@@ -79,9 +88,11 @@ export const _ControlledRadioGroup = <T extends FieldValues>({
             ))}
           </RadioGroup>
 
-          <FormHelperText>
-            <ErrorMessage messageKey={fieldState.error?.message} />
-          </FormHelperText>
+          {showErrorMessage && (
+            <FormHelperText>
+              <ErrorMessage messageKey={fieldState.error?.message} />
+            </FormHelperText>
+          )}
         </FormControl>
       )}
     />

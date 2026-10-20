@@ -2450,7 +2450,13 @@
       "section": "Seleziona il tipo di integrazione",
       "pagoPaProduct": {
         "label": "Prodotto PagoPA",
-        "description": "IO, Stampa avvisi"
+        "description": "IO, Stampa avvisi",
+        "errors": {
+          "noIntegrationAvailable": {
+            "title": "Hai già configurato tutti i prodotti PagoPA",
+            "message": "Seleziona un altro tipo di integrazione per continuare."
+          }
+        }
       },
       "eService": {
         "label": "E-service PDND",
@@ -2458,6 +2464,12 @@
       },
       "pdndClient": {
         "label": "Client PDND"
+      },
+      "errors": {
+        "selectAtLeastOneOption": {
+          "title": "Completa la configurazione per continuare",
+          "message": "Devi selezionare almeno un tipo di integrazione"
+        }
       }
     }
   },

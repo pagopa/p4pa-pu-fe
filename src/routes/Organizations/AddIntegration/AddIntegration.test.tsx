@@ -1,8 +1,24 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { type Control, useController } from 'react-hook-form';
 
 import { AddIntegration } from '.';
+import {
+  OrganizationApiKey,
+  OrganizationApiKeyType
+} from '@generated/core/client';
+
+const { mockGetOrganizationApiKeys } = vi.hoisted(() => ({
+  mockGetOrganizationApiKeys: vi.fn<() => { data: Array<OrganizationApiKey> }>()
+}));
+
+vi.mock('@core/api/integrations', () => ({
+  getOrganizationApiKeys: mockGetOrganizationApiKeys
+}));
+
+vi.mock('./integrations/pagopa', () => ({
+  default: () => null
+}));
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>();
@@ -38,11 +54,13 @@ vi.mock('@core/components/FormComponent', () => ({
     ControlledRadioGroup: ({
       name,
       control,
-      options
+      options,
+      value
     }: {
       name: string;
       control: Control<Record<string, unknown>>;
       options: Array<{ value: string; label: React.ReactNode }>;
+      value: string;
     }) => {
       const { field, fieldState } = useController({ name, control });
       return (
@@ -54,7 +72,7 @@ vi.mock('@core/components/FormComponent', () => ({
                 name={name}
                 data-testid={`option-${option.value}`}
                 value={option.value}
-                checked={field.value === option.value}
+                checked={value === option.value}
                 onChange={() => field.onChange(option.value)}
               />
               {option.label}
@@ -84,6 +102,61 @@ vi.mock('@core/components/FormComponent', () => ({
 }));
 
 describe('AddIntegration', () => {
+  beforeEach(() => {
+    mockGetOrganizationApiKeys.mockReturnValue({
+      data: []
+    });
+  });
+
+  it('shows an alert and blocks submission when no pagoPA keys are available', async () => {
+    mockGetOrganizationApiKeys.mockReturnValue({
+      data: [
+        { keyType: OrganizationApiKeyType.IO },
+        { keyType: OrganizationApiKeyType.GENERATE_NOTICE }
+      ]
+    });
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+
+    render(<AddIntegration />);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('option-pagoPa-product'));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'integrations.pagopa.add.error.message'
+    );
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'integrations.pagopa.add.error.title'
+    );
+    fireEvent.click(screen.getByTestId('next-button'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('flagIntegrationType-error')).toHaveTextContent(
+        'integrations.pagopa.add.error.message'
+      );
+    });
+    expect(logSpy).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByTestId('option-e-service'));
+    await waitFor(() => {
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByTestId('next-button'));
+    await waitFor(() => {
+      expect(logSpy).toHaveBeenCalledWith({
+        flagIntegrationType: 'e-service'
+      });
+    });
+  });
+
+  it('starts with no selected integration type and no validation alert', () => {
+    render(<AddIntegration />);
+
+    screen.getAllByRole('radio').forEach((radio) => {
+      expect(radio).not.toBeChecked();
+    });
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
   it('shows a validation error when submitting without selecting an option', async () => {
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
@@ -94,8 +167,39 @@ describe('AddIntegration', () => {
       expect(screen.getByTestId('flagIntegrationType-error')).toHaveTextContent(
         'commons.validation.selectAtLeastOneOption'
       );
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        'commons.validation.selectAtLeastOneOption'
+      );
     });
+
     expect(logSpy).not.toHaveBeenCalled();
+  });
+
+  it('updates the controlled radio value when the selection changes', () => {
+    render(<AddIntegration />);
+
+    const pagoPaOption = screen.getByTestId('option-pagoPa-product');
+    const eServiceOption = screen.getByTestId('option-e-service');
+
+    fireEvent.click(pagoPaOption);
+    expect(pagoPaOption).toBeChecked();
+    expect(eServiceOption).not.toBeChecked();
+
+    fireEvent.click(eServiceOption);
+    expect(eServiceOption).toBeChecked();
+    expect(pagoPaOption).not.toBeChecked();
+  });
+
+  it('clears the validation alert after selecting an integration type', async () => {
+    render(<AddIntegration />);
+    fireEvent.click(screen.getByTestId('next-button'));
+
+    await screen.findByRole('alert');
+    fireEvent.click(screen.getByTestId('option-pagoPa-product'));
+
+    await waitFor(() => {
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
   });
 
   it('submits the selected integration type', async () => {
