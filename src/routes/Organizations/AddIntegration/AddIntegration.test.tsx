@@ -2,7 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { type Control, useController } from 'react-hook-form';
 
-import { AddIntegration } from '.';
+import { AddIntegration, type AddIntegrationFormData } from '.';
+import utils from '@core/utils';
 import {
   OrganizationApiKey,
   OrganizationApiKeyType
@@ -17,7 +18,13 @@ vi.mock('@core/api/integrations', () => ({
 }));
 
 vi.mock('./integrations/pagopa', () => ({
-  default: () => null
+  default: ({ control }: { control: Control<AddIntegrationFormData> }) => {
+    const { field } = useController({
+      name: 'PAGOPA_PRODUCT.apiKey',
+      control
+    });
+    return <input aria-label="API key" {...field} value={field.value ?? ''} />;
+  }
 }));
 
 vi.mock('react-router', async (importOriginal) => {
@@ -102,6 +109,38 @@ vi.mock('@core/components/FormComponent', () => ({
 }));
 
 describe('AddIntegration', () => {
+  it('notifies about an empty API key only when Continue is pressed', async () => {
+    const notifySpy = vi
+      .spyOn(utils.notify, 'emit')
+      .mockImplementation(() => undefined);
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+
+    render(<AddIntegration />);
+    expect(notifySpy).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByTestId('option-pagoPa-product'));
+    const apiKey = await screen.findByRole('textbox', { name: 'API key' });
+    fireEvent.blur(apiKey);
+    expect(notifySpy).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByTestId('next-button'));
+    await waitFor(() => {
+      expect(notifySpy).toHaveBeenCalledTimes(1);
+    });
+
+    notifySpy.mockClear();
+    logSpy.mockClear();
+    fireEvent.change(apiKey, { target: { value: 'test-api-key' } });
+    fireEvent.click(screen.getByTestId('next-button'));
+    await waitFor(() => {
+      expect(logSpy).toHaveBeenCalledWith({
+        flagIntegrationType: 'pagoPa-product',
+        PAGOPA_PRODUCT: { type: undefined, apiKey: 'test-api-key' }
+      });
+    });
+    expect(notifySpy).not.toHaveBeenCalled();
+  });
+
   beforeEach(() => {
     mockGetOrganizationApiKeys.mockReturnValue({
       data: []

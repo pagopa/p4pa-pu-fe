@@ -2465,6 +2465,10 @@
           "noIntegrationAvailable": {
             "title": "Hai già configurato tutti i prodotti PagoPA",
             "message": "Seleziona un altro tipo di integrazione per continuare."
+          },
+          "apiKey": {
+            "title": "Inserisci la chiave API",
+            "message": "La chiave API non può essere vuota."
           }
         }
       },

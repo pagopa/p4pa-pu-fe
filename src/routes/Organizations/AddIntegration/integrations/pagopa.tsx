@@ -12,8 +12,12 @@ import { Control, useController } from 'react-hook-form';
 import type { AddIntegrationFormData } from '..';
 import { useEffect } from 'react';
 
-const Product = () => {
+const Product = ({ control }: { control: Control<AddIntegrationFormData> }) => {
   const { t } = useTranslation();
+  const { field } = useController({
+    name: 'PAGOPA_PRODUCT.apiKey',
+    control
+  });
   return (
     <WizardStepWrapper
       title={t('integrations.add.pagoPaProduct.config.title')}
@@ -22,6 +26,10 @@ const Product = () => {
     >
       <FormControl fullWidth required>
         <TextField
+          name={field.name}
+          value={field.value ?? ''}
+          onChange={field.onChange}
+          onBlur={field.onBlur}
           label={t('integrations.add.pagoPaProduct.config.apiKey')}
           variant="outlined"
           required
@@ -70,7 +78,6 @@ const PagoPAIntegration = ({
             value={field.value ?? ''}
             onChange={field.onChange}
             onBlur={field.onBlur}
-            inputRef={field.ref}
             labelId="api-Key-list"
             label={t('integrations.add.pagoPaProduct.products')}
           >
@@ -82,7 +89,7 @@ const PagoPAIntegration = ({
           </Select>
         </FormControl>
       </WizardStepWrapper>
-      <Product />
+      <Product control={control} />
     </>
   );
 };

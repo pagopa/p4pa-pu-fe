@@ -6,6 +6,57 @@ import type { AddIntegrationFormData } from '..';
 import PagoPAIntegration from './pagopa';
 
 describe('PagoPAIntegration', () => {
+  it('binds the API key to the parent form and includes edits on submit', async () => {
+    const onSubmit = vi.fn();
+    const Parent = () => {
+      const { control, watch, handleSubmit, setValue } =
+        useForm<AddIntegrationFormData>({
+          defaultValues: {
+            PAGOPA_PRODUCT: {
+              type: OrganizationApiKeyType.IO,
+              apiKey: 'initial-key'
+            }
+          }
+        });
+      return (
+        <form noValidate onSubmit={handleSubmit(onSubmit)}>
+          <PagoPAIntegration
+            control={control}
+            availableApiKeys={[OrganizationApiKeyType.IO]}
+          />
+          <output data-testid="api-key">
+            {watch('PAGOPA_PRODUCT.apiKey')}
+          </output>
+          <button
+            type="button"
+            onClick={() => setValue('PAGOPA_PRODUCT.apiKey', 'parent-key')}
+          >
+            Update API key
+          </button>
+          <button type="submit">Submit</button>
+        </form>
+      );
+    };
+
+    render(<Parent />);
+    const input = screen.getByRole('textbox');
+    expect(input).toHaveValue('initial-key');
+    fireEvent.click(screen.getByText('Update API key'));
+    expect(input).toHaveValue('parent-key');
+
+    fireEvent.change(input, { target: { value: 'edited-key' } });
+    expect(screen.getByTestId('api-key')).toHaveTextContent('edited-key');
+    fireEvent.blur(input);
+    fireEvent.click(screen.getByText('Submit'));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalled();
+    });
+    expect(onSubmit.mock.calls[0][0]).toEqual({
+      PAGOPA_PRODUCT: { type: OrganizationApiKeyType.IO, apiKey: 'edited-key' }
+    });
+  });
+
   it.each([
     { initialType: undefined, expectedType: OrganizationApiKeyType.IO },
     {
@@ -96,13 +147,13 @@ describe('PagoPAIntegration', () => {
     expect(screen.getByTestId('product-type')).toHaveTextContent('IO');
 
     fireEvent.mouseDown(screen.getByRole('combobox'));
-    fireEvent.click(screen.getByRole('option', { name: 'GENERATE_NOTICE' }));
+    fireEvent.click(screen.getByRole('option', { name: /GENERATE_NOTICE$/ }));
     expect(screen.getByTestId('product-type')).toHaveTextContent(
       'GENERATE_NOTICE'
     );
 
     fireEvent.mouseDown(screen.getByRole('combobox'));
-    fireEvent.click(screen.getByRole('option', { name: 'IO' }));
+    fireEvent.click(screen.getByRole('option', { name: /IO$/ }));
     expect(screen.getByTestId('product-type')).toHaveTextContent('IO');
     expect(screen.getByRole('combobox')).toHaveTextContent('IO');
 

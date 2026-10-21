@@ -1,5 +1,5 @@
 import Typography from '@mui/material/Typography';
-import { useForm } from 'react-hook-form';
+import { SubmitErrorHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
@@ -88,6 +88,16 @@ export const AddIntegration = () => {
               'integrations.add.pagoPaProduct.errors.noIntegrationAvailable'
           });
         }
+        if (
+          values.flagIntegrationType === IntegrationType.PAGOPA_PRODUCT &&
+          !values.PAGOPA_PRODUCT?.apiKey
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['PAGOPA_PRODUCT', 'apiKey'],
+            message: 'integrations.add.pagoPaProduct.errors.apiKey.title'
+          });
+        }
       })
     ),
     mode: 'onSubmit',
@@ -115,6 +125,15 @@ export const AddIntegration = () => {
   const onSubmit = (data: AddIntegrationFormData) => {
     // TODO: Handle form submission
     console.log(data);
+  };
+
+  const onInvalidSubmit: SubmitErrorHandler<AddIntegrationFormData> = (
+    formErrors
+  ) => {
+    const apiKeyError = formErrors.PAGOPA_PRODUCT?.apiKey;
+    if (apiKeyError?.message) {
+      utils.notify.emit(t(apiKeyError.message));
+    }
   };
 
   console.log(availableApiKeys, errors);
@@ -195,7 +214,7 @@ export const AddIntegration = () => {
         )}
       <WizardStepButtons
         onBack={onBack}
-        onNext={handleSubmit(onSubmit)}
+        onNext={handleSubmit(onSubmit, onInvalidSubmit)}
         nextLabel={t('commons.confirm')}
         backLabel={t('commons.cancel')}
       />
