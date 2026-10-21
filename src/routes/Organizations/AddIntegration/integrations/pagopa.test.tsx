@@ -6,6 +6,67 @@ import type { AddIntegrationFormData } from '..';
 import PagoPAIntegration from './pagopa';
 
 describe('PagoPAIntegration', () => {
+  it('binds the IO service switch to form state and hides it for notice products', async () => {
+    const onSubmit = vi.fn();
+    const Parent = () => {
+      const { control, watch, handleSubmit, setValue } =
+        useForm<AddIntegrationFormData>({
+          defaultValues: {
+            PAGOPA_PRODUCT: {
+              keyType: OrganizationApiKeyType.IO,
+              apiKey: 'test-key',
+              serviceEnabled: false
+            }
+          }
+        });
+      return (
+        <form noValidate onSubmit={handleSubmit(onSubmit)}>
+          <PagoPAIntegration
+            control={control}
+            availableApiKeys={[
+              OrganizationApiKeyType.IO,
+              OrganizationApiKeyType.GENERATE_NOTICE
+            ]}
+          />
+          <output data-testid="service-enabled">
+            {String(watch('PAGOPA_PRODUCT.serviceEnabled'))}
+          </output>
+          <button
+            type="button"
+            onClick={() => setValue('PAGOPA_PRODUCT.serviceEnabled', false)}
+          >
+            Disable from parent
+          </button>
+          <button type="submit">Submit</button>
+        </form>
+      );
+    };
+
+    render(<Parent />);
+    expect(screen.getByRole('checkbox')).not.toBeChecked();
+
+    fireEvent.click(screen.getByRole('checkbox'));
+    expect(screen.getByTestId('service-enabled')).toHaveTextContent('true');
+    fireEvent.click(screen.getByText('Submit'));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalled();
+    });
+    expect(onSubmit.mock.calls[0][0]).toEqual({
+      PAGOPA_PRODUCT: {
+        keyType: OrganizationApiKeyType.IO,
+        apiKey: 'test-key',
+        serviceEnabled: true
+      }
+    });
+
+    fireEvent.click(screen.getByText('Disable from parent'));
+    expect(screen.getByRole('checkbox')).not.toBeChecked();
+
+    fireEvent.mouseDown(screen.getByRole('combobox'));
+    fireEvent.click(screen.getByRole('option', { name: /GENERATE_NOTICE$/ }));
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+  });
+
   it('binds the API key to the parent form and includes edits on submit', async () => {
     const onSubmit = vi.fn();
     const Parent = () => {
@@ -53,7 +114,10 @@ describe('PagoPAIntegration', () => {
       expect(onSubmit).toHaveBeenCalled();
     });
     expect(onSubmit.mock.calls[0][0]).toEqual({
-      PAGOPA_PRODUCT: { type: OrganizationApiKeyType.IO, apiKey: 'edited-key' }
+      PAGOPA_PRODUCT: {
+        keyType: OrganizationApiKeyType.IO,
+        apiKey: 'edited-key'
+      }
     });
   });
 
@@ -101,7 +165,7 @@ describe('PagoPAIntegration', () => {
         expect(onSubmit).toHaveBeenCalled();
       });
       expect(onSubmit.mock.calls[0][0]).toEqual({
-        PAGOPA_PRODUCT: { type: expectedType, apiKey: '' }
+        PAGOPA_PRODUCT: { keyType: expectedType, apiKey: '' }
       });
     }
   );
@@ -166,7 +230,7 @@ describe('PagoPAIntegration', () => {
     });
     expect(onSubmit.mock.calls[0][0]).toEqual({
       PAGOPA_PRODUCT: {
-        type: OrganizationApiKeyType.GENERATE_NOTICE,
+        keyType: OrganizationApiKeyType.GENERATE_NOTICE,
         apiKey: ''
       }
     });

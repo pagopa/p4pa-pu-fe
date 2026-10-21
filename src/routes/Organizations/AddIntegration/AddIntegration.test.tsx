@@ -1,37 +1,44 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { type Control, useController } from 'react-hook-form';
 
-import { AddIntegration, type AddIntegrationFormData } from '.';
+import { AddIntegration } from '.';
 import utils from '@core/utils';
+import i18n from '@core/translations/i18n';
 import {
+  KeyTypeEnum,
   OrganizationApiKey,
+  OrganizationApiKeys,
   OrganizationApiKeyType
 } from '@generated/core/client';
 
-const { mockGetOrganizationApiKeys } = vi.hoisted(() => ({
-  mockGetOrganizationApiKeys: vi.fn<() => { data: Array<OrganizationApiKey> }>()
+const {
+  mockGetOrganizationApiKeys,
+  mockEncryptAndSaveApiKey,
+  mockMutateAsync,
+  mockNavigate
+} = vi.hoisted(() => ({
+  mockGetOrganizationApiKeys:
+    vi.fn<() => { data: Array<OrganizationApiKey> }>(),
+  mockEncryptAndSaveApiKey: vi.fn(),
+  mockMutateAsync: vi.fn<(data: OrganizationApiKeys) => Promise<void>>(),
+  mockNavigate: vi.fn()
 }));
 
 vi.mock('@core/api/integrations', () => ({
   getOrganizationApiKeys: mockGetOrganizationApiKeys
 }));
 
-vi.mock('./integrations/pagopa', () => ({
-  default: ({ control }: { control: Control<AddIntegrationFormData> }) => {
-    const { field } = useController({
-      name: 'PAGOPA_PRODUCT.apiKey',
-      control
-    });
-    return <input aria-label="API key" {...field} value={field.value ?? ''} />;
-  }
+vi.mock('@core/api/organizations', () => ({
+  encryptAndSaveApiKey: mockEncryptAndSaveApiKey
 }));
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>();
   return {
     ...actual,
-    useNavigate: vi.fn()
+    useNavigate: () => mockNavigate,
+    useParams: () => ({ organizationId: '33' })
   };
 });
 
@@ -69,7 +76,7 @@ vi.mock('@core/components/FormComponent', () => ({
       options: Array<{ value: string; label: React.ReactNode }>;
       value: string;
     }) => {
-      const { field, fieldState } = useController({ name, control });
+      const { field } = useController({ name, control });
       return (
         <div>
           {options.map((option) => (
@@ -85,11 +92,6 @@ vi.mock('@core/components/FormComponent', () => ({
               {option.label}
             </label>
           ))}
-          {fieldState.error && (
-            <span data-testid={`${name}-error`}>
-              {fieldState.error.message}
-            </span>
-          )}
         </div>
       );
     },
@@ -109,152 +111,181 @@ vi.mock('@core/components/FormComponent', () => ({
 }));
 
 describe('AddIntegration', () => {
-  it('notifies about an empty API key only when Continue is pressed', async () => {
-    const notifySpy = vi
-      .spyOn(utils.notify, 'emit')
-      .mockImplementation(() => undefined);
-    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
-
-    render(<AddIntegration />);
-    expect(notifySpy).not.toHaveBeenCalled();
-
-    fireEvent.click(screen.getByTestId('option-pagoPa-product'));
-    const apiKey = await screen.findByRole('textbox', { name: 'API key' });
-    fireEvent.blur(apiKey);
-    expect(notifySpy).not.toHaveBeenCalled();
-
-    fireEvent.click(screen.getByTestId('next-button'));
-    await waitFor(() => {
-      expect(notifySpy).toHaveBeenCalledTimes(1);
-    });
-
-    notifySpy.mockClear();
-    logSpy.mockClear();
-    fireEvent.change(apiKey, { target: { value: 'test-api-key' } });
-    fireEvent.click(screen.getByTestId('next-button'));
-    await waitFor(() => {
-      expect(logSpy).toHaveBeenCalledWith({
-        flagIntegrationType: 'pagoPa-product',
-        PAGOPA_PRODUCT: { type: undefined, apiKey: 'test-api-key' }
-      });
-    });
-    expect(notifySpy).not.toHaveBeenCalled();
-  });
-
   beforeEach(() => {
-    mockGetOrganizationApiKeys.mockReturnValue({
-      data: []
-    });
+    vi.clearAllMocks();
+    mockGetOrganizationApiKeys.mockReturnValue({ data: [] });
+    mockEncryptAndSaveApiKey.mockReturnValue({ mutateAsync: mockMutateAsync });
+    mockMutateAsync.mockResolvedValue(undefined);
+    vi.spyOn(utils.notify, 'emit').mockImplementation(() => undefined);
   });
 
-  it('shows an alert and blocks submission when no pagoPA keys are available', async () => {
-    mockGetOrganizationApiKeys.mockReturnValue({
-      data: [
-        { keyType: OrganizationApiKeyType.IO },
-        { keyType: OrganizationApiKeyType.GENERATE_NOTICE }
-      ]
-    });
-    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
-
-    render(<AddIntegration />);
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
-    fireEvent.click(screen.getByTestId('option-pagoPa-product'));
-
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      'integrations.pagopa.add.error.message'
-    );
-    expect(screen.getByRole('alert')).toHaveTextContent(
-      'integrations.pagopa.add.error.title'
-    );
-    fireEvent.click(screen.getByTestId('next-button'));
-
-    await waitFor(() => {
-      expect(screen.getByTestId('flagIntegrationType-error')).toHaveTextContent(
-        'integrations.pagopa.add.error.message'
-      );
-    });
-    expect(logSpy).not.toHaveBeenCalled();
-
-    fireEvent.click(screen.getByTestId('option-e-service'));
-    await waitFor(() => {
-      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
-    });
-    fireEvent.click(screen.getByTestId('next-button'));
-    await waitFor(() => {
-      expect(logSpy).toHaveBeenCalledWith({
-        flagIntegrationType: 'e-service'
-      });
-    });
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
-  it('starts with no selected integration type and no validation alert', () => {
+  it('starts without a selection or notification and uses the organization from the URL', () => {
     render(<AddIntegration />);
 
     screen.getAllByRole('radio').forEach((radio) => {
       expect(radio).not.toBeChecked();
     });
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+    expect(utils.notify.emit).not.toHaveBeenCalled();
+    expect(mockGetOrganizationApiKeys).toHaveBeenCalledWith(33);
+    expect(mockEncryptAndSaveApiKey).toHaveBeenCalledWith(33);
   });
 
-  it('shows a validation error when submitting without selecting an option', async () => {
-    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
-
+  it('notifies when submitting without selecting an integration', async () => {
     render(<AddIntegration />);
     fireEvent.click(screen.getByTestId('next-button'));
 
     await waitFor(() => {
-      expect(screen.getByTestId('flagIntegrationType-error')).toHaveTextContent(
-        'commons.validation.selectAtLeastOneOption'
-      );
-      expect(screen.getByRole('alert')).toHaveTextContent(
-        'commons.validation.selectAtLeastOneOption'
+      expect(utils.notify.emit).toHaveBeenCalledWith(
+        i18n.t('integrations.add.errors.selectAtLeastOneOption.title')
       );
     });
-
-    expect(logSpy).not.toHaveBeenCalled();
+    expect(mockMutateAsync).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it('updates the controlled radio value when the selection changes', () => {
+  it('notifies about an empty API key only when Continue is pressed', async () => {
     render(<AddIntegration />);
+    fireEvent.click(screen.getByTestId('option-pagoPa-product'));
+    const apiKey = screen.getByRole('textbox');
+    fireEvent.blur(apiKey);
+    expect(utils.notify.emit).not.toHaveBeenCalled();
 
-    const pagoPaOption = screen.getByTestId('option-pagoPa-product');
-    const eServiceOption = screen.getByTestId('option-e-service');
-
-    fireEvent.click(pagoPaOption);
-    expect(pagoPaOption).toBeChecked();
-    expect(eServiceOption).not.toBeChecked();
-
-    fireEvent.click(eServiceOption);
-    expect(eServiceOption).toBeChecked();
-    expect(pagoPaOption).not.toBeChecked();
-  });
-
-  it('clears the validation alert after selecting an integration type', async () => {
-    render(<AddIntegration />);
     fireEvent.click(screen.getByTestId('next-button'));
+    await waitFor(() => {
+      expect(utils.notify.emit).toHaveBeenCalledExactlyOnceWith(
+        'integrations.add.pagoPaProduct.errors.apiKey.title'
+      );
+    });
+    expect(mockMutateAsync).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
 
-    await screen.findByRole('alert');
+    fireEvent.change(apiKey, { target: { value: 'test-api-key' } });
+    fireEvent.click(screen.getByTestId('next-button'));
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledWith({
+        apiKey: 'test-api-key',
+        keyType: KeyTypeEnum.IO,
+        serviceEnabled: false
+      });
+    });
+  });
+
+  it('shows an alert and prevents saving when no pagoPA products are available', async () => {
+    mockGetOrganizationApiKeys.mockReturnValue({
+      data: [
+        { keyType: OrganizationApiKeyType.IO },
+        { keyType: OrganizationApiKeyType.GENERATE_NOTICE }
+      ]
+    });
+    render(<AddIntegration />);
     fireEvent.click(screen.getByTestId('option-pagoPa-product'));
 
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent(
+      'integrations.add.pagoPaProduct.errors.noIntegrationAvailable.title'
+    );
+    expect(alert).toHaveTextContent(
+      'integrations.add.pagoPaProduct.errors.noIntegrationAvailable.message'
+    );
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('next-button'));
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+    });
+    expect(mockMutateAsync).not.toHaveBeenCalled();
+    expect(utils.notify.emit).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByTestId('option-e-service'));
     await waitFor(() => {
       expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
+    expect(screen.getByTestId('option-e-service')).toBeChecked();
+    expect(screen.getByTestId('option-pagoPa-product')).not.toBeChecked();
   });
 
-  it('submits the selected integration type', async () => {
-    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+  it.each([false, true])(
+    'saves IO with serviceEnabled=%s and returns to the previous page',
+    async (serviceEnabled) => {
+      render(<AddIntegration />);
+      fireEvent.click(screen.getByTestId('option-pagoPa-product'));
+      fireEvent.change(screen.getByRole('textbox'), {
+        target: { value: 'test-api-key' }
+      });
+      if (serviceEnabled) {
+        fireEvent.click(screen.getByRole('checkbox'));
+      }
+      fireEvent.click(screen.getByTestId('next-button'));
 
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith(-1);
+      });
+      expect(mockMutateAsync).toHaveBeenCalledExactlyOnceWith({
+        apiKey: 'test-api-key',
+        keyType: KeyTypeEnum.IO,
+        serviceEnabled
+      });
+      expect(utils.notify.emit).toHaveBeenCalledWith('commons.done', 'success');
+    }
+  );
+
+  it('saves the remaining notice product without serviceEnabled', async () => {
+    mockGetOrganizationApiKeys.mockReturnValue({
+      data: [{ keyType: OrganizationApiKeyType.IO }]
+    });
     render(<AddIntegration />);
     fireEvent.click(screen.getByTestId('option-pagoPa-product'));
+    expect(screen.getByRole('combobox')).toHaveTextContent('GENERATE_NOTICE');
+    fireEvent.change(screen.getByRole('textbox'), {
+      target: { value: 'notice-api-key' }
+    });
     fireEvent.click(screen.getByTestId('next-button'));
 
     await waitFor(() => {
-      expect(logSpy).toHaveBeenCalledWith({
-        flagIntegrationType: 'pagoPa-product'
-      });
+      expect(mockNavigate).toHaveBeenCalledWith(-1);
     });
-    expect(
-      screen.queryByTestId('flagIntegrationType-error')
-    ).not.toBeInTheDocument();
+    expect(mockMutateAsync).toHaveBeenCalledExactlyOnceWith({
+      apiKey: 'notice-api-key',
+      keyType: KeyTypeEnum.GENERATE_NOTICE
+    });
+  });
+
+  it('notifies about save failures without navigating away', async () => {
+    const error = new Error('Save failed');
+    mockMutateAsync.mockRejectedValueOnce(error);
+    const consoleSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    render(<AddIntegration />);
+    fireEvent.click(screen.getByTestId('option-pagoPa-product'));
+    fireEvent.change(screen.getByRole('textbox'), {
+      target: { value: 'test-api-key' }
+    });
+    fireEvent.click(screen.getByTestId('next-button'));
+
+    await waitFor(() => {
+      expect(utils.notify.emit).toHaveBeenCalledWith(
+        'integrations.add.errors.saveIntegration.message'
+      );
+    });
+    expect(consoleSpy).toHaveBeenCalledWith(error);
+    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(utils.notify.emit).not.toHaveBeenCalledWith(
+      'commons.done',
+      'success'
+    );
+  });
+
+  it('navigates back when Cancel is pressed', () => {
+    render(<AddIntegration />);
+    fireEvent.click(screen.getByTestId('back-button'));
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
+    expect(mockMutateAsync).not.toHaveBeenCalled();
   });
 });
