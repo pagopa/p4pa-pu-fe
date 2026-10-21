@@ -2,7 +2,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '../../../__tests__/renderers';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
-import { useForm } from 'react-hook-form';
+import { FieldErrors, useForm } from 'react-hook-form';
 import { _ControlledRadioGroup } from '../_ControlledRadioGroup';
 
 vi.mock('../ErrorMessage', () => ({
@@ -27,14 +27,15 @@ describe('_ControlledRadioGroup', () => {
   it.each([true, false])(
     'preserves validation when showErrorMessage is %s',
     (showErrorMessage) => {
+      const validationErrors: FieldErrors<FormValues> = {
+        choice: { type: 'custom', message: 'validation.error' }
+      };
       const Form = () => {
         const {
           control,
           formState: { errors }
         } = useForm<FormValues>({
-          errors: {
-            choice: { type: 'custom', message: 'validation.error' }
-          }
+          errors: validationErrors
         });
         return (
           <>
