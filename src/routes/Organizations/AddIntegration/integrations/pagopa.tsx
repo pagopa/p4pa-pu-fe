@@ -5,17 +5,30 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField
+  Stack,
+  Switch,
+  TextField,
+  Typography
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Control, useController } from 'react-hook-form';
 import type { AddIntegrationFormData } from '..';
 import { useEffect } from 'react';
 
-const Product = ({ control }: { control: Control<AddIntegrationFormData> }) => {
+const Product = ({
+  control,
+  productType
+}: {
+  control: Control<AddIntegrationFormData>;
+  productType: OrganizationApiKeyType | undefined;
+}) => {
   const { t } = useTranslation();
-  const { field } = useController({
+  const { field: apiKeyField } = useController({
     name: 'PAGOPA_PRODUCT.apiKey',
+    control
+  });
+  const { field: serviceEnabled } = useController({
+    name: 'PAGOPA_PRODUCT.serviceEnabled',
     control
   });
   return (
@@ -26,15 +39,38 @@ const Product = ({ control }: { control: Control<AddIntegrationFormData> }) => {
     >
       <FormControl fullWidth required>
         <TextField
-          name={field.name}
-          value={field.value ?? ''}
-          onChange={field.onChange}
-          onBlur={field.onBlur}
+          name={apiKeyField.name}
+          value={apiKeyField.value ?? ''}
+          onChange={apiKeyField.onChange}
+          onBlur={apiKeyField.onBlur}
           label={t('integrations.add.pagoPaProduct.config.apiKey')}
           variant="outlined"
           required
         />
       </FormControl>
+      {productType === OrganizationApiKeyType.IO && (
+        <>
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={2}
+            justifyContent="space-between"
+            mt={4}
+          >
+            <Typography fontSize={16} variant="body1" fontWeight={600}>
+              {t('integrations.add.pagoPaProduct.config.IO.title')}
+            </Typography>
+            <Switch
+              name={serviceEnabled.name}
+              checked={serviceEnabled.value ?? false}
+              onChange={(e) => serviceEnabled.onChange(e.target.checked)}
+            />
+          </Stack>
+          <Typography fontSize={14} variant="caption" color="textSecondary">
+            {t('integrations.add.pagoPaProduct.config.IO.subtitle')}
+          </Typography>
+        </>
+      )}
     </WizardStepWrapper>
   );
 };
@@ -50,7 +86,7 @@ const PagoPAIntegration = ({
 }) => {
   const { t } = useTranslation();
   const { field } = useController({
-    name: 'PAGOPA_PRODUCT.type',
+    name: 'PAGOPA_PRODUCT.keyType',
     control
   });
   const { value, onChange } = field;
@@ -89,7 +125,7 @@ const PagoPAIntegration = ({
           </Select>
         </FormControl>
       </WizardStepWrapper>
-      <Product control={control} />
+      <Product control={control} productType={value} />
     </>
   );
 };

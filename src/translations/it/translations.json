@@ -2459,7 +2459,11 @@
         "config": {
           "title": "Configura il prodotto PagoPA",
           "subtitle": "Completa le informazioni",
-          "apiKey": "API Key"
+          "apiKey": "API Key",
+          "IO": {
+            "title": "Notifiche invio messaggio",
+            "subtitle": "Permette di inviare notifiche al destinatario"
+          }
         },
         "errors": {
           "noIntegrationAvailable": {
@@ -2483,6 +2487,10 @@
         "selectAtLeastOneOption": {
           "title": "Completa la configurazione per continuare",
           "message": "Devi selezionare almeno un tipo di integrazione"
+        },
+        "saveIntegration": {
+          "title": "Errore durante il salvataggio",
+          "message": "Si è verificato un errore durante il salvataggio dell'integrazione."
         }
       }
     }

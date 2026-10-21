@@ -11,12 +11,13 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import Divider from '@mui/material/Divider';
 import PagoPAIntegration from './integrations/pagopa';
-import { OrganizationApiKeyType } from '@generated/core/client';
+import { KeyTypeEnum, OrganizationApiKeyType } from '@generated/core/client';
 import { getOrganizationApiKeys } from '@core/api/integrations';
 import { Alert, AlertTitle } from '@mui/material';
 import { useEffect } from 'react';
 import utils from '@core/utils';
 import i18n from '@core/translations/i18n';
+import { encryptAndSaveApiKey } from '@core/api/organizations';
 
 enum IntegrationType {
   E_SERVICE = 'e-service',
@@ -39,13 +40,14 @@ const addIntegrationSchema = z.object({
     }),
   PAGOPA_PRODUCT: z
     .object({
-      type: z
+      keyType: z
         .union([
           z.literal(OrganizationApiKeyType.IO),
           z.literal(OrganizationApiKeyType.GENERATE_NOTICE)
         ])
         .optional(),
-      apiKey: z.string().optional()
+      apiKey: z.string().optional(),
+      serviceEnabled: z.boolean().optional()
     })
     .optional()
 });
@@ -60,13 +62,16 @@ export const AddIntegration = () => {
     organizationId: string;
   }>();
 
-  const { data } = getOrganizationApiKeys(Number(organizationIdByURL!));
+  const organizationId = Number(organizationIdByURL);
+  const { data } = getOrganizationApiKeys(organizationId);
 
   const availableApiKeys = data
     ? Object.values(OrganizationApiKeyType)
         .filter((keyType) => !data.some((key) => key.keyType === keyType))
         .filter((keyType) => keyType !== OrganizationApiKeyType.SEND)
     : [];
+
+  const savedIntegrationTypeMutation = encryptAndSaveApiKey(organizationId);
 
   const {
     control,
@@ -104,8 +109,9 @@ export const AddIntegration = () => {
     defaultValues: {
       flagIntegrationType: undefined,
       PAGOPA_PRODUCT: {
-        type: undefined,
-        apiKey: ''
+        keyType: undefined,
+        apiKey: '',
+        serviceEnabled: false
       }
     }
   });
@@ -122,21 +128,38 @@ export const AddIntegration = () => {
     navigate(-1);
   };
 
-  const onSubmit = (data: AddIntegrationFormData) => {
-    // TODO: Handle form submission
-    console.log(data);
+  const onSubmit = async (data: AddIntegrationFormData) => {
+    try {
+      if (data.flagIntegrationType === IntegrationType.PAGOPA_PRODUCT) {
+        if (!data.PAGOPA_PRODUCT?.apiKey || !data.PAGOPA_PRODUCT?.keyType) {
+          throw new Error('Missing API key or type for PagoPA product');
+        }
+        await savedIntegrationTypeMutation.mutateAsync({
+          apiKey: data.PAGOPA_PRODUCT.apiKey,
+          keyType: data.PAGOPA_PRODUCT.keyType as unknown as KeyTypeEnum,
+          ...(data.PAGOPA_PRODUCT.keyType === OrganizationApiKeyType.IO && {
+            serviceEnabled: data.PAGOPA_PRODUCT.serviceEnabled ?? false
+          })
+        });
+        navigate(-1);
+        utils.notify.emit(t('commons.done'), 'success');
+      }
+    } catch (error) {
+      utils.notify.emit(t('integrations.add.errors.saveIntegration.message'));
+      console.error(error);
+    }
   };
 
   const onInvalidSubmit: SubmitErrorHandler<AddIntegrationFormData> = (
     formErrors
   ) => {
+    if (formErrors.flagIntegrationType) return;
     const apiKeyError = formErrors.PAGOPA_PRODUCT?.apiKey;
     if (apiKeyError?.message) {
       utils.notify.emit(t(apiKeyError.message));
     }
   };
 
-  console.log(availableApiKeys, errors);
   return (
     <>
       <TitleComponent
