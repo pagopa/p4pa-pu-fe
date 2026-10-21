@@ -13,7 +13,7 @@ describe('PagoPAIntegration', () => {
         useForm<AddIntegrationFormData>({
           defaultValues: {
             PAGOPA_PRODUCT: {
-              type: OrganizationApiKeyType.IO,
+              keyType: OrganizationApiKeyType.IO,
               apiKey: 'initial-key'
             }
           }
@@ -71,7 +71,7 @@ describe('PagoPAIntegration', () => {
         const { control, watch, handleSubmit } =
           useForm<AddIntegrationFormData>({
             defaultValues: {
-              PAGOPA_PRODUCT: { type: initialType, apiKey: '' }
+              PAGOPA_PRODUCT: { keyType: initialType, apiKey: '' }
             }
           });
         return (
@@ -84,7 +84,7 @@ describe('PagoPAIntegration', () => {
               ]}
             />
             <output data-testid="product-type">
-              {watch('PAGOPA_PRODUCT.type')}
+              {watch('PAGOPA_PRODUCT.keyType')}
             </output>
             <button type="submit">Submit</button>
           </form>
@@ -112,10 +112,10 @@ describe('PagoPAIntegration', () => {
       const { control, watch, handleSubmit, setValue } =
         useForm<AddIntegrationFormData>({
           defaultValues: {
-            PAGOPA_PRODUCT: { type: undefined, apiKey: '' }
+            PAGOPA_PRODUCT: { keyType: undefined, apiKey: '' }
           }
         });
-      const productType = watch('PAGOPA_PRODUCT.type');
+      const productType = watch('PAGOPA_PRODUCT.keyType');
 
       return (
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
@@ -131,7 +131,7 @@ describe('PagoPAIntegration', () => {
             type="button"
             onClick={() =>
               setValue(
-                'PAGOPA_PRODUCT.type',
+                'PAGOPA_PRODUCT.keyType',
                 OrganizationApiKeyType.GENERATE_NOTICE
               )
             }
