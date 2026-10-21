@@ -1,60 +1,123 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
-import {
-  OrganizationApiKey,
-  OrganizationApiKeyType
-} from '@generated/core/client';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { useForm } from 'react-hook-form';
+import { OrganizationApiKeyType } from '@generated/core/client';
+import type { AddIntegrationFormData } from '..';
 import PagoPAIntegration from './pagopa';
 
-const { mockGetOrganizationApiKeys } = vi.hoisted(() => ({
-  mockGetOrganizationApiKeys:
-    vi.fn<() => { data: Array<OrganizationApiKey> | undefined }>()
-}));
-
-vi.mock('../../../../api/organizations', () => ({
-  getOrganizationApiKeys: mockGetOrganizationApiKeys
-}));
-
 describe('PagoPAIntegration', () => {
-  it.each<{
-    description: string;
-    data: Array<OrganizationApiKey> | undefined;
-    expected: Array<OrganizationApiKeyType>;
-  }>([
+  it.each([
+    { initialType: undefined, expectedType: OrganizationApiKeyType.IO },
     {
-      description:
-        'only offers missing types, excluding inactive configured keys',
-      data: [
-        { keyType: OrganizationApiKeyType.IO, flagActive: false },
-        { keyType: OrganizationApiKeyType.SEND, flagActive: true }
-      ],
-      expected: [OrganizationApiKeyType.GENERATE_NOTICE]
-    },
-    {
-      description: 'offers every type when no keys are configured',
-      data: [],
-      expected: Object.values(OrganizationApiKeyType)
-    },
-    {
-      description: 'offers no types when every key is configured',
-      data: Object.values(OrganizationApiKeyType).map((keyType) => ({
-        keyType
-      })),
-      expected: []
-    },
-    {
-      description: 'offers no types before configured keys have loaded',
-      data: undefined,
-      expected: []
+      initialType: OrganizationApiKeyType.GENERATE_NOTICE,
+      expectedType: OrganizationApiKeyType.GENERATE_NOTICE
     }
-  ])('$description', ({ data, expected }) => {
-    mockGetOrganizationApiKeys.mockReturnValue({ data });
+  ] as const)(
+    'initializes and submits $expectedType when the initial value is $initialType',
+    async ({ initialType, expectedType }) => {
+      const onSubmit = vi.fn();
+      const Parent = () => {
+        const { control, watch, handleSubmit } =
+          useForm<AddIntegrationFormData>({
+            defaultValues: {
+              PAGOPA_PRODUCT: { type: initialType, apiKey: '' }
+            }
+          });
+        return (
+          <form noValidate onSubmit={handleSubmit(onSubmit)}>
+            <PagoPAIntegration
+              control={control}
+              availableApiKeys={[
+                OrganizationApiKeyType.IO,
+                OrganizationApiKeyType.GENERATE_NOTICE
+              ]}
+            />
+            <output data-testid="product-type">
+              {watch('PAGOPA_PRODUCT.type')}
+            </output>
+            <button type="submit">Submit</button>
+          </form>
+        );
+      };
 
-    render(<PagoPAIntegration />);
+      render(<Parent />);
+      expect(screen.getByRole('combobox')).toHaveTextContent(expectedType);
+      expect(screen.getByTestId('product-type')).toHaveTextContent(
+        expectedType
+      );
+      fireEvent.click(screen.getByText('Submit'));
+      await waitFor(() => {
+        expect(onSubmit).toHaveBeenCalled();
+      });
+      expect(onSubmit.mock.calls[0][0]).toEqual({
+        PAGOPA_PRODUCT: { type: expectedType, apiKey: '' }
+      });
+    }
+  );
+
+  it('binds the select to the watched parent field and submits its value', async () => {
+    const onSubmit = vi.fn();
+    const Parent = () => {
+      const { control, watch, handleSubmit, setValue } =
+        useForm<AddIntegrationFormData>({
+          defaultValues: {
+            PAGOPA_PRODUCT: { type: undefined, apiKey: '' }
+          }
+        });
+      const productType = watch('PAGOPA_PRODUCT.type');
+
+      return (
+        <form noValidate onSubmit={handleSubmit(onSubmit)}>
+          <PagoPAIntegration
+            control={control}
+            availableApiKeys={[
+              OrganizationApiKeyType.IO,
+              OrganizationApiKeyType.GENERATE_NOTICE
+            ]}
+          />
+          <output data-testid="product-type">{productType ?? 'unset'}</output>
+          <button
+            type="button"
+            onClick={() =>
+              setValue(
+                'PAGOPA_PRODUCT.type',
+                OrganizationApiKeyType.GENERATE_NOTICE
+              )
+            }
+          >
+            Change from parent
+          </button>
+          <button type="submit">Submit</button>
+        </form>
+      );
+    };
+
+    render(<Parent />);
+    expect(screen.getByTestId('product-type')).toHaveTextContent('IO');
+
     fireEvent.mouseDown(screen.getByRole('combobox'));
+    fireEvent.click(screen.getByRole('option', { name: 'GENERATE_NOTICE' }));
+    expect(screen.getByTestId('product-type')).toHaveTextContent(
+      'GENERATE_NOTICE'
+    );
 
-    expect(
-      screen.queryAllByRole('option').map((option) => option.textContent)
-    ).toEqual(expected);
+    fireEvent.mouseDown(screen.getByRole('combobox'));
+    fireEvent.click(screen.getByRole('option', { name: 'IO' }));
+    expect(screen.getByTestId('product-type')).toHaveTextContent('IO');
+    expect(screen.getByRole('combobox')).toHaveTextContent('IO');
+
+    fireEvent.click(screen.getByText('Change from parent'));
+    expect(screen.getByRole('combobox')).toHaveTextContent('GENERATE_NOTICE');
+
+    fireEvent.click(screen.getByText('Submit'));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalled();
+    });
+    expect(onSubmit.mock.calls[0][0]).toEqual({
+      PAGOPA_PRODUCT: {
+        type: OrganizationApiKeyType.GENERATE_NOTICE,
+        apiKey: ''
+      }
+    });
   });
 });

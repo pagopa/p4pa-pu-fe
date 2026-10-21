@@ -2449,8 +2449,18 @@
       "subtitle": "Dopo la creazione, potrai sempre modificare o eliminare l’integrazione.",
       "section": "Seleziona il tipo di integrazione",
       "pagoPaProduct": {
+        "title": "Seleziona il prodotto PagoPA",
+        "subtitle": "Indica quale prodotto vuoi integrare",
         "label": "Prodotto PagoPA",
+        "products": "Prodotto PagoPA",
         "description": "IO, Stampa avvisi",
+        "IO": "IO",
+        "GENERATE_NOTICE": "Stampa avvisi",
+        "config": {
+          "title": "Configura il prodotto PagoPA",
+          "subtitle": "Completa le informazioni",
+          "apiKey": "API Key"
+        },
         "errors": {
           "noIntegrationAvailable": {
             "title": "Hai già configurato tutti i prodotti PagoPA",

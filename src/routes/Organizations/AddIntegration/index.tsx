@@ -8,7 +8,7 @@ import TitleComponent from '@core/components/TitleComponent/TitleComponent';
 import WizardStepButtons from '@core/components/Wizard/WizardStepButtons';
 import WizardStepWrapper from '@core/components/Wizard/WizardStepWrapper';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import Divider from '@mui/material/Divider';
 import PagoPAIntegration from './integrations/pagopa';
 import { OrganizationApiKeyType } from '@generated/core/client';
@@ -36,15 +36,31 @@ const addIntegrationSchema = z.object({
           i18n.t('integrations.add.errors.selectAtLeastOneOption.title')
         );
       }
+    }),
+  PAGOPA_PRODUCT: z
+    .object({
+      type: z
+        .union([
+          z.literal(OrganizationApiKeyType.IO),
+          z.literal(OrganizationApiKeyType.GENERATE_NOTICE)
+        ])
+        .optional(),
+      apiKey: z.string().optional()
     })
+    .optional()
 });
 
-type AddIntegrationFormData = z.infer<typeof addIntegrationSchema>;
+export type AddIntegrationFormData = z.infer<typeof addIntegrationSchema>;
 
 export const AddIntegration = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { data } = getOrganizationApiKeys(1);
+
+  const { organizationId: organizationIdByURL } = useParams<{
+    organizationId: string;
+  }>();
+
+  const { data } = getOrganizationApiKeys(Number(organizationIdByURL!));
 
   const availableApiKeys = data
     ? Object.values(OrganizationApiKeyType)
@@ -76,7 +92,11 @@ export const AddIntegration = () => {
     ),
     mode: 'onSubmit',
     defaultValues: {
-      flagIntegrationType: undefined
+      flagIntegrationType: undefined,
+      PAGOPA_PRODUCT: {
+        type: undefined,
+        apiKey: ''
+      }
     }
   });
 
@@ -97,6 +117,7 @@ export const AddIntegration = () => {
     console.log(data);
   };
 
+  console.log(availableApiKeys, errors);
   return (
     <>
       <TitleComponent
@@ -167,7 +188,10 @@ export const AddIntegration = () => {
       </WizardStepWrapper>
       {availableApiKeys.length > 0 &&
         flagIntegrationType === IntegrationType.PAGOPA_PRODUCT && (
-          <PagoPAIntegration availableApiKeys={availableApiKeys} />
+          <PagoPAIntegration
+            availableApiKeys={availableApiKeys}
+            control={control}
+          />
         )}
       <WizardStepButtons
         onBack={onBack}
