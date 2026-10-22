@@ -58,6 +58,7 @@
     "src/extra/**/*",
     "vite.config.mts",
     "vitest.config.mts",
-    "vitest.setup.ts"
+    "vitest.setup.ts",
+    "__mocks__"
   ]
 }
