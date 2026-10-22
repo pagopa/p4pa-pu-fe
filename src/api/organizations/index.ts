@@ -7,7 +7,11 @@ import {
 } from './mappings';
 import { parseAndLog } from '../../utils/loaders';
 import { organizationDetailSchema } from '../../../generated/core/zod-schema';
-import { OrganizationUpdateDTO } from '@generated/core/client';
+import {
+  OrganizationApiKeys,
+  OrganizationApiKeyType,
+  OrganizationUpdateDTO
+} from '@generated/core/client';
 
 export const getOrganizationsByBrokerIdAndFilters = () =>
   useMutation({
@@ -55,5 +59,42 @@ export const updateOrganization = () =>
         organizationId,
         organizationData
       );
+    }
+  });
+
+export const getOrganizationApiKeys = (organizationId: number) =>
+  useQuery({
+    queryKey: ['getOrganizationApiKeys', organizationId],
+    queryFn: async () => {
+      const { data: apiKeys } =
+        await utils.apiClient.bff.getOrganizationApiKeys(organizationId);
+      return apiKeys;
+    }
+  });
+
+export const getOrganizationApiKey = (
+  organizationId: number,
+  keyType: OrganizationApiKeyType
+) =>
+  useQuery({
+    queryKey: ['getOrganizationApiKey', organizationId, keyType],
+    queryFn: async () => {
+      const { data: apiKeys } = await utils.apiClient.bff.getOrganizationApiKey(
+        organizationId,
+        keyType
+      );
+      return apiKeys;
+    }
+  });
+
+export const encryptAndSaveApiKey = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['encryptAndSaveApiKey', organizationId],
+    mutationFn: async (data: OrganizationApiKeys) => {
+      const { data: apiKeys } = await utils.apiClient.bff.encryptAndSaveApiKey(
+        organizationId,
+        data
+      );
+      return apiKeys;
     }
   });
