@@ -32,8 +32,7 @@
       "vite/client",
       "globals",
       "react",
-      "react-dom",
-      "@testing-library/jest-dom"
+      "react-dom"
     ],
     "paths": {
       "@extra/*": [

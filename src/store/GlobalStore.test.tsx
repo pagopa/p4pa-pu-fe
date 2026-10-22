@@ -61,7 +61,7 @@ describe('StoreContext', () => {
       return null;
     };
 
-    expect(() => render(<TestComponent />)).toThrowError(
+    expect(() => render(<TestComponent />)).toThrow(
       'useStore must be used within a StoreProvider'
     );
   });
