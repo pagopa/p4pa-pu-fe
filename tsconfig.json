@@ -32,7 +32,8 @@
       "vite/client",
       "globals",
       "react",
-      "react-dom"
+      "react-dom",
+      "@testing-library/jest-dom"
     ],
     "paths": {
       "@extra/*": [
@@ -58,7 +59,6 @@
     "src/extra/**/*",
     "vite.config.mts",
     "vitest.config.mts",
-    "vitest.setup.ts",
-    "__mocks__"
+    "vitest.setup.ts"
   ]
 }
