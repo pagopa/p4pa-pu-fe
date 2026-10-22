@@ -74,16 +74,18 @@ vi.mock('../../hooks/useSearch', () => ({
   }))
 }));
 
-vi.mock('../../utils', async (importOriginal) => {
+vi.mock('../../utils/roles', () => {
   return {
-    ...(await importOriginal()),
     default: {
-      URI: {
-        decode: vi.fn(() => ({}))
-      },
-      roles: {
-        useIsSuperAdmin: vi.fn(() => false)
-      }
+      useIsSuperAdmin: vi.fn(() => false)
+    }
+  };
+});
+
+vi.mock('../../utils/URI', () => {
+  return {
+    default: {
+      decode: vi.fn(() => ({}))
     }
   };
 });

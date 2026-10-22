@@ -1,5 +1,4 @@
-import type SxProps from '@mui/material/SxProps';
-import type Theme from '@mui/material/Theme';
+import type { SxProps, Theme } from '@mui/material/styles';
 
 export const sidebarStyles = (
   theme: Theme,

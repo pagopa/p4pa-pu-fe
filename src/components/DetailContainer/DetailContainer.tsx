@@ -8,14 +8,14 @@ import React from 'react';
 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import type { TypographyOwnProps } from '@mui/material/Typography';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { useTheme } from '@mui/material/styles';
+import type { ChipOwnProps } from '@mui/material/Chip';
 import Chip from '@mui/material/Chip';
-import type ChipOwnProps from '@mui/material/ChipOwnProps';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import type TypographyOwnProps from '@mui/material/TypographyOwnProps';
 import Stack from '@mui/material/Stack';
 
 export type DetailData = {

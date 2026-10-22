@@ -7,8 +7,7 @@ import FilterContainer, {
 import type { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 
-import Button from '@mui/material/Button';
-import type ButtonProps from '@mui/material/ButtonProps';
+import Button, { type ButtonProps } from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 
 type FilterContainerDrawerButton = {

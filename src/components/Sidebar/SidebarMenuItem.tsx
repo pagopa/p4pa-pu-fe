@@ -13,9 +13,8 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme, alpha } from '@mui/material/styles';
+import { useTheme, alpha, type SxProps } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import type SxProps from '@mui/material/SxProps';
 
 type Props = {
   collapsed: boolean;

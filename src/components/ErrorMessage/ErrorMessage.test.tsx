@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import { ErrorMessage } from './ErrorMessage';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { render } from '../../__tests__/renderers';
-import type AlertProps from '@mui/material/AlertProps';
+import { type AlertProps } from '@mui/material/Alert';
 
 describe('ErrorMessage', () => {
   beforeEach(() => {

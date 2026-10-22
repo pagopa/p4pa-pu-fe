@@ -2,10 +2,10 @@ import { theme } from '@pagopa/mui-italia';
 import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
+import type { SelectChangeEvent } from '@mui/material/Select';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Pagination from '@mui/material/Pagination';
-import type SelectChangeEvent from '@mui/material/SelectChangeEvent';
 
 type CustomPaginationProps = {
   sizePageOptions?: Array<number>;

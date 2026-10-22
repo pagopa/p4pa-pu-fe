@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { useId } from 'react';
 
-import type DialogProps from '@mui/material/DialogProps';
+import type { DialogProps } from '@mui/material/Dialog';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';

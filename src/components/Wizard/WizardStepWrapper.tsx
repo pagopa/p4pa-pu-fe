@@ -2,8 +2,8 @@ import { theme } from '@pagopa/mui-italia';
 import type { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import type { BoxProps } from '@mui/material/Box';
 import Box from '@mui/material/Box';
-import type BoxProps from '@mui/material/BoxProps';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 

@@ -1,6 +1,6 @@
 import type React from 'react';
+import type { ButtonOwnProps } from '@mui/material/Button';
 import Button from '@mui/material/Button';
-import type ButtonOwnProps from '@mui/material/ButtonOwnProps';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 

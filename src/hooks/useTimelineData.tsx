@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { PaymentEventType } from '../../generated/core/data-contracts';
 
 import Typography from '@mui/material/Typography';
-import type ChipOwnProps from '@mui/material/ChipOwnProps';
+import type { ChipOwnProps } from '@mui/material/Chip';
 
 export type TimelineElement = {
   date: Date;

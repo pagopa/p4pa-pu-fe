@@ -20,9 +20,9 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
-import type Theme from '@mui/material/Theme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import NavigateNext from '@mui/icons-material/NavigateNext';
+import type { Theme } from '@mui/material/styles';
 
 const defaultRouteHandle: RouteHandleObject = {
   backButton: true,

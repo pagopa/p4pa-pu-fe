@@ -9,8 +9,8 @@ import type {
 } from '../../../generated/core/data-contracts';
 import { PageRoutes } from '..';
 
+import type { ChipProps } from '@mui/material/Chip';
 import Chip from '@mui/material/Chip';
-import type ChipProps from '@mui/material/ChipProps';
 import IconButton from '@mui/material/IconButton';
 import ChevronRight from '@mui/icons-material/ChevronRight';
 

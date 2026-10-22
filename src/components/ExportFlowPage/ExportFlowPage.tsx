@@ -20,8 +20,8 @@ import {
 import utils from '../../utils';
 
 import Button from '@mui/material/Button';
+import type { GridDirection } from '@mui/material/Grid';
 import Grid from '@mui/material/Grid';
-import type GridDirection from '@mui/material/GridDirection';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import Dashboard from '@mui/icons-material/Dashboard';
 import InsertDriveFile from '@mui/icons-material/InsertDriveFile';

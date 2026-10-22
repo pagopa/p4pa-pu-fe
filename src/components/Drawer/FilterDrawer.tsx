@@ -4,8 +4,8 @@ import type { DrawerProps } from '../Drawer';
 import { Drawer } from '../Drawer';
 
 import Grid from '@mui/material/Grid';
+import type { ButtonProps } from '@mui/material/Button';
 import Button from '@mui/material/Button';
-import type ButtonProps from '@mui/material/ButtonProps';
 
 type FilterDrawerProps = DrawerProps & {
   filterMap: FilterMap;

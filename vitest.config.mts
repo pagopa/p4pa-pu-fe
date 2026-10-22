@@ -15,7 +15,6 @@ export default defineConfig({
   },
   test: {
     bail: isCI ? 1 : 5,
-    //mockReset: true,
     globals: true,
     setupFiles: './vitest.setup.ts',
     environment: 'happy-dom',
@@ -28,13 +27,15 @@ export default defineConfig({
         }
       }
     },
+
     clearMocks: true,
+    mockReset: false,
+    isolate: true,
+
     watch: false,
 
     silent: 'passed-only',
     reporters: ['dot'],
-
-    isolate: true,
 
     fsModuleCache: true,
 

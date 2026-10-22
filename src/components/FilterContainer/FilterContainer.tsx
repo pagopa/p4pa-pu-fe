@@ -13,8 +13,7 @@ import type {
 } from '../../models/Filters';
 import { toEndOfDay, toStartOfDay } from '../../utils/formatters';
 
-import Grid from '@mui/material/Grid';
-import type GridOwnProps from '@mui/material/GridOwnProps';
+import Grid, { type GridOwnProps } from '@mui/material/Grid';
 
 export enum COMPONENT_TYPE {
   textField = 'textField',

@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import Alert from '@mui/material/Alert';
-import type AlertProps from '@mui/material/AlertProps';
+import Alert, { type AlertProps } from '@mui/material/Alert';
 
 type ErrorMessageProps = {
   variant?: AlertProps['variant'];

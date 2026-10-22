@@ -7,9 +7,9 @@ import { generatePath, Link } from 'react-router';
 import { PageRoutes } from '../../routes';
 import ChipTruncateTooltip from '../ChipTruncateTooltip';
 
-import type ChipProps from '@mui/material/ChipProps';
 import IconButton from '@mui/material/IconButton';
 import ReadMore from '@mui/icons-material/ReadMore';
+import type { ChipProps } from '@mui/material/Chip';
 
 export type DataGridProps = {
   data: PagedTreasuredClassificationExtendedDTO;

@@ -10,8 +10,7 @@ import Typography from '@mui/material/Typography';
 import { format } from 'date-fns';
 import type { ReactNode } from 'react';
 import { it } from 'date-fns/locale';
-import Chip from '@mui/material/Chip';
-import type ChipOwnProps from '@mui/material/ChipOwnProps';
+import Chip, { type ChipOwnProps } from '@mui/material/Chip';
 
 export type TimelineNode = {
   date: Date;

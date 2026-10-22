@@ -1,4 +1,4 @@
-import type SvgIconComponent from '@mui/icons-material/SvgIconComponent';
+import type { SvgIconComponent } from '@mui/icons-material/index';
 
 export type ISidebarMenuItem = {
   label: string;

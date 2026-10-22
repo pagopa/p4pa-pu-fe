@@ -4,14 +4,13 @@ import React, { useEffect, useId } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
+import type { TypographyOwnProps } from '@mui/material/Typography';
 import Typography from '@mui/material/Typography';
-import type TypographyOwnProps from '@mui/material/TypographyOwnProps';
+import type { ButtonProps } from '@mui/material/Button';
 import Button from '@mui/material/Button';
-import type ButtonProps from '@mui/material/ButtonProps';
+import type { SxProps, Theme } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
-import type SxProps from '@mui/material/SxProps';
-import type Theme from '@mui/material/Theme';
 
 export type ActionMenuItem = {
   icon?: React.ReactNode;

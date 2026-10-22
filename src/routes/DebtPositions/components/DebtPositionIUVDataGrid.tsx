@@ -11,10 +11,10 @@ import type {
 import { formatDate, moneyFormat } from '../../../utils/formatters';
 import ChipTruncateTooltip from '../../../components/ChipTruncateTooltip';
 
-import type ChipProps from '@mui/material/ChipProps';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ReadMore from '@mui/icons-material/ReadMore';
+import type { ChipProps } from '@mui/material/Chip';
 
 export type DataGridProps = {
   data?: PagedInstallmentView;

@@ -3,8 +3,7 @@ import type { ReceiptDetailDTO } from '../../../generated/core/client';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import type SxProps from '@mui/material/SxProps';
-import type Theme from '@mui/material/Theme';
+import type { SxProps, Theme } from '@mui/material/styles';
 
 type ReceiptDetailWarningBannerProps = {
   receiptOrigin: ReceiptDetailDTO['receiptOrigin'];
