@@ -37,10 +37,11 @@ export default defineConfig({
     silent: 'passed-only',
     reporters: ['dot'],
 
-    fsModuleCache: true,
+    fsModuleCache: !!isCI,
 
     pool: 'forks',
-    maxWorkers: isCI ? 2 : '50%',
+    maxWorkers: isCI ? undefined : '50%',
+
     coverage: {
       provider: 'v8',
       reporter: isCI ? ['text', 'json-summary', 'lcov'] : ['text'],
