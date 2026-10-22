@@ -1,13 +1,15 @@
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
-import { ReadMore } from '@mui/icons-material';
-import { ChipProps, IconButton } from '@mui/material';
-import { PagedTreasuredClassificationExtendedDTO } from '../../../generated/core/client';
+import type { PagedTreasuredClassificationExtendedDTO } from '../../../generated/core/client';
 import { formatDate, moneyFormat } from '../../utils/formatters';
 import { generatePath, Link } from 'react-router';
 import { PageRoutes } from '../../routes';
 import ChipTruncateTooltip from '../ChipTruncateTooltip';
+
+import type ChipProps from '@mui/material/ChipProps';
+import IconButton from '@mui/material/IconButton';
+import ReadMore from '@mui/icons-material/ReadMore';
 
 export type DataGridProps = {
   data: PagedTreasuredClassificationExtendedDTO;

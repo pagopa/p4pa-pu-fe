@@ -1,9 +1,9 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useStep2Form } from './useStep2Form';
-import { Step2Data } from '../models/DebtPositionType';
+import type { Step2Data } from '../models/DebtPositionType';
 import { SubjectType } from '../utils/fieldValidation';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { z } from 'zod';
 
 vi.mock('react-i18next', () => ({

@@ -1,21 +1,21 @@
-import {
+import type {
   GridColDef,
   GridRenderCellParams,
   GridValidRowModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight } from '@mui/icons-material';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../../routes';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
-import { ChipProps } from '@mui/material/Chip';
-import {
+import type { ChipProps } from '@mui/material/Chip';
+import type {
   DebtPositionStatus,
   PagedDebtPositionView
 } from '../../../../generated/core/data-contracts';
 import { format } from 'date-fns';
 import ChipTruncateTooltip from '../../../components/ChipTruncateTooltip';
-import { IconButton } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import ChevronRight from '@mui/icons-material/ChevronRight';
 
 type ResultDataRow = {
   id: number;

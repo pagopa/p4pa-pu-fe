@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getAssessments } from '../../../api/assessments';
 import { useAssessmentNameValidation } from './useAssessmentNameValidation';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';

@@ -1,5 +1,5 @@
 import utils from '../utils';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
 import { receiptDetailDTOSchema } from '../../generated/core/zod-schema';
 import { createMock } from 'zodock';

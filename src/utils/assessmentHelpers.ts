@@ -1,4 +1,4 @@
-import { ChipOwnProps } from '@mui/material/Chip';
+import type { ChipOwnProps } from '@mui/material/Chip';
 
 /**
  * Types of assessment status

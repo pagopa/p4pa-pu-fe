@@ -1,9 +1,11 @@
-import { Stack, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DateValidationError } from '@mui/x-date-pickers/models';
+import type { DateValidationError } from '@mui/x-date-pickers/models';
 import { endOfDay, startOfDay, format } from 'date-fns';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 //Generates an accessible label for the calendar open button. If there is a value, shows "Change date, [formatted date]", otherwise "Choose date".
 

@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { Control } from 'react-hook-form';
+import type { Control } from 'react-hook-form';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 import { BasicAuthFields } from './BasicAuthFields';
-import { OrgSilServiceFormData } from '../schema';
+import type { OrgSilServiceFormData } from '../schema';
 
 vi.mock('../../../components/FormComponent', () => ({
   FormComponent: {

@@ -4,14 +4,15 @@
  */
 import { useReducer, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFieldArray, Path, FieldValues, PathValue } from 'react-hook-form';
+import type { Path, FieldValues, PathValue } from 'react-hook-form';
+import { useFieldArray } from 'react-hook-form';
 import { createAmountValidator } from '../utils/fieldValidation';
 import {
   formatDate,
   parseAmountToNumber,
   formatAmountForDisplay
 } from '../utils/formatters';
-import {
+import type {
   Installment,
   InstallmentManagementProps,
   InstallmentManagementResult,

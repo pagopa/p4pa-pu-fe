@@ -1,9 +1,10 @@
-import { RouteHandleObject } from '../models/Routes';
+import type { RouteHandleObject } from '../models/Routes';
 import DebtTypes from './DebtTypes/DebtTypes';
 import DebtTypeCatalogDetailView from './DebtTypeCatalogDetailView/DebtTypeCatalogDetailView';
 import { DebtTypeCreate } from './DebtTypeCreate';
 import { DebtTypeCatalogEdit } from './DebtTypeCatalogEdit';
-import { Outlet, RouteObject } from 'react-router';
+import type { RouteObject } from 'react-router';
+import { Outlet } from 'react-router';
 import { SuperAdminRouteGuard } from '../components/RouteGuard/RouteGuard';
 
 export const debtTypesRoutes: Array<RouteObject> = [

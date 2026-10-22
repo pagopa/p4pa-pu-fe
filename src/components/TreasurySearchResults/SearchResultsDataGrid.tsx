@@ -1,16 +1,16 @@
-import {
+import type {
   GridColDef,
   GridRenderCellParams,
   GridValidRowModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
-import { ReadMore } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
 import { generatePath, Link } from 'react-router';
 import { PageRoutes } from '../../routes';
-import { PagedTreasuryView } from '../../../generated/core/client';
+import type { PagedTreasuryView } from '../../../generated/core/client';
 import { formatDate, moneyFormat } from '../../utils/formatters';
+import IconButton from '@mui/material/IconButton';
+import ReadMore from '@mui/icons-material/ReadMore';
 
 type SearchResultDataRow = {
   billAmountCents: number;

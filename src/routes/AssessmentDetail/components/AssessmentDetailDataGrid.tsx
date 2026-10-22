@@ -1,16 +1,16 @@
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
-import { ReadMore } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
 import { moneyFormat, formatDate } from '../../../utils/formatters';
-import {
+import type {
   AssessmentsDetail,
   AssessmentsRowsDetail
 } from '../../../../generated/core/client';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { PageRoutes } from '../..';
 import { appendReceiptIudQuery } from '../../../utils/receiptNavigation';
+import IconButton from '@mui/material/IconButton';
+import ReadMore from '@mui/icons-material/ReadMore';
 
 type AssessmentDetailDataGridProps = {
   data?: AssessmentsRowsDetail;

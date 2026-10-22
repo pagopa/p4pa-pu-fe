@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '../__tests__/renderers';
 import { vi } from 'vitest';
-import { useForm, UseFormReturn } from 'react-hook-form';
+import type { UseFormReturn } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useFormDependencies } from './useFormDependecies';
 
 type Fields = {

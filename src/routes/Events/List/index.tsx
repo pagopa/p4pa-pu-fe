@@ -6,21 +6,19 @@ import CustomDataGrid, {
   EmptyData
 } from '../../../components/DataGrid/CustomDataGrid';
 
-import {
-  getEventsColumns,
-  getFiltersWithSubmitButton,
+import type {
   NodoFilterValues,
   RegistryType,
   SilFilterValues
 } from '../configs';
+import { getEventsColumns, getFiltersWithSubmitButton } from '../configs';
 import { useNavigate, useParams } from 'react-router';
 import { useStore } from '../../../store/GlobalStore';
 import getPagoPaRegistries from '../../../api/getPagoPaRegistries';
 import getSilRegistries from '../../../api/getSilRegistries';
 import { PageRoutes } from '../..';
-import { GridRowId, GridValidRowModel } from '@mui/x-data-grid';
+import type { GridRowId, GridValidRowModel } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import { Stack } from '@mui/material';
 import { ErrorMessage } from '../../../components/ErrorMessage/ErrorMessage';
 import utils from '../../../utils';
 import {
@@ -28,11 +26,12 @@ import {
   shouldShowGeneralError
 } from '../../../utils/filtersValidation';
 import { useSearch } from '../../../hooks/useSearch';
-import {
+import type {
   PagedPagoPaRegistry,
   PagedSilRegistry
 } from '../../../../generated/core/data-contracts';
-import { BaseFilterValues } from '../../../models/Filters';
+import type { BaseFilterValues } from '../../../models/Filters';
+import Stack from '@mui/material/Stack';
 
 type EventsFilters = SilFilterValues | NodoFilterValues;
 

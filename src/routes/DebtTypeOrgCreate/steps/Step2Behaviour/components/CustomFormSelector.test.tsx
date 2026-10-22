@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '../../../../../__tests__/renderers';
 import { FormProvider, useForm } from 'react-hook-form';
 import { CustomFormSelector } from './CustomFormSelector';
 import { i18nTestSetup } from '../../../../../__tests__/i18nTestSetup';
-import { DebtTypeOrgForm } from '../../../types';
+import type { DebtTypeOrgForm } from '../../../types';
 
 const mockCustomFormOptions = [
   { label: 'Form 1', value: 1 },

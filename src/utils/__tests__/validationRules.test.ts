@@ -3,7 +3,7 @@ import {
   createIBANValidationRules,
   validateLogoBeforeSubmit
 } from '../validationRules';
-import { UnifiedFormData } from '../../models/OrganizationEditTypes';
+import type { UnifiedFormData } from '../../models/OrganizationEditTypes';
 
 vi.mock('../fieldValidation', () => ({
   isValidIBAN: vi.fn((iban: string) => {

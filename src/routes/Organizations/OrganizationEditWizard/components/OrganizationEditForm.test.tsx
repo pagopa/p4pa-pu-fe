@@ -7,11 +7,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { generatePath } from 'react-router';
 import { OrganizationEditForm } from './OrganizationEditForm';
-import { UnifiedFormData } from '../../../../models/OrganizationEditTypes';
-import {
-  OrganizationDetail,
-  OrganizationStatus
-} from '../../../../../generated/core/data-contracts';
+import type { UnifiedFormData } from '../../../../models/OrganizationEditTypes';
+import type { OrganizationDetail } from '../../../../../generated/core/data-contracts';
+import { OrganizationStatus } from '../../../../../generated/core/data-contracts';
 import { i18nTestSetup } from '../../../../__tests__/i18nTestSetup';
 
 // Mock hooks

@@ -1,6 +1,10 @@
 import utils from '@core/utils';
-import { Card, Divider, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+
+import Card from '@mui/material/Card';
+import Divider from '@mui/material/Divider';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 const DEFAULT_EMPTY_VALUE = '_';
 

@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '../../__tests__/renderers';
 import { waitFor } from '@testing-library/react';
 import utils from '../../utils';
@@ -10,7 +11,7 @@ import {
   getDebtPositionTypesByOrganizationId
 } from '../debtPositionsTypes';
 import { parseAndLog } from '../../utils/loaders';
-import { DebtPositionTypeWithCountFilteredRequest } from './mappings';
+import type { DebtPositionTypeWithCountFilteredRequest } from './mappings';
 
 vi.mock('../../utils', () => ({
   default: {

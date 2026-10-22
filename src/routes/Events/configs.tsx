@@ -3,19 +3,17 @@ import {
   RegistryPagoPaEventType,
   RegistrySilEventType
 } from '../../../generated/core/data-contracts';
-import { Search } from '@mui/icons-material';
-import {
-  COMPONENT_TYPE,
-  FilterItem
-} from '../../components/FilterContainer/FilterContainer';
-import { TabsConfig } from '../../components/SearchCard/SearchCard';
-import { BaseFilterValues } from '../../models/Filters';
-import { ReadMore } from '@mui/icons-material';
+import type { FilterItem } from '../../components/FilterContainer/FilterContainer';
+import { COMPONENT_TYPE } from '../../components/FilterContainer/FilterContainer';
+import type { TabsConfig } from '../../components/SearchCard/SearchCard';
+import type { BaseFilterValues } from '../../models/Filters';
 import i18n from '../../translations/i18n';
-import { GridColDef, GridRowId } from '@mui/x-data-grid';
+import type { GridColDef, GridRowId } from '@mui/x-data-grid';
 import { formatDateTime } from '../../utils/formatters';
 import utils from '../../utils';
-import { IconButton } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import Search from '@mui/icons-material/Search';
+import ReadMore from '@mui/icons-material/ReadMore';
 
 export const silFields: Array<FilterItem> = [
   {

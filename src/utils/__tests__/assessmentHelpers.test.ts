@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { ChipOwnProps } from '@mui/material/Chip';
+import type { Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { ChipOwnProps } from '@mui/material/Chip';
+import type { AssessmentStatus } from '../assessmentHelpers';
 import {
-  AssessmentStatus,
   assessmentStateColors,
   getAssessmentStatusChipProps
 } from '../assessmentHelpers';

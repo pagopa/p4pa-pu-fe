@@ -1,5 +1,8 @@
-import React from 'react';
-import { Button, ButtonOwnProps, Grid, Typography } from '@mui/material';
+import type React from 'react';
+import Button from '@mui/material/Button';
+import type ButtonOwnProps from '@mui/material/ButtonOwnProps';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 
 export type ButtonConfig = {
   variant?: ButtonOwnProps['variant'];

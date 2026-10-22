@@ -2,17 +2,17 @@
  * Utility functions for transforming Organization data
  */
 
-import {
-  OrganizationAdditionalLanguage,
+import type {
   OrganizationDetail,
   OrganizationUpdateDTO
 } from '../../generated/core/data-contracts';
-import {
+import { OrganizationAdditionalLanguage } from '../../generated/core/data-contracts';
+import type {
   UnifiedFormData,
   UnifiedFormValues,
-  FieldData,
-  LANGUAGE_OPTIONS
+  FieldData
 } from '../models/OrganizationEditTypes';
+import { LANGUAGE_OPTIONS } from '../models/OrganizationEditTypes';
 import { fileToBase64 } from './filevalidation';
 
 /**

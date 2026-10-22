@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
+import type React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor } from '../../../__tests__/renderers';
 import userEvent from '@testing-library/user-event';
@@ -95,7 +95,11 @@ describe('_ControlledSelect', () => {
 
   it('is disabled while fetchFn is loading', () => {
     const fetchFn = (): UseQueryResult<SelectOptions> =>
-      ({ data: undefined, isLoading: true, isError: false }) as any;
+      ({
+        data: undefined,
+        isLoading: true,
+        isError: false
+      }) as any;
 
     render(
       <FormShell>
@@ -114,7 +118,11 @@ describe('_ControlledSelect', () => {
 
   it('is disabled when fetchFn returns no options', () => {
     const fetchFn = (): UseQueryResult<SelectOptions> =>
-      ({ data: [], isLoading: false, isError: false }) as any;
+      ({
+        data: [],
+        isLoading: false,
+        isError: false
+      }) as any;
 
     render(
       <FormShell>
@@ -133,7 +141,11 @@ describe('_ControlledSelect', () => {
 
   it('emits a notification when fetchFn errors', () => {
     const fetchFn = (): UseQueryResult<SelectOptions> =>
-      ({ data: undefined, isLoading: false, isError: true }) as any;
+      ({
+        data: undefined,
+        isLoading: false,
+        isError: true
+      }) as any;
 
     render(
       <FormShell>

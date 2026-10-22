@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { fireEvent, render, screen } from '@testing-library/react';
-import AssessmentActionMenu, { Props } from './AssessmentActionMenu';
+import type { Props } from './AssessmentActionMenu';
+import AssessmentActionMenu from './AssessmentActionMenu';
 import { StoreProvider } from '../../store/GlobalStore';
 import { AssessmentStatus } from '../../../generated/core/data-contracts';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -8,8 +10,8 @@ import { RouterProvider, createBrowserRouter } from 'react-router';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { Layout } from '../layout/Layout';
 import { Theme } from '../../utils/theme';
-// NOTE: I SPENT HOURS BEFORE UNDERSTANDING THIS IS REQUIRED
-// TO AUTO UPDATE THE DOM ON A SIGNAL CHANGE
+
+// NOTE: NEEDED TO AUTO UPDATE THE DOM ON A SIGNAL CHANGE
 import '@preact/signals-react/auto';
 
 const ORG_ID = 1;
@@ -106,7 +108,6 @@ describe('AssessmentActionMenu component:', () => {
         () =>
           ({
             mutateAsync: mutateAsyncSpy
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           }) as any
       );
 

@@ -1,10 +1,11 @@
-import React from 'react';
+import type React from 'react';
 import { vi } from 'vitest';
 import { render, screen, waitFor } from '../../../../__tests__/renderers';
 import userEvent from '@testing-library/user-event';
 import { Step5Operators } from '.';
 import { StoreProvider } from '../../../../store/GlobalStore';
-import { FormProvider, useForm, FieldValues } from 'react-hook-form';
+import type { FieldValues } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { OperatorsSelection } from '../../../../../generated/core/data-contracts';
 import { setOrganizationId } from '../../../../store/OrganizationIdStore';
 

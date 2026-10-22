@@ -5,12 +5,10 @@ import { PageRoutes } from '../../routes';
 import { Step1Configuration } from './steps/Step1Configuration';
 import WizardStepButtons from '../../components/Wizard/WizardStepButtons';
 import { FormProvider, useForm } from 'react-hook-form';
-import { z } from 'zod';
-import {
-  AssessmentRegistryFormValues,
-  assessmentRegistrySchema
-} from './steps/Step1Configuration/schema';
-import { AssessmentsRegistry } from '../../../generated/core/data-contracts';
+import type { z } from 'zod';
+import type { AssessmentRegistryFormValues } from './steps/Step1Configuration/schema';
+import { assessmentRegistrySchema } from './steps/Step1Configuration/schema';
+import type { AssessmentsRegistry } from '../../../generated/core/data-contracts';
 import { createAssessmentsRegistry } from '../../api/assessments';
 import { useStore } from '../../store/GlobalStore';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';

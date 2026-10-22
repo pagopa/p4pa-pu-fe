@@ -1,4 +1,4 @@
-import { PdndServiceView } from '@generated/core/client';
+import type { PdndServiceView } from '@generated/core/client';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { I18N_PREFIX } from '../..';

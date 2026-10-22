@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
-import { OrgSilServiceFormData } from '../schema';
+import type { OrgSilServiceFormData } from '../schema';
 import { transformFormDataToDTO } from '../utils/orgSilServiceFormUtils';
 import orgSilService from '../../../api/orgSilService/index';
 import { PageRoutes } from '../..';

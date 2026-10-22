@@ -1,15 +1,15 @@
 import { useTranslation } from 'react-i18next';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { IconButton } from '@mui/material';
-import { ChevronRight } from '@mui/icons-material';
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
-import {
+import type {
   PagedDebtPositionTypeWithCount,
   DebtPositionTypeWithCount
 } from '../../../../generated/core/data-contracts';
 import { formatDateTime } from '../../../utils/formatters';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../../routes';
+import IconButton from '@mui/material/IconButton';
+import ChevronRight from '@mui/icons-material/ChevronRight';
 
 export type DebtTypesDataGridProps = {
   data: PagedDebtPositionTypeWithCount;

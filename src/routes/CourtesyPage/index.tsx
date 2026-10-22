@@ -1,8 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { AbacusIcon } from '../../assets/icons/abacus';
-import ResponsePage, {
-  ButtonConfig
-} from '../../components/ResponsePage/ResponsePage';
+import type { ButtonConfig } from '../../components/ResponsePage/ResponsePage';
+import ResponsePage from '../../components/ResponsePage/ResponsePage';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 import utils from '../../utils';

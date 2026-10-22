@@ -8,8 +8,8 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
-import { DashboardByIuv } from '../../../../generated/core/data-contracts';
-import { DrawerItemConfig } from '../models';
+import type { DashboardByIuv } from '../../../../generated/core/data-contracts';
+import type { DrawerItemConfig } from '../models';
 import { useReceiptDownload } from '../../TelematicReceiptDetail/useReceiptDownload';
 
 type HomeDrawerIUVProps = {

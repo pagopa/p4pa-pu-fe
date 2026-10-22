@@ -1,16 +1,16 @@
 import { TabContext, TabList, TabPanel } from '@mui/lab';
-import {
-  Alert,
-  Box,
-  Button,
-  FormControl,
-  Stack,
-  Tab,
-  TextField
-} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { useTranslation } from 'react-i18next';
-import { TABS, tabsConfigProps, USER_PROFILES } from '../models';
+import type { tabsConfigProps, USER_PROFILES } from '../models';
+import { TABS } from '../models';
+
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import Stack from '@mui/material/Stack';
+import Tab from '@mui/material/Tab';
+import TextField from '@mui/material/TextField';
 
 type HomeTabsProps = {
   tabsHandleChange: (event: React.SyntheticEvent, newTab: TABS) => void;

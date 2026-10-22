@@ -1,5 +1,7 @@
-import { Controller, Control, Path, FieldValues } from 'react-hook-form';
-import { _TextField, _TextFieldProps } from './_TextField';
+import type { Control, Path, FieldValues } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
+import type { _TextFieldProps } from './_TextField';
+import { _TextField } from './_TextField';
 import { ErrorMessage } from './ErrorMessage';
 
 export type _ControlledTextFieldProps<T extends FieldValues> =

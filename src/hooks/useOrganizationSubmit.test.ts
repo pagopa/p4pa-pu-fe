@@ -1,11 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '../__tests__/renderers';
 import { useOrganizationSubmit } from './useOrganizationSubmit';
-import {
-  OrganizationDetail,
-  OrganizationStatus
-} from '../../generated/core/data-contracts';
-import { UnifiedFormData } from '../models/OrganizationEditTypes';
+import type { OrganizationDetail } from '../../generated/core/data-contracts';
+import { OrganizationStatus } from '../../generated/core/data-contracts';
+import type { UnifiedFormData } from '../models/OrganizationEditTypes';
 import { PageRoutes } from '../routes';
 
 vi.mock('react-i18next', () => ({

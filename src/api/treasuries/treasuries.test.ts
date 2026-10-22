@@ -1,10 +1,11 @@
 import utils from '../../utils';
 import * as mapping from '../treasuries/mappings';
-import { AxiosResponse } from 'axios';
-import { describe, expect, it, Mock, vi } from 'vitest';
+import type { AxiosResponse } from 'axios';
+import type { Mock } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { renderHook, waitFor } from '../../__tests__/renderers';
 import { getTreasuries } from '../treasuries';
-import { TreasuriesFilteredRequest } from '../treasuries/mappings';
+import type { TreasuriesFilteredRequest } from '../treasuries/mappings';
 
 vi.mock('../../utils', () => {
   const originalModule = vi.importActual('../../utils');

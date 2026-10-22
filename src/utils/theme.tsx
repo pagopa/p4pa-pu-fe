@@ -1,7 +1,7 @@
-import { ThemeProvider } from '@mui/material';
-import { PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import style from './style';
+import { ThemeProvider } from '@mui/material/styles';
 
 export const Theme = (props: PropsWithChildren) => (
   <>

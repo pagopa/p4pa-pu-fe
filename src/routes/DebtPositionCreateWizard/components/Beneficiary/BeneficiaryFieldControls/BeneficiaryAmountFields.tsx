@@ -1,9 +1,9 @@
-import { FieldValues } from 'react-hook-form';
-import { Grid } from '@mui/material';
+import type { FieldValues } from 'react-hook-form';
 import { AmountField } from '../BeneficiaryFieldComponents';
 import { buildBeneficiaryFieldPath } from '../../../../../utils/BeneficiaryFieldHelpers';
-import { BeneficiaryFieldsProps } from '../../../../../models/BeneficiaryFieldTypes';
+import type { BeneficiaryFieldsProps } from '../../../../../models/BeneficiaryFieldTypes';
 import { BeneficiaryControlledField } from './BeneficiaryControlledField';
+import Grid from '@mui/material/Grid';
 
 /**
  * Component for the beneficiary amount fields group

@@ -1,17 +1,15 @@
 import utils from '../../utils';
 import * as mapping from './mappings';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../../__tests__/renderers';
 import type { ClassificationsFilteredRequest } from './mappings';
-import { FilterValues } from '../../models/Filters';
+import type { FilterValues } from '../../models/Filters';
 import { getClassifications } from '.';
 
-vi.mock('../../utils', () => {
-  const originalModule =
-    vi.importActual<typeof import('../../utils')>('../../utils');
+vi.mock('../../utils', async (importOriginal) => {
   return {
-    ...originalModule,
+    ...(await importOriginal()),
     default: {
       apiClient: {
         bff: {

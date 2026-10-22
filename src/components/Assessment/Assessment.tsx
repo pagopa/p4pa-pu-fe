@@ -2,7 +2,6 @@ import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import AddIcon from '@mui/icons-material/Add';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
-import { Box, Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { useMultiFilters, FilterCategory } from '../../hooks/useMultiFilters';
@@ -11,6 +10,9 @@ import { PageRoutes } from '../../routes';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { useAppNavigate } from '../../hooks/useAppNavigation';
 import { shouldShowGeneralError } from '../../utils/filtersValidation';
+
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 
 export const Assessment = () => {
   const { t } = useTranslation();

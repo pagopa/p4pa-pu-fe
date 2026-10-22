@@ -1,9 +1,14 @@
-import { Box, MenuList, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { TABS, DashboardResult } from '../models';
+import type { DashboardResult } from '../models';
+import { TABS } from '../models';
 import { HomeDrawerIUV } from './HomeDrawerIUV';
 import { HomeDrawerFC } from './HomeDrawerFC';
 import { HomeDrawerIUF } from './HomeDrawerIUF';
+
+import Box from '@mui/material/Box';
+import MenuList from '@mui/material/MenuList';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
 
 type HomeDrawerBodyProps = {
   searchLabel: string;

@@ -1,8 +1,8 @@
 import { render, screen, fireEvent, waitFor } from '../../__tests__/renderers';
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import FileUploader from './FileUploader';
-import { ThemeProvider } from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
+import { ThemeProvider } from '@mui/material/styles';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({

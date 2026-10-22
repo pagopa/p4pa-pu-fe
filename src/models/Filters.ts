@@ -1,9 +1,9 @@
-import {
+import type {
   IngestionFlowFileStatus,
   IngestionFlowFileTypeEnum,
-  ExportFileTypeEnum,
-  ExportFileStatus
+  ExportFileTypeEnum
 } from '../../generated/core/client';
+import { ExportFileStatus } from '../../generated/core/client';
 export type FlowStatus = IngestionFlowFileStatus;
 
 export type FilteredRequest<T> = {

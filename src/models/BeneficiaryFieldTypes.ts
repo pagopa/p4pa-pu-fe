@@ -1,11 +1,15 @@
-import {
+import type {
   Control,
   FieldErrors,
   FieldValues,
   UseFormGetValues,
   UseFormTrigger
 } from 'react-hook-form';
-import { BeneficiaryValidationContext } from '../utils/BeneficiaryFieldHelpers';
+import type { BeneficiaryValidationContext } from '../utils/BeneficiaryFieldHelpers';
+import type {
+  createBeneficiaryFieldValidators,
+  createBeneficiaryValidators
+} from '../utils/fieldValidation';
 
 // Props comuni per i componenti del campo beneficiario
 export type BeneficiaryFieldsProps<T extends FieldValues> = {
@@ -26,13 +30,9 @@ export type BeneficiaryFieldsProps<T extends FieldValues> = {
   /** Errori del form */
   errors: FieldErrors<T>;
   /** Validatori per il beneficiario */
-  validators: ReturnType<
-    typeof import('../utils/fieldValidation').createBeneficiaryValidators
-  >;
+  validators: ReturnType<typeof createBeneficiaryValidators>;
   /** Validatori di campo */
-  fieldValidators: ReturnType<
-    typeof import('../utils/fieldValidation').createBeneficiaryFieldValidators
-  >;
+  fieldValidators: ReturnType<typeof createBeneficiaryFieldValidators>;
   /** Array di campi del form array */
   fields: Array<Record<'id', string>>;
   /** Funzione per la traduzione */

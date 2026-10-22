@@ -2,11 +2,10 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ContentCopyIcon from '@mui/icons-material/ContentCopyOutlined';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined';
 import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
-import { Button, Divider, IconButton, Stack, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { PdndClientNoSecretDTO } from '@generated/core/data-contracts';
+import type { PdndClientNoSecretDTO } from '@generated/core/data-contracts';
 
 import { deletePdndClient } from '@core/api/integrations';
 import { BaseDialog } from '@core/components/BaseDialog';
@@ -14,6 +13,12 @@ import { CopiableField } from '@core/components/CopiableField';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
 import { copyWithFeedback } from '@core/utils/clipboard';
 import notify from '@core/utils/notify';
+
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 type PdndClientDialogProps = {
   open: boolean;

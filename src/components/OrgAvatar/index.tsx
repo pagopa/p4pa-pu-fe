@@ -1,5 +1,7 @@
-import { Avatar, AvatarProps } from '@mui/material';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+
+import Avatar from '@mui/material/Avatar';
+import type AvatarProps from '@mui/material/AvatarProps';
 
 type OrgAvatarProps = AvatarProps;
 

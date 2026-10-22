@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { fireEvent, render, screen } from '../../__tests__/renderers';
-import { vi, describe, it, expect, beforeEach, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { DebtPositionsInstallmentDetail } from './DebtPositionsInstallmentDetail';
 import debtPositions from '../../api/debtPositions';
 import { useLocation, useParams } from 'react-router';
@@ -12,7 +13,7 @@ import {
   DebtPositionOrigin,
   InstallmentStatus
 } from '../../../generated/core/client';
-import React from 'react';
+import type React from 'react';
 
 global.ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),

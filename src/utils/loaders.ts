@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { ZodSchema } from 'zod';
+import type { ZodSchema } from 'zod';
 import * as zodSchema from '../../generated/core/zod-schema';
 import utils from '.';
-import { getResourceUrl, ResourceType } from './resources';
+import type { ResourceType } from './resources';
+import { getResourceUrl } from './resources';
 
 export function parseAndLog<T>(
   schema: ZodSchema,

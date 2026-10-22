@@ -1,5 +1,5 @@
-import { createTheme } from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
+import { createTheme } from '@mui/material/styles';
 
 const customTheme = createTheme({
   ...theme,

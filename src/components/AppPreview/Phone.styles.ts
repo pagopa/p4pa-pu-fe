@@ -1,4 +1,4 @@
-import { CSSProperties } from 'react';
+import type { CSSProperties } from 'react';
 
 export const GRADIENT_PLACEHOLDER =
   'linear-gradient(#788ED5, #173465, #0736A2)';

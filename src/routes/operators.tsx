@@ -1,6 +1,7 @@
-import { RouteHandleObject } from '../models/Routes';
+import type { RouteHandleObject } from '../models/Routes';
 import OperatorsList from './OperatorsList/OperatorsList';
-import { Outlet, RouteObject } from 'react-router';
+import type { RouteObject } from 'react-router';
+import { Outlet } from 'react-router';
 import { AdminRouteGuard } from '../components/RouteGuard/RouteGuard';
 import OperatorDetail from './OperatorsDetail';
 import MyOrganization from './OperatorsList/MyOrganization/MyOrganization';

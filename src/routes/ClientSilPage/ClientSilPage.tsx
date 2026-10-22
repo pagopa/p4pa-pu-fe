@@ -1,6 +1,4 @@
 import { useState, useCallback } from 'react';
-import { Add } from '@mui/icons-material';
-import { Grid, Stack, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import FilterContainer from '../../components/FilterContainer/FilterContainer';
@@ -16,6 +14,11 @@ import type {
 } from '../../../generated/core/client';
 import { PageRoutes } from '../../routes';
 import { generatePath, useNavigate } from 'react-router';
+
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
+import Add from '@mui/icons-material/Add';
 
 /**
  * Main page for the management of Client SIL

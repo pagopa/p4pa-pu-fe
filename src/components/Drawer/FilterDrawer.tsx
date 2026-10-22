@@ -1,7 +1,11 @@
 import MultiFilter from '../MultiFilter/MultiFilter';
-import { FilterCategory, FilterMap } from '../../hooks/useMultiFilters';
-import { Grid, Button, ButtonProps } from '@mui/material';
-import { Drawer, DrawerProps } from '../Drawer';
+import type { FilterCategory, FilterMap } from '../../hooks/useMultiFilters';
+import type { DrawerProps } from '../Drawer';
+import { Drawer } from '../Drawer';
+
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import type ButtonProps from '@mui/material/ButtonProps';
 
 type FilterDrawerProps = DrawerProps & {
   filterMap: FilterMap;

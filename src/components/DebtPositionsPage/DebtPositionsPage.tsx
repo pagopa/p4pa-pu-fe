@@ -1,5 +1,3 @@
-import { Grid } from '@mui/material';
-import { FileUpload } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router';
 import { useState, useCallback } from 'react';
@@ -8,11 +6,11 @@ import ActionCard from '../ActionCard/ActionCard';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { useTabsConfig } from './useDebtTabsConfig';
 import { PageRoutes } from '../../routes';
-import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
+import type { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 import { SearchType } from '../../models/DebtPositions';
 import { useDateRange } from '../../hooks/useDateRange';
 import { FilterFieldIds } from '../../models/SearchCardFields';
-import { DateValidationError } from '@mui/x-date-pickers';
+import type { DateValidationError } from '@mui/x-date-pickers';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import utils from '../../utils';
 import {
@@ -29,6 +27,8 @@ import {
   setFieldError,
   stripErrorFields
 } from '../../utils/filterErrors';
+import Grid from '@mui/material/Grid';
+import FileUpload from '@mui/icons-material/FileUpload';
 
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();

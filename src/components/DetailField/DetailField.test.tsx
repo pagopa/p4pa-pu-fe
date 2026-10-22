@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
-import { DetailField, DetailFieldProps } from '../DetailField';
+import type { DetailFieldProps } from '../DetailField';
+import { DetailField } from '../DetailField';
 
 describe('DetailField', () => {
   const defaultProps: DetailFieldProps = {

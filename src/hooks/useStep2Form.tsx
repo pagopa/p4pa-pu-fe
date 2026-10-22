@@ -3,10 +3,11 @@
  * @summary Handles form initialization, validation, edit mode sync, and business logic for Step2AddDebtor
  */
 import { useEffect, useRef } from 'react';
-import { useForm, Resolver, FieldErrors } from 'react-hook-form';
-import { z } from 'zod';
-import { TFunction } from 'i18next';
-import { Step2Data } from '../models/DebtPositionType';
+import type { Resolver, FieldErrors } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import type { z } from 'zod';
+import type { TFunction } from 'i18next';
+import type { Step2Data } from '../models/DebtPositionType';
 import { SubjectType } from '../utils/fieldValidation';
 
 type Step2DataField = keyof Step2Data;

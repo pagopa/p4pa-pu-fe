@@ -5,9 +5,9 @@ import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { PageRoutes } from '..';
 import { OrgSilServiceForm } from './components/OrgSilServiceForm';
-import { OrgSilServiceFormData } from './schema';
+import type { OrgSilServiceFormData } from './schema';
 import orgSilServiceApi from '../../api/orgSilService';
-import { OrgSilServiceDecryptedDTO } from '../../../generated/core/data-contracts';
+import type { OrgSilServiceDecryptedDTO } from '../../../generated/core/data-contracts';
 import { useEffect, useRef } from 'react';
 
 export const OrgSilServiceEdit = () => {

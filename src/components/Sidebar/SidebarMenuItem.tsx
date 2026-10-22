@@ -1,22 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Collapse,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  useMediaQuery,
-  type Theme,
-  useTheme,
-  Box,
-  SxProps
-} from '@mui/material';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { type Theme } from '@mui/material';
 import { NavLink, useNavigate } from 'react-router';
-import { alpha } from '@mui/material';
-import { ISidebarMenuItem } from '../../models/SidebarMenuItem';
+import type { ISidebarMenuItem } from '../../models/SidebarMenuItem';
 import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import useCollapseMenu from '../../hooks/useCollapseMenu';
+
+import Collapse from '@mui/material/Collapse';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme, alpha } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import type SxProps from '@mui/material/SxProps';
 
 type Props = {
   collapsed: boolean;

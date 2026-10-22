@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../__tests__/renderers';
-import {
-  OrgSilServiceType,
-  OrgSilServiceExtendedDTO
-} from '../../generated/core/data-contracts';
+import type { OrgSilServiceExtendedDTO } from '../../generated/core/data-contracts';
+import { OrgSilServiceType } from '../../generated/core/data-contracts';
 import { setOrganizationId } from '../store/OrganizationIdStore';
 
 vi.mock('../utils', () => ({

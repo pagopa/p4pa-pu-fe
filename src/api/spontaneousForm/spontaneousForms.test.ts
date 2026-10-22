@@ -4,12 +4,11 @@ import { buildQueryParams } from './mappings';
 import spontaneousFormsApi from './index';
 import type { SpontaneousFormsFilteredRequest } from './mappings';
 import utils from '../../utils';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 
-vi.mock('../../utils', () => {
-  const originalModule = vi.importActual('../../utils');
+vi.mock('../../utils', async (importOriginal) => {
   return {
-    ...originalModule,
+    ...(await importOriginal()),
     default: {
       apiClient: {
         bff: {

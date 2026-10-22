@@ -1,10 +1,11 @@
-import { Control, useFormState } from 'react-hook-form';
+import type { Control } from 'react-hook-form';
+import { useFormState } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { FormComponent } from '../../../../../components/FormComponent';
-import { DebtTypeOrgForm } from '../../../types';
+import type { DebtTypeOrgForm } from '../../../types';
 import { useServiceSelectorState } from '../../../hooks/useServiceSelectorState';
-import { UseQueryResult } from '@tanstack/react-query';
-import { OrgSilServiceExtendedDTO } from '../.../../../../../../../generated/core/data-contracts';
+import type { UseQueryResult } from '@tanstack/react-query';
+import type { OrgSilServiceExtendedDTO } from '../.../../../../../../../generated/core/data-contracts';
 
 type ServiceSelectorProps = {
   control: Control<DebtTypeOrgForm>;

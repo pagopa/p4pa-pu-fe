@@ -1,15 +1,15 @@
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import { ReadMore } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
 import { Link } from 'react-router';
 import CustomDataGrid from '../../../../components/DataGrid/CustomDataGrid';
 import { moneyFormat } from '../../../../utils/formatters';
-import {
+import type {
   PagedPaymentsReportingRow,
   PaymentsReportingWithReceiptView
 } from '../../../../../generated/core/client';
 import { buildTelematicReceiptDetailPath } from '../../../../utils/receiptNavigation';
+import IconButton from '@mui/material/IconButton';
+import ReadMore from '@mui/icons-material/ReadMore';
 
 type ReportingDetailDataGridProps = {
   data?: PagedPaymentsReportingRow;

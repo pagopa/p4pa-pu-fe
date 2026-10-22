@@ -1,12 +1,11 @@
 import { render, screen } from '../../__tests__/renderers';
-import { vi, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { vi } from 'vitest';
 import { getTransfers } from '../../api/transfers';
-import {
-  InstallmentDetailDrawerProps,
-  InstallmentDetailDrawer
-} from './InstallmentDetailDrawer';
+import type { InstallmentDetailDrawerProps } from './InstallmentDetailDrawer';
+import { InstallmentDetailDrawer } from './InstallmentDetailDrawer';
 import { moneyFormat } from '../../utils/formatters';
-import { TransferDTO } from '../../../generated/core/data-contracts';
+import type { TransferDTO } from '../../../generated/core/data-contracts';
 
 vi.mock('../../api/transfers', () => ({
   getTransfers: vi.fn()

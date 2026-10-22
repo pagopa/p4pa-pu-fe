@@ -1,15 +1,18 @@
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight } from '@mui/icons-material';
-import { Chip, ChipProps, IconButton } from '@mui/material';
 import { generatePath, Link } from 'react-router';
 import CustomDataGrid from '../../components/DataGrid/CustomDataGrid';
-import {
+import type {
   AssessmentsRegistry,
   AssessmentsRegistryStatus,
   PagedAssessmentsRegistry
 } from '../../../generated/core/data-contracts';
 import { PageRoutes } from '..';
+
+import Chip from '@mui/material/Chip';
+import type ChipProps from '@mui/material/ChipProps';
+import IconButton from '@mui/material/IconButton';
+import ChevronRight from '@mui/icons-material/ChevronRight';
 
 export type DataGridProps = {
   data: PagedAssessmentsRegistry | undefined;

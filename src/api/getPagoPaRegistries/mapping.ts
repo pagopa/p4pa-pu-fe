@@ -1,4 +1,4 @@
-import { NodoFilterValues } from '../../routes/Events/configs';
+import type { NodoFilterValues } from '../../routes/Events/configs';
 import utils from '../../utils';
 
 export type NodoFilterValuesFilteredRequest = {

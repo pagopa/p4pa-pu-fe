@@ -38,7 +38,7 @@ export default defineConfig({
 
     fsModuleCache: true,
 
-    pool: 'threads',
+    pool: 'forks',
     maxWorkers: isCI ? 2 : '50%',
     coverage: {
       provider: 'v8',

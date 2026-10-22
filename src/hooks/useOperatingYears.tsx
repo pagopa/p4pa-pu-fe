@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import utils from '../utils';
 import { getOperatingYears } from '../api/assessments';
-import { AxiosError } from 'axios';
+import type { AxiosError } from 'axios';
 
 export type OperatingYearOption = {
   label: string;

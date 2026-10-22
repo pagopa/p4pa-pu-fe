@@ -11,7 +11,7 @@ import { FormComponent } from '../../../../components/FormComponent';
 import { useStore } from '../../../../store/GlobalStore';
 import { useDebtPositionTypesByOrg } from '../../../../hooks/useDebtPositionTypesByOrg';
 import { useEffect, useMemo } from 'react';
-import { DebtTypeOrgForm } from '../../types';
+import type { DebtTypeOrgForm } from '../../types';
 import { useParams } from 'react-router';
 import { getDebtPositionTypeOrgById } from '../../../../api/debtPositionsTypeOrg';
 import {

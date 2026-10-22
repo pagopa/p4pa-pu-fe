@@ -1,4 +1,5 @@
-import { createBrowserRouter, Navigate, RouteObject } from 'react-router';
+import type { RouteObject } from 'react-router';
+import { createBrowserRouter, Navigate } from 'react-router';
 import utils from '../utils';
 import { setupFallback, appSetup } from '../utils/setup';
 import { assessmentRoutes } from '../routes/assessment';
@@ -22,7 +23,7 @@ import { operatorsRoutes } from '../routes/operators';
 import { organizationsRoutes } from './organizations';
 import { postTokenOrError } from '../api/token';
 import { responsesRoutes } from '../routes/responses';
-import { RouteHandleObject } from '../models/Routes';
+import type { RouteHandleObject } from '../models/Routes';
 import IoMessageGuidePage from './IoMessageGuidePage/IoMessageGuidePage';
 import ResourcePage from './ResourcePage/ResourcePage';
 import { extensions } from '@extra/index';

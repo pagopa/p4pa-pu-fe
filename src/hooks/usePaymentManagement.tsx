@@ -4,7 +4,7 @@
  */
 import { useEffect, useCallback, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import {
+import type {
   PaymentConfiguration,
   PaymentOption,
   PaymentFormValues,

@@ -7,10 +7,8 @@ import type { AppState } from '../models/AppState';
 import type { FilterValues } from '../models/Filters';
 import utils from '../utils';
 import type { AxiosResponse } from 'axios';
-import {
-  AssessmentsRegistry,
-  AssessmentsRegistryStatus
-} from '../../generated/core/data-contracts';
+import type { AssessmentsRegistry } from '../../generated/core/data-contracts';
+import { AssessmentsRegistryStatus } from '../../generated/core/data-contracts';
 
 vi.mock('../utils', () => ({
   default: {

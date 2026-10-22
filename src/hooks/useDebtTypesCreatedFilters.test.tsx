@@ -1,4 +1,4 @@
-import { GridSortModel } from '@mui/x-data-grid';
+import type { GridSortModel } from '@mui/x-data-grid';
 import { renderHook, act } from '../__tests__/renderers';
 import useDebtTypesCreatedFilters from '../hooks/useDebtTypesCreatedFilters';
 

@@ -1,4 +1,3 @@
-import { Grid, GridOwnProps } from '@mui/material';
 import { FormComponent } from '../FormComponent';
 import type {
   ButtonProps,
@@ -6,13 +5,16 @@ import type {
   SelectProps,
   TextFieldProps
 } from '../FormComponent';
-import { ChangeEvent, MouseEvent } from 'react';
-import {
+import type { ChangeEvent, MouseEvent } from 'react';
+import type {
   DateRangeValue,
   BaseFilterValues,
   FilterFieldValue
 } from '../../models/Filters';
 import { toEndOfDay, toStartOfDay } from '../../utils/formatters';
+
+import Grid from '@mui/material/Grid';
+import type GridOwnProps from '@mui/material/GridOwnProps';
 
 export enum COMPONENT_TYPE {
   textField = 'textField',

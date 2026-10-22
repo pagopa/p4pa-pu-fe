@@ -1,9 +1,9 @@
 import React from 'react';
-import {
+import type {
   DetailData,
   DetailSectionProps
 } from '../../components/DetailContainer/DetailContainer';
-import {
+import type {
   PagoPaRegistryDTO,
   SilRegistryDTO
 } from '../../../generated/core/data-contracts';

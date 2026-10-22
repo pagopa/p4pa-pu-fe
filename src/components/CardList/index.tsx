@@ -1,10 +1,10 @@
-import { Stack } from '@mui/material';
-import { GridSortModel } from '@mui/x-data-grid';
+import type { GridSortModel } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { EmptyData } from '../DataGrid/CustomDataGrid';
 import { usePagination } from '@core/hooks/usePagination';
 import { HiddenDiv } from '../HiddenDiv';
 import CustomPagination from '../DataGrid/CustomPagination';
+import Stack from '@mui/material/Stack';
 
 export type CardListProps<T> = {
   rows: Array<T>;

@@ -11,7 +11,8 @@ import { NotificationConfigSelector } from './components/NotificationConfigSelec
 import { ActualizationConfigSelector } from './components/ActualizationConfigSelector';
 import { SpontaneousModeSelector } from './components/SpontaneousModeSelector';
 import { CustomFormSelector } from './components/CustomFormSelector';
-import { DebtTypeOrgForm, SpontaneousMode } from '../../types';
+import type { DebtTypeOrgForm } from '../../types';
+import { SpontaneousMode } from '../../types';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { useStore } from '../../../../store/GlobalStore';

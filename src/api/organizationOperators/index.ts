@@ -7,13 +7,15 @@ import {
   pagedOrganizationOperatorSchema,
   pagedOrganizationWithDebtPositionTypeOrgAndOperatorsCountSchema
 } from '../../../generated/core/zod-schema';
-import {
-  buildOrganizationOperatorsQueryParams,
-  buildBrokerOrganizationsQueryParams,
+import type {
   OrganizationOperatorsFilteredRequest,
   BrokerOrganizationsFilteredRequest
 } from './mappings';
-import { FilteredRequest } from '../../models/Filters';
+import {
+  buildOrganizationOperatorsQueryParams,
+  buildBrokerOrganizationsQueryParams
+} from './mappings';
+import type { FilteredRequest } from '../../models/Filters';
 
 export const useOrganizationOperatorsSearch = (organizationId: number) => {
   return useMutation({

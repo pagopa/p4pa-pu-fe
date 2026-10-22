@@ -1,4 +1,4 @@
-import { RouteHandleObject } from '../models/Routes';
+import type { RouteHandleObject } from '../models/Routes';
 import ImportFlow from './ImportFlowPage';
 
 export const importRoutes = [

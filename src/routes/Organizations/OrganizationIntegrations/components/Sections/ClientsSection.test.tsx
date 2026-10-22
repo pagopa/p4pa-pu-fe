@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { PdndClientNoSecretDTO } from '@generated/core/client';
+import type { PdndClientNoSecretDTO } from '@generated/core/client';
 
 import { ClientsSection } from './ClientsSection';
 

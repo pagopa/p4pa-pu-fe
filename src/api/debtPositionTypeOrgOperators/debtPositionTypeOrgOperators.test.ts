@@ -3,8 +3,8 @@ import { renderHook, waitFor } from '../../__tests__/renderers';
 import utils from '../../utils';
 import { getDebtPositionTypeOrgOperators } from '.';
 import type { PagedDebtPositionTypeOrgOperatorDTO } from '../../../generated/core/data-contracts';
-import { AxiosResponse } from 'axios';
-import { DebtPositionTypeOrgOperatorFilteredRequest } from './mappings';
+import type { AxiosResponse } from 'axios';
+import type { DebtPositionTypeOrgOperatorFilteredRequest } from './mappings';
 
 vi.mock('../../utils', () => ({
   default: {

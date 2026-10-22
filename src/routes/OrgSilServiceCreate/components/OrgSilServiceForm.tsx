@@ -1,10 +1,9 @@
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Stack, Box, Paper, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { theme } from '@pagopa/mui-italia';
-import { ArrowBack, LibraryAddCheck, MenuBook } from '@mui/icons-material';
-import { orgSilServiceFormSchema, OrgSilServiceFormData } from '../schema';
+import type { OrgSilServiceFormData } from '../schema';
+import { orgSilServiceFormSchema } from '../schema';
 import {
   SERVICE_TYPE_OPTIONS,
   LEGACY_OPTIONS
@@ -15,6 +14,14 @@ import SectionBox from '../../../components/Wizard/SectionBox';
 import { FormComponent } from '../../../components/FormComponent';
 import { useConditionalReset } from '../hooks/useConditionalReset';
 import { useEffect } from 'react';
+
+import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import LibraryAddCheck from '@mui/icons-material/LibraryAddCheck';
+import MenuBook from '@mui/icons-material/MenuBook';
 
 type OrgSilServiceFormConfig = {
   title: string;

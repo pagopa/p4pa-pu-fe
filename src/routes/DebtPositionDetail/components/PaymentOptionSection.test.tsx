@@ -3,7 +3,7 @@ import { PaymentOptionSection } from './PaymentOptionSection';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 import { render } from '../../../__tests__/renderers';
-import { PaymentOptionDisplayData } from '../DebtPositionDetail';
+import type { PaymentOptionDisplayData } from '../DebtPositionDetail';
 import { PageRoutes } from '../../../routes';
 
 const navigateMock = vi.fn();

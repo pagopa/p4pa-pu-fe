@@ -1,20 +1,23 @@
 import { useStore } from '../../store/GlobalStore';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { getClassificationDetail } from '../../api/getClassificationDetail';
-import { Stack, Tab, useTheme } from '@mui/material';
-import { SyntheticEvent, useState, useEffect, useMemo } from 'react';
+import type { SyntheticEvent } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
-import DetailContainer, {
-  DetailData
-} from '../DetailContainer/DetailContainer';
+import type { DetailData } from '../DetailContainer/DetailContainer';
+import DetailContainer from '../DetailContainer/DetailContainer';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { StatusBar } from '../StatusBar/StatusBar';
 import { PageRoutes } from '../../routes';
-import { OpenInNew } from '@mui/icons-material';
 import { buildTelematicReceiptDetailPath } from '../../utils/receiptNavigation';
 import { ClassificationsEnum } from '../../../generated/core/data-contracts';
 import ReceiptDetailWarningBanner from '../ReceiptDetail/ReceiptDetailWarningBanner';
+
+import Stack from '@mui/material/Stack';
+import Tab from '@mui/material/Tab';
+import { useTheme } from '@mui/material/styles';
+import OpenInNew from '@mui/icons-material/OpenInNew';
 
 export const ClassificationDetails = () => {
   const store = useStore();

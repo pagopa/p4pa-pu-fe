@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useSearch, SearchVariables } from './useSearch';
-import { UseMutationResult } from '@tanstack/react-query';
+import type { SearchVariables } from './useSearch';
+import { useSearch } from './useSearch';
+import type { UseMutationResult } from '@tanstack/react-query';
 
 vi.mock('./useHashParamsListener', () => ({
   decodeHash: vi.fn(() => ({})),

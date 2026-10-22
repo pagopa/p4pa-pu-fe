@@ -1,10 +1,8 @@
-import { Box, Stack, Typography, useTheme } from '@mui/material';
-import { Downloading, Search } from '@mui/icons-material';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import FilterContainer, {
   COMPONENT_TYPE
@@ -13,10 +11,8 @@ import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { PageRoutes } from '../../routes';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
-import {
-  ExportFileStatus,
-  ExportFileTypeEnum
-} from '../../../generated/core/client';
+import type { ExportFileTypeEnum } from '../../../generated/core/client';
+import { ExportFileStatus } from '../../../generated/core/client';
 import { getExportFile, getExportFiles } from '../../api/exportFiles';
 import { downloadBlob } from '../../utils/download';
 import EmptyDataGrid from '../EmptyDataGrid/EmptyDataGrid';
@@ -25,8 +21,15 @@ import utils from '../../utils';
 import { useEffect, useState } from 'react';
 import { useSearch } from '../../hooks/useSearch';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
-import { PagedExportFile } from '../../../generated/core/data-contracts';
-import { ExportFilesFilters } from '../../api/exportFiles/mapping';
+import type { PagedExportFile } from '../../../generated/core/data-contracts';
+import type { ExportFilesFilters } from '../../api/exportFiles/mapping';
+
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import Downloading from '@mui/icons-material/Downloading';
+import Search from '@mui/icons-material/Search';
 
 export type ExportFlowOverviewProps = {
   routingCategory: string;

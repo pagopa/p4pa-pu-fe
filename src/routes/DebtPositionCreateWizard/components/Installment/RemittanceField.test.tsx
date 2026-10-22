@@ -1,6 +1,8 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, test, expect, vi, beforeEach, Mock } from 'vitest';
-import { useForm, UseFormTrigger } from 'react-hook-form';
+import type { Mock } from 'vitest';
+import { describe, test, expect, vi, beforeEach } from 'vitest';
+import type { UseFormTrigger } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import RemittanceField from './RemittanceField';
 
 vi.mock('react-i18next', () => ({

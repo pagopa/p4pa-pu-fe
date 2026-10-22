@@ -4,7 +4,7 @@
  */
 
 import { isValidIBAN } from './fieldValidation';
-import { UnifiedFormData } from '../models/OrganizationEditTypes';
+import type { UnifiedFormData } from '../models/OrganizationEditTypes';
 
 /**
  * Validation rules factory for IBAN fields

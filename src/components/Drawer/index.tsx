@@ -1,16 +1,15 @@
-import React from 'react';
-import {
-  Drawer as MuiDrawer,
-  Box,
-  Typography,
-  IconButton,
-  useTheme,
-  Stack
-} from '@mui/material';
-import { TypographyProps } from '@mui/material/Typography';
+import type React from 'react';
+import type { TypographyProps } from '@mui/material/Typography';
+import Typography from '@mui/material/Typography';
 import Close from '@mui/icons-material/Close';
 import { DetailField } from '../DetailField';
 import { useTranslation } from 'react-i18next';
+
+import MuiDrawer from '@mui/material/Drawer';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import { useTheme } from '@mui/material/styles';
+import Stack from '@mui/material/Stack';
 
 export type DrawerProps = {
   open: boolean;

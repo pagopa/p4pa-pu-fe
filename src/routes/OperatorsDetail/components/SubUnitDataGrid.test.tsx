@@ -1,6 +1,9 @@
 import { fireEvent, render, screen } from '../../../__tests__/renderers';
 import { describe, expect, beforeEach, it, vi } from 'vitest';
-import { OrgSubUnit, PagedOrgSubUnit } from '../../../../generated/core/client';
+import type {
+  OrgSubUnit,
+  PagedOrgSubUnit
+} from '../../../../generated/core/client';
 import SubUnitDataGrid from './SubUnitDataGrid';
 
 const formatDate = vi.fn((date: string) => `formatted:${date}`);

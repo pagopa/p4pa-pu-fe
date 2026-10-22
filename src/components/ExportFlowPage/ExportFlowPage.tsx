@@ -1,5 +1,3 @@
-import { ArrowBack, Dashboard, InsertDriveFile } from '@mui/icons-material';
-import { Button, Grid, GridDirection } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import TitleComponent from '../TitleComponent/TitleComponent';
@@ -10,16 +8,23 @@ import { useDebtPositionsTypeOrg } from '../../hooks/useDebtPositionsTypeOrg';
 import { useStore } from '../../store/GlobalStore';
 import { useDateRange } from '../../hooks/useDateRange';
 import { FormComponent } from '../FormComponent';
-import {
-  ExportFileTypeEnum,
+import type {
   PaidExportFileRequest,
   ReceiptsArchivingExportFileRequest
 } from '../../../generated/core/client';
+import { ExportFileTypeEnum } from '../../../generated/core/client';
 import {
   createPaidExportFile,
   createReceiptsArchivingExportFile
 } from '../../api/createExportFile';
 import utils from '../../utils';
+
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import type GridDirection from '@mui/material/GridDirection';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import Dashboard from '@mui/icons-material/Dashboard';
+import InsertDriveFile from '@mui/icons-material/InsertDriveFile';
 
 export const ExportFlowPage = () => {
   const { t } = useTranslation();

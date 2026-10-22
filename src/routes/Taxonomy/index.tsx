@@ -1,4 +1,3 @@
-import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import ActionCard from '../../components/ActionCard/ActionCard';
@@ -13,7 +12,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import SearchCard from '../../components/SearchCard/SearchCard';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { TaxonomyFilters } from '../../models/Taxonomy';
+import type { TaxonomyFilters } from '../../models/Taxonomy';
 import { useState } from 'react';
 import {
   getScheduleLastUpdatedTime,
@@ -22,6 +21,7 @@ import {
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
 import { ScheduleEnum } from '../../../generated/core/data-contracts';
 import { formatDateTime } from '../../utils/formatters';
+import Grid from '@mui/material/Grid';
 
 export const TaxonomyPage = () => {
   const { t } = useTranslation();

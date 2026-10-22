@@ -1,19 +1,22 @@
 import { useState } from 'react';
-import { Box, Button, Stack } from '@mui/material';
-import { Delete, Edit } from '@mui/icons-material';
 import { Trans, useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { AxiosError } from 'axios';
 import { useStore } from '../../../store/GlobalStore';
 import spontaneousFormApi from '../../../api/spontaneousForm';
-import DetailContainer, {
-  DetailSectionProps
-} from '../../../components/DetailContainer/DetailContainer';
+import type { DetailSectionProps } from '../../../components/DetailContainer/DetailContainer';
+import DetailContainer from '../../../components/DetailContainer/DetailContainer';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 import GenericDialog from '../../../components/GenericDialog/GenericDialog';
-import { SpontaneousFormDetailDTO } from '../../../../generated/core/data-contracts';
+import type { SpontaneousFormDetailDTO } from '../../../../generated/core/data-contracts';
 import utils from '../../../utils';
 import { PageRoutes } from '../..';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Delete from '@mui/icons-material/Delete';
+import Edit from '@mui/icons-material/Edit';
 
 const SpontaneousFormDetail = () => {
   const { t } = useTranslation();

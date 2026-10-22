@@ -1,4 +1,5 @@
-import { NavigateOptions, To, useNavigate } from 'react-router';
+import type { NavigateOptions, To } from 'react-router';
+import { useNavigate } from 'react-router';
 import utils from '../utils';
 
 /**

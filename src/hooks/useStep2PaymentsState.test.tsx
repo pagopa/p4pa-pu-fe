@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook, act } from '../__tests__/renderers';
 import { useStep2PaymentsState } from './useStep2PaymentsState';
-import {
+import type {
   PagedPaidInstallmentsDTO,
   PaidInstallmentDTO
 } from '../api/classifications/paidInstallments/mappings';

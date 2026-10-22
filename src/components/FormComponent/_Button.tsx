@@ -1,4 +1,5 @@
-import { ButtonProps, Button } from '@mui/material';
+import type ButtonProps from '@mui/material/ButtonProps';
+import Button from '@mui/material/Button';
 
 export type _ButtonProps = ButtonProps & {
   label?: string;

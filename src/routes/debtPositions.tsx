@@ -2,7 +2,7 @@ import DebtPositionResults from './DebtPositions/DebtPositionsResults';
 import DebtPositionsImportOverview from './DebtPositionsImportOverview';
 import DebtPositionsInstallmentDetail from './DebtPositionsInstallmentDetail';
 import DebtPositionsPage from './DebtPositionsPage';
-import { RouteHandleObject } from '../models/Routes';
+import type { RouteHandleObject } from '../models/Routes';
 import DebtPositionDetail from './DebtPositionDetail/DebtPositionDetail';
 import DebtPositionCreateWizard from './DebtPositionCreateWizard/DebtPositionCreateWizard';
 import DebtPositionCreateWizardCompleted from './DebtPositionCreateWizard/DebtPositionCreateWizardCompleted';

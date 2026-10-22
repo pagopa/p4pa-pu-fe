@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { GridSortModel } from '@mui/x-data-grid';
+import type { GridSortModel } from '@mui/x-data-grid';
 
 type FiltersState = {
   page: number;

@@ -1,15 +1,9 @@
-/**
- * Organization Edit Form Component
- * Unified form for editing organization details (replaces two-step wizard)
- */
-
-import { Box, Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { theme } from '@pagopa/mui-italia';
 import { generatePath, useNavigate } from 'react-router';
 import TitleComponent from '../../../../components/TitleComponent/TitleComponent';
-import { UnifiedFormData } from '../../../../models/OrganizationEditTypes';
-import { OrganizationDetail } from '../../../../../generated/core/data-contracts';
+import type { UnifiedFormData } from '../../../../models/OrganizationEditTypes';
+import type { OrganizationDetail } from '../../../../../generated/core/data-contracts';
 import { PageRoutes } from '../../../../routes';
 import {
   transformFormValuesToFieldData,
@@ -25,6 +19,10 @@ import { EntityProfileSection } from './Step/sections/EntityProfileSection';
 import { AccountingInfoSection } from './Step/sections/AccountingInfoSection';
 import { PaymentsInfoSection } from './Step/sections/PaymentsInfoSection';
 import { FormActionButtons } from './FormActionButtons';
+
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 
 type OrganizationEditFormProps = {
   formData: UnifiedFormData;

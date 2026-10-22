@@ -1,10 +1,8 @@
-import { Grid, TextField, Typography, Box } from '@mui/material';
-import { Visibility } from '@mui/icons-material';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 import WizardStepButtons from '../../../../../components/Wizard/WizardStepButtons';
-import {
+import type {
   OrganizationEditStep1Data,
   Step1FormValues
 } from '../../../../../models/OrganizationEditTypes';
@@ -15,6 +13,12 @@ import {
 } from '../../../../../utils/filevalidation';
 import { FormComponent } from '../../../../../components/FormComponent';
 import { theme } from '@pagopa/mui-italia';
+
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Visibility from '@mui/icons-material/Visibility';
 
 type Props = {
   data: OrganizationEditStep1Data;

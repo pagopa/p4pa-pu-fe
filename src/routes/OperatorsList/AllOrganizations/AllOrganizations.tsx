@@ -1,23 +1,23 @@
 import { useTranslation } from 'react-i18next';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useState } from 'react';
-import { ChevronRight } from '@mui/icons-material';
 import CustomDataGrid, {
   DataGridContainer
 } from '../../../components/DataGrid/CustomDataGrid';
 import utils from '../../../utils';
 import { useSearch } from '../../../hooks/useSearch';
+import type { FilterItem } from '../../../components/FilterContainer/FilterContainer';
 import FilterContainer, {
-  COMPONENT_TYPE,
-  FilterItem
+  COMPONENT_TYPE
 } from '../../../components/FilterContainer/FilterContainer';
-import { BaseFilterValues } from '../../../models/Filters';
+import type { BaseFilterValues } from '../../../models/Filters';
 import Search from '@mui/icons-material/Search';
 import { useBrokerOrganizationsSearch } from '../../../api/organizationOperators';
-import { OrganizationWithDebtPositionTypeOrgAndOperatorsCount } from '../../../../generated/core/data-contracts';
+import type { OrganizationWithDebtPositionTypeOrgAndOperatorsCount } from '../../../../generated/core/data-contracts';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../..';
-import { IconButton } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import ChevronRight from '@mui/icons-material/ChevronRight';
 
 type BrokerOrganizationFilters = BaseFilterValues & {
   ipaCode?: string;

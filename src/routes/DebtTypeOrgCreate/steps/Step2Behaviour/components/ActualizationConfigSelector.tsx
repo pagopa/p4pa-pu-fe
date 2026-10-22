@@ -1,6 +1,6 @@
-import { Control } from 'react-hook-form';
+import type { Control } from 'react-hook-form';
 import { ServiceSelector } from './ServiceSelector';
-import { DebtTypeOrgForm } from '../../../types';
+import type { DebtTypeOrgForm } from '../../../types';
 import { useActualizationServices } from '../../../hooks/useOrgSilServices';
 
 type ActualizationConfigSelectorProps = {

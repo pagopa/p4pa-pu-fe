@@ -2,10 +2,8 @@ import { render, screen } from '../../__tests__/renderers';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
 import { BudgetCostsDetail } from './BudgetCostsDetail';
-import {
-  DebtPositionTypeOrgBalanceCostDTO,
-  DebtPositionTypeOrgBalanceCostType
-} from '../../../generated/core/client';
+import type { DebtPositionTypeOrgBalanceCostDTO } from '../../../generated/core/client';
+import { DebtPositionTypeOrgBalanceCostType } from '../../../generated/core/client';
 
 const currentYear = String(new Date().getFullYear());
 const previousYear = String(new Date().getFullYear() - 1);

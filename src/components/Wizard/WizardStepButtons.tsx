@@ -1,6 +1,8 @@
-import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { ArrowBack, Save } from '@mui/icons-material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import Save from '@mui/icons-material/Save';
 
 type Props = {
   onBack?: () => void;

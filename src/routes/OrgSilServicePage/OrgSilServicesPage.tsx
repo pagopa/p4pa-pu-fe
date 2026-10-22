@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { Add } from '@mui/icons-material';
-import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import FilterContainer from '../../components/FilterContainer/FilterContainer';
@@ -10,15 +8,15 @@ import { useStore } from '../../store/GlobalStore';
 import { useSearch } from '../../hooks/useSearch';
 import useOrgSilServiceFilters from '../../hooks/useOrgSilServiceFilters';
 import orgSilServiceApi from '../../api/orgSilService';
-import { OrgSilServicesFilters } from '../../api/orgSilService/mappings';
-import {
-  OrgSilServiceType,
-  OrgSilServiceView
-} from '../../../generated/core/client';
+import type { OrgSilServicesFilters } from '../../api/orgSilService/mappings';
+import type { OrgSilServiceView } from '../../../generated/core/client';
+import { OrgSilServiceType } from '../../../generated/core/client';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '..';
-import { FilterFieldValue } from '../../models/Filters';
+import type { FilterFieldValue } from '../../models/Filters';
 import utils from '../../utils';
+import Grid from '@mui/material/Grid';
+import Add from '@mui/icons-material/Add';
 
 const SERVICE_CONFIGS: Record<
   number,

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '../__tests__/renderers';
 import { useOrganizationEditForm } from './useOrganizationEditForm';
-import { UnifiedFormData } from '../models/OrganizationEditTypes';
+import type { UnifiedFormData } from '../models/OrganizationEditTypes';
 
 // Mock react-i18next
 vi.mock('react-i18next', () => ({

@@ -4,7 +4,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useConditionalReset } from './useConditionalReset';
-import { OrgSilServiceFormData } from '../schema';
+import type { OrgSilServiceFormData } from '../schema';
 import {
   BASIC_AUTH_FIELDS,
   JWT_AUTH_FIELDS,

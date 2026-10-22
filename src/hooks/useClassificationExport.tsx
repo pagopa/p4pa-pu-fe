@@ -1,11 +1,10 @@
 import { useForm } from 'react-hook-form';
 import { useCallback } from 'react';
-import {
+import type {
   ClassificationsExportFileRequestDTO,
-  ClassificationsExportFileFilter,
-  ExportFileTypeEnum,
-  LabelEnum
+  ClassificationsExportFileFilter
 } from '../../generated/core/client';
+import { ExportFileTypeEnum, LabelEnum } from '../../generated/core/client';
 import { format } from 'date-fns';
 
 const isValidLabelEnum = (value: string): value is LabelEnum => {

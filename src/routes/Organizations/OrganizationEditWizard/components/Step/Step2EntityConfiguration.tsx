@@ -1,8 +1,7 @@
-import { Grid, Typography, Box } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import WizardStepButtons from '../../../../../components/Wizard/WizardStepButtons';
-import {
+import type {
   UnifiedFormData,
   UnifiedFormValues
 } from '../../../../../models/OrganizationEditTypes';
@@ -14,6 +13,10 @@ import {
   mapStep2ValuesToFieldData,
   unifiedFormDataToFormValues
 } from '../../../../../utils/organizationFormTransformers';
+
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 type Props = {
   data: UnifiedFormData;

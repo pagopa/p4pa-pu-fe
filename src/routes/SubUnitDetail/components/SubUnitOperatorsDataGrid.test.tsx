@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { SubUnitOperatorsDataGrid } from './SubUnitOperatorsDataGrid';
-import {
+import type {
   OrgSubUnitOperator,
   PagedOrgSubUnitOperators
 } from '@generated/core/data-contracts';

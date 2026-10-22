@@ -1,17 +1,20 @@
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import { ReadMore } from '@mui/icons-material';
-import { ChipProps, IconButton, Typography } from '@mui/material';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import { PageRoutes } from '../../../routes';
 import { generatePath, useNavigate } from 'react-router';
-import {
+import type {
   InstallmentStatus,
   InstallmentViewDTO,
   PagedInstallmentView
 } from '../../../../generated/core/data-contracts';
 import { formatDate, moneyFormat } from '../../../utils/formatters';
 import ChipTruncateTooltip from '../../../components/ChipTruncateTooltip';
+
+import type ChipProps from '@mui/material/ChipProps';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import ReadMore from '@mui/icons-material/ReadMore';
 
 export type DataGridProps = {
   data?: PagedInstallmentView;

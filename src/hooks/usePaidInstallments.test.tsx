@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '../__tests__/renderers';
 import { usePaidInstallments } from './usePaidInstallments';
 import { AxiosError } from 'axios';
-import { PagedPaidInstallmentsDTO } from '../api/classifications/paidInstallments/mappings';
+import type { PagedPaidInstallmentsDTO } from '../api/classifications/paidInstallments/mappings';
 import utils from '../utils';
 
 const mockMutateAsync = vi.fn();

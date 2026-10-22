@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '../../../__tests__/renderers';
 import { HomeDrawerBody } from './HomeDrawerBody';
-import { TABS, DashboardResult } from '../models';
+import type { DashboardResult } from '../models';
+import { TABS } from '../models';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 
 // Mock the child drawer components

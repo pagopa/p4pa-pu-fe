@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { AppState } from '../models/AppState';
+import type { AppState } from '../models/AppState';
 import { appState, setAppState, setLoading } from './AppStateStore';
 
 describe('AppState Store', () => {

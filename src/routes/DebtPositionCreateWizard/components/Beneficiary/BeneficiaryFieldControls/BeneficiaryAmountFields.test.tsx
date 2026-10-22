@@ -1,8 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
-import { useForm, FieldValues, Control } from 'react-hook-form';
+import type { FieldValues, Control } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { BeneficiaryAmountFields } from './BeneficiaryAmountFields';
-import { BeneficiaryValidationContext } from '../../../../../utils/BeneficiaryFieldHelpers';
+import type { BeneficiaryValidationContext } from '../../../../../utils/BeneficiaryFieldHelpers';
 
 vi.mock('../BeneficiaryFieldComponents', () => ({
   AmountField: vi.fn(({ field, t, disabled, context, index }) => (

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import React, { useImperativeHandle, useRef } from 'react';
-import {
+import type {
   Control,
   UseFormGetValues,
   UseFormSetValue,
@@ -10,10 +10,8 @@ import {
   FieldArrayPath,
   Path
 } from 'react-hook-form';
-import { Grid, Paper, Box, Button, Divider } from '@mui/material';
-import { Add } from '@mui/icons-material';
 import { BeneficiaryHeader } from './BeneficiaryFieldComponents';
-import { BeneficiaryValidationContext } from '../../../../utils/BeneficiaryFieldHelpers';
+import type { BeneficiaryValidationContext } from '../../../../utils/BeneficiaryFieldHelpers';
 import {
   BeneficiaryIdentityFields,
   BeneficiaryAmountFields,
@@ -22,6 +20,13 @@ import {
 } from './BeneficiaryFieldControls';
 import { useBeneficiaryManagement } from '../../../../hooks/useBeneficiaryManagement';
 import { useInstallmentBeneficiaryManagement } from '../../../../hooks/useInstallmentBeneficiaryManagement';
+
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Add from '@mui/icons-material/Add';
 
 // ===== TYPES =====
 type BeneficiaryField = Record<string, unknown> & { id: string };

@@ -4,7 +4,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { vi } from 'vitest';
 
 import { CostConfiguration } from './CostConfiguration';
-import { DebtTypeOrgForm } from '@core/routes/DebtTypeOrgCreate/types';
+import type { DebtTypeOrgForm } from '@core/routes/DebtTypeOrgCreate/types';
 
 vi.mock('@core/components/FormComponent', () => ({
   FormComponent: {

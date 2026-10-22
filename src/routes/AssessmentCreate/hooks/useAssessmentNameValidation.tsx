@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { getAssessments } from '../../../api/assessments';
-import { FilterValues } from '../../../models/Filters';
+import type { FilterValues } from '../../../models/Filters';
 
 type AssessmentValidationParams = {
   assessmentName: string;

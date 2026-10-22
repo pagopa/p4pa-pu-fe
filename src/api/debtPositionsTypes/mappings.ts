@@ -1,7 +1,7 @@
-import { FilteredRequest } from '../../models/Filters';
-import { DebtPositionTypeRequestBody } from '../../../generated/core/data-contracts';
-import { Step2Data } from '../../routes/DebtTypeCreate/components/Step2Settings';
-import utils from '../../utils';
+import type { FilteredRequest } from '../../models/Filters';
+import type { DebtPositionTypeRequestBody } from '../../../generated/core/data-contracts';
+import type { Step2Data } from '../../routes/DebtTypeCreate/components/Step2Settings';
+import type utils from '../../utils';
 
 type GetDebtPositionTypeWithCountQueryParams = Parameters<
   typeof utils.apiClient.bff.getDebtPositionTypeWithCount

@@ -1,24 +1,24 @@
-import { Stack } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import { FieldValues } from 'react-hook-form';
+import type { FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import AddIcon from '@mui/icons-material/Add';
+import type { PagedOrgSubUnit } from '@generated/core/data-contracts';
 
-import { PagedOrgSubUnit } from '@generated/core/data-contracts';
+import type { SubUnitsFilters } from '@core/api/orgSubUnit';
+import { getPagedOrgSubUnits } from '@core/api/orgSubUnit';
 
-import { getPagedOrgSubUnits, SubUnitsFilters } from '@core/api/orgSubUnit';
 import FilterContainer from '@core/components/FilterContainer/FilterContainer';
-import TitleComponent, {
-  ActionMenuItem
-} from '@core/components/TitleComponent/TitleComponent';
+import type { ActionMenuItem } from '@core/components/TitleComponent/TitleComponent';
+import TitleComponent from '@core/components/TitleComponent/TitleComponent';
 import { useSearch } from '@core/hooks/useSearch';
 import { useSubUnitsFilters } from '@core/hooks/useSubunitsListFilters';
 import { setCustomBreadcrumbsItems } from '@core/store/AppStateStore';
 import utils from '@core/utils';
-
 import { PageRoutes } from '..';
+
 import { SubUnitsDataGrid } from './components/SubUnitsDataGrid';
+import Stack from '@mui/material/Stack';
 
 export const SubUnitsList = () => {
   const { t } = useTranslation();

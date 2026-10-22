@@ -1,8 +1,8 @@
-import { ArrowBack } from '@mui/icons-material';
 import Button from '@mui/material/Button';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router';
 import { useSmartBack } from '../../hooks/useSmartBack';
+import ArrowBack from '@mui/icons-material/ArrowBack';
 
 export type BackButtonProps = {
   text?: string;

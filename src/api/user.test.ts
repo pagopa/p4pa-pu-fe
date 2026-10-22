@@ -1,6 +1,7 @@
 import { renderHook, waitFor } from '../__tests__/renderers';
 import utils from '../utils';
-import { vi, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { vi } from 'vitest';
 import { userInfoDTOSchema } from '../../generated/core/zod-schema';
 import user from './user';
 import { createMock } from 'zodock';

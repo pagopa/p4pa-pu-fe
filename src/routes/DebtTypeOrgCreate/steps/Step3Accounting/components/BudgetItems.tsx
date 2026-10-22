@@ -1,12 +1,15 @@
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import TableRowsIcon from '@mui/icons-material/TableRows';
-import { Divider, Stack, Typography } from '@mui/material';
-import { DebtTypeOrgForm } from '@core/routes/DebtTypeOrgCreate/types';
+import type { DebtTypeOrgForm } from '@core/routes/DebtTypeOrgCreate/types';
 import SectionBox from '@core/components/Wizard/SectionBox';
 import { FormComponent } from '@core/components/FormComponent';
 import { CostConfiguration } from './CostConfiguration';
 import { DebtPositionTypeOrgBalanceCostType } from '@generated/core/data-contracts';
+
+import Divider from '@mui/material/Divider';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 export const BudgetItems = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();

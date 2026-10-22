@@ -1,7 +1,6 @@
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import DownloadIcon from '@mui/icons-material/Download';
-import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { FilterCategory, useMultiFilters } from '../../hooks/useMultiFilters';
@@ -9,6 +8,7 @@ import { PageRoutes } from '../../routes';
 import { useState } from 'react';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { useAppNavigate } from '../../hooks/useAppNavigation';
+import Grid from '@mui/material/Grid';
 
 export const Classifications = () => {
   const { t } = useTranslation();

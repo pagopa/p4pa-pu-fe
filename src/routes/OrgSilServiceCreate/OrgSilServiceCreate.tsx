@@ -5,7 +5,7 @@ import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { PageRoutes } from '..';
 import { OrgSilServiceForm } from './components/OrgSilServiceForm';
-import { OrgSilServiceFormData } from './schema';
+import type { OrgSilServiceFormData } from './schema';
 
 export const OrgSilServiceCreate = () => {
   const navigate = useNavigate();

@@ -1,14 +1,15 @@
-import React from 'react';
+import type React from 'react';
 import { vi } from 'vitest';
 import { render, screen, fireEvent } from '../../../../__tests__/renderers';
 import { Step2Behaviour } from '.';
 import { StoreProvider } from '../../../../store/GlobalStore';
-import { FormProvider, useForm, FieldValues } from 'react-hook-form';
+import type { FieldValues } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { setOrganizationId } from '../../../../store/OrganizationIdStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { step2Schema } from './schema';
 import { PaymentMethodOption, SpontaneousMode } from '../../types';
-import { SpontaneousForm } from '../../../../../generated/core/data-contracts';
+import type { SpontaneousForm } from '../../../../../generated/core/data-contracts';
 
 const { mockGetSpontaneousFormsList, mockNotifyEmit } = vi.hoisted(() => ({
   mockGetSpontaneousFormsList: vi.fn<
@@ -48,15 +49,10 @@ vi.mock('../../hooks/useActualizationConfig', () => ({
   })
 }));
 
-vi.mock('../../../../utils', async () => {
-  const actual =
-    await vi.importActual<typeof import('../../../../utils')>(
-      '../../../../utils'
-    );
+vi.mock('../../../../utils', async (importOriginal) => {
   return {
-    ...actual,
+    ...(await importOriginal()),
     default: {
-      ...actual.default,
       notify: {
         emit: mockNotifyEmit
       }

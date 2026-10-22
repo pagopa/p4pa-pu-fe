@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { SubjectType } from '../utils/fieldValidation';
 import {
   isValidCodiceFiscale,

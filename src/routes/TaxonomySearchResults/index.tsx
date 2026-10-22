@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
-import { Stack } from '@mui/material';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import TaxonomyDataGrid from './TaxonomyDataGrid';
 import {
   TaxonomyFilter,
   SEARCH_FIELD_NAMES
 } from '../../components/TaxonomyFilter';
-import { FieldValues, FormProvider, useForm, Path } from 'react-hook-form';
+import type { FieldValues, Path } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { FormComponent } from '../../components/FormComponent';
 import { getTaxonomies } from '../../api/taxonomy';
 import { useSearch } from '../../hooks/useSearch';
@@ -17,7 +17,8 @@ import {
   shouldShowGeneralError
 } from '../../utils/filtersValidation';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
-import { PagedTaxonomy } from '../../../generated/core/client';
+import type { PagedTaxonomy } from '../../../generated/core/client';
+import Stack from '@mui/material/Stack';
 
 const TaxonomySearchResults = () => {
   const { t } = useTranslation();

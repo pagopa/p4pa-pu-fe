@@ -1,6 +1,7 @@
-import { Control, useWatch } from 'react-hook-form';
+import type { Control } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { ServiceSelector } from './ServiceSelector';
-import { DebtTypeOrgForm } from '../../../types';
+import type { DebtTypeOrgForm } from '../../../types';
 import { useTranslation } from 'react-i18next';
 import { FormComponent } from '../../../../../components/FormComponent';
 import { useNotificationServices } from '../../../hooks/useOrgSilServices';

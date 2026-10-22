@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { createRef, MutableRefObject } from 'react';
-import { FieldErrors, FieldValues } from 'react-hook-form';
+import type { MutableRefObject } from 'react';
+import { createRef } from 'react';
+import type { FieldErrors, FieldValues } from 'react-hook-form';
 import type { BeneficiaryValidationContext } from '../../models/paymentTypes';
 import {
   isEmpty,

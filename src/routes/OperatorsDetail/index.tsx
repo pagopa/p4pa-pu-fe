@@ -1,29 +1,26 @@
 import { useState } from 'react';
-import { Grid, Typography, useTheme, Box, Button } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import FilterContainer, {
   COMPONENT_TYPE
 } from '../../components/FilterContainer/FilterContainer';
-import { Search, Add } from '@mui/icons-material';
 import OperatorDetailDataGrid from './components/OperatorDetailDataGrid';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import utils from '../../utils';
-import { FieldValues } from 'react-hook-form';
+import type { FieldValues } from 'react-hook-form';
 import { useSearch } from '../../hooks/useSearch';
-import { FilterFieldValue } from '../../models/Filters';
+import type { FilterFieldValue } from '../../models/Filters';
 import { useOperatorDetailSearch } from '../../api/organizationOperators';
-import DetailContainer, {
-  DetailSection
-} from '../../components/DetailContainer/DetailContainer';
+import type { DetailSection } from '../../components/DetailContainer/DetailContainer';
+import DetailContainer from '../../components/DetailContainer/DetailContainer';
 import { useDebtPositionTypesByOrg } from '../../hooks/useDebtPositionTypesByOrg';
 import { useBreadcrumbs } from './hooks/useBreadcrumbs';
-import {
+import type {
   DebtPositionTypeOrgDTO,
-  OrgSubUnit,
-  SubUnitType
+  OrgSubUnit
 } from '../../../generated/core/data-contracts';
+import { SubUnitType } from '../../../generated/core/data-contracts';
 import { removeDebtPositionTypeOrgFromOperator } from '../../api/debtPositionTypeOrgOperators';
 import { useStore } from '../../store/GlobalStore';
 import {
@@ -31,6 +28,14 @@ import {
   deleteOrgSubUnitFromOperator
 } from '@core/api/orgSubUnit';
 import SubUnitDataGrid from './components/SubUnitDataGrid';
+
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Search from '@mui/icons-material/Search';
+import Add from '@mui/icons-material/Add';
 
 const OPERATORS_ID = 'op';
 const SUB_UNITS_ID = 'sub';

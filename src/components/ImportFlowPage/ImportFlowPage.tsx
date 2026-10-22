@@ -1,17 +1,6 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography
-} from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
 import FileUploader from '../FileUploader/FileUploader';
 import { useTranslation } from 'react-i18next';
-import { AltRoute, ArrowBack } from '@mui/icons-material';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import TitleComponent from '../TitleComponent/TitleComponent';
@@ -19,8 +8,19 @@ import { importFlowConfig } from '../../models/ImportDetails';
 import { PageRoutes } from '../../routes';
 import { uploadIngestionFlowFile } from '../../api/ingestionFlowFiles';
 import { useStore } from '../../store/GlobalStore';
-import { IngestionFlowFileType } from '../../../generated/fileshare/client';
+import type { IngestionFlowFileType } from '../../../generated/fileshare/client';
 import utils from '../../utils';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import Grid from '@mui/material/Grid';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import Typography from '@mui/material/Typography';
+import AltRoute from '@mui/icons-material/AltRoute';
+import ArrowBack from '@mui/icons-material/ArrowBack';
 
 const ImportFlow = () => {
   const { t } = useTranslation();

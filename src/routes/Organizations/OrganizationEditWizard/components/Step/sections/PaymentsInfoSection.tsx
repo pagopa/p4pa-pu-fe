@@ -1,24 +1,24 @@
-import {
-  Box,
-  FormControlLabel,
-  Grid,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Switch,
-  TextField,
-  Typography,
-  Divider,
-  Stack
-} from '@mui/material';
 import PaymentsIcon from '@mui/icons-material/Payments';
-import { Controller, Control, FieldErrors } from 'react-hook-form';
+import type { Control, FieldErrors } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { theme } from '@pagopa/mui-italia';
-import {
-  LANGUAGE_OPTIONS,
+import type {
   UnifiedFormData,
   UnifiedFormValues
 } from '../../../../../../models/OrganizationEditTypes';
+import { LANGUAGE_OPTIONS } from '../../../../../../models/OrganizationEditTypes';
+
+import Box from '@mui/material/Box';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Grid from '@mui/material/Grid';
+import MenuItem from '@mui/material/MenuItem';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Switch from '@mui/material/Switch';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import Stack from '@mui/material/Stack';
 
 type PaymentsInfoSectionProps = {
   control: Control<UnifiedFormValues>;

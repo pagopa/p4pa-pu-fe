@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate } from 'react-router';
-import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, fireEvent, screen, waitFor } from '../../__tests__/renderers';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import DebtPositionsPage from './DebtPositionsPage';

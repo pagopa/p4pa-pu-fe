@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { DebtPositionTypeOrg } from '../../generated/core/client';
+import type { DebtPositionTypeOrg } from '../../generated/core/client';
 import { useTranslation } from 'react-i18next';
-import { DebtPositionType } from '../models/DebtPositionType';
+import type { DebtPositionType } from '../models/DebtPositionType';
 import utils from '../utils';
 import { getDebtPositionTypeOrgs } from '../api/debtPositionsTypeOrg';
-import { AxiosError } from 'axios';
+import type { AxiosError } from 'axios';
 
 export const useDebtPositionsTypeOrg = ({
   organizationId,

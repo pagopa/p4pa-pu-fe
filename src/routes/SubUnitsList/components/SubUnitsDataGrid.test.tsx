@@ -2,7 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@core/__tests__/renderers';
 
 import { SubUnitsDataGrid } from './SubUnitsDataGrid';
-import { OrgSubUnit, PagedOrgSubUnit } from '@generated/core/data-contracts';
+import type {
+  OrgSubUnit,
+  PagedOrgSubUnit
+} from '@generated/core/data-contracts';
 
 vi.mock('@core/components/DataGrid/CustomDataGrid', () => ({
   default: ({

@@ -1,18 +1,24 @@
-import { Box, Button, IconButton, Stack, useTheme } from '@mui/material';
-import { Add, RemoveCircleOutline } from '@mui/icons-material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Filter } from './Filter';
 import { HiddenDiv } from '../HiddenDiv';
-import { FilterCategory, FilterMap } from '../../hooks/useMultiFilters';
+import type { FilterCategory, FilterMap } from '../../hooks/useMultiFilters';
 import { useStore } from '../../store/GlobalStore';
+import type { KeyofFilterMap } from '../../store/FilterStore';
 import {
   addFilterRow,
   removeFilterRow,
-  updateFilter,
-  KeyofFilterMap
+  updateFilter
 } from '../../store/FilterStore';
-import { FilterFieldValue } from '../../models/Filters';
+import type { FilterFieldValue } from '../../models/Filters';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
+import Add from '@mui/icons-material/Add';
+import RemoveCircleOutline from '@mui/icons-material/RemoveCircleOutline';
 
 export type MultiFilterProps = {
   filterMap: FilterMap;

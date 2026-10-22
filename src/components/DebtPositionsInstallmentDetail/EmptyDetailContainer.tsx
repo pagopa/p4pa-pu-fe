@@ -1,12 +1,11 @@
-import {
-  Card,
-  CardContent,
-  CardOwnProps,
-  Typography,
-  useTheme
-} from '@mui/material';
-import { Category } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
+
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import type CardOwnProps from '@mui/material/CardOwnProps';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import Category from '@mui/icons-material/Category';
 
 type EmptyDetailContainerProps = {
   sx?: CardOwnProps['sx'];

@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import {
-  screen,
-  fireEvent,
-  render,
-  RenderOptions
-} from '@testing-library/react';
+import type { RenderOptions } from '@testing-library/react';
+import { screen, fireEvent, render } from '@testing-library/react';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router';
 import DebtPositionCreateWizardCompleted from './DebtPositionCreateWizardCompleted';
 import config from '../../utils/config';
@@ -13,7 +9,7 @@ import * as GlobalStore from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import debtPositions from '../../api/debtPositions';
 import utils from '../../utils';
-import { FilterValues } from '../../models/Filters';
+import type { FilterValues } from '../../models/Filters';
 
 // Create mock filter values
 const mockFilterValues: FilterValues = {

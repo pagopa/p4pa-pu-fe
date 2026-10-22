@@ -1,11 +1,3 @@
-import {
-  Grid,
-  TextField,
-  MenuItem,
-  InputAdornment,
-  Switch,
-  FormControlLabel
-} from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
@@ -18,20 +10,18 @@ import BeneficiaryField from '../Beneficiary/BeneficiaryField';
 import InstallmentField from '../Installment/InstallmentField';
 import type { PaymentOption } from '../../../../models/paymentTypes';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
-import { BeneficiaryFieldRef } from '../Beneficiary/BeneficiaryField';
+import type { BeneficiaryFieldRef } from '../Beneficiary/BeneficiaryField';
 import { useStore } from '../../../../store/GlobalStore';
-import {
+import type {
   Step2Data,
   Step3Data,
-  Step1Data,
-  DebtPositionTypeEnum
+  Step1Data
 } from '../../../../models/DebtPositionType';
+import { DebtPositionTypeEnum } from '../../../../models/DebtPositionType';
 import debtPositionsApi from '../../../../api/debtPositions';
 import { DebtPositionStatus } from '../../../../../generated/core/data-contracts';
-import {
-  createStep3Resolver,
-  Step3FormValues
-} from '../../../../models/Step3Schema';
+import type { Step3FormValues } from '../../../../models/Step3Schema';
+import { createStep3Resolver } from '../../../../models/Step3Schema';
 import { useStep3ApiOperations } from '../../../../hooks/useStep3ApiOperations';
 import { useStep3FormHandlers } from '../../../../hooks/useStep3FormHandlers';
 import { useStep3Validation } from '../../../../hooks/useStep3Validation';
@@ -40,6 +30,13 @@ import {
   populateAllFormFields,
   prepareFormData
 } from '../../../../utils/step3FormDataUtils';
+
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import InputAdornment from '@mui/material/InputAdornment';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 type Props = {
   data: Step3Data;

@@ -1,15 +1,15 @@
-import React from 'react';
-import {
+import type React from 'react';
+import type {
   UseFormSetValue,
   UseFormTrigger,
   UseFormReset,
   UseFormGetValues
 } from 'react-hook-form';
-import { Step3FormValues } from '../models/Step3Schema';
+import type { Step3FormValues } from '../models/Step3Schema';
 import { DebtPositionTypeEnum } from '../models/DebtPositionType';
 import { PaymentOptionType } from '../../generated/core/data-contracts';
 import type { PaymentOption, Beneficiary } from '../models/paymentTypes';
-import { BeneficiaryFieldRef } from '../routes/DebtPositionCreateWizard/components/Beneficiary/BeneficiaryField';
+import type { BeneficiaryFieldRef } from '../routes/DebtPositionCreateWizard/components/Beneficiary/BeneficiaryField';
 import { triggerValidationForAllBeneficiaries } from '../utils/paymentUtility';
 import utils from '../utils';
 

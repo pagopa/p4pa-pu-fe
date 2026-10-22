@@ -1,9 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent } from '../../__tests__/renderers';
 import { Filter } from './Filter';
-import { FilterItem, COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
-import { FilterMap } from '../../hooks/useMultiFilters';
-import { KeyofFilterMap } from '../../store/FilterStore';
+import type { FilterItem } from '../FilterContainer/FilterContainer';
+import { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
+import type { FilterMap } from '../../hooks/useMultiFilters';
+import type { KeyofFilterMap } from '../../store/FilterStore';
 
 vi.mock('../FilterContainer/FilterContainer', () => ({
   default: vi.fn(({ items }) => (

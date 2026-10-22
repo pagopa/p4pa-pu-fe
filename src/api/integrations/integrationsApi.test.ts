@@ -1,5 +1,5 @@
 import utils from '@core/utils';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
 import { createMock } from 'zodock';
 import { OrganizationApiKeyType } from '@generated/core/client';

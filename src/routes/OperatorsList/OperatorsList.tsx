@@ -1,4 +1,3 @@
-import { Box, Tab, Tabs } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams } from 'react-router';
@@ -7,6 +6,10 @@ import MyOrganization from './MyOrganization/MyOrganization';
 import AllOrganizations from './AllOrganizations/AllOrganizations';
 import utils from '../../utils';
 import { useStore } from '../../store/GlobalStore';
+
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 
 export const OperatorsList = () => {
   const isSuperAdmin = utils.roles.useIsSuperAdmin();

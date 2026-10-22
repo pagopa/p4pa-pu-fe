@@ -1,5 +1,3 @@
-import { Add, Search } from '@mui/icons-material';
-import { Box, Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { useStore } from '../../../store/GlobalStore';
@@ -10,10 +8,16 @@ import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 import FilterContainer, {
   COMPONENT_TYPE
 } from '../../../components/FilterContainer/FilterContainer';
-import { PagedSpontaneousForm } from '../../../../generated/core/data-contracts';
+import type { PagedSpontaneousForm } from '../../../../generated/core/data-contracts';
 import SpontaneousFormDataGrid from './components/SpontaneousFormDataGrid';
 import { PageRoutes } from '../..';
 import { useNavigate } from 'react-router';
+
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import { useTheme } from '@mui/material/styles';
+import Add from '@mui/icons-material/Add';
+import Search from '@mui/icons-material/Search';
 
 type SpontaneousFormFilters = {
   code?: string;

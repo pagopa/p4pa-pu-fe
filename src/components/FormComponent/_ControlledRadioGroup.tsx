@@ -1,21 +1,15 @@
-import {
-  Controller,
-  Control,
-  Path,
-  FieldValues,
-  PathValue
-} from 'react-hook-form';
-import {
-  FormControl,
-  FormControlLabel,
-  FormControlLabelProps,
-  FormHelperText,
-  FormLabel,
-  Radio,
-  RadioGroup,
-  RadioGroupProps
-} from '@mui/material';
+import type { Control, Path, FieldValues, PathValue } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { ErrorMessage } from './ErrorMessage';
+
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import type FormControlLabelProps from '@mui/material/FormControlLabelProps';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormLabel from '@mui/material/FormLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import type RadioGroupProps from '@mui/material/RadioGroupProps';
 
 export type RadioOption<T extends FieldValues> = {
   value: PathValue<T, Path<T>>;

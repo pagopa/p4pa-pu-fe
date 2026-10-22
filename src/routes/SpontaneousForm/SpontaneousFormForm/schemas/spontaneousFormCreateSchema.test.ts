@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import {
-  SpontaneousFormCreateData,
-  spontaneousFormCreateSchema
-} from './spontaneousFormCreateSchema';
+import type { SpontaneousFormCreateData } from './spontaneousFormCreateSchema';
+import { spontaneousFormCreateSchema } from './spontaneousFormCreateSchema';
 
 describe('spontaneousFormCreateSchema', () => {
   describe('valid inputs', () => {

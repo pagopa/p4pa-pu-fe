@@ -74,13 +74,10 @@ vi.mock('../../hooks/useSearch', () => ({
   }))
 }));
 
-vi.mock('../../utils', async () => {
-  const actual = await vi.importActual('../../utils');
+vi.mock('../../utils', async (importOriginal) => {
   return {
-    ...actual,
+    ...(await importOriginal()),
     default: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(actual as any).default,
       URI: {
         decode: vi.fn(() => ({}))
       },

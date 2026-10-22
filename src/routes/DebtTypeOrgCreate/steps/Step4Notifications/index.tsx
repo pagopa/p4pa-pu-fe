@@ -7,7 +7,7 @@ import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../../components/FormComponent';
 import Stack from '@mui/material/Stack';
 import Link from '@mui/material/Link';
-import { DebtTypeOrgForm } from '../../types';
+import type { DebtTypeOrgForm } from '../../types';
 import { AppPreview } from '../../../../components/AppPreview';
 import { theme } from '@pagopa/mui-italia';
 

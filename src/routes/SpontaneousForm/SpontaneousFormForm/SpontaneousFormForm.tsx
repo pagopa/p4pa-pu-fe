@@ -1,16 +1,22 @@
-import { useForm, Controller, UseFormSetError } from 'react-hook-form';
+import type { UseFormSetError } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Stack, Box, Paper, Typography, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { theme } from '@pagopa/mui-italia';
-import { ArrowBack, Description, Translate } from '@mui/icons-material';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 import SectionBox from '../../../components/Wizard/SectionBox';
 import { FormComponent } from '../../../components/FormComponent';
-import {
-  SpontaneousFormCreateData,
-  spontaneousFormCreateSchema
-} from './schemas/spontaneousFormCreateSchema';
+import type { SpontaneousFormCreateData } from './schemas/spontaneousFormCreateSchema';
+import { spontaneousFormCreateSchema } from './schemas/spontaneousFormCreateSchema';
+
+import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import Description from '@mui/icons-material/Description';
+import Translate from '@mui/icons-material/Translate';
 
 export type SpontaneousFormMode = 'create' | 'edit';
 

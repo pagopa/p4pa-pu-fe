@@ -1,17 +1,15 @@
-import { Grid, Stack, useTheme, Button } from '@mui/material';
-import { Add, FilterAlt } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
 import { useState, useMemo } from 'react';
 import FilterContainer from '../../components/FilterContainer/FilterContainer';
 import FilterContainerDrawer from '../../components/FilterContainerDrawer/FilterContainerDrawer';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { BaseFilterValues } from '../../models/Filters';
+import type { BaseFilterValues } from '../../models/Filters';
 import { SearchType } from '../../models/DebtPositions';
 import { IUVDataGrid } from './components/DebtPositionIUVDataGrid';
 import { DebtPositionsDataGrid } from './components/DebtPositionsDataGrid';
 import useDebtPositionFilters from '../../hooks/useDebtPositionsFilters';
-import {
+import type {
   PagedInstallmentView,
   PagedDebtPositionView
 } from '../../../generated/core/client';
@@ -31,6 +29,13 @@ import {
 } from '../../utils/fieldValidation';
 import utils from '../../utils';
 import { clearFieldError, setFieldError } from '../../utils/filterErrors';
+
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import Add from '@mui/icons-material/Add';
+import FilterAlt from '@mui/icons-material/FilterAlt';
 
 export const DebtPositionResults = () => {
   const theme = useTheme();

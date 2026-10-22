@@ -1,4 +1,5 @@
-import { describe, expect, it, Mock, vi } from 'vitest';
+import type { Mock } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import { useLocation } from 'react-router';
 import TelematicReceiptSearchResults from '../../routes/TelematicReceiptSearchResults';

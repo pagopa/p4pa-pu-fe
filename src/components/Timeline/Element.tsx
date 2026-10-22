@@ -8,9 +8,10 @@ import {
 } from '@mui/lab';
 import Typography from '@mui/material/Typography';
 import { format } from 'date-fns';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { it } from 'date-fns/locale';
-import { Chip, ChipOwnProps } from '@mui/material';
+import Chip from '@mui/material/Chip';
+import type ChipOwnProps from '@mui/material/ChipOwnProps';
 
 export type TimelineNode = {
   date: Date;

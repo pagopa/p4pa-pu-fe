@@ -1,9 +1,9 @@
-import {
+import type {
   DashboardByFc,
   DashboardByIuf,
   DashboardByIuv
 } from '../../../generated/core/data-contracts';
-import { ReactElement, ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 export enum TABS {
   IUV = 'IUV',

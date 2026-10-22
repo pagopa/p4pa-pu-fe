@@ -3,17 +3,17 @@
  * This module provides reusable functions for payment processing and validation.
  * @module paymentUtility
  */
-import { FieldErrors, FieldValues, Path } from 'react-hook-form';
-import {
+import type { FieldErrors, FieldValues, Path } from 'react-hook-form';
+import type {
   BeneficiaryValidationContext,
   Beneficiary,
   Installment
 } from '../models/paymentTypes';
 import { format } from 'date-fns';
-import { Step2Data, Step3Data } from '../models/DebtPositionType';
-import { UseFormTrigger } from 'react-hook-form';
+import type { Step2Data, Step3Data } from '../models/DebtPositionType';
+import type { UseFormTrigger } from 'react-hook-form';
 import { isBeneficiariesTotalValid } from './fieldValidation';
-import { PersonEntityType } from '../../generated/core/data-contracts';
+import type { PersonEntityType } from '../../generated/core/data-contracts';
 import { isSameBeneficiariesAsBeforeEnabled } from '../models/Step3Schema';
 
 /**

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
-import { Download } from '@mui/icons-material';
 import ReceiptDetail from '.';
-import { ReceiptDetailDTO } from '../../../generated/core/client';
+import type { ReceiptDetailDTO } from '../../../generated/core/client';
+import Download from '@mui/icons-material/Download';
 
 vi.mock('../TitleComponent/TitleComponent', () => ({
   default: ({ title, accessibleTitle, callToAction }: any) => (

@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import Stack from '@mui/material/Stack';
 import { useFormContext } from 'react-hook-form';
 import { FormComponent } from '../FormComponent';

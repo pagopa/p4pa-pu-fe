@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LangCode } from '@pagopa/mui-italia';
+import type { LangCode } from '@pagopa/mui-italia';
 import i18n from '../translations/i18n';
 
 export const useLanguage = () => {

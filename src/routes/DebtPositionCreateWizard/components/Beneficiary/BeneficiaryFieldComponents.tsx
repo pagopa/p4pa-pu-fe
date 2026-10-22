@@ -1,14 +1,7 @@
-import React, { useState } from 'react';
-import {
-  TextField,
-  InputAdornment,
-  Typography,
-  Box,
-  Button,
-  Stack
-} from '@mui/material';
+import type React from 'react';
+import { useState } from 'react';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import {
+import type {
   FieldErrors,
   FieldValues,
   Path,
@@ -28,6 +21,13 @@ import {
 } from '../../../../utils/paymentUtility';
 import DoneIcon from '@mui/icons-material/Done';
 import { validateTaxonomyCategory } from '../../../../api/transfers';
+
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
 
 let ibanValidationTimer: ReturnType<typeof setTimeout> | null = null;
 let postalIbanValidationTimer: ReturnType<typeof setTimeout> | null = null;

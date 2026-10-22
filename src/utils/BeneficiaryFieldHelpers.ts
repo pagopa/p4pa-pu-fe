@@ -1,5 +1,5 @@
-import { FieldValues, Path } from 'react-hook-form';
-import { BeneficiaryValidationContext as BaseValidationContext } from '../models/paymentTypes';
+import type { FieldValues, Path } from 'react-hook-form';
+import type { BeneficiaryValidationContext as BaseValidationContext } from '../models/paymentTypes';
 
 // Helper to build a typed path for form fields
 export function buildBeneficiaryFieldPath<

@@ -1,20 +1,22 @@
-import {
+import type {
   GridColDef,
   GridRenderCellParams,
   GridValidRowModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import { IconButton, Chip } from '@mui/material';
-import { ReadMore } from '@mui/icons-material';
 import { useNavigate, generatePath } from 'react-router';
 import { PageRoutes } from '../../routes';
-import {
+import type {
   PagedAssessmentsExtendedDTO,
   AssessmentsExtendedDTO
 } from '../../../generated/core/data-contracts';
 import CustomDataGrid from '../../components/DataGrid/CustomDataGrid';
 import { formatDate } from '../../utils/formatters';
 import { getAssessmentStatusChipProps } from '../../utils/assessmentHelpers';
+
+import IconButton from '@mui/material/IconButton';
+import Chip from '@mui/material/Chip';
+import ReadMore from '@mui/icons-material/ReadMore';
 
 type AssessmentSearchResultsDataGridProps = {
   data?: PagedAssessmentsExtendedDTO;

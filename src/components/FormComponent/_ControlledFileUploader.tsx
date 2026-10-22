@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { Control, Controller, FieldValues, Path } from 'react-hook-form';
-import FileUploader, { FileUploaderProps } from '../FileUploader/FileUploader';
+import type { Control, FieldValues, Path } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
+import type { FileUploaderProps } from '../FileUploader/FileUploader';
+import FileUploader from '../FileUploader/FileUploader';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { ErrorMessage } from './ErrorMessage';

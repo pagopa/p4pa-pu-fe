@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { ApiKeysSection } from './ApiKeysSection';
-import { OrganizationApiKey } from '@generated/core/client';
+import type { OrganizationApiKey } from '@generated/core/client';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
 
 vi.mock('../Dialogs/ApiKeyDialog', () => ({

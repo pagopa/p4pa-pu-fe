@@ -1,13 +1,15 @@
-import { Stack, Box, Container, Link } from '@mui/material';
-
-import {
+import type {
   LangSwitchProps,
-  LangSwitch,
-  FooterLegal,
   FooterLinksType,
   CompanyLinkType as MuiCompanyLinkType
 } from '@pagopa/mui-italia';
+import { LangSwitch, FooterLegal } from '@pagopa/mui-italia';
 import { LinksType } from '../../models/Links';
+
+import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Link from '@mui/material/Link';
 
 export type CompanyLinkType = MuiCompanyLinkType & {
   image?: React.ReactNode;

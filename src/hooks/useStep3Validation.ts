@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react';
-import {
+import type {
   UseFormTrigger,
   UseFormSetValue,
   UseFormGetValues
 } from 'react-hook-form';
-import { Step3FormValues } from '../models/Step3Schema';
+import type { Step3FormValues } from '../models/Step3Schema';
 import {
   validateFormFields,
   validateBusinessLogic,

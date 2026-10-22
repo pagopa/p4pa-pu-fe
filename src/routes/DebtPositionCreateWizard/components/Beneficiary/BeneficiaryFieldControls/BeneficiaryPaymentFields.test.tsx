@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Control, FieldValues } from 'react-hook-form';
+import type { Control, FieldValues } from 'react-hook-form';
 import { BeneficiaryPaymentFields } from './BeneficiaryPaymentFields';
-import { BeneficiaryValidationContext } from '../../../../../utils/BeneficiaryFieldHelpers';
+import type { BeneficiaryValidationContext } from '../../../../../utils/BeneficiaryFieldHelpers';
 
 const mockRulesForIban = {
   validate: {

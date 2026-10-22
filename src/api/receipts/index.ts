@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
-import { buildQueryParams, TelematicReceiptsFilteredRequest } from './mappings';
+import type { TelematicReceiptsFilteredRequest } from './mappings';
+import { buildQueryParams } from './mappings';
 import { parseAndLog } from '../../utils/loaders';
 import { pagedReceiptViewSchema } from '../../../generated/core/zod-schema';
 

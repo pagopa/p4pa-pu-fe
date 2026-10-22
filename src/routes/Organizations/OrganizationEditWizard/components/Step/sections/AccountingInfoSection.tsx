@@ -1,11 +1,18 @@
-import { Box, Grid, Stack, Switch, TextField, Typography } from '@mui/material';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import { Controller, Control, FieldErrors } from 'react-hook-form';
+import type { Control, FieldErrors } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { theme } from '@pagopa/mui-italia';
-import {
+import type {
   UnifiedFormData,
   UnifiedFormValues
 } from '../../../../../../models/OrganizationEditTypes';
+
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Switch from '@mui/material/Switch';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 type AccountingInfoSectionProps = {
   control: Control<UnifiedFormValues>;

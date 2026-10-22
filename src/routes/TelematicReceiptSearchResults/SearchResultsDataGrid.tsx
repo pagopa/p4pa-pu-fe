@@ -1,13 +1,12 @@
-import {
+import type {
   GridColDef,
   GridRenderCellParams,
   GridValidRowModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import { FileDownload, ReadMore } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
 import { moneyFormat } from '../../utils/formatters';
-import {
+import type {
   PagedReceiptView,
   ReceiptView
 } from '../../../generated/core/data-contracts';
@@ -19,6 +18,9 @@ import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import ActionMenu from '../../components/ActionMenu/ActionMenu';
 import CustomDataGrid from '../../components/DataGrid/CustomDataGrid';
+
+import FileDownload from '@mui/icons-material/FileDownload';
+import ReadMore from '@mui/icons-material/ReadMore';
 
 type SearchResultDataRow = ReceiptView & GridValidRowModel;
 

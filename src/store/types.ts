@@ -1,14 +1,14 @@
-import { AppState } from '../models/AppState';
-import { ConfigFE } from '../../generated/core/client';
-import { FilterValues } from '../models/Filters';
-import { OrganizationIdMemo } from '../models/Organization';
-import {
+import type { AppState } from '../models/AppState';
+import type { ConfigFE } from '../../generated/core/client';
+import type { FilterValues } from '../models/Filters';
+import type { OrganizationIdMemo } from '../models/Organization';
+import type {
   OperatorRole,
   OrganizationDTO,
   UserInfoDTO
 } from '../../generated/core/data-contracts';
-import { IdTokenPayload } from '../models/IdTokenPayload';
-import { FilterMap } from '../hooks/useMultiFilters';
+import type { IdTokenPayload } from '../models/IdTokenPayload';
+import type { FilterMap } from '../hooks/useMultiFilters';
 
 export type State = {
   [STATE.USER_INFO]: UserInfoDTO | undefined;

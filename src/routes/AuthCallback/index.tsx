@@ -1,9 +1,11 @@
-import { Box, CircularProgress } from '@mui/material';
 import { useLoaderData, useNavigate } from 'react-router';
-import { postTokenOrError } from '../../api/token';
+import type { postTokenOrError } from '../../api/token';
 import { setIdToken } from '../../store/IdTokenStore';
 import { useEffect } from 'react';
 import { PageRoutes } from '../';
+
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function AuthCallback() {
   const result = useLoaderData() as Awaited<

@@ -1,6 +1,6 @@
-import { Button } from '@mui/material';
 import PreviewIcon from '@mui/icons-material/Preview';
 import { t } from 'i18next';
+import Button from '@mui/material/Button';
 
 type PreviewButtonProps = {
   disabled?: boolean;

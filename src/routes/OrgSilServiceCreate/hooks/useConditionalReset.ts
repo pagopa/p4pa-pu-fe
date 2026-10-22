@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { UseFormResetField, UseFormWatch } from 'react-hook-form';
-import { OrgSilServiceFormData } from '../schema';
+import type { UseFormResetField, UseFormWatch } from 'react-hook-form';
+import type { OrgSilServiceFormData } from '../schema';
 import {
   BASIC_AUTH_FIELDS,
   JWT_AUTH_FIELDS,

@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { useStep3FormHandlers } from './useStep3FormHandlers';
-import { Step3FormValues } from '../models/Step3Schema';
+import type { Step3FormValues } from '../models/Step3Schema';
 import { DebtPositionTypeEnum } from '../models/DebtPositionType';
 import { PaymentOptionType } from '../../generated/core/data-contracts';
 import { triggerValidationForAllBeneficiaries } from '../utils/paymentUtility';

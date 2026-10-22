@@ -1,7 +1,8 @@
 import { setupInterceptors } from '../interceptors';
-import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { Client } from '../../models/Client';
-import {
+import type { Mock } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { Client } from '../../models/Client';
+import type {
   AxiosError,
   AxiosResponse,
   InternalAxiosRequestConfig,

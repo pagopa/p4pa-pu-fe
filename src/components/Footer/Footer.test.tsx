@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import { Footer } from '../Footer';
-import { FooterLinksType } from '@pagopa/mui-italia';
+import type { FooterLinksType } from '@pagopa/mui-italia';
 
 describe('Footer', () => {
   const companyLink = {

@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Step1GeneralConfiguration from './Step1GeneralConfiguration';
-import { Step1Data } from '../../../../models/DebtPositionType';
+import type { Step1Data } from '../../../../models/DebtPositionType';
 import { useStore } from '../../../../store/GlobalStore';
 import { useTranslation } from 'react-i18next';
 

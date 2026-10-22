@@ -1,10 +1,10 @@
-import React from 'react';
+import type React from 'react';
 import { vi } from 'vitest';
 import { render, screen } from '../../../../__tests__/renderers';
 import { Step1Configuration } from '.';
 import { StoreProvider } from '../../../../store/GlobalStore';
 import { FormProvider, useForm } from 'react-hook-form';
-import { DebtTypeOrgForm } from '../../types';
+import type { DebtTypeOrgForm } from '../../types';
 import { setOrganizationId } from '../../../../store/OrganizationIdStore';
 import { fillField } from '../../../../__tests__/utils'; // adjust path accordingly
 

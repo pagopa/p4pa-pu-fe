@@ -1,18 +1,19 @@
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { IconButton } from '@mui/material';
-import { GridColDef } from '@mui/x-data-grid';
+import type { GridColDef } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-
 import CustomDataGrid from '@core/components/DataGrid/CustomDataGrid';
-import {
+
+import type {
   OrgSubUnit,
-  OrgSubUnitStatus,
   PagedOrgSubUnit
 } from '@generated/core/data-contracts';
+import { OrgSubUnitStatus } from '@generated/core/data-contracts';
 import { formatDate } from '@core/utils/formatters';
-import { MIChip, MIChipProps } from '@pagopa/mui-italia';
+import type { MIChipProps } from '@pagopa/mui-italia';
+import { MIChip } from '@pagopa/mui-italia';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '@core/routes';
+import IconButton from '@mui/material/IconButton';
 
 type SubUnitsDataGridProps = {
   data: PagedOrgSubUnit;

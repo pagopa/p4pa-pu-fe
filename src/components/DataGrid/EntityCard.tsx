@@ -1,4 +1,6 @@
-import { Typography, Stack, Card } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
+import Card from '@mui/material/Card';
 
 export type EntityRowDetail = {
   label: string;

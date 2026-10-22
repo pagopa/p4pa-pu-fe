@@ -1,11 +1,12 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor, act } from '../__tests__/renderers';
 import utils from '../utils';
+import type { CreateDebtPositionTypeOrg } from './debtPositionsTypeOrg';
 import {
   getDebtPositionTypeOrgs,
   getDebtPositionTypeOrgById,
   createDebtPositionTypeOrg,
-  CreateDebtPositionTypeOrg,
   updateFlagActiveDebtPositionTypeOrg
 } from './debtPositionsTypeOrg';
 import { parseAndLog } from '../utils/loaders';

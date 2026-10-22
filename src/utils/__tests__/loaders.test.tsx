@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import type { OrganizationDTO } from '../../../generated/core/data-contracts';
 import {
   OperatorRole,
-  OrganizationDTO,
   OrganizationStatus
 } from '../../../generated/core/data-contracts';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { renderHook, waitFor } from '../../__tests__/renderers';
 import utils from '../index';
 import loaders from '../loaders';
