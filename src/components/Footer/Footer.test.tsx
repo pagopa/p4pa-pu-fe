@@ -1,5 +1,4 @@
 import { describe, it, expect, vi } from 'vitest';
-import 'vitest-dom/extend-expect';
 import { render, screen } from '../../__tests__/renderers';
 import { Footer } from '../Footer';
 import { FooterLinksType } from '@pagopa/mui-italia';

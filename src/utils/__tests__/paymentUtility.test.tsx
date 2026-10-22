@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { createRef, MutableRefObject } from 'react';
 import { FieldErrors, FieldValues } from 'react-hook-form';
 import type { BeneficiaryValidationContext } from '../../models/paymentTypes';
@@ -33,9 +33,6 @@ import {
 } from '../paymentUtility';
 import { DebtPositionTypeEnum } from '../../models/DebtPositionType';
 
-// Remove any mocks for getErrorData before tests
-vi.unmock('../paymentUtility');
-
 describe('isEmpty', () => {
   it('should return true for non-string values', () => {
     expect(isEmpty(null)).toBe(true);
@@ -69,12 +66,6 @@ describe('buildFieldPath', () => {
 });
 
 describe('getErrorData', () => {
-  // Make sure there are no active mocks for getErrorData before starting tests
-  beforeEach(() => {
-    vi.resetAllMocks();
-    vi.unmock('../paymentUtility');
-  });
-
   it('should handle standard case correctly', () => {
     // Create a structured error object
     const errors = {

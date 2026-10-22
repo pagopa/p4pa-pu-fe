@@ -176,13 +176,13 @@ describe('Request interceptor behavior', () => {
     expect(result.headers['Authorization']).toBe(`Bearer ${accessToken}`);
   });
 
-  it('should handle request error', () => {
+  it('should handle request error', async () => {
     setupInterceptors(client);
     const errorHandler = (client.instance.interceptors.request.use as Mock).mock
       .calls[0][1];
     const error = new Error('Request error');
 
-    expect(errorHandler(error)).rejects.toBe(error);
+    await expect(errorHandler(error)).rejects.toBe(error);
   });
 });
 

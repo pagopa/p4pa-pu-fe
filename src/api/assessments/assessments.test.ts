@@ -1,7 +1,7 @@
 import utils from '../../utils';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '../../__tests__/renderers';
+import { act, renderHook, waitFor } from '../../__tests__/renderers';
 import {
   createAssessment,
   getAssessments,
@@ -735,7 +735,11 @@ describe('getAssessmentsRegistries', () => {
       getAssessmentsRegistries({ organizationId })
     );
 
-    expect(result.current.mutateAsync(query)).rejects.toThrow(errorMock);
+    await act(async () => {
+      await expect(result.current.mutateAsync(query)).rejects.toThrow(
+        errorMock
+      );
+    });
 
     await waitFor(() => {
       expect(result.current.isError).toBe(true);
@@ -830,7 +834,7 @@ describe('getAssessmentsRegistry', () => {
 
     expect(result.current.data).toBeNull();
     expect(apiMock).toHaveBeenCalledWith(organizationId, assessmentRegistryId);
-    expect(mockParseAndLog).toBeCalledWith(expect.anything(), null);
+    expect(mockParseAndLog).toHaveBeenCalledWith(expect.anything(), null);
   });
 
   it('should handle API errors correctly', async () => {
@@ -1154,7 +1158,7 @@ describe('updateAssessmentsRegistry', () => {
       assessmentRegistryId,
       assessmentRegistry
     );
-    expect(mockParseAndLog).toBeCalledWith(expect.anything(), null);
+    expect(mockParseAndLog).toHaveBeenCalledWith(expect.anything(), null);
   });
 
   it('should not update registry if mutate is not called', () => {

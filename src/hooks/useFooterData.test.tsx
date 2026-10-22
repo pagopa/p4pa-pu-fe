@@ -23,7 +23,9 @@ describe('useFooterData', () => {
   setConfigFe(mockConfigFe);
 
   beforeEach(() => {
-    global.Image = vi.fn(() => mockImage) as unknown as typeof global.Image;
+    global.Image = vi.fn(function () {
+      return mockImage;
+    }) as unknown as typeof global.Image;
   });
 
   afterEach(() => {

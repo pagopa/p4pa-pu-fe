@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { ChipOwnProps } from '@mui/material/Chip';
 import {
   AssessmentStatus,
@@ -8,7 +8,7 @@ import {
 
 const testValidStatus = (
   status: AssessmentStatus,
-  mockTranslationFunction: ReturnType<typeof vi.fn>
+  mockTranslationFunction: (key: string) => string
 ): void => {
   const result = getAssessmentStatusChipProps(status, mockTranslationFunction);
   expect(result).toHaveProperty('label');
@@ -19,7 +19,7 @@ const testValidStatus = (
 
 const testInvalidStatus = (
   status: string,
-  mockTranslationFunction: ReturnType<typeof vi.fn>
+  mockTranslationFunction: (key: string) => string
 ): void => {
   const result = getAssessmentStatusChipProps(status, mockTranslationFunction);
   expect(result).toEqual({
@@ -28,12 +28,12 @@ const testInvalidStatus = (
   });
 };
 
-const createEmptyTranslationFunction = (): ReturnType<typeof vi.fn> => {
-  return vi.fn(() => '');
+const createEmptyTranslationFunction = (): Mock<(key: string) => string> => {
+  return vi.fn<(key: string) => string>(() => '');
 };
 
-const createErrorTranslationFunction = (): ReturnType<typeof vi.fn> => {
-  return vi.fn(() => {
+const createErrorTranslationFunction = (): Mock<(key: string) => string> => {
+  return vi.fn<(key: string) => string>(() => {
     throw new Error('Translation error');
   });
 };
