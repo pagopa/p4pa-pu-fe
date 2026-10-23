@@ -78,6 +78,23 @@ export const organizationsRoutes = [
           }
         }
       },
+            {
+        id: 'EDIT_INTEGRATION',
+        element: (
+          <AdminRouteGuard>
+            <AddIntegration mode="edit" />
+          </AdminRouteGuard>
+        ),
+        path: `:organizationId/integrations/edit/:IntegrationType`,
+        handle: {
+          backButton: true,
+          backButtonText: 'commons.exit',
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
+        }
+      },
       {
         id: 'ORGANIZATIONS_DETAIL',
         element: (

@@ -6,6 +6,51 @@ import type { AddIntegrationFormData } from '..';
 import PagoPAIntegration from './pagopa';
 
 describe('PagoPAIntegration', () => {
+  it.each([
+    OrganizationApiKeyType.IO,
+    OrganizationApiKeyType.GENERATE_NOTICE
+  ] as const)(
+    'displays the initial %s as read-only without available options',
+    async (keyType) => {
+      const onSubmit = vi.fn();
+      const Parent = () => {
+        const { control, handleSubmit } = useForm<AddIntegrationFormData>({
+          defaultValues: {
+            PAGOPA_PRODUCT: { keyType, apiKey: 'initial-key' }
+          }
+        });
+        return (
+          <form noValidate onSubmit={handleSubmit(onSubmit)}>
+            <PagoPAIntegration
+              control={control}
+              availableApiKeys={[]}
+              readOnly
+            />
+            <button type="submit">Submit</button>
+          </form>
+        );
+      };
+
+      render(<Parent />);
+      const select = screen.getByRole('combobox');
+      expect(select).toHaveTextContent(keyType);
+      fireEvent.mouseDown(select);
+      fireEvent.keyDown(select, { key: 'ArrowDown' });
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+
+      fireEvent.change(screen.getByRole('textbox'), {
+        target: { value: 'updated-key' }
+      });
+      fireEvent.click(screen.getByText('Submit'));
+      await waitFor(() => {
+        expect(onSubmit).toHaveBeenCalled();
+      });
+      expect(onSubmit.mock.calls[0][0]).toEqual({
+        PAGOPA_PRODUCT: { keyType, apiKey: 'updated-key' }
+      });
+    }
+  );
+
   it('binds the IO service switch to form state and hides it for notice products', async () => {
     const onSubmit = vi.fn();
     const Parent = () => {

@@ -1010,6 +1010,7 @@
     "remove": "Rimuovi",
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
+    "requiredFieldDescriptionShort": "* Campo obbligatorio",
     "results": "Risultati",
     "roles": {
       "ROLE_ADMIN": "Amministratore",
@@ -2493,6 +2494,10 @@
           "message": "Si è verificato un errore durante il salvataggio dell'integrazione."
         }
       }
+    },
+    "edit": {
+      "title": "Modifica integrazione",
+      "subtitle": "Modifica i campi disponibili e salva le modifiche."
     }
   },
   "organizations": {

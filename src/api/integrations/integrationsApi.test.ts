@@ -22,6 +22,16 @@ const organizationId = 33;
 const keyType = OrganizationApiKeyType.IO;
 
 describe('getOrganizationApiKeys', () => {
+  it('does not fetch when disabled', () => {
+    const apiMock = vi.spyOn(utils.apiClient.bff, 'getOrganizationApiKeys');
+    const { result } = renderHook(() =>
+      getOrganizationApiKeys(organizationId, false)
+    );
+
+    expect(result.current.fetchStatus).toBe('idle');
+    expect(apiMock).not.toHaveBeenCalled();
+  });
+
   it('returns data correctly', async () => {
     const dataMock = [createMock(organizationApiKeySchema)];
     const apiMock = vi
