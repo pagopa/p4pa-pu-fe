@@ -68,7 +68,9 @@ export function useSearch<
       ...trimmedFilters,
       [`${id}page`]: null,
       [`${id}size`]: null,
-      [`${id}sort`]: null
+      [`${id}sort`]: null,
+      // FIXME: don't merge this change
+      [`uselessStringTest`]: null
     });
     utils.URI.set(params, { replace: true });
     query.mutateAsync({
