@@ -11,7 +11,7 @@ import { PageRoutes } from '../../routes';
 import ReceiptDetail from '../../components/ReceiptDetail';
 import { useReceiptDetail } from '../../hooks/useReceiptDetail';
 import { useEffect, useState } from 'react';
-import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
+import type { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
 import { setCustomBreadcrumbsItems } from '../../store/AppStateStore';
 import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/assessmentDetail';
 

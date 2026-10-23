@@ -1,25 +1,24 @@
-import { Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { ButtonNaked } from '@pagopa/mui-italia';
-import { FilterAlt } from '@mui/icons-material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
-import {
-  FilterCategory,
-  FilterMap,
-  useMultiFilters
-} from '../../hooks/useMultiFilters';
+import type { FilterMap } from '../../hooks/useMultiFilters';
+import { FilterCategory, useMultiFilters } from '../../hooks/useMultiFilters';
 import { FilterDrawer } from '../Drawer/FilterDrawer';
-import { BaseFilterValues } from '../../models/Filters';
-import { PagedTreasuredClassificationExtendedDTO } from '../../../generated/core/data-contracts';
+import type { BaseFilterValues } from '../../models/Filters';
+import type { PagedTreasuredClassificationExtendedDTO } from '../../../generated/core/data-contracts';
 import DownloadIcon from '@mui/icons-material/Download';
 import { getClassifications } from '../../api/classifications';
 import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+
+import Grid from '@mui/material/Grid';
+import { useTheme } from '@mui/material/styles';
+import FilterAlt from '@mui/icons-material/FilterAlt';
 
 export type LocationState = {
   category: string;

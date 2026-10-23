@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import Step1EntityProfile from './Step1EntityProfile';
-import { OrganizationEditStep1Data } from '../../../../../models/OrganizationEditTypes';
+import type { OrganizationEditStep1Data } from '../../../../../models/OrganizationEditTypes';
 import { i18nTestSetup } from '../../../../../__tests__/i18nTestSetup';
 import * as fileValidation from '../../../../../utils/filevalidation';
 

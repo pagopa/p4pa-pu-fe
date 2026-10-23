@@ -5,7 +5,7 @@ import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
 import { buildQueryParams } from './mappings';
 import { ReceiptOriginType } from '../../../generated/core/data-contracts';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { renderHook, waitFor } from '../../__tests__/renderers';
 
 vi.mock('../../utils', () => ({

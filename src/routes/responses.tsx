@@ -1,4 +1,4 @@
-import { RouteHandleObject } from '../models/Routes';
+import type { RouteHandleObject } from '../models/Routes';
 import GenericErrorPage from './UtilityPages/genericError';
 import SuccessPage from './UtilityPages/success';
 

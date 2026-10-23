@@ -1,17 +1,6 @@
-import React, { useEffect } from 'react';
-import {
-  Box,
-  Divider,
-  Grid,
-  IconButton,
-  List,
-  Typography,
-  useTheme,
-  Tooltip,
-  useMediaQuery,
-  type Theme,
-  CircularProgress
-} from '@mui/material';
+import type React from 'react';
+import { useEffect } from 'react';
+import { type Theme } from '@mui/material';
 import { SidebarMenuItem } from './SidebarMenuItem';
 import { useTranslation } from 'react-i18next';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -28,15 +17,26 @@ import DomainIcon from '@mui/icons-material/Domain';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import { sidebarStyles } from './sidebar.styles';
 import { PageRoutes } from '../../routes';
-import { ISidebarMenuItem } from '../../models/SidebarMenuItem';
+import type { ISidebarMenuItem } from '../../models/SidebarMenuItem';
 import useCollapseMenu from '../../hooks/useCollapseMenu';
 import { useStore } from '../../store/GlobalStore';
 import utils from '../../utils';
-import { Dns } from '@mui/icons-material';
 import { generatePath } from 'react-router';
 
 import { useGenerateSupersetUrl } from '@core/api/statistics';
 import { extensions } from '@extra/index';
+
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import Tooltip from '@mui/material/Tooltip';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import CircularProgress from '@mui/material/CircularProgress';
+import Dns from '@mui/icons-material/Dns';
 
 export const Sidebar: React.FC = () => {
   const { t } = useTranslation();

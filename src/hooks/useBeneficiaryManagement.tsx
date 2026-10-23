@@ -4,12 +4,13 @@
  */
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFieldArray, Path, FieldValues, PathValue } from 'react-hook-form';
+import type { Path, FieldValues, PathValue } from 'react-hook-form';
+import { useFieldArray } from 'react-hook-form';
 import {
   createBeneficiaryValidators,
   createBeneficiaryFieldValidators
 } from '../utils/fieldValidation';
-import {
+import type {
   Beneficiary,
   BeneficiaryManagementProps,
   BeneficiaryManagementResult

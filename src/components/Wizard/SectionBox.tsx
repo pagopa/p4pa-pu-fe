@@ -1,5 +1,7 @@
-import { Stack, Typography } from '@mui/material';
-import { PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
+
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 type SectionBoxProps = {
   title: string;

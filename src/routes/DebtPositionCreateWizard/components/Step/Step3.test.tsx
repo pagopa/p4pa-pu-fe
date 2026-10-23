@@ -2,12 +2,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '../../../../__tests__/renderers';
 import userEvent from '@testing-library/user-event';
 import Step3 from './Step3';
-import {
+import type {
   Step3Data,
   Step1Data,
-  Step2Data,
-  DebtPositionTypeEnum
+  Step2Data
 } from '../../../../models/DebtPositionType';
+import { DebtPositionTypeEnum } from '../../../../models/DebtPositionType';
 import type { Beneficiary, Installment } from '../../../../models/paymentTypes';
 
 vi.mock('../../../../hooks/useStep3ApiOperations', () => ({

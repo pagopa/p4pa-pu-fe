@@ -1,6 +1,5 @@
 import AddIcon from '@mui/icons-material/Add';
 import TuneIcon from '@mui/icons-material/Tune';
-import { Box, Stack, Tab, Tabs } from '@mui/material';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
@@ -22,6 +21,11 @@ import {
 } from '@core/api/integrations';
 import { useHashParamsListener } from '@core/hooks/useHashParamsListener';
 import utils from '@core/utils';
+
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 
 export const I18N_PREFIX = { keyPrefix: 'organizations.integrations' };
 

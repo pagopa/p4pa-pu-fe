@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
-import { buildQueryParams, TreasuriesFilteredRequest } from './mappings';
+import type { TreasuriesFilteredRequest } from './mappings';
+import { buildQueryParams } from './mappings';
 
 export const getTreasuries = ({ organizationId }: { organizationId: number }) =>
   useMutation({

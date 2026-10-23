@@ -1,11 +1,13 @@
-import { Controller, Control, FieldErrors } from 'react-hook-form';
+import type { Control, FieldErrors } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Alert from '@mui/material/Alert';
 import { FormComponent } from '../../../../../components/FormComponent';
-import { DebtTypeOrgForm, SpontaneousMode } from '../../../types';
+import type { DebtTypeOrgForm } from '../../../types';
+import { SpontaneousMode } from '../../../types';
 
 type SpontaneousModeSelectorProps = {
   control: Control<DebtTypeOrgForm>;

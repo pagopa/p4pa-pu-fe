@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useFooterData } from './useFooterData';
-import { ConfigFE } from '../../generated/core/client';
+import type { ConfigFE } from '../../generated/core/client';
 import { render, renderHook, act } from '../__tests__/renderers';
 import { setConfigFe } from '../store/ConfigFeStore';
 import { PageRoutes } from '../routes';
@@ -23,7 +23,9 @@ describe('useFooterData', () => {
   setConfigFe(mockConfigFe);
 
   beforeEach(() => {
-    global.Image = vi.fn(() => mockImage) as unknown as typeof global.Image;
+    global.Image = vi.fn(function () {
+      return mockImage;
+    }) as unknown as typeof global.Image;
   });
 
   afterEach(() => {

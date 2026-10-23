@@ -5,10 +5,10 @@ import {
   getOrganizationsByBrokerIdAndFilters,
   updateOrganization
 } from './';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
 import { randomUUID } from 'node:crypto';
-import { OrganizationsFilteredRequest } from './mappings';
+import type { OrganizationsFilteredRequest } from './mappings';
 import {
   OrganizationStatus,
   OrganizationAdditionalLanguage

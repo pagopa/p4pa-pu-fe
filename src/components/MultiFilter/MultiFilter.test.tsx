@@ -1,13 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent } from '../../__tests__/renderers';
 import MultiFilter from './MultiFilter';
-import { FilterMap } from '../../hooks/useMultiFilters';
-import { COMPONENT_TYPE, FilterItem } from '../FilterContainer/FilterContainer';
+import type { FilterMap } from '../../hooks/useMultiFilters';
+import type { FilterItem } from '../FilterContainer/FilterContainer';
+import { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
+import type { KeyofFilterMap } from '../../store/FilterStore';
 import {
   selectedFilters,
   setSelectedFilters,
-  setFilterValues,
-  KeyofFilterMap
+  setFilterValues
 } from '../../store/FilterStore';
 
 type SelectOption = {

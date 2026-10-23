@@ -5,8 +5,9 @@ import {
   orgSilServiceDecryptedDTOSchema,
   pagedOrgSilServiceViewSchema
 } from '../../../generated/core/zod-schema';
-import { buildQueryParams, OrgSilServicesFilteredRequest } from './mappings';
-import { OrgSilServiceDecryptedDTO } from '../../../generated/core/client';
+import type { OrgSilServicesFilteredRequest } from './mappings';
+import { buildQueryParams } from './mappings';
+import type { OrgSilServiceDecryptedDTO } from '../../../generated/core/client';
 
 const getOrgSilServices = ({ organizationId }: { organizationId: number }) =>
   useMutation({

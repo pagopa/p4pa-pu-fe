@@ -1,7 +1,7 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '../../__tests__/renderers';
 import AssessmentSearchResultsDataGrid from './AssessmentSearchResultsDataGrid';
-import {
+import type {
   PagedAssessmentsExtendedDTO,
   AssessmentsExtendedDTO
 } from '../../../generated/core/data-contracts';

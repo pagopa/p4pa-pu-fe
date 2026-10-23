@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
+import type React from 'react';
 import {
   render,
   screen,
@@ -7,17 +7,15 @@ import {
   waitFor
 } from '../../../../../__tests__/renderers';
 import { useForm, FormProvider, useFormContext } from 'react-hook-form';
-import {
-  OperatorsSelection,
-  UserInfoDTO
-} from '../../../../../../generated/core/data-contracts';
+import type { UserInfoDTO } from '../../../../../../generated/core/data-contracts';
+import { OperatorsSelection } from '../../../../../../generated/core/data-contracts';
 import * as api from '../../../../../api/debtPositionTypeOrgOperators';
 import { OperatorSelector } from './OperatorSelector';
 import { setUserInfo } from '../../../../../store/UserInfoStore';
 import { expect, vi } from 'vitest';
 import { useSearch } from '../../../../../hooks/useSearch';
 import { useParams } from 'react-router';
-import { DebtTypeOrgForm } from '../../../types';
+import type { DebtTypeOrgForm } from '../../../types';
 
 type OperatorFixture = {
   mappedExternalUserId?: string;

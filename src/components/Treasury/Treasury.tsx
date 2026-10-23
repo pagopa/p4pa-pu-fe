@@ -1,7 +1,5 @@
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
-import { FileUpload } from '@mui/icons-material';
-import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { PageRoutes } from '../../routes';
@@ -11,6 +9,8 @@ import { useMultiFilters, FilterCategory } from '../../hooks/useMultiFilters';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { useAppNavigate } from '../../hooks/useAppNavigation';
 import { shouldShowGeneralError } from '../../utils/filtersValidation';
+import Grid from '@mui/material/Grid';
+import FileUpload from '@mui/icons-material/FileUpload';
 
 export const Treasury = () => {
   const { t } = useTranslation();

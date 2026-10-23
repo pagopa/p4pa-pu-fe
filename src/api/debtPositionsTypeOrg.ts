@@ -1,12 +1,12 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
-import { SaveDebtPositionTypeOrgDTO } from '../../generated/core/data-contracts';
+import type { SaveDebtPositionTypeOrgDTO } from '../../generated/core/data-contracts';
 import {
   debtPositionTypeOrgSchema,
   saveDebtPositionTypeOrgDTOSchema
 } from '../../generated/core/zod-schema';
 import { parseAndLog } from '../utils/loaders';
-import { AxiosError } from 'axios';
+import type { AxiosError } from 'axios';
 
 export const getDebtPositionTypeOrgs = ({
   organizationId,

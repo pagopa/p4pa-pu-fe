@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { UseMutationResult } from '@tanstack/react-query';
+import type { UseMutationResult } from '@tanstack/react-query';
 import utils from '../utils';
 import { decodeHash, useHashParamsListener } from './useHashParamsListener';
 import { trimStringValues } from '../utils/textUtils';

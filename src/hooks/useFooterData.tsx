@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from './useLanguage';
 import { Markdown } from '../components/Markdown';
-import { FooterLinksType } from '@pagopa/mui-italia';
-import { CompanyLinkType } from '../components/Footer';
+import type { FooterLinksType } from '@pagopa/mui-italia';
+import type { CompanyLinkType } from '../components/Footer';
 import { useEffect, useState } from 'react';
 import { useStore } from '../store/GlobalStore';
 import { languages } from '@core/translations/languages';

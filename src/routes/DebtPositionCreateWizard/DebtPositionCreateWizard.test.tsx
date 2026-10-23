@@ -1,13 +1,14 @@
 import { render, screen, fireEvent, waitFor } from '../../__tests__/renderers';
-import { vi, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { vi } from 'vitest';
 import DebtPositionCreateWizard from './DebtPositionCreateWizard';
-import { StepperContainerProps } from '../../components/Stepper';
+import type { StepperContainerProps } from '../../components/Stepper';
 import { useNavigate, useLocation } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import debtPositions from '../../api/debtPositions';
 import utils from '../../utils';
+import type { DebtPositionDetailDTO } from '../../../generated/core/data-contracts';
 import {
-  DebtPositionDetailDTO,
   PersonEntityType,
   PaymentOptionType,
   DebtPositionStatus

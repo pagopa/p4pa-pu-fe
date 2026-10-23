@@ -1,28 +1,25 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ZodError, z } from 'zod';
+import type { z } from 'zod';
+import { ZodError } from 'zod';
 import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import type { CreateDebtPositionTypeOrg } from '../../../api/debtPositionsTypeOrg';
 import {
   createDebtPositionTypeOrg,
-  CreateDebtPositionTypeOrg,
   updateDebtPositionTypeOrg,
   getDebtPositionTypeOrgById
 } from '../../../api/debtPositionsTypeOrg';
-import {
-  DebtTypeOrgForm,
-  FormBalanceCostList,
-  PaymentMethodOption,
-  SpontaneousMode
-} from '../types';
+import type { DebtTypeOrgForm, FormBalanceCostList } from '../types';
+import { PaymentMethodOption, SpontaneousMode } from '../types';
 import { useApiOperations } from './useApiOperations';
 import { useFormSchemas } from './useFormSchemas';
 import { useStore } from '../../../store/GlobalStore';
 import utils from '../../../utils';
 import { useDebtTypeOrgId } from '../../../hooks/useDebtTypeOrgId';
 import { useTranslation } from 'react-i18next';
-import { debtPositionTypeOrgDTOSchema } from '@generated/core/zod-schema';
+import type { debtPositionTypeOrgDTOSchema } from '@generated/core/zod-schema';
+import type { DebtPositionTypeOrgBalanceCostDTO } from '@generated/core/data-contracts';
 import {
-  DebtPositionTypeOrgBalanceCostDTO,
   DebtPositionTypeOrgBalanceCostType,
   OperatorsSelection
 } from '@generated/core/data-contracts';

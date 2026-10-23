@@ -1,10 +1,10 @@
-import {
+import type {
   FieldValues,
   Path,
   PathValue,
-  UseFormReturn,
-  useWatch
+  UseFormReturn
 } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { useEffect, useRef } from 'react';
 
 export type FormDependencies<T extends FieldValues> = {

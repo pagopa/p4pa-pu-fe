@@ -1,9 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import SearchIcon from '@mui/icons-material/Search';
-import {
-  COMPONENT_TYPE,
-  FilterItem
-} from '../components/FilterContainer/FilterContainer';
+import type { FilterItem } from '../components/FilterContainer/FilterContainer';
+import { COMPONENT_TYPE } from '../components/FilterContainer/FilterContainer';
 
 /**
  * Hook for the configuration of the filters of the Client SIL page

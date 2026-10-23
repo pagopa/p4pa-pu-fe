@@ -1,14 +1,12 @@
-import { KeyboardArrowDown } from '@mui/icons-material';
-import {
-  Accordion,
-  AccordionSummary,
-  Stack,
-  Typography,
-  useTheme
-} from '@mui/material';
-import DetailContainer, {
-  DetailSectionProps
-} from '../DetailContainer/DetailContainer';
+import type { DetailSectionProps } from '../DetailContainer/DetailContainer';
+import DetailContainer from '../DetailContainer/DetailContainer';
+
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 
 type Props = {
   idTitle?: number;

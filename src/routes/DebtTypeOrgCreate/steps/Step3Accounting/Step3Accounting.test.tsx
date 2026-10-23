@@ -3,7 +3,7 @@ import { render, screen } from '../../../../__tests__/renderers';
 import { Step3Accounting } from '.';
 import { StoreProvider } from '../../../../store/GlobalStore';
 import { FormProvider, useForm } from 'react-hook-form';
-import { DebtTypeOrgForm } from '../../types';
+import type { DebtTypeOrgForm } from '../../types';
 
 vi.mock('./components/BudgetItems', () => ({
   BudgetItems: ({ edit }: { edit?: boolean }) => (

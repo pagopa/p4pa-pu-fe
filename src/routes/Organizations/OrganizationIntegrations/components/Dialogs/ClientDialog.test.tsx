@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { PdndClientDialog } from './ClientDialog';
 import { deletePdndClient } from '@core/api/integrations';
-import { PdndClientNoSecretDTO } from '@generated/core/data-contracts';
+import type { PdndClientNoSecretDTO } from '@generated/core/data-contracts';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
 import { copyWithFeedback } from '@core/utils/clipboard';
 import notify from '@core/utils/notify';

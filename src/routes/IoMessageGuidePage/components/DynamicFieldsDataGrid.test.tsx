@@ -1,4 +1,4 @@
-import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
+import { i18nTestSetup } from '@core/__tests__/i18nTestSetup';
 import {
   render,
   screen,
@@ -36,13 +36,15 @@ const mockData = [
   }
 ];
 
+const writeText = vi.fn<(text: string) => Promise<void>>();
+
 describe('DynamicFieldsDataGrid', () => {
   beforeEach(() => {
     i18nTestSetup(translations);
-    Object.assign(navigator, {
-      clipboard: {
-        writeText: vi.fn().mockResolvedValue(undefined)
-      }
+    writeText.mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      configurable: true
     });
   });
 
@@ -84,13 +86,12 @@ describe('DynamicFieldsDataGrid', () => {
   it('should copy tag to clipboard when copy button is clicked', async () => {
     render(<DynamicFieldsDataGrid data={mockData} />);
 
-    const copyButtons = screen.getAllByRole('button');
-    fireEvent.click(copyButtons[0]);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Copia tag %debitore_nomeCompleto%' })
+    );
 
     await waitFor(() => {
-      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-        '%debitore_nomeCompleto%'
-      );
+      expect(writeText).toHaveBeenCalledWith('%debitore_nomeCompleto%');
     });
   });
 

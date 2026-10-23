@@ -1,10 +1,10 @@
-import { Stack } from '@mui/material';
-import { Control } from 'react-hook-form';
+import type { Control } from 'react-hook-form';
 import { FormComponent } from '../../../components/FormComponent';
-import { OrgSilServiceFormData } from '../schema';
+import type { OrgSilServiceFormData } from '../schema';
 import { AUTH_CONFIG_OPTIONS } from '../utils/orgSilServiceFormUtils';
 import { BasicAuthFields } from './BasicAuthFields';
 import { JwtAuthFields } from './JwtAuthFields';
+import Stack from '@mui/material/Stack';
 
 type LegacyAuthConfigurationProps = {
   control: Control<OrgSilServiceFormData>;

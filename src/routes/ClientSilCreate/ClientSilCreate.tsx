@@ -5,7 +5,6 @@ import { FormProvider, useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AxiosError } from 'axios';
-import { Stack, Box, Typography, TextField } from '@mui/material';
 import BookIcon from '@mui/icons-material/MenuBook';
 import WizardStepWrapper from '../../components/Wizard/WizardStepWrapper';
 import SectionBox from '../../components/Wizard/SectionBox';
@@ -15,6 +14,11 @@ import { createClientSil } from '../../api/clientSil';
 import { PageRoutes } from '../../routes';
 import utils from '../../utils';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
+
+import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
 
 /**
  * Schema of validation for the creation of a Client SIL

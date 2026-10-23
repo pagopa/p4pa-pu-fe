@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { BeneficiaryIdentityFields } from './BeneficiaryIdentityFields';
-import { Control, FieldValues } from 'react-hook-form';
-import { BeneficiaryValidationContext } from '../../../../../utils/BeneficiaryFieldHelpers';
+import type { Control, FieldValues } from 'react-hook-form';
+import type { BeneficiaryValidationContext } from '../../../../../utils/BeneficiaryFieldHelpers';
 import * as BeneficiaryFieldHelpers from '../../../../../utils/BeneficiaryFieldHelpers';
 
 // Mock dependencies

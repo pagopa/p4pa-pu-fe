@@ -1,6 +1,7 @@
-import React from 'react';
-import { Tooltip, Chip } from '@mui/material';
-import { ChipProps } from '@mui/material/Chip';
+import type React from 'react';
+import type { ChipProps } from '@mui/material/Chip';
+import Chip from '@mui/material/Chip';
+import Tooltip from '@mui/material/Tooltip';
 
 type ChipTruncateTooltipProps = ChipProps & {
   tooltipLabel?: string;

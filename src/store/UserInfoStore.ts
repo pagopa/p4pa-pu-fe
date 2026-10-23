@@ -1,5 +1,5 @@
 import { signal } from '@preact/signals-react';
-import { UserInfoDTO } from '../../generated/core/data-contracts';
+import type { UserInfoDTO } from '../../generated/core/data-contracts';
 
 // Initialize the persistent store
 export const userInfoState = signal<UserInfoDTO | undefined>();

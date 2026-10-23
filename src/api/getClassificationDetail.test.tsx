@@ -1,5 +1,5 @@
 import utils from '../utils';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
 import { getClassificationDetail } from './getClassificationDetail';
 import { renderHook, waitFor } from '../__tests__/renderers';

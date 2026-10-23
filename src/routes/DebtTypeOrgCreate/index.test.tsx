@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DebtTypeOrgCreate } from './index';
 import { useStepperLogic } from '../../hooks/useStepperLogic';
 import { useDebtTypeOrgForm } from './hooks/useDebtTypeOrgForm';

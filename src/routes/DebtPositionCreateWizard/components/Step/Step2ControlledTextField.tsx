@@ -1,6 +1,9 @@
-import { Controller, Control, FieldErrors } from 'react-hook-form';
-import { TextField, TextFieldProps } from '@mui/material';
-import { Step2Data } from '../../../../models/DebtPositionType';
+import type { Control, FieldErrors } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
+import type { Step2Data } from '../../../../models/DebtPositionType';
+
+import type { TextFieldProps } from '@mui/material/TextField';
+import TextField from '@mui/material/TextField';
 
 type Step2DataField = keyof Step2Data;
 type NestedFieldName = `${Step2DataField}.value`;

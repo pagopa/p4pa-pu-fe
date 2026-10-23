@@ -1,6 +1,6 @@
 import { signal } from '@preact/signals-react';
 import { jwtDecode } from 'jwt-decode';
-import { IdTokenPayload } from '../models/IdTokenPayload';
+import type { IdTokenPayload } from '../models/IdTokenPayload';
 
 export const idTokenPayloadState = signal<IdTokenPayload | undefined>(
   undefined

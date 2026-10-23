@@ -1,5 +1,5 @@
 import utils from '../utils';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../__tests__/renderers';
 import {
@@ -7,10 +7,12 @@ import {
   useSilRegistry,
   useRegistry
 } from './registryDetail';
-import { RequestParams } from '../../generated/core/client';
-import {
+import type { RequestParams } from '../../generated/core/client';
+import type {
   PagoPaRegistryDTO,
-  SilRegistryDTO,
+  SilRegistryDTO
+} from '../../generated/core/data-contracts';
+import {
   RegistryEventCategory,
   RegistryPagoPaEventType,
   RegistryEventSubType,

@@ -1,8 +1,12 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useBeneficiaryManagement } from './useBeneficiaryManagement';
-import { UseFormGetValues, UseFormTrigger, Control } from 'react-hook-form';
-import { Beneficiary } from '../models/paymentTypes';
+import type {
+  UseFormGetValues,
+  UseFormTrigger,
+  Control
+} from 'react-hook-form';
+import type { Beneficiary } from '../models/paymentTypes';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({

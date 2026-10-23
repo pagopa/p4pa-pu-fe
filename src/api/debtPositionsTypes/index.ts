@@ -5,13 +5,10 @@ import {
   debtPositionTypeSchema,
   pagedDebtPositionTypeWithCountSchema
 } from '../../../generated/core/zod-schema';
-import { DebtPositionTypePatchRequestBody } from '../../../generated/core/data-contracts';
-import {
-  buildQueryParams,
-  buildQueryPostParams,
-  DebtPositionTypeWithCountFilteredRequest
-} from './mappings';
-import { Step2Data } from '../../routes/DebtTypeCreate/components/Step2Settings';
+import type { DebtPositionTypePatchRequestBody } from '../../../generated/core/data-contracts';
+import type { DebtPositionTypeWithCountFilteredRequest } from './mappings';
+import { buildQueryParams, buildQueryPostParams } from './mappings';
+import type { Step2Data } from '../../routes/DebtTypeCreate/components/Step2Settings';
 
 export const getDebtPositionTypeWithCount = ({
   organizationId

@@ -2,29 +2,28 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Trans, useTranslation } from 'react-i18next';
-import {
-  Box,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Link,
-  Stack,
-  TextField,
-  Typography
-} from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 import MessageIcon from '@mui/icons-material/Message';
 import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import SectionBox from '../../../components/Wizard/SectionBox';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import { FormComponent } from '../../../components/FormComponent';
-import {
+import type {
   DebtPositionTypeDetailDTO,
   DebtPositionTypeRequestBody
 } from '../../../../generated/core/data-contracts';
 import { AppPreview } from '../../../components/AppPreview';
 import { PageRoutes } from '../..';
 import ExternalLink from '../../../components/ExternalLink/ExternalLink';
+
+import Box from '@mui/material/Box';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
+import Link from '@mui/material/Link';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 export type Step2Data = Partial<DebtPositionTypeRequestBody> &
   Pick<

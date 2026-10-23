@@ -3,9 +3,14 @@
  * Improved version using reducer pattern based on useBeneficiaryManagement
  */
 import { useCallback, useEffect, useRef } from 'react';
-import { FieldValues, Path, FieldArrayPath, PathValue } from 'react-hook-form';
+import type {
+  FieldValues,
+  Path,
+  FieldArrayPath,
+  PathValue
+} from 'react-hook-form';
 import { useBeneficiaryManagement } from './useBeneficiaryManagement';
-import {
+import type {
   InstallmentBeneficiaryManagementProps,
   InstallmentBeneficiaryManagementResult
 } from '../models/paymentTypes';

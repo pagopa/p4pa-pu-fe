@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { vi } from 'vitest';
 import {
   render,
@@ -8,7 +8,8 @@ import {
 } from '../../../../__tests__/renderers';
 import { Step4Notifications } from '.';
 import { StoreProvider } from '../../../../store/GlobalStore';
-import { FormProvider, useForm, FieldValues } from 'react-hook-form';
+import type { FieldValues } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { setOrganizationId } from '../../../../store/OrganizationIdStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { step4Schema } from './schema'; // adjust path accordingly

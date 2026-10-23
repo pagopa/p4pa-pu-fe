@@ -1,5 +1,5 @@
 import { signal } from '@preact/signals-react';
-import { GenericDialogProps } from '../components/GenericDialog/GenericDialog';
+import type { GenericDialogProps } from '../components/GenericDialog/GenericDialog';
 
 /** open a Dialog notification */
 const open = (dialog: Omit<GenericDialogProps, 'open'>) => {

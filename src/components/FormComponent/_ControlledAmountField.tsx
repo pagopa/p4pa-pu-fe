@@ -1,6 +1,8 @@
-import { Controller, Control, Path, FieldValues } from 'react-hook-form';
+import type { Control, Path, FieldValues } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { ErrorMessage } from './ErrorMessage';
-import { _AmountField, AmountFieldProps } from './_AmountField';
+import type { AmountFieldProps } from './_AmountField';
+import { _AmountField } from './_AmountField';
 
 export type _ControlledAmountFieldProps<T extends FieldValues> =
   AmountFieldProps & {

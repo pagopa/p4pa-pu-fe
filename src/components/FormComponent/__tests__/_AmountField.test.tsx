@@ -40,7 +40,8 @@ vi.mock('../../../utils/formatters', () => ({
   parseAmountToNumber: mockParseAmountToNumber
 }));
 
-import { _AmountField, AmountFieldProps } from '../_AmountField';
+import type { AmountFieldProps } from '../_AmountField';
+import { _AmountField } from '../_AmountField';
 
 i18nTestSetup({});
 

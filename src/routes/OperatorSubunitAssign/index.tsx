@@ -12,12 +12,12 @@ import FilterContainer, {
 } from '@core/components/FilterContainer/FilterContainer';
 import { GridSelector } from '@core/components/GridSelector';
 import utils from '@core/utils';
-import { OrgSubUnit } from '@generated/core/data-contracts';
-import { GridColDef } from '@mui/x-data-grid';
-import { FilterFieldValue } from '@core/models/Filters';
-import { Search } from '@mui/icons-material';
+import type { OrgSubUnit } from '@generated/core/data-contracts';
+import type { GridColDef } from '@mui/x-data-grid';
+import type { FilterFieldValue } from '@core/models/Filters';
 import WizardStepButtons from '@core/components/Wizard/WizardStepButtons';
 import { PageRoutes } from '..';
+import Search from '@mui/icons-material/Search';
 
 export const OperatorSubunitAssign = () => {
   const { t } = useTranslation();

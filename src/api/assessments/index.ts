@@ -12,11 +12,11 @@ import {
   assessmentsDetailSchema
 } from '../../../generated/core/zod-schema';
 import { pagedAssessmentsExtendedDTOSchema } from '../../../generated/core/zod-schema';
-import {
+import type {
   AssessmentsRegistry,
   AssessmentStatus
 } from '../../../generated/core/data-contracts';
-import { FilteredRequest, FilterValues } from '../../models/Filters';
+import type { FilteredRequest, FilterValues } from '../../models/Filters';
 
 type AssessmentsParams = Parameters<
   typeof utils.apiClient.bff.getPagedAssessmentsExtendedDto

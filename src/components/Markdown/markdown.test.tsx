@@ -1,7 +1,6 @@
 import { render, screen } from '../../__tests__/renderers';
 import { describe, expect, it } from 'vitest';
 import { Markdown } from '../Markdown';
-import 'vitest-dom/extend-expect';
 
 describe('MarkdownText Component', () => {
   it('renders allowed tags in the markdown', () => {

@@ -1,13 +1,13 @@
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import BookIcon from '@mui/icons-material/MenuBook';
-import { Stack } from '@mui/material';
-
 import SectionBox from '../../../components/Wizard/SectionBox';
+
 import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../components/FormComponent';
 import { useStore } from '../../../store/GlobalStore';
 import { useDebtPositionsTypeOrg } from '../../../hooks/useDebtPositionsTypeOrg';
+import Stack from '@mui/material/Stack';
 
 export type Step1Props = {
   editmode?: boolean;

@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import Step2EntityConfiguration from './Step2EntityConfiguration';
-import { UnifiedFormData } from '../../../../../models/OrganizationEditTypes';
+import type { UnifiedFormData } from '../../../../../models/OrganizationEditTypes';
 import { i18nTestSetup } from '../../../../../__tests__/i18nTestSetup';
 
 vi.mock('../../../../../utils/fieldValidation', () => ({

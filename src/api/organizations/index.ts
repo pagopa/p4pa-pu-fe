@@ -1,13 +1,11 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../../utils';
 import { pagedOrganizationWithDebtPositionTypeOrgAndOperatorsCountSchema } from '../../../generated/core/zod-schema';
-import {
-  buildOrganizationsQueryParams,
-  OrganizationsFilteredRequest
-} from './mappings';
+import type { OrganizationsFilteredRequest } from './mappings';
+import { buildOrganizationsQueryParams } from './mappings';
 import { parseAndLog } from '../../utils/loaders';
 import { organizationDetailSchema } from '../../../generated/core/zod-schema';
-import {
+import type {
   OrganizationApiKeys,
   OrganizationApiKeyType,
   OrganizationUpdateDTO

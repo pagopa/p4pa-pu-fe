@@ -1,6 +1,6 @@
 import utils from '.';
-import { Client } from '../models/Client';
-import { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import type { Client } from '../models/Client';
+import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import navigation from './navigation';
 import i18n from '../translations/i18n';
 import { appState } from '../store/AppStateStore';

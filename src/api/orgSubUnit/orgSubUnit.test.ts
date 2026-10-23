@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { act, renderHook } from '../../__tests__/renderers';
 import { describe, expect, beforeEach, it, vi } from 'vitest';
 import { createMock } from 'zodock';

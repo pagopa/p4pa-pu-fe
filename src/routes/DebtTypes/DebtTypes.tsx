@@ -1,5 +1,3 @@
-import { Add, Search } from '@mui/icons-material';
-import { Box, Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { useState } from 'react';
@@ -13,7 +11,13 @@ import { useStore } from '../../store/GlobalStore';
 import { PageRoutes } from '../../routes';
 import utils from '../../utils';
 import { useSearch } from '../../hooks/useSearch';
-import { PagedDebtPositionTypeWithCount } from '../../../generated/core/data-contracts';
+import type { PagedDebtPositionTypeWithCount } from '../../../generated/core/data-contracts';
+
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import { useTheme } from '@mui/material/styles';
+import Add from '@mui/icons-material/Add';
+import Search from '@mui/icons-material/Search';
 
 type DebtTypesFilters = {
   code?: string;

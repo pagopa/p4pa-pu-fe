@@ -1,4 +1,4 @@
-import {
+import type {
   Control,
   FieldArrayPath,
   FieldErrors,
@@ -9,7 +9,7 @@ import {
   UseFormTrigger
 } from 'react-hook-form';
 
-import { DebtPositionTypeEnum } from './DebtPositionType';
+import type { DebtPositionTypeEnum } from './DebtPositionType';
 
 export type Beneficiary = {
   entityName: string;

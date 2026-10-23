@@ -1,12 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
-import {
-  FileOrigin,
+import type {
   IngestionFlowFileType,
   RequestParams
 } from '../../../generated/fileshare/client';
+import { FileOrigin } from '../../../generated/fileshare/client';
 import { extractFilename } from '../../utils/formatters';
-import { buildQueryParams, FlowFileFilteredRequest } from './mappings';
+import type { FlowFileFilteredRequest } from './mappings';
+import { buildQueryParams } from './mappings';
 
 export const getIngestionFlowFiles = (
   organizationId: number,

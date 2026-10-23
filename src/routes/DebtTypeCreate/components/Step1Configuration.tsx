@@ -10,10 +10,10 @@ import SectionBox from '../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../components/FormComponent';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
-import { DebtPositionTypeDetailDTO } from '../../../../generated/core/data-contracts';
+import type { DebtPositionTypeDetailDTO } from '../../../../generated/core/data-contracts';
 import { TaxonomyFilter } from '../../../components/TaxonomyFilter';
 import { TaxonomyEdit } from './components/TaxonomyEdit';
-import { TaxonomyFields } from '../../../models/Taxonomy';
+import type { TaxonomyFields } from '../../../models/Taxonomy';
 import { step1Schema } from './schema';
 
 export type Step1Data = TaxonomyFields & {

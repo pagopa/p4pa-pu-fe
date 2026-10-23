@@ -6,21 +6,23 @@ import Step1Loading from './components/Step/Step1Loading';
 import Step2AddDebtor from './components/Step/Step2AddDebtor';
 import Step3 from './components/Step/Step3';
 import { StepperContainer } from '../../components/Stepper';
-import {
+import type {
   PaymentOption,
   Beneficiary,
   Installment
 } from '../../models/paymentTypes';
 import { PageRoutes } from '../../routes';
-import { Step3Data, Step2Data, Step1Data } from '../../models/DebtPositionType';
+import type {
+  Step3Data,
+  Step2Data,
+  Step1Data
+} from '../../models/DebtPositionType';
 import debtPositions from '../../api/debtPositions';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import utils from '../../utils';
-import {
-  DebtPositionDetailDTO,
-  PersonEntityType
-} from '../../../generated/core/data-contracts';
+import type { DebtPositionDetailDTO } from '../../../generated/core/data-contracts';
+import { PersonEntityType } from '../../../generated/core/data-contracts';
 import { SubjectType } from '../../utils/fieldValidation';
 
 type FormData = {

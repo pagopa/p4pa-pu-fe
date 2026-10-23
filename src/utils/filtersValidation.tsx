@@ -1,4 +1,4 @@
-import { BaseFilterValues, FilterFieldValue } from '../models/Filters';
+import type { BaseFilterValues, FilterFieldValue } from '../models/Filters';
 
 /**
  * Helper function to check if a Date value is valid (not null, not undefined, and not Invalid Date)

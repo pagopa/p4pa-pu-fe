@@ -1,17 +1,16 @@
-import React from 'react';
-import {
-  Breadcrumbs as BreadcrumbsMUI,
-  useTheme,
-  Typography,
-  useMediaQuery,
-  Stack,
-  Link as MUILink
-} from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
+import type React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink, useMatches, useNavigate } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
-import { RouteHandleObject } from '../../models/Routes';
+import type { RouteHandleObject } from '../../models/Routes';
+
+import BreadcrumbsMUI from '@mui/material/Breadcrumbs';
+import { useTheme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import Stack from '@mui/material/Stack';
+import MUILink from '@mui/material/Link';
+import ArrowBack from '@mui/icons-material/ArrowBack';
 
 export type BreadcrumbsProps = {
   separator: React.ReactElement;

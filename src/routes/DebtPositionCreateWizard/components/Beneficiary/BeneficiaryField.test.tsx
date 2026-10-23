@@ -1,14 +1,13 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
-  useForm,
-  FormProvider,
+import type {
   Control,
   FieldErrors,
   UseFormSetValue,
   UseFormGetValues,
   UseFormTrigger
 } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import BeneficiaryField from './BeneficiaryField';
 import * as beneficiaryManagementHooks from '../../../../hooks/useBeneficiaryManagement';
 

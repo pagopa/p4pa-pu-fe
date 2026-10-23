@@ -2,10 +2,8 @@ import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
 import { pagedDebtPositionTypeOrgOperatorDTOSchema } from '../../../generated/core/zod-schema';
-import {
-  buildQueryParams,
-  DebtPositionTypeOrgOperatorFilteredRequest
-} from './mappings';
+import type { DebtPositionTypeOrgOperatorFilteredRequest } from './mappings';
+import { buildQueryParams } from './mappings';
 
 export const getDebtPositionTypeOrgOperators = (organizationId: number) =>
   useMutation({

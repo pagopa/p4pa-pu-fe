@@ -74,19 +74,18 @@ vi.mock('../../hooks/useSearch', () => ({
   }))
 }));
 
-vi.mock('../../utils', async () => {
-  const actual = await vi.importActual('../../utils');
+vi.mock('../../utils/roles', () => {
   return {
-    ...actual,
     default: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(actual as any).default,
-      URI: {
-        decode: vi.fn(() => ({}))
-      },
-      roles: {
-        useIsSuperAdmin: vi.fn(() => false)
-      }
+      useIsSuperAdmin: vi.fn(() => false)
+    }
+  };
+});
+
+vi.mock('../../utils/URI', () => {
+  return {
+    default: {
+      decode: vi.fn(() => ({}))
     }
   };
 });

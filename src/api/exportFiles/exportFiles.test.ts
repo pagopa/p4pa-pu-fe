@@ -2,12 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../../__tests__/renderers';
 import { getExportFiles, getExportFile } from '.';
 import utils from '../../utils';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import {
   ExportFileStatus,
   ExportFileTypeEnum
 } from '../../../generated/core/data-contracts';
-import { ExportFilesFilteredRequest } from './mapping';
+import type { ExportFilesFilteredRequest } from './mapping';
 
 vi.mock('../../utils', () => ({
   default: {

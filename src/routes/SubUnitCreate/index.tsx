@@ -1,16 +1,16 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Box } from '@mui/material';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import type { SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { AxiosError } from 'axios';
 import { generatePath, useNavigate, useParams } from 'react-router';
-
 import { OrgSubUnitStatus, SubUnitType } from '@generated/core/data-contracts';
 
 import { createOrgSubUnit } from '@core/api/orgSubUnit';
+
 import { FormComponent } from '@core/components/FormComponent';
-import { SelectOptions } from '@core/components/FormComponent/_Select';
+import type { SelectOptions } from '@core/components/FormComponent/_Select';
 import TitleComponent from '@core/components/TitleComponent/TitleComponent';
 import SectionBox from '@core/components/Wizard/SectionBox';
 import WizardStepButtons from '@core/components/Wizard/WizardStepButtons';
@@ -19,6 +19,7 @@ import utils from '@core/utils';
 import { PageRoutes } from '..';
 import { MIAlert } from '@pagopa/mui-italia';
 import { useEffect } from 'react';
+import Box from '@mui/material/Box';
 
 const subUnitSchema = z.object({
   subUnitCode: z.string({

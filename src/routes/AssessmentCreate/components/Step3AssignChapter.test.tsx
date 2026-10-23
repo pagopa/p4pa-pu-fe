@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { FormProvider, useForm, Controller } from 'react-hook-form';
 import { useOperatingYears } from '../../../hooks/useOperatingYears';

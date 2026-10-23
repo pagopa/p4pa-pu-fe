@@ -53,6 +53,30 @@ vi.mock('../utils/formatters', () => ({
   formatDate: vi.fn(() => '01/01/2023')
 }));
 
+type BeneficiaryManagement = ReturnType<typeof useBeneficiaryManagement>;
+
+// Factory for the useBeneficiaryManagement mock return value.
+// getBeneficiaryPath has a generic signature that a vi.fn() cannot satisfy,
+// so the cast is isolated here.
+const createBeneficiaryManagementMock = (
+  overrides: Partial<BeneficiaryManagement> = {}
+): BeneficiaryManagement => ({
+  fields: [],
+  addBeneficiary: vi.fn(),
+  removeBeneficiary: vi.fn(),
+  resetAllBeneficiaries: vi.fn(),
+  updateAmountValidations: vi.fn(),
+  wasSubmittedRef: { current: false },
+  isInitializingRef: { current: false },
+  existingBeneficiaries: {},
+  getBeneficiaryPath:
+    vi.fn() as unknown as BeneficiaryManagement['getBeneficiaryPath'],
+  validators: {},
+  fieldValidators: {},
+  MAX_BENEFICIARIES: 5,
+  ...overrides
+});
+
 describe('usePaymentManagement', () => {
   // Initial setup for tests
   const initialData = {
@@ -106,20 +130,13 @@ describe('usePaymentManagement', () => {
     const mockRemoveBeneficiary = vi.fn();
 
     // Use directly the imported and mocked hook
-    vi.mocked(useBeneficiaryManagement).mockReturnValue({
-      fields: [{ id: '1' }],
-      addBeneficiary: mockAddBeneficiary,
-      removeBeneficiary: mockRemoveBeneficiary,
-      resetAllBeneficiaries: vi.fn(),
-      updateAmountValidations: vi.fn(),
-      wasSubmittedRef: { current: false },
-      isInitializingRef: { current: false },
-      existingBeneficiaries: {},
-      getBeneficiaryPath: vi.fn(),
-      validators: {},
-      fieldValidators: {},
-      MAX_BENEFICIARIES: 5
-    });
+    vi.mocked(useBeneficiaryManagement).mockReturnValue(
+      createBeneficiaryManagementMock({
+        fields: [{ id: '1' }],
+        addBeneficiary: mockAddBeneficiary,
+        removeBeneficiary: mockRemoveBeneficiary
+      })
+    );
 
     const multibeneficiaryData = {
       ...initialData,
@@ -184,20 +201,12 @@ describe('usePaymentManagement', () => {
   it('should correctly validate payment data for SINGLE type', () => {
     const mockUpdateAmountValidations = vi.fn();
 
-    vi.mocked(useBeneficiaryManagement).mockReturnValue({
-      fields: [{ id: '1' }],
-      addBeneficiary: vi.fn(),
-      removeBeneficiary: vi.fn(),
-      resetAllBeneficiaries: vi.fn(),
-      updateAmountValidations: mockUpdateAmountValidations,
-      wasSubmittedRef: { current: false },
-      isInitializingRef: { current: false },
-      existingBeneficiaries: {},
-      getBeneficiaryPath: vi.fn(),
-      validators: {},
-      fieldValidators: {},
-      MAX_BENEFICIARIES: 5
-    });
+    vi.mocked(useBeneficiaryManagement).mockReturnValue(
+      createBeneficiaryManagementMock({
+        fields: [{ id: '1' }],
+        updateAmountValidations: mockUpdateAmountValidations
+      })
+    );
 
     // In this case we don't replace the trigger but only verify updateAmountValidations
     const { result } = renderHook(() =>
@@ -265,20 +274,9 @@ describe('usePaymentManagement', () => {
       taxonomyCode: 'TEST123'
     };
 
-    vi.mocked(useBeneficiaryManagement).mockReturnValue({
-      fields: [{ id: '1' }],
-      addBeneficiary: vi.fn(),
-      removeBeneficiary: vi.fn(),
-      resetAllBeneficiaries: vi.fn(),
-      updateAmountValidations: vi.fn(),
-      wasSubmittedRef: { current: false },
-      isInitializingRef: { current: false },
-      existingBeneficiaries: {},
-      getBeneficiaryPath: vi.fn(),
-      validators: {},
-      fieldValidators: {},
-      MAX_BENEFICIARIES: 5
-    });
+    vi.mocked(useBeneficiaryManagement).mockReturnValue(
+      createBeneficiaryManagementMock({ fields: [{ id: '1' }] })
+    );
 
     const { result } = renderHook(() =>
       usePaymentManagement({
@@ -363,20 +361,12 @@ describe('usePaymentManagement', () => {
     const mockSetValue = vi.fn();
     const mockResetAllBeneficiaries = vi.fn();
 
-    vi.mocked(useBeneficiaryManagement).mockReturnValue({
-      fields: [{ id: '1' }],
-      addBeneficiary: vi.fn(),
-      removeBeneficiary: vi.fn(),
-      resetAllBeneficiaries: mockResetAllBeneficiaries,
-      updateAmountValidations: vi.fn(),
-      wasSubmittedRef: { current: false },
-      isInitializingRef: { current: false },
-      existingBeneficiaries: {},
-      getBeneficiaryPath: vi.fn(),
-      validators: {},
-      fieldValidators: {},
-      MAX_BENEFICIARIES: 5
-    });
+    vi.mocked(useBeneficiaryManagement).mockReturnValue(
+      createBeneficiaryManagementMock({
+        fields: [{ id: '1' }],
+        resetAllBeneficiaries: mockResetAllBeneficiaries
+      })
+    );
 
     const { result, rerender } = renderHook(() =>
       usePaymentManagement({

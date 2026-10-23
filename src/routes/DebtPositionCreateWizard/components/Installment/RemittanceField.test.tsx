@@ -1,5 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import type { Mock } from 'vitest';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
+import type { UseFormTrigger } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import RemittanceField from './RemittanceField';
 
@@ -23,16 +25,21 @@ type FormData = {
   }>;
 };
 
+type ValidateRemittance = (
+  index: number,
+  trigger: UseFormTrigger<FormData>
+) => void;
+
 const TestWrapper = ({
   defaultValue = '',
   disabled = false,
   error = undefined,
-  validateRemittanceMock = vi.fn()
+  validateRemittanceMock = vi.fn<ValidateRemittance>()
 }: {
   defaultValue?: string;
   disabled?: boolean;
   error?: { message?: string };
-  validateRemittanceMock?: ReturnType<typeof vi.fn>;
+  validateRemittanceMock?: Mock<ValidateRemittance>;
 }) => {
   const { control, trigger } = useForm<FormData>({
     defaultValues: {
@@ -55,10 +62,10 @@ const TestWrapper = ({
 };
 
 describe('RemittanceField', () => {
-  let validateRemittanceMock: ReturnType<typeof vi.fn>;
+  let validateRemittanceMock: Mock<ValidateRemittance>;
 
   beforeEach(() => {
-    validateRemittanceMock = vi.fn();
+    validateRemittanceMock = vi.fn<ValidateRemittance>();
   });
 
   test('should render the field correctly', () => {

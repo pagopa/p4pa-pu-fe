@@ -1,12 +1,10 @@
 import { FormProvider, useForm } from 'react-hook-form';
-import { FileUpload } from '@mui/icons-material';
 import { generatePath } from 'react-router';
-import { Grid } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
 import ActionCard from '../../../components/ActionCard/ActionCard';
 import { PageRoutes } from '../../../routes';
+
 import { ReportingFilters } from '../components/ReportingFilters';
 import SearchCard from '../../../components/SearchCard/SearchCard';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
@@ -16,6 +14,8 @@ import {
   noFilterSetted,
   shouldShowGeneralError
 } from '../../../utils/filtersValidation';
+import Grid from '@mui/material/Grid';
+import FileUpload from '@mui/icons-material/FileUpload';
 
 export const Reporting = () => {
   const { t } = useTranslation();

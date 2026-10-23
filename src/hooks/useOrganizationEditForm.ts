@@ -4,14 +4,14 @@
  */
 
 import { useMemo } from 'react';
-import {
-  useForm,
+import type {
   Control,
   FieldErrors,
   UseFormHandleSubmit
 } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import {
+import type {
   UnifiedFormData,
   UnifiedFormValues
 } from '../models/OrganizationEditTypes';

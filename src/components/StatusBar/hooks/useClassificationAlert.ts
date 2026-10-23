@@ -3,10 +3,8 @@ import {
   CLASSIFICATION_SEVERITY_MAP,
   CLASSIFICATION_ALERT_KEYS
 } from '../utils/classificationAlerts';
-import {
-  ClassificationDetailDTO,
-  ClassificationsEnum
-} from '../../../../generated/core/data-contracts';
+import type { ClassificationDetailDTO } from '../../../../generated/core/data-contracts';
+import { ClassificationsEnum } from '../../../../generated/core/data-contracts';
 
 export const useClassificationAlert = (data: ClassificationDetailDTO) => {
   return useMemo(() => {

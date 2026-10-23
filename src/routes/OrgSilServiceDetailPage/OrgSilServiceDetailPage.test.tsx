@@ -7,8 +7,8 @@ import OrgSilServiceDetailPage from './OrgSilServiceDetailPage';
 import orgSilServiceApi from '../../api/orgSilService';
 import { useStore } from '../../store/GlobalStore';
 import { getOrgSilServiceSectionsConfig } from './model/OrgSilServiceSectionConfigs';
+import type { OrgSilServiceDecryptedDTO } from '../../../generated/core/data-contracts';
 import {
-  OrgSilServiceDecryptedDTO,
   OrgSilServiceType,
   JwtAlgorithm
 } from '../../../generated/core/data-contracts';

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { OrganizationApiKeyType } from '@generated/core/client';
+import type { OrganizationApiKeyType } from '@generated/core/client';
 import {
   organizationApiKeySchema,
   pagedPdndServiceViewSchema,
@@ -11,7 +11,7 @@ import {
 
 import utils from '@core/utils';
 import { parseAndLog } from '@core/utils/loaders';
-import { FilteredRequest } from '@core/models/Filters';
+import type { FilteredRequest } from '@core/models/Filters';
 
 export const getOrganizationApiKeys = (organizationId: number) =>
   useQuery({

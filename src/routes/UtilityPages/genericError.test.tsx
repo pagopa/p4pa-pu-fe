@@ -6,11 +6,9 @@ import { PageRoutes } from '../../routes';
 const mockNavigate = vi.fn();
 const mockUseLocation = vi.fn();
 
-vi.mock('react-router', async () => {
-  const actual =
-    await vi.importActual<typeof import('react-router')>('react-router');
+vi.mock('react-router', async (importOriginal) => {
   return {
-    ...actual,
+    ...(await importOriginal()),
     useNavigate: () => mockNavigate,
     useLocation: () => mockUseLocation()
   };

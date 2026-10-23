@@ -2,15 +2,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../../__tests__/renderers';
 import getPagoPaRegistries from '.';
 import utils from '../../utils';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import {
   RegistryPagoPaEventType,
   RegistryOutcome,
   RegistryEventSubType,
   RegistryEventCategory
 } from '../../../generated/core/data-contracts';
-import { FilteredRequest } from '../../models/Filters';
-import { NodoFilterValues } from '../../routes/Events/configs';
+import type { FilteredRequest } from '../../models/Filters';
+import type { NodoFilterValues } from '../../routes/Events/configs';
 
 // Mock corretto dei moduli
 vi.mock('../../utils', () => ({

@@ -1,10 +1,10 @@
-import Autocomplete, {
-  AutocompleteInputChangeReason
-} from '@mui/material/Autocomplete';
-import TextField, { TextFieldProps } from '@mui/material/TextField';
+import type { AutocompleteInputChangeReason } from '@mui/material/Autocomplete';
+import Autocomplete from '@mui/material/Autocomplete';
+import type { TextFieldProps } from '@mui/material/TextField';
+import TextField from '@mui/material/TextField';
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FilterFieldValue } from '../../models/Filters';
+import type { FilterFieldValue } from '../../models/Filters';
 
 export type SelectItem = {
   label: string;

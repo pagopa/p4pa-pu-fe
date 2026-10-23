@@ -2,11 +2,11 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useForm } from 'react-hook-form';
 import { PaymentsInfoSection } from './PaymentsInfoSection';
-import {
+import type {
   UnifiedFormData,
-  UnifiedFormValues,
-  LANGUAGE_OPTIONS
+  UnifiedFormValues
 } from '../../../../../../models/OrganizationEditTypes';
+import { LANGUAGE_OPTIONS } from '../../../../../../models/OrganizationEditTypes';
 import { i18nTestSetup } from '../../../../../../__tests__/i18nTestSetup';
 
 vi.mock('../../../../../../components/FormComponent', () => ({

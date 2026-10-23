@@ -2,11 +2,9 @@ import { useMutation } from '@tanstack/react-query';
 import utils from '../../../utils';
 import { parseAndLog } from '../../../utils/loaders';
 import { assessmentsRowsDetailSchema } from '../../../../generated/core/zod-schema';
-import { FilteredRequest } from '../../../models/Filters';
-import {
-  AssessmentDetailFilters,
-  buildAssessmentDetailQueryParams
-} from '../mappings';
+import type { FilteredRequest } from '../../../models/Filters';
+import type { AssessmentDetailFilters } from '../mappings';
+import { buildAssessmentDetailQueryParams } from '../mappings';
 
 /**
  * Hook for getting the details of a specific assessment

@@ -1,6 +1,5 @@
-import { Search } from '@mui/icons-material';
 import { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
-import { TabsConfig } from '../SearchCard/SearchCard';
+import type { TabsConfig } from '../SearchCard/SearchCard';
 import { FilterFieldIds } from '../../models/SearchCardFields';
 import { useDebtPositionsTypeOrg } from '../../hooks/useDebtPositionsTypeOrg';
 import { useStore } from '../../store/GlobalStore';
@@ -8,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { DebtPositionStatus } from '../../../generated/core/data-contracts';
 import { optionMapsConverter } from '../../utils/formatters';
 import { InstallmentStatus } from '../../../generated/core/data-contracts';
+import Search from '@mui/icons-material/Search';
 
 export const useTabsConfig = (): Array<TabsConfig> => {
   const { t } = useTranslation();

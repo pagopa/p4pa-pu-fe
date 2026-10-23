@@ -1,28 +1,12 @@
-import {
-  Box,
-  Button,
-  Stack,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText
-} from '@mui/material';
-import {
-  Delete,
-  Edit,
-  MoreVert,
-  HighlightOff,
-  Check
-} from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { DetailAccordion } from '../../components/DetailAccordion/DetailAccordion';
-import {
+import type {
   AccordionSectionConfig,
-  getAccordionSectionsConfig,
   OperatorsData
 } from '../../models/DebtTypeSectionsConfig';
+import { getAccordionSectionsConfig } from '../../models/DebtTypeSectionsConfig';
 import { useEffect, useState, useMemo } from 'react';
 import { STATE } from '../../store/types';
 import {
@@ -33,7 +17,8 @@ import utils from '../../utils';
 import debtPositions from '../../api/debtPositions';
 import { PageRoutes } from '../../routes';
 import GenericDialog from '../../components/GenericDialog/GenericDialog';
-import { AxiosError, isAxiosError } from 'axios';
+import type { AxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 import { useStore } from '../../store/GlobalStore';
 import { useDebtPositionTypeOrgSearch } from '../../api/debtTypesCreated';
 import { OrgSilServiceType } from '../../../generated/core/data-contracts';
@@ -41,6 +26,19 @@ import { theme } from '@pagopa/mui-italia';
 import { useConfirmDialog } from './hooks/useConfirmDialog';
 import { getDebtPositionTypeOrgOperators } from '../../api/debtPositionTypeOrgOperators';
 import { useQueryClient } from '@tanstack/react-query';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Delete from '@mui/icons-material/Delete';
+import Edit from '@mui/icons-material/Edit';
+import MoreVert from '@mui/icons-material/MoreVert';
+import HighlightOff from '@mui/icons-material/HighlightOff';
+import Check from '@mui/icons-material/Check';
 
 export const DebtTypeDetailView = () => {
   const {

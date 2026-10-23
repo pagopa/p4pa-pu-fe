@@ -2,8 +2,8 @@ import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
 import { pagedSilRegistrySchema } from '../../../generated/core/zod-schema';
-import { FilteredRequest } from '../../models/Filters';
-import { SilFilterValues } from '../../routes/Events/configs';
+import type { FilteredRequest } from '../../models/Filters';
+import type { SilFilterValues } from '../../routes/Events/configs';
 import { buildQueryParams } from './mapping';
 
 const getSilRegistries = (organizationId: number) =>

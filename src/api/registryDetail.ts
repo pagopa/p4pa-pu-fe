@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { RequestParams } from '../../generated/core/client';
+import type { RequestParams } from '../../generated/core/client';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import {

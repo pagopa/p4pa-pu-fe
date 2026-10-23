@@ -1,10 +1,10 @@
 import { Trans, useTranslation } from 'react-i18next';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
-import {
+import type {
   DebtPositionTypeOrgDTO,
   PagedDebtPositionTypeOrgDTO
 } from '../../../../generated/core/client';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import EmptyDetailContainer from '../../../components/DebtPositionsInstallmentDetail/EmptyDetailContainer';
 import { GridActionMenu } from './ActionMenu';
 import utils from '../../../utils';

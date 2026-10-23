@@ -1,11 +1,14 @@
-import { Button, ButtonProps, Grid } from '@mui/material';
-import { Drawer, DrawerProps } from '../Drawer';
+import type { DrawerProps } from '../Drawer';
+import { Drawer } from '../Drawer';
+import type { FilterItem } from '../FilterContainer/FilterContainer';
 import FilterContainer, {
-  FilterItem,
   COMPONENT_TYPE
 } from '../FilterContainer/FilterContainer';
-import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
+import type { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+
+import Button, { type ButtonProps } from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
 
 type FilterContainerDrawerButton = {
   buttonText: string;

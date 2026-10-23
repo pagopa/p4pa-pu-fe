@@ -3,7 +3,8 @@
  * Tests the unified form container that loads organization data and renders OrganizationEditForm
  */
 
-import { beforeEach, describe, expect, it, vi, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { render, screen, waitFor } from '../../../__tests__/renderers';
 import {
@@ -16,7 +17,7 @@ import OrganizationEditWizard from './OrganizationEditWizard';
 import utils from '../../../utils';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 import { OrganizationStatus } from '../../../../generated/core/data-contracts';
-import { UnifiedFormData } from '../../../models/OrganizationEditTypes';
+import type { UnifiedFormData } from '../../../models/OrganizationEditTypes';
 
 vi.mock('../../../api/organizations', () => ({
   getOrganizationDetail: vi.fn(),

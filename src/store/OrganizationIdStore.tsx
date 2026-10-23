@@ -1,5 +1,5 @@
 import { usePersistentSignal } from '../hooks/usePersistentSignal';
-import { OrganizationIdMemo } from '../models/Organization';
+import type { OrganizationIdMemo } from '../models/Organization';
 import { STATE } from './types';
 
 // Initialize the persistent store

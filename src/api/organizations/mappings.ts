@@ -1,5 +1,5 @@
-import { FilteredRequest } from '../../models/Filters';
-import utils from '../../utils';
+import type { FilteredRequest } from '../../models/Filters';
+import type utils from '../../utils';
 
 type GetOrganizationsByBrokerIdQueryParams = Parameters<
   typeof utils.apiClient.bff.getOrganizationsByBrokerIdAndFilters

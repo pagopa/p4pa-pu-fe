@@ -1,6 +1,5 @@
-import { Box, Grid, IconButton, Typography } from '@mui/material';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-import {
+import type {
   Control,
   FieldArrayWithId,
   FieldErrors,
@@ -17,6 +16,11 @@ import AmountField from './AmountField';
 import DateField from './DateField';
 import RemittanceField from './RemittanceField';
 import BeneficiaryControl from './BeneficiaryControl';
+
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 
 /**
  * Interface that defines the validation functions used in installments

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { UseFormTrigger } from 'react-hook-form';
+import type { UseFormTrigger } from 'react-hook-form';
 import type { BeneficiaryValidationContext } from '../../../../models/paymentTypes';
 import {
   handleAmountChange,

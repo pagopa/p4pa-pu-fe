@@ -1,8 +1,8 @@
 import { useDebtPositionTypesByOrg } from './useDebtPositionTypesByOrg';
 import { getDebtPositionTypesByOrganizationId } from '../api/debtPositionsTypes';
 import utils from '../utils';
-import { AxiosError } from 'axios';
-import { Mock } from 'vitest';
+import type { AxiosError } from 'axios';
+import type { Mock } from 'vitest';
 import { renderHook, waitFor } from '../__tests__/renderers';
 
 // Mock API call module

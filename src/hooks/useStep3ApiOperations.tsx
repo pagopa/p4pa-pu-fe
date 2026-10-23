@@ -1,21 +1,25 @@
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { UseMutationResult } from '@tanstack/react-query';
-import {
+import type { UseMutationResult } from '@tanstack/react-query';
+import type {
   DebtPositionDTO,
   DebtPositionDetailDTO,
-  ManageDebtPositionDTO,
+  ManageDebtPositionDTO
+} from '../../generated/core/data-contracts';
+import {
   DebtPositionStatus,
   DebtPositionOrigin,
   PaymentOptionType
 } from '../../generated/core/data-contracts';
 import { PageRoutes } from '../routes';
-import {
-  Step3FormValues,
-  convertFormDataToManageDebtPositionDTO
-} from '../models/Step3Schema';
-import { Step1Data, Step2Data, Step3Data } from '../models/DebtPositionType';
+import type { Step3FormValues } from '../models/Step3Schema';
+import { convertFormDataToManageDebtPositionDTO } from '../models/Step3Schema';
+import type {
+  Step1Data,
+  Step2Data,
+  Step3Data
+} from '../models/DebtPositionType';
 import {
   DEFAULT_VALUES,
   createInstallmentObject,

@@ -3,7 +3,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { useForm } from 'react-hook-form';
 import { PaymentMethodSelector, SelectedField } from './PaymentMethodSelector';
-import { DebtTypeOrgForm, PaymentMethodOption } from '../../../types';
+import type { DebtTypeOrgForm } from '../../../types';
+import { PaymentMethodOption } from '../../../types';
 
 vi.mock('../../../../../components/FormComponent', () => ({
   FormComponent: {

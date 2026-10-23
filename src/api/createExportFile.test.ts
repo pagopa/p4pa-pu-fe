@@ -1,20 +1,18 @@
 import utils from '../utils';
 import { act, renderHook } from '../__tests__/renderers';
 import { describe, expect, it, vi } from 'vitest';
-import {
-  ExportFileTypeEnum,
+import type {
   PaidExportFileRequest,
   ReceiptsArchivingExportFileRequest
 } from '../../generated/core/client';
+import { ExportFileTypeEnum } from '../../generated/core/client';
 import {
   createClassificationsExportFile,
   createPaidExportFile,
   createReceiptsArchivingExportFile
 } from './createExportFile';
-import {
-  ClassificationsExportFileRequestDTO,
-  LabelEnum
-} from '../../generated/core/data-contracts';
+import type { ClassificationsExportFileRequestDTO } from '../../generated/core/data-contracts';
+import { LabelEnum } from '../../generated/core/data-contracts';
 
 vi.mock('../utils', () => ({
   default: {

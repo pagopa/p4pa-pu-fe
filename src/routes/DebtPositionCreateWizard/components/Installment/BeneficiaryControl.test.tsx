@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import BeneficiaryControl from './BeneficiaryControl';
 import * as React from 'react';
-import {
+import type {
   Control,
   UseFormGetValues,
   UseFormSetValue,

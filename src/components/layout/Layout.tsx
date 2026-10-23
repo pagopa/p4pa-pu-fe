@@ -1,17 +1,8 @@
-import {
-  Button,
-  Container,
-  Grid,
-  Stack,
-  Theme,
-  useMediaQuery
-} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { Outlet, ScrollRestoration, useMatches } from 'react-router';
 import { BackButton } from '../BackButton';
-import { NavigateNext } from '@mui/icons-material';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
-import { RouteHandleObject } from '../../models/Routes';
+import type { RouteHandleObject } from '../../models/Routes';
 import { Header } from '../Header';
 import { Sidebar } from '../Sidebar/Sidebar';
 import utils from '../../utils';
@@ -24,6 +15,14 @@ import '../../style.css';
 import { RouteChangeAnnouncement } from '../RouteChangeAnnouncement';
 import { PageRoutes } from '../../routes';
 import { MISnackbar } from '@pagopa/mui-italia';
+
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import NavigateNext from '@mui/icons-material/NavigateNext';
+import type { Theme } from '@mui/material/styles';
 
 const defaultRouteHandle: RouteHandleObject = {
   backButton: true,

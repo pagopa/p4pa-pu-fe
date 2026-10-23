@@ -3,10 +3,8 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useClassificationAlert } from './useClassificationAlert';
-import {
-  ClassificationDetailDTO,
-  ClassificationsEnum
-} from '../../../../generated/core/data-contracts';
+import type { ClassificationDetailDTO } from '../../../../generated/core/data-contracts';
+import { ClassificationsEnum } from '../../../../generated/core/data-contracts';
 
 vi.mock('../utils/classificationAlerts', () => ({
   CLASSIFICATION_SEVERITY_MAP: {

@@ -1,18 +1,5 @@
-import {
-  Box,
-  Grid,
-  Typography,
-  FormControlLabel,
-  Switch,
-  Radio,
-  RadioGroup,
-  FormControl,
-  FormLabel,
-  FormHelperText
-} from '@mui/material';
-import {
+import type {
   Control,
-  Controller,
   FieldErrors,
   FieldValues,
   UseFormGetValues,
@@ -20,9 +7,9 @@ import {
   UseFormTrigger,
   Path,
   FieldArrayPath,
-  PathValue,
-  useWatch
+  PathValue
 } from 'react-hook-form';
+import { Controller, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useCallback } from 'react';
 import BeneficiaryField from '../Beneficiary/BeneficiaryField';
@@ -30,6 +17,17 @@ import {
   isSameBeneficiariesAsBeforeEnabled,
   hasValidBeneficiaries
 } from '../../../../models/Step3Schema';
+
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import FormHelperText from '@mui/material/FormHelperText';
 
 /**
  * Component that handles the beneficiary control for installments

@@ -4,10 +4,9 @@ import loader from '../utils/loaders';
 import { setConfigFe } from '../store/ConfigFeStore';
 import { setUserInfo } from '../store/UserInfoStore';
 import { idTokenPayloadState } from '../store/IdTokenStore';
-import { CircularProgress, Stack } from '@mui/material';
 import { setOperatorRole } from '../store/OperatorRoleStore';
-import { OrganizationDTO } from '../../generated/core/client';
-import { IdTokenPayload } from '../models/IdTokenPayload';
+import type { OrganizationDTO } from '../../generated/core/client';
+import type { IdTokenPayload } from '../models/IdTokenPayload';
 import {
   selectedOrganizationState,
   setOrganizations
@@ -21,9 +20,13 @@ import { setupInterceptors } from './interceptors';
 import utils from '.';
 import { OrganizationStatus } from '../../generated/core/data-contracts';
 import { PageRoutes } from '../routes';
-import { generatePath, LoaderFunctionArgs, redirect } from 'react-router';
+import type { LoaderFunctionArgs } from 'react-router';
+import { generatePath, redirect } from 'react-router';
 import { AxiosError } from 'axios';
 import navigation from './navigation';
+
+import CircularProgress from '@mui/material/CircularProgress';
+import Stack from '@mui/material/Stack';
 
 const deployPath = utils.config.deployPath;
 

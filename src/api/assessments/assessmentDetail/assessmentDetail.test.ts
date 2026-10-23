@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor, act } from '../../../__tests__/renderers';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import utils from '../../../utils';
 import * as loaders from '../../../utils/loaders';
 import { getAssessmentDetail } from './assessmentDetail';

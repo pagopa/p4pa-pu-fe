@@ -1,26 +1,50 @@
 import { defineConfig, configDefaults } from 'vitest/config';
 import { config } from 'dotenv';
-import path from 'path';
+import { fileURLToPath } from 'url';
+
+const isCI = !!process.env.CI;
 
 export default defineConfig({
   resolve: {
     extensions: ['.ts', '.js', '.mjs', '.json', '.tsx'],
     alias: {
-      '@extra': path.resolve(__dirname, 'src/extra'),
-      '@core': path.resolve(__dirname, 'src'),
-      '@generated': path.resolve(__dirname, 'generated')
+      '@extra': fileURLToPath(new URL('./src/extra', import.meta.url)),
+      '@core': fileURLToPath(new URL('./src', import.meta.url)),
+      '@generated': fileURLToPath(new URL('./generated', import.meta.url))
     }
   },
   test: {
+    bail: isCI ? 1 : 5,
     globals: true,
     setupFiles: './vitest.setup.ts',
-    environment: 'jsdom',
+    environment: 'happy-dom',
+    environmentOptions: {
+      happyDOM: {
+        settings: {
+          fetch: {
+            disableSameOriginPolicy: true
+          }
+        }
+      }
+    },
+
     clearMocks: true,
+    mockReset: false,
+    isolate: true,
+
     watch: false,
-    silent: true,
+
+    silent: 'passed-only',
+    reporters: ['dot'],
+
+    fsModuleCache: !!isCI,
+
+    pool: 'forks',
+    maxWorkers: isCI ? undefined : '50%',
+
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json-summary', 'json', 'html', 'lcov'],
+      reporter: isCI ? ['text', 'json-summary', 'lcov', 'json'] : ['text'],
       reportOnFailure: true,
       exclude: [
         ...configDefaults.exclude,
@@ -37,16 +61,20 @@ export default defineConfig({
       ],
       include: ['src/**/*.ts?(x)'],
       thresholds: {
-        lines: 80,
-        branches: 80
+        global: {
+          lines: 80,
+          branches: 80
+        }
       }
     },
-    env: {
-      ...config({ path: './.env.test' }).parsed
-    },
+    env: config({ path: './.env.test' }).parsed || {},
     server: {
       deps: {
-        inline: ['@pagopa/mui-italia']
+        inline: [
+          /@pagopa\/mui-italia/,
+          /@mui\/material/,
+          /@mui\/icons-material/
+        ]
       }
     },
     include: ['**/*.test.ts?(x)']

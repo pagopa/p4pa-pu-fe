@@ -1,14 +1,15 @@
+import type { Mock } from 'vitest';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ChipOwnProps } from '@mui/material/Chip';
+import type { ChipOwnProps } from '@mui/material/Chip';
+import type { AssessmentStatus } from '../assessmentHelpers';
 import {
-  AssessmentStatus,
   assessmentStateColors,
   getAssessmentStatusChipProps
 } from '../assessmentHelpers';
 
 const testValidStatus = (
   status: AssessmentStatus,
-  mockTranslationFunction: ReturnType<typeof vi.fn>
+  mockTranslationFunction: (key: string) => string
 ): void => {
   const result = getAssessmentStatusChipProps(status, mockTranslationFunction);
   expect(result).toHaveProperty('label');
@@ -19,7 +20,7 @@ const testValidStatus = (
 
 const testInvalidStatus = (
   status: string,
-  mockTranslationFunction: ReturnType<typeof vi.fn>
+  mockTranslationFunction: (key: string) => string
 ): void => {
   const result = getAssessmentStatusChipProps(status, mockTranslationFunction);
   expect(result).toEqual({
@@ -28,12 +29,12 @@ const testInvalidStatus = (
   });
 };
 
-const createEmptyTranslationFunction = (): ReturnType<typeof vi.fn> => {
-  return vi.fn(() => '');
+const createEmptyTranslationFunction = (): Mock<(key: string) => string> => {
+  return vi.fn<(key: string) => string>(() => '');
 };
 
-const createErrorTranslationFunction = (): ReturnType<typeof vi.fn> => {
-  return vi.fn(() => {
+const createErrorTranslationFunction = (): Mock<(key: string) => string> => {
+  return vi.fn<(key: string) => string>(() => {
     throw new Error('Translation error');
   });
 };

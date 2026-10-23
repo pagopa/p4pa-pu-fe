@@ -1,6 +1,8 @@
-import { Link, LinkProps } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { forwardRef, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { forwardRef } from 'react';
+
+import Link, { type LinkProps } from '@mui/material/Link';
 
 type ExternalLinkProps = Omit<LinkProps, 'target' | 'rel'> & {
   children?: ReactNode;

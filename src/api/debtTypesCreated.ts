@@ -5,7 +5,7 @@ import {
   pagedDebtPositionTypeOrgWithCountSchema,
   pagedOrganizationWithDebtPositionTypeOrgCountSchema
 } from '../../generated/core/zod-schema';
-import { FilteredRequest } from '../models/Filters';
+import type { FilteredRequest } from '../models/Filters';
 
 export type DebtPositionTypeOrgWithCountFilters = {
   code?: string;

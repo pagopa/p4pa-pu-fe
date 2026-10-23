@@ -5,8 +5,8 @@
  * modules
  *
  */
-import { ISidebarMenuItem } from '@core/models/SidebarMenuItem';
-import { RouteObject } from 'react-router';
+import type { ISidebarMenuItem } from '@core/models/SidebarMenuItem';
+import type { RouteObject } from 'react-router';
 
 /**
  * Pattern: src/extra/[moduleName]/routes.tsx

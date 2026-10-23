@@ -1,17 +1,16 @@
-import {
-  Box,
-  Typography,
-  TypographyOwnProps,
-  Button,
-  ButtonProps,
-  useTheme,
-  IconButton,
-  SxProps,
-  Theme
-} from '@mui/material';
-import { MIChip, MIChipProps } from '@pagopa/mui-italia';
+import type { MIChipProps } from '@pagopa/mui-italia';
+import { MIChip } from '@pagopa/mui-italia';
 import React, { useEffect, useId } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import Box from '@mui/material/Box';
+import type { TypographyOwnProps } from '@mui/material/Typography';
+import Typography from '@mui/material/Typography';
+import type { ButtonProps } from '@mui/material/Button';
+import Button from '@mui/material/Button';
+import type { SxProps, Theme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
 
 export type ActionMenuItem = {
   icon?: React.ReactNode;

@@ -1,5 +1,6 @@
-import { LoaderFunction, LoaderFunctionArgs, Navigate } from 'react-router';
-import { RouteHandleObject } from '../models/Routes';
+import type { LoaderFunction, LoaderFunctionArgs } from 'react-router';
+import { Navigate } from 'react-router';
+import type { RouteHandleObject } from '../models/Routes';
 import config from '../utils/config';
 import Conservation from './Conservation';
 import TelematicReceipt from './TelematicReceipt';

@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
-import { Box, Typography, Button, Tooltip } from '@mui/material';
-import { ContentCopy } from '@mui/icons-material';
+import type React from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { copyToClipboard } from '../../../utils/clipboard';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import ContentCopy from '@mui/icons-material/ContentCopy';
 
 type ExpandableCardProps = {
   content: string;

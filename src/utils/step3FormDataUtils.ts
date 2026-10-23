@@ -1,9 +1,16 @@
-import { UseFormSetValue, FieldValues, Path, PathValue } from 'react-hook-form';
-import {
-  Step3FormValues,
-  convertFormValuesToStep3Data
-} from '../models/Step3Schema';
-import { Step3Data, Step1Data, Step2Data } from '../models/DebtPositionType';
+import type {
+  UseFormSetValue,
+  FieldValues,
+  Path,
+  PathValue
+} from 'react-hook-form';
+import type { Step3FormValues } from '../models/Step3Schema';
+import { convertFormValuesToStep3Data } from '../models/Step3Schema';
+import type {
+  Step3Data,
+  Step1Data,
+  Step2Data
+} from '../models/DebtPositionType';
 import type { Installment } from '../models/paymentTypes';
 
 /**

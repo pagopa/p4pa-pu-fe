@@ -1,4 +1,3 @@
-import { Button, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
@@ -28,6 +27,9 @@ import {
   Payment,
   Registry
 } from './components/OrganizationDetailSections';
+
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
 
 export const OrganizationDetail = () => {
   const { t } = useTranslation();

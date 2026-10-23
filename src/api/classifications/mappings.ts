@@ -1,6 +1,6 @@
-import { FilteredRequest } from '../../models/Filters';
-import { ClassificationsEnum } from '../../../generated/core/data-contracts';
-import { FilterValues } from '../../models/Filters';
+import type { FilteredRequest } from '../../models/Filters';
+import type { ClassificationsEnum } from '../../../generated/core/data-contracts';
+import type { FilterValues } from '../../models/Filters';
 import { euroToCents } from '../../utils/formatters';
 import utils from '../../utils';
 

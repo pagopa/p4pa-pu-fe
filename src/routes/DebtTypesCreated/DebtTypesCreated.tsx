@@ -1,5 +1,3 @@
-import { Add } from '@mui/icons-material';
-import { Box, Tab, Tabs } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
@@ -9,6 +7,11 @@ import ManagedOrgs from './ManagedOrgs/ManagedOrgs';
 import MyOrg from './MyOrg/MyOrg';
 import utils from '../../utils';
 import { useStore } from '../../store/GlobalStore';
+
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import Add from '@mui/icons-material/Add';
 
 export const DebtTypesCreated = () => {
   const isSuperAdmin = utils.roles.useIsSuperAdmin();

@@ -1,22 +1,22 @@
-import { KeyboardArrowDown, ReadMore } from '@mui/icons-material';
-import {
-  Box,
-  Accordion,
-  AccordionSummary,
-  Typography,
-  Chip,
-  IconButton
-} from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
 import { t } from 'i18next';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import DetailContainer from '../../../components/DetailContainer/DetailContainer';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { moneyFormat } from '../../../utils/formatters';
-import { PaymentOptionDisplayData } from '../DebtPositionDetail';
+import type { PaymentOptionDisplayData } from '../DebtPositionDetail';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../../routes';
+
+import Box from '@mui/material/Box';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+import ReadMore from '@mui/icons-material/ReadMore';
 
 export const PaymentOptionSection = ({
   optionData

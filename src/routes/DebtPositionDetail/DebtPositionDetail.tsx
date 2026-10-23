@@ -1,36 +1,20 @@
-import {
-  Box,
-  Typography,
-  Accordion,
-  AccordionSummary,
-  Divider,
-  Menu,
-  MenuItem,
-  Alert
-} from '@mui/material';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import {
-  Delete,
-  Edit,
-  GetApp,
-  History,
-  KeyboardArrowDown,
-  MoreVert
-} from '@mui/icons-material';
-import { MIChipProps, theme } from '@pagopa/mui-italia';
-import DetailContainer, {
-  DetailData
-} from '../../components/DetailContainer/DetailContainer';
+import type { MIChipProps } from '@pagopa/mui-italia';
+import { theme } from '@pagopa/mui-italia';
+import type { DetailData } from '../../components/DetailContainer/DetailContainer';
+import DetailContainer from '../../components/DetailContainer/DetailContainer';
 import { useTranslation } from 'react-i18next';
 import { PaymentOptionSection } from './components/PaymentOptionSection';
 import { format, parseISO } from 'date-fns';
-import {
+import type {
   PaymentOptionDTO,
   InstallmentDTO,
-  PaymentOptionType,
   PaymentOptionStatus,
+  InstallmentStatus
+} from '../../../generated/core/data-contracts';
+import {
+  PaymentOptionType,
   DebtPositionStatus,
-  InstallmentStatus,
   DebtPositionOrigin
 } from '../../../generated/core/data-contracts';
 import debtPositions from '../../api/debtPositions';
@@ -43,11 +27,26 @@ import { setCustomBreadcrumbsItems } from '../../store/AppStateStore';
 import { Timeline } from '../../components/Timeline';
 import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import { useQueryClient } from '@tanstack/react-query';
-import utils from '../../utils';
 import { downloadBlob } from '../../utils/download';
 import { useTimelineData } from '../../hooks/useTimelineData';
 import { isDateInPast, moneyFormat } from '../../utils/formatters';
 import { isTechnicalDebtPosition } from '../../utils/debtpositions';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import Divider from '@mui/material/Divider';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Alert from '@mui/material/Alert';
+import Delete from '@mui/icons-material/Delete';
+import Edit from '@mui/icons-material/Edit';
+import GetApp from '@mui/icons-material/GetApp';
+import History from '@mui/icons-material/History';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+import MoreVert from '@mui/icons-material/MoreVert';
+import notify from '@core/utils/notify';
 
 export type PaymentOptionDisplayData = {
   title: string;
@@ -306,7 +305,7 @@ const DebtPositionDetail = () => {
   const handlePublishConfirm = async () => {
     if (hasExpiredDueDates()) {
       setDialogConfig(null);
-      utils.notify.emit(
+      notify.emit(
         t('debtPositionCreateWizard.step3.dueDate.futureDate'),
         'error'
       );
@@ -321,7 +320,7 @@ const DebtPositionDetail = () => {
     } catch (error) {
       console.error('Error while publishing the debt position:', error);
       setDialogConfig(null);
-      utils.notify.emit(t('debtPositionDetail.publishError'), 'error');
+      notify.emit(t('debtPositionDetail.publishError'), 'error');
     }
   };
 
@@ -348,7 +347,7 @@ const DebtPositionDetail = () => {
       downloadBlob(data, fileName);
     } catch (error) {
       console.error(t('commons.files.downloadFailed'), error);
-      utils.notify.emit(t('commons.files.downloadFailed'));
+      notify.emit(t('commons.files.downloadFailed'));
     }
   };
 

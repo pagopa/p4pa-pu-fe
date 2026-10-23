@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router';
 import { AxiosError } from 'axios';
-import { UseFormSetError } from 'react-hook-form';
+import type { UseFormSetError } from 'react-hook-form';
 import { useStore } from '../../../store/GlobalStore';
 import spontaneousFormApi from '../../../api/spontaneousForm';
 import { PageRoutes } from '../..';
-import { SpontaneousFormCreateData } from '../SpontaneousFormForm/schemas/spontaneousFormCreateSchema';
+import type { SpontaneousFormCreateData } from '../SpontaneousFormForm/schemas/spontaneousFormCreateSchema';
 import SpontaneousFormForm from '../SpontaneousFormForm/SpontaneousFormForm';
 
 const SpontaneousFormCreate = () => {

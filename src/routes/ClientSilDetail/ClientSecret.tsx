@@ -1,21 +1,20 @@
-import {
-  Box,
-  Button,
-  Grid,
-  Stack,
-  Tooltip,
-  Typography,
-  useTheme
-} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import CachedIcon from '@mui/icons-material/Cached';
 import { useState } from 'react';
 import { copyToClipboard } from '../../utils/clipboard';
-import { ContentCopy } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import utils from '../../utils';
 import { generateClientSecret } from '../../api/clientSil';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import ContentCopy from '@mui/icons-material/ContentCopy';
 
 type ClientSecretProps = {
   secretValue: string;

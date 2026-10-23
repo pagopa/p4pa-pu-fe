@@ -1,16 +1,3 @@
-import {
-  Card,
-  CardContent,
-  Typography,
-  Grid,
-  useTheme,
-  Chip,
-  ChipOwnProps,
-  Button,
-  Divider,
-  TypographyOwnProps,
-  Stack
-} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import {
   formatDate,
@@ -18,6 +5,18 @@ import {
   moneyFormat
 } from '../../utils/formatters';
 import React from 'react';
+
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import type { TypographyOwnProps } from '@mui/material/Typography';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import { useTheme } from '@mui/material/styles';
+import type { ChipOwnProps } from '@mui/material/Chip';
+import Chip from '@mui/material/Chip';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Stack from '@mui/material/Stack';
 
 export type DetailData = {
   label?: string;

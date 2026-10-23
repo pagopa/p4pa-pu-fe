@@ -1,10 +1,7 @@
-import { Download, History, ReadMore, Visibility } from '@mui/icons-material';
-import { Alert, Button, Divider, Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import DetailContainer, {
-  DetailData
-} from '../DetailContainer/DetailContainer';
+import type { DetailData } from '../DetailContainer/DetailContainer';
+import DetailContainer from '../DetailContainer/DetailContainer';
 import EmptyDetailContainer from './EmptyDetailContainer';
 import { InstallmentStatus } from '../../../generated/core/data-contracts';
 import { useStore } from '../../store/GlobalStore';
@@ -13,7 +10,7 @@ import debtPositions from '../../api/debtPositions';
 import { useParams, useNavigate, generatePath } from 'react-router';
 import { PageRoutes } from '../../routes';
 import { useEffect, useState } from 'react';
-import { BredcrumbItem } from '../Breadcrumbs/Breadcrumbs';
+import type { BredcrumbItem } from '../Breadcrumbs/Breadcrumbs';
 import { InstallmentDetailDrawer } from './InstallmentDetailDrawer';
 import { Timeline } from '../Timeline';
 import { setAppState } from '../../store/AppStateStore';
@@ -22,6 +19,16 @@ import { isTechnicalDebtPosition } from '../../utils/debtpositions';
 import utils from '../../utils';
 import { useTimelineData } from '../../hooks/useTimelineData';
 import { stateColors } from '../../routes/DebtPositions/components/DebtPositionIUVDataGrid';
+
+import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Download from '@mui/icons-material/Download';
+import History from '@mui/icons-material/History';
+import ReadMore from '@mui/icons-material/ReadMore';
+import Visibility from '@mui/icons-material/Visibility';
 
 export const DebtPositionsInstallmentDetail = () => {
   const { t } = useTranslation();

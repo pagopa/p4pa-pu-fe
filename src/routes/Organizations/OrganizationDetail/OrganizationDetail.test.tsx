@@ -3,7 +3,7 @@ import { getOrganizationDetail } from '@core/api/organizations';
 import utils from '@core/utils';
 import { OrganizationStatus } from '@generated/core/client';
 import { OrganizationDetail } from '.';
-import { OrganizationDetail as OrganizationDetailDTO } from '@generated/core/client';
+import type { OrganizationDetail as OrganizationDetailDTO } from '@generated/core/client';
 
 vi.mock('../../../assets/appio.svg', () => ({ default: 'appio-svg-mock' }));
 vi.mock('../../../assets/send.svg', () => ({ default: 'send-svg-mock' }));

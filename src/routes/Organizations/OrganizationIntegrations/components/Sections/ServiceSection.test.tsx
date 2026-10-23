@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { PdndServiceView } from '@generated/core/client';
+import type { PdndServiceView } from '@generated/core/client';
 import { ServicesSection } from './ServiceSection';
 
 vi.mock('../Dialogs/ServiceDialog', () => ({

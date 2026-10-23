@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import * as formattersModule from '../utils/formatters';
 import * as fieldValidationModule from '../utils/fieldValidation';
 import React from 'react';
-import { Installment } from '../models/paymentTypes';
+import type { Installment } from '../models/paymentTypes';
 
 // Mock preparation
 const mockFields = [{ id: 'field1' }, { id: 'field2' }];

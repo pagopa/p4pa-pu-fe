@@ -1,11 +1,11 @@
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
-import { OrganizationApiKey } from '@generated/core/client';
-import { Chip } from '@mui/material';
+import type { OrganizationApiKey } from '@generated/core/client';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { I18N_PREFIX } from '../..';
 import { ApiKeyDialog } from '../Dialogs/ApiKeyDialog';
 import { Section, Row, Field } from '../Containers';
+import Chip from '@mui/material/Chip';
 
 export const ApiKeysSection = ({
   apiKeys,

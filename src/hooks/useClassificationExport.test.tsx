@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { renderHook, act } from '../__tests__/renderers';
-import {
-  useClassificationExport,
-  ClassificationFormFields
-} from './useClassificationExport';
+import type { ClassificationFormFields } from './useClassificationExport';
+import { useClassificationExport } from './useClassificationExport';
 import { ExportFileTypeEnum, LabelEnum } from '../../generated/core/client';
 
 describe('useClassificationExport', () => {

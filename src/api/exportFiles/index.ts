@@ -2,10 +2,8 @@ import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
 import { pagedExportFileSchema } from '../../../generated/core/zod-schema';
-import {
-  buildGetExportFilesQueryParams,
-  ExportFilesFilteredRequest
-} from './mapping';
+import type { ExportFilesFilteredRequest } from './mapping';
+import { buildGetExportFilesQueryParams } from './mapping';
 
 export const getExportFiles = (
   organizationId: number,

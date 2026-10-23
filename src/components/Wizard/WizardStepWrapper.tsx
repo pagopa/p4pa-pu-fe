@@ -1,7 +1,11 @@
-import { Box, BoxProps, Grid, Typography } from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
-import { PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import type { BoxProps } from '@mui/material/Box';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 
 type Props = BoxProps & {
   title?: string;

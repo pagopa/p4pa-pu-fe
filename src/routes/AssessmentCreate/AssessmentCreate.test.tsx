@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createAssessment } from '../../api/assessments';
@@ -14,7 +15,8 @@ import { useWatch, useForm } from 'react-hook-form';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { AssessmentCreate } from './AssessmentCreate';
 import { render } from '../../__tests__/renderers';
-import { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import type { InternalAxiosRequestConfig } from 'axios';
+import { AxiosError } from 'axios';
 import utils from '../../utils';
 
 vi.mock('../../api/assessments', () => ({

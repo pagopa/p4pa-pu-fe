@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '../../__tests__/renderers';
-import FilterContainer, { COMPONENT_TYPE, FilterItem } from './FilterContainer';
+import type { FilterItem } from './FilterContainer';
+import FilterContainer, { COMPONENT_TYPE } from './FilterContainer';
 
 describe('FilterContainer', () => {
   describe('TextField', () => {

@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor, within } from '../../../__tests__/renderers';
 import userEvent from '@testing-library/user-event';
-import { _Select, SelectOptions } from '../_Select';
+import type { SelectOptions } from '../_Select';
+import { _Select } from '../_Select';
 
 const OPTIONS: SelectOptions = [
   { label: 'All', value: null },

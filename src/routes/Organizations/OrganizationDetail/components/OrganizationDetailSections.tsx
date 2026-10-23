@@ -1,11 +1,15 @@
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { Divider, Paper, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { generatePath, Link } from 'react-router';
 
-import { OrganizationDetail } from '@generated/core/data-contracts';
+import type { OrganizationDetail } from '@generated/core/data-contracts';
 
 import { PageRoutes } from '@core/routes';
+
+import Divider from '@mui/material/Divider';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 type RowProps = {
   label: string;

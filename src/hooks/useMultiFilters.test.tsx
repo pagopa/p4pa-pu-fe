@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../__tests__/renderers';
 import { useMultiFilters, FilterCategory } from './useMultiFilters';
 import * as FilterStore from '../store/FilterStore';
-import { FilterValues } from '../models/Filters';
+import type { FilterValues } from '../models/Filters';
 import { filterValues } from '../store/FilterStore';
 
 const initialFilterValues: FilterValues = {

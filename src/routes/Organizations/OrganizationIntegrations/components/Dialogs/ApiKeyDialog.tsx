@@ -2,11 +2,10 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopyOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined';
 import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
-import { Button, Divider, IconButton, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { OrganizationApiKey } from '@generated/core/data-contracts';
+import type { OrganizationApiKey } from '@generated/core/data-contracts';
 
 import {
   deleteOrganizationApiKey,
@@ -17,6 +16,12 @@ import { SECRET_MASK } from '@core/components/ShowSecretValue';
 import { copyWithFeedback } from '@core/utils/clipboard';
 import notify from '@core/utils/notify';
 import { KeyTypeEnum } from '@generated/core/client';
+
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 type ApiKeyDialogProps = {
   apiKey: OrganizationApiKey;

@@ -2,21 +2,21 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useStore } from '../../../../store/GlobalStore';
 import { useTranslation } from 'react-i18next';
-import { MenuItem, TextField } from '@mui/material';
 import { getDebtPositionTypeOrgs } from '../../../../api/debtPositionsTypeOrg';
 import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import BookIcon from '@mui/icons-material/MenuBook';
-import {
+import type {
   DebtPositionType,
   Step1Data
 } from '../../../../models/DebtPositionType';
-import {
-  createStep1GeneralConfigurationSchema,
-  Step1GeneralConfigurationFormValues
-} from '../../../../models/Step1GeneralConfigurationSchema';
+import type { Step1GeneralConfigurationFormValues } from '../../../../models/Step1GeneralConfigurationSchema';
+import { createStep1GeneralConfigurationSchema } from '../../../../models/Step1GeneralConfigurationSchema';
 import { useEffect, useRef, useMemo } from 'react';
+
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 
 type FormValues = Step1GeneralConfigurationFormValues;
 

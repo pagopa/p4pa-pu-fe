@@ -7,12 +7,10 @@ import {
   getIngestionFlowFileNotice,
   uploadIngestionFlowFile
 } from './';
-import {
-  IngestionFlowFileType,
-  UploadIngestionFlowFileResponseDTO
-} from '../../../generated/fileshare/client';
+import type { UploadIngestionFlowFileResponseDTO } from '../../../generated/fileshare/client';
+import { IngestionFlowFileType } from '../../../generated/fileshare/client';
 import { IngestionFlowFileTypeEnum } from '../../../generated/core/data-contracts';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import * as formatters from '../../utils/formatters';
 

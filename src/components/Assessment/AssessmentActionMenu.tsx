@@ -1,16 +1,20 @@
-import { useState, MouseEvent } from 'react';
-import { Close, Delete, MoreVert } from '@mui/icons-material';
-import { Button, Menu, MenuItem } from '@mui/material';
-import {
-  AssessmentsRowsDetail,
-  AssessmentStatus
-} from '../../../generated/core/data-contracts';
+import type { MouseEvent } from 'react';
+import { useState } from 'react';
+import type { AssessmentsRowsDetail } from '../../../generated/core/data-contracts';
+import { AssessmentStatus } from '../../../generated/core/data-contracts';
 import { useParams } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { updateAssessmentsStatus } from '../../api/assessments';
 import utils from '../../utils';
 import { useTranslation } from 'react-i18next';
+
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Close from '@mui/icons-material/Close';
+import Delete from '@mui/icons-material/Delete';
+import MoreVert from '@mui/icons-material/MoreVert';
 
 export type Props = {
   status?: AssessmentsRowsDetail['status'];

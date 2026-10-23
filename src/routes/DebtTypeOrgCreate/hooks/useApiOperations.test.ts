@@ -1,11 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '../../../__tests__/renderers';
 import { useApiOperations } from './useApiOperations';
-import {
-  DebtTypeOrgForm,
-  PaymentMethodOption,
-  SpontaneousMode
-} from '../types';
+import type { DebtTypeOrgForm } from '../types';
+import { PaymentMethodOption, SpontaneousMode } from '../types';
 import {
   DebtPositionTypeOrgBalanceCostType,
   OperatorsSelection

@@ -1,5 +1,5 @@
 import ClassificationExport from './ClassificationExport/ClassificationExport';
-import { RouteHandleObject } from '../models/Routes';
+import type { RouteHandleObject } from '../models/Routes';
 import ExportFlow from './ExportFlowPage/ExportFlowPage';
 
 export const exportRoutes = [

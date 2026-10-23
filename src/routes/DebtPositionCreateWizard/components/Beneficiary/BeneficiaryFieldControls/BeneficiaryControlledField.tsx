@@ -1,11 +1,11 @@
-import {
-  Controller,
+import type {
   FieldValues,
   ControllerRenderProps,
   ControllerFieldState,
   Path
 } from 'react-hook-form';
-import { BeneficiaryFieldsProps } from '../../../../../models/BeneficiaryFieldTypes';
+import { Controller } from 'react-hook-form';
+import type { BeneficiaryFieldsProps } from '../../../../../models/BeneficiaryFieldTypes';
 
 export function BeneficiaryControlledField<T extends FieldValues>({
   name,

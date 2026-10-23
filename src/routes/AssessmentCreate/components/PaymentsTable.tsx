@@ -1,14 +1,12 @@
 import { useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, OpenInNew as OpenInNewIcon } from '@mui/icons-material';
-import { Box, useTheme, IconButton } from '@mui/material';
-import { GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
+import type { GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import FilterContainer, {
   COMPONENT_TYPE
 } from '../../../components/FilterContainer/FilterContainer';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import { moneyFormat } from '../../../utils/formatters';
-import {
+import type {
   PagedPaidInstallmentsDTO,
   PaymentsUIFilters,
   PaidInstallmentDTO
@@ -17,6 +15,12 @@ import { usePaymentsTableFilters } from '../../../hooks/usePaymentsTableFilters'
 import { useHashParamsListener } from '../../../hooks/useHashParamsListener';
 import utils from '../../../utils';
 import { buildTelematicReceiptDetailPath } from '../../../utils/receiptNavigation';
+
+import Box from '@mui/material/Box';
+import { useTheme } from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
+import Search from '@mui/icons-material/Search';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 // Payment row type with additional fields for table display
 type PaymentRow = PaidInstallmentDTO & {

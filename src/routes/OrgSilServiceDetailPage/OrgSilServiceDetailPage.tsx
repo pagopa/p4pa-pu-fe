@@ -1,5 +1,3 @@
-import { Box, Button, Stack } from '@mui/material';
-import { Edit, Delete } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { useEffect, useState } from 'react';
@@ -9,10 +7,16 @@ import { STATE } from '../../store/types';
 import { useStore } from '../../store/GlobalStore';
 import DetailContainer from '../../components/DetailContainer/DetailContainer';
 import orgSilServiceApi from '../../api/orgSilService';
-import { DetailSectionProps } from '../../components/DetailContainer/DetailContainer';
+import type { DetailSectionProps } from '../../components/DetailContainer/DetailContainer';
 import { getOrgSilServiceSectionsConfig } from './model/OrgSilServiceSectionConfigs';
 import { PageRoutes } from '..';
 import utils from '../../utils';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Edit from '@mui/icons-material/Edit';
+import Delete from '@mui/icons-material/Delete';
 
 export const OrgSilServiceDetailPage = () => {
   const [sections, setSections] = useState<DetailSectionProps['sections']>([]);

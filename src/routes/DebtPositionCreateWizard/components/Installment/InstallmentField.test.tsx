@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import InstallmentField from './InstallmentField';
-import { Control, FieldValues } from 'react-hook-form';
-import { ReactNode } from 'react';
+import type { Control, FieldValues } from 'react-hook-form';
+import type { ReactNode } from 'react';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({

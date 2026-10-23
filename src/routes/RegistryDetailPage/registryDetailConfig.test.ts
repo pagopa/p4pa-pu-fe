@@ -6,9 +6,11 @@ import {
   isSilRegistry,
   mapRegistryToDetailSections
 } from './registryDetailConfig';
-import {
+import type {
   PagoPaRegistryDTO,
-  SilRegistryDTO,
+  SilRegistryDTO
+} from '../../../generated/core/data-contracts';
+import {
   RegistryEventCategory,
   RegistryPagoPaEventType,
   RegistryEventSubType,

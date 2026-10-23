@@ -155,7 +155,7 @@ describe('Classifications Detail:', () => {
         'getClassificationDetail'
       );
       render(<ClassificationsDetail />);
-      expect(spyGetClassificationDetails).toBeCalledWith(2, 673);
+      expect(spyGetClassificationDetails).toHaveBeenCalledWith(2, 673);
     });
 
     it('handles invalid classificationId by navigating to error page', async () => {

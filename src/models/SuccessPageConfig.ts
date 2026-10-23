@@ -1,4 +1,4 @@
-import { ButtonConfig } from '../components/ResponsePage/ResponsePage';
+import type { ButtonConfig } from '../components/ResponsePage/ResponsePage';
 
 type SuccessPage = {
   title: string;

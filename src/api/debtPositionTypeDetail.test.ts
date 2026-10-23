@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../__tests__/renderers';
 import utils from '../utils';
 import { getDebtPositionTypeDetail } from './debtPositionTypeDetail';

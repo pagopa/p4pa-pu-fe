@@ -1,12 +1,12 @@
-import {
-  DialogProps,
-  Dialog,
-  DialogTitle,
-  Typography,
-  DialogContent,
-  DialogActions
-} from '@mui/material';
-import { ReactNode, useId } from 'react';
+import type { ReactNode } from 'react';
+import { useId } from 'react';
+
+import type { DialogProps } from '@mui/material/Dialog';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import Typography from '@mui/material/Typography';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 
 type BaseDialogProps = {
   open: boolean;

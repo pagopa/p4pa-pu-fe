@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { TFunction } from 'i18next';
+import type { TFunction } from 'i18next';
 import { isValidPartitaIVA, isValidIBAN } from '../utils/fieldValidation';
 
 /**

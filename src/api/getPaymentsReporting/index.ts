@@ -2,7 +2,8 @@ import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
 import { pagedPaymentsReportingViewSchema } from '../../../generated/core/zod-schema';
-import { buildQueryParams, ReportingFilteredRequest } from './mappings';
+import type { ReportingFilteredRequest } from './mappings';
+import { buildQueryParams } from './mappings';
 
 export const getPaymentsReporting = ({
   organizationId

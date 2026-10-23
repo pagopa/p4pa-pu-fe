@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { waitFor } from '@testing-library/react';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 
 import utils from '../../utils';
-import { SupersetUrlResponseDTO } from '../../../generated/core/client';
+import type { SupersetUrlResponseDTO } from '../../../generated/core/client';
 import { renderHook } from '../../__tests__/renderers';
 import { useGenerateSupersetUrl } from '.';
 

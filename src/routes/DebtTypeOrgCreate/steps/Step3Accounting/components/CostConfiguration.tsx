@@ -1,8 +1,8 @@
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Stack } from '@mui/material';
-import { DebtTypeOrgForm } from '@core/routes/DebtTypeOrgCreate/types';
+import type { DebtTypeOrgForm } from '@core/routes/DebtTypeOrgCreate/types';
 import { FormComponent } from '@core/components/FormComponent';
+import Stack from '@mui/material/Stack';
 
 type CostConfigurationProps = {
   index: number;

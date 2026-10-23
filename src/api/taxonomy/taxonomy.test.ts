@@ -1,22 +1,23 @@
 import utils from '../../utils';
-import { AxiosResponse } from 'axios';
-import { describe, expect, it, Mock, vi } from 'vitest';
+import type { AxiosResponse } from 'axios';
+import type { Mock } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   getTaxonomies,
   getTaxonomyDetail,
   synchronizeTaxonomy
 } from '../taxonomy';
 import { renderHook, waitFor } from '../../__tests__/renderers';
-import {
+import type {
   Taxonomy,
   WorkflowCreatedDTO
 } from '../../../generated/core/data-contracts';
-import { buildQueryParams, TaxonomyFilteredRequest } from './mappings';
+import type { TaxonomyFilteredRequest } from './mappings';
+import { buildQueryParams } from './mappings';
 
-vi.mock('../../utils', () => {
-  const originalModule = vi.importActual('../../utils');
+vi.mock('../../utils', async (importOriginal) => {
   return {
-    ...originalModule,
+    ...(await importOriginal()),
     default: {
       apiClient: {
         bff: {

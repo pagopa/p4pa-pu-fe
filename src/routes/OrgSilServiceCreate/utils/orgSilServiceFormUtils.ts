@@ -1,9 +1,11 @@
-import { OrgSilServiceFormData } from '../schema';
-import {
+import type { OrgSilServiceFormData } from '../schema';
+import type {
   OrgSilServiceDecryptedDTO,
-  JwtAlgorithm,
   SilServiceLegacyBasicAuthConfigDTO,
-  SilServiceLegacyJwtAuthConfigDTO,
+  SilServiceLegacyJwtAuthConfigDTO
+} from '../../../../generated/core/data-contracts';
+import {
+  JwtAlgorithm,
   OrgSilServiceType
 } from '../../../../generated/core/data-contracts';
 import { toCamelCase } from '../../../utils/formatters';

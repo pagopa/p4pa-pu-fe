@@ -1,4 +1,4 @@
-import {
+import type {
   ClassificationPaidInstallmentsView,
   PagedClassificationPaidInstallmentsView
 } from '../../../../generated/core/data-contracts';

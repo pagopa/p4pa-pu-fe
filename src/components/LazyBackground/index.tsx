@@ -1,4 +1,6 @@
-import React, { useEffect, useState, CSSProperties } from 'react';
+import type { CSSProperties } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 type LazyBackgroundProps = {
   src: string; // URL of the high-res background image
