@@ -32,7 +32,8 @@ const {
   mockMutateAsync,
   mockNavigate
 } = vi.hoisted(() => ({
-  mockGetOrganizationApiKey: vi.fn(() => ({ data: undefined })),
+  mockGetOrganizationApiKey:
+    vi.fn<() => { data: { apiKey: string } | undefined }>(),
   mockGetOrganizationApiKeys:
     vi.fn<
       (
@@ -132,6 +133,48 @@ vi.mock('@core/components/FormComponent', () => ({
 }));
 
 describe('AddIntegration', () => {
+  it('fills the API key when it loads without overwriting later user edits', async () => {
+    vi.mocked(useParams).mockReturnValue({
+      organizationId: '33',
+      IntegrationType: 'pagoPa-product'
+    });
+    const { rerender } = render(<AddIntegration mode="edit" />, '/?keyType=IO');
+    expect(screen.getByRole('textbox')).toHaveValue('');
+
+    mockGetOrganizationApiKey.mockReturnValue({
+      data: { apiKey: 'loaded-key' }
+    });
+    rerender(<AddIntegration mode="edit" />);
+    await waitFor(() => {
+      expect(screen.getByRole('textbox')).toHaveValue('loaded-key');
+    });
+
+    fireEvent.change(screen.getByRole('textbox'), {
+      target: { value: 'edited-key' }
+    });
+    mockGetOrganizationApiKey.mockReturnValue({
+      data: { apiKey: 'refetched-key' }
+    });
+    rerender(<AddIntegration mode="edit" />);
+    expect(screen.getByRole('textbox')).toHaveValue('edited-key');
+  });
+
+  it('preserves an API key entered before the query finishes', () => {
+    vi.mocked(useParams).mockReturnValue({
+      organizationId: '33',
+      IntegrationType: 'pagoPa-product'
+    });
+    const { rerender } = render(<AddIntegration mode="edit" />, '/?keyType=IO');
+    fireEvent.change(screen.getByRole('textbox'), {
+      target: { value: 'user-key' }
+    });
+    mockGetOrganizationApiKey.mockReturnValue({
+      data: { apiKey: 'loaded-key' }
+    });
+    rerender(<AddIntegration mode="edit" />);
+    expect(screen.getByRole('textbox')).toHaveValue('user-key');
+  });
+
   it.each(['IO', 'GENERATE_NOTICE'])(
     'shows the URL keyType %s read-only in edit mode',
     (keyType) => {
@@ -184,6 +227,7 @@ describe('AddIntegration', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockGetOrganizationApiKey.mockReturnValue({ data: undefined });
     vi.mocked(useParams).mockReturnValue({ organizationId: '33' });
     mockGetOrganizationApiKeys.mockReturnValue({ data: [] });
     mockEncryptAndSaveApiKey.mockReturnValue({ mutateAsync: mockMutateAsync });

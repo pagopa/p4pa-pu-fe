@@ -95,7 +95,6 @@ export const ApiKeyDialog = ({
     );
   };
 
-
   return (
     <BaseDialog
       open={open}
@@ -105,18 +104,20 @@ export const ApiKeyDialog = ({
       actions={
         <>
           <Button
-            disabled={deleteApiKey.isPending}
-            onClick={handleEdit}
-          >
-            {t('commons.edit')}
-          </Button>
-          <Button
             color="error"
             startIcon={<DeleteOutlineIcon />}
             disabled={deleteApiKey.isPending}
             onClick={handleDelete}
           >
             {t('commons.delete')}
+          </Button>
+          <Button
+            color="primary"
+            variant="outlined"
+            disabled={deleteApiKey.isPending}
+            onClick={handleEdit}
+          >
+            {t('commons.edit')}
           </Button>
         </>
       }

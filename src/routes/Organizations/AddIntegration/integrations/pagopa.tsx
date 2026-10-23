@@ -115,6 +115,7 @@ const PagoPAIntegration = ({
             {t('integrations.add.pagoPaProduct.products')}
           </InputLabel>
           <Select
+            disabled={readOnly}
             readOnly={readOnly}
             name={field.name}
             value={field.value ?? ''}

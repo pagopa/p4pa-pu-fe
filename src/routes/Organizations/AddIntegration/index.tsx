@@ -20,7 +20,6 @@ import utils from '@core/utils';
 import i18n from '@core/translations/i18n';
 import { encryptAndSaveApiKey, getOrganizationApiKey } from '@core/api/organizations';
 
-
 const addIntegrationSchema = z.object({
   flagIntegrationType: z
     .nativeEnum(IntegrationType, {
@@ -56,7 +55,6 @@ interface AddIntegrationProps {
 
 export const AddIntegration = (props: AddIntegrationProps) => {
   const { mode = 'add' } = props;
-
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -88,7 +86,6 @@ export const AddIntegration = (props: AddIntegrationProps) => {
       mode === 'edit'
     );
 
-  
   const availableApiKeys = data
     ? Object.values(OrganizationApiKeyType)
         .filter((keyType) => !data.some((key) => key.keyType === keyType))
@@ -102,12 +99,14 @@ export const AddIntegration = (props: AddIntegrationProps) => {
     handleSubmit,
     watch,
     trigger,
+    resetField,
+    getFieldState,
     formState: { errors }
   } = useForm<AddIntegrationFormData>({
     resolver: zodResolver(
       addIntegrationSchema.superRefine((values, ctx) => {
         if (
-          values.flagIntegrationType === IntegrationType.PAGOPA_PRODUCT &&
+          values.flagIntegrationType === IntegrationType.PAGOPA_PRODUCT && mode === 'add' &&
           availableApiKeys.length === 0
         ) {
           ctx.addIssue({
@@ -141,6 +140,18 @@ export const AddIntegration = (props: AddIntegrationProps) => {
   });
 
   const flagIntegrationType = watch('flagIntegrationType');
+
+  useEffect(() => {
+    if (
+      mode === 'edit' &&
+      organizationApiKey?.apiKey !== undefined &&
+      !getFieldState('PAGOPA_PRODUCT.apiKey').isDirty
+    ) {
+      resetField('PAGOPA_PRODUCT.apiKey', {
+        defaultValue: organizationApiKey.apiKey
+      });
+    }
+  }, [mode, organizationApiKey?.apiKey, resetField, getFieldState]);
 
   useEffect(() => {
     if (flagIntegrationType !== undefined) {
@@ -187,14 +198,14 @@ export const AddIntegration = (props: AddIntegrationProps) => {
   return (
     <>
       <TitleComponent
-        title={t('integrations.add.title')}
-        description={t('integrations.add.subtitle')}
+        title={t(`integrations.${mode}.title`)}
+        description={t(`integrations.${mode}.subtitle`)}
       />
       <Typography variant="body1" color="error" sx={{ marginBottom: 2 }}>
-        {t('commons.requiredFieldDescription')}
+        {t('commons.requiredFieldDescriptionShort')}
       </Typography>
       {
-        mode === 'add' && (      <WizardStepWrapper p={2}>
+        mode === 'add' && (<WizardStepWrapper p={2}>
         <Typography variant="h6" component="h2" mb={2}>
           {t('integrations.add.section')}
         </Typography>

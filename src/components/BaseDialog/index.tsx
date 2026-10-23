@@ -51,7 +51,7 @@ export const BaseDialog = ({
 
       <DialogContent>{children}</DialogContent>
 
-      {actions && <DialogActions>{actions}</DialogActions>}
+      {actions && <DialogActions sx={{ padding: 3, paddingTop: 0 }}>{actions}</DialogActions>}
     </Dialog>
   );
 };
