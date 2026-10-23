@@ -18,7 +18,7 @@ import { Alert, AlertTitle } from '@mui/material';
 import { useEffect } from 'react';
 import utils from '@core/utils';
 import i18n from '@core/translations/i18n';
-import { encryptAndSaveApiKey } from '@core/api/organizations';
+import { encryptAndSaveApiKey, getOrganizationApiKey } from '@core/api/organizations';
 
 
 const addIntegrationSchema = z.object({
@@ -82,7 +82,13 @@ export const AddIntegration = (props: AddIntegrationProps) => {
   const organizationId = Number(organizationIdByURL);
 
   const { data } = getOrganizationApiKeys(organizationId, mode === 'add');
+  const { data: organizationApiKey } = getOrganizationApiKey(
+      organizationId,
+      initialKeyType,
+      mode === 'edit'
+    );
 
+  
   const availableApiKeys = data
     ? Object.values(OrganizationApiKeyType)
         .filter((keyType) => !data.some((key) => key.keyType === keyType))
@@ -128,18 +134,13 @@ export const AddIntegration = (props: AddIntegrationProps) => {
       flagIntegrationType: integrationTypeByURL,
       PAGOPA_PRODUCT: {
         keyType: initialKeyType,
-        apiKey: '',
+        apiKey: organizationApiKey?.apiKey,
         serviceEnabled: initialServiceEnabled
       }
     }
   });
 
   const flagIntegrationType = watch('flagIntegrationType');
-
-  console.log('integrationTypeByURL:', integrationTypeByURL);
-  console.log('mode:', mode);
-  console.log('availableApiKeys:', availableApiKeys);
-  console.log('flagIntegrationType:', flagIntegrationType);
 
   useEffect(() => {
     if (flagIntegrationType !== undefined) {

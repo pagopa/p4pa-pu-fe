@@ -27,10 +27,12 @@ const render = (ui: React.ReactNode, initialEntry = '/') =>
 
 const {
   mockGetOrganizationApiKeys,
+  mockGetOrganizationApiKey,
   mockEncryptAndSaveApiKey,
   mockMutateAsync,
   mockNavigate
 } = vi.hoisted(() => ({
+  mockGetOrganizationApiKey: vi.fn(() => ({ data: undefined })),
   mockGetOrganizationApiKeys:
     vi.fn<
       (
@@ -48,6 +50,7 @@ vi.mock('@core/api/integrations', () => ({
 }));
 
 vi.mock('@core/api/organizations', () => ({
+  getOrganizationApiKey: mockGetOrganizationApiKey,
   encryptAndSaveApiKey: mockEncryptAndSaveApiKey
 }));
 
@@ -162,11 +165,21 @@ describe('AddIntegration', () => {
   });
 
   it('disables the configured keys query in edit mode and enables it in add mode', () => {
-    const { rerender } = render(<AddIntegration mode="edit" />);
+    const { rerender } = render(<AddIntegration mode="edit" />, '/?keyType=IO');
     expect(mockGetOrganizationApiKeys).toHaveBeenLastCalledWith(33, false);
+    expect(mockGetOrganizationApiKey).toHaveBeenLastCalledWith(
+      33,
+      OrganizationApiKeyType.IO,
+      true
+    );
 
     rerender(<AddIntegration mode="add" />);
     expect(mockGetOrganizationApiKeys).toHaveBeenLastCalledWith(33, true);
+    expect(mockGetOrganizationApiKey).toHaveBeenLastCalledWith(
+      33,
+      OrganizationApiKeyType.IO,
+      false
+    );
   });
 
   beforeEach(() => {
