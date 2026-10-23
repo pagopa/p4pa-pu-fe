@@ -393,7 +393,8 @@ describe('useSearch', () => {
         iuv: 'ABC123',
         page: null,
         size: null,
-        sort: null
+        sort: null,
+        uselessStringTest: null
       });
 
       expect(utils.URI.set).toHaveBeenCalledWith(expect.any(String), {
