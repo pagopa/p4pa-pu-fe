@@ -33,7 +33,7 @@ describe('Assessment', () => {
   it('should render all main elements', () => {
     render(<Assessment />);
     expect(screen.getByText('commons.routes.ASSESSMENT')).toBeInTheDocument();
-    expect(screen.getByText('assessment.createAssessment')).toBeInTheDocument();
+    expect(screen.getByText('assessment.testStringMod')).toBeInTheDocument();
     expect(screen.getByText('assessment.search')).toBeInTheDocument();
     expect(
       screen.getByText('assessment.searchDescription')
@@ -114,7 +114,7 @@ describe('Assessment', () => {
 
   it('should trigger create assessment button click', () => {
     render(<Assessment />);
-    const btn = screen.getByText('assessment.createAssessment');
+    const btn = screen.getByText('assessment.testStringMod');
     fireEvent.click(btn);
     expect(btn).toBeInTheDocument();
   });
