@@ -44,7 +44,7 @@ export default defineConfig({
 
     coverage: {
       provider: 'v8',
-      reporter: isCI ? ['text', 'json-summary', 'lcov'] : ['text'],
+      reporter: isCI ? ['text', 'json-summary', 'lcov', 'json'] : ['text'],
       reportOnFailure: true,
       exclude: [
         ...configDefaults.exclude,
