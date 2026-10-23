@@ -57,7 +57,8 @@ export const Assessment = () => {
         callToAction={[
           {
             icon: <AddIcon />,
-            buttonText: t('assessment.createAssessment'),
+            // FIXME: Don't merge this
+            buttonText: t('assessment.testStringMod'),
             variant: 'contained',
             onActionClick: handleCreateAssessment,
             dataTestId: 'assessment-create-button'
