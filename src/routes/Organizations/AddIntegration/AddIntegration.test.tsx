@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  fireEvent,
+  render as testingRender,
+  screen,
+  waitFor
+} from '@testing-library/react';
 import { type Control, useController } from 'react-hook-form';
+import { MemoryRouter, useParams } from 'react-router';
 
 import { AddIntegration } from '.';
 import utils from '@core/utils';
@@ -12,6 +18,13 @@ import {
   OrganizationApiKeyType
 } from '@generated/core/client';
 
+const render = (ui: React.ReactNode, initialEntry = '/') =>
+  testingRender(ui, {
+    wrapper: ({ children }) => (
+      <MemoryRouter initialEntries={[initialEntry]}>{children}</MemoryRouter>
+    )
+  });
+
 const {
   mockGetOrganizationApiKeys,
   mockEncryptAndSaveApiKey,
@@ -19,7 +32,12 @@ const {
   mockNavigate
 } = vi.hoisted(() => ({
   mockGetOrganizationApiKeys:
-    vi.fn<() => { data: Array<OrganizationApiKey> }>(),
+    vi.fn<
+      (
+        organizationId: number,
+        enabled?: boolean
+      ) => { data: Array<OrganizationApiKey> }
+    >(),
   mockEncryptAndSaveApiKey: vi.fn(),
   mockMutateAsync: vi.fn<(data: OrganizationApiKeys) => Promise<void>>(),
   mockNavigate: vi.fn()
@@ -38,7 +56,7 @@ vi.mock('react-router', async (importOriginal) => {
   return {
     ...actual,
     useNavigate: () => mockNavigate,
-    useParams: () => ({ organizationId: '33' })
+    useParams: vi.fn()
   };
 });
 
@@ -111,8 +129,49 @@ vi.mock('@core/components/FormComponent', () => ({
 }));
 
 describe('AddIntegration', () => {
+  it.each(['IO', 'GENERATE_NOTICE'])(
+    'shows the URL keyType %s read-only in edit mode',
+    (keyType) => {
+      vi.mocked(useParams).mockReturnValue({
+        organizationId: '33',
+        IntegrationType: 'pagoPa-product'
+      });
+      mockGetOrganizationApiKeys.mockReturnValue({ data: [] });
+
+      render(<AddIntegration mode="edit" />, `/?keyType=${keyType}`);
+
+      const select = screen.getByRole('combobox');
+      expect(select).toHaveTextContent(keyType);
+      fireEvent.mouseDown(select);
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+      expect(mockGetOrganizationApiKeys).toHaveBeenCalledWith(33, false);
+    }
+  );
+
+  it.each([
+    { query: 'IO', expected: OrganizationApiKeyType.IO },
+    {
+      query: 'GENERATE_NOTICE',
+      expected: OrganizationApiKeyType.GENERATE_NOTICE
+    },
+    { query: 'SEND', expected: OrganizationApiKeyType.IO }
+  ])('initializes the product for keyType=$query', ({ query, expected }) => {
+    render(<AddIntegration />, `/?keyType=${query}`);
+    fireEvent.click(screen.getByTestId('option-pagoPa-product'));
+    expect(screen.getByRole('combobox')).toHaveTextContent(expected);
+  });
+
+  it('disables the configured keys query in edit mode and enables it in add mode', () => {
+    const { rerender } = render(<AddIntegration mode="edit" />);
+    expect(mockGetOrganizationApiKeys).toHaveBeenLastCalledWith(33, false);
+
+    rerender(<AddIntegration mode="add" />);
+    expect(mockGetOrganizationApiKeys).toHaveBeenLastCalledWith(33, true);
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useParams).mockReturnValue({ organizationId: '33' });
     mockGetOrganizationApiKeys.mockReturnValue({ data: [] });
     mockEncryptAndSaveApiKey.mockReturnValue({ mutateAsync: mockMutateAsync });
     mockMutateAsync.mockResolvedValue(undefined);
@@ -132,7 +191,7 @@ describe('AddIntegration', () => {
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
     expect(utils.notify.emit).not.toHaveBeenCalled();
-    expect(mockGetOrganizationApiKeys).toHaveBeenCalledWith(33);
+    expect(mockGetOrganizationApiKeys).toHaveBeenCalledWith(33, true);
     expect(mockEncryptAndSaveApiKey).toHaveBeenCalledWith(33);
   });
 
