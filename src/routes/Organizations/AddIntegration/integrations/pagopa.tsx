@@ -77,12 +77,14 @@ const Product = ({
 
 const PagoPAIntegration = ({
   availableApiKeys,
-  control
+  control,
+  readOnly = false
 }: {
   availableApiKeys: Array<
     OrganizationApiKeyType.IO | OrganizationApiKeyType.GENERATE_NOTICE
   >;
   control: Control<AddIntegrationFormData>;
+  readOnly?: boolean;
 }) => {
   const { t } = useTranslation();
   const { field } = useController({
@@ -93,10 +95,13 @@ const PagoPAIntegration = ({
   const firstAvailableApiKey = availableApiKeys[0];
 
   useEffect(() => {
-    if (value === undefined) {
+    if (!readOnly && value === undefined) {
       onChange(firstAvailableApiKey);
     }
-  }, [value, onChange, firstAvailableApiKey]);
+  }, [value, onChange, firstAvailableApiKey, readOnly]);
+
+  const selectedOptions = value === undefined ? [] : [value];
+  const productOptions = readOnly ? selectedOptions : availableApiKeys;
 
   return (
     <>
@@ -110,6 +115,8 @@ const PagoPAIntegration = ({
             {t('integrations.add.pagoPaProduct.products')}
           </InputLabel>
           <Select
+            disabled={readOnly}
+            readOnly={readOnly}
             name={field.name}
             value={field.value ?? ''}
             onChange={field.onChange}
@@ -117,7 +124,7 @@ const PagoPAIntegration = ({
             labelId="api-Key-list"
             label={t('integrations.add.pagoPaProduct.products')}
           >
-            {availableApiKeys.map((keyType) => (
+            {productOptions.map((keyType) => (
               <MenuItem value={keyType} key={keyType}>
                 {t(`integrations.add.pagoPaProduct.${keyType}`)}
               </MenuItem>

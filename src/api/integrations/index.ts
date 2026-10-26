@@ -13,9 +13,10 @@ import utils from '@core/utils';
 import { parseAndLog } from '@core/utils/loaders';
 import type { FilteredRequest } from '@core/models/Filters';
 
-export const getOrganizationApiKeys = (organizationId: number) =>
+export const getOrganizationApiKeys = (organizationId: number, enabled = true) =>
   useQuery({
     queryKey: ['organizationApiKeys', organizationId],
+    enabled,
     queryFn: async () => {
       const { data } =
         await utils.apiClient.bff.getOrganizationApiKeys(organizationId);

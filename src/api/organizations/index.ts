@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { skipToken, useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../../utils';
 import { pagedOrganizationWithDebtPositionTypeOrgAndOperatorsCountSchema } from '../../../generated/core/zod-schema';
 import type { OrganizationsFilteredRequest } from './mappings';
@@ -72,17 +72,23 @@ export const getOrganizationApiKeys = (organizationId: number) =>
 
 export const getOrganizationApiKey = (
   organizationId: number,
-  keyType: OrganizationApiKeyType
+  keyType: OrganizationApiKeyType | undefined,
+  enabled = true
 ) =>
   useQuery({
     queryKey: ['getOrganizationApiKey', organizationId, keyType],
-    queryFn: async () => {
-      const { data: apiKeys } = await utils.apiClient.bff.getOrganizationApiKey(
-        organizationId,
-        keyType
-      );
-      return apiKeys;
-    }
+    enabled,
+    queryFn:
+      keyType === undefined
+        ? skipToken
+        : async () => {
+            const { data: apiKeys } =
+              await utils.apiClient.bff.getOrganizationApiKey(
+                organizationId,
+                keyType
+              );
+            return apiKeys;
+          }
   });
 
 export const encryptAndSaveApiKey = (organizationId: number) =>

@@ -2,13 +2,14 @@ import Typography from '@mui/material/Typography';
 import { SubmitErrorHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { IntegrationType } from '../enums';
 
 import { FormComponent } from '@core/components/FormComponent';
 import TitleComponent from '@core/components/TitleComponent/TitleComponent';
 import WizardStepButtons from '@core/components/Wizard/WizardStepButtons';
 import WizardStepWrapper from '@core/components/Wizard/WizardStepWrapper';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
 import Divider from '@mui/material/Divider';
 import PagoPAIntegration from './integrations/pagopa';
 import { KeyTypeEnum, OrganizationApiKeyType } from '@generated/core/client';
@@ -17,13 +18,7 @@ import { Alert, AlertTitle } from '@mui/material';
 import { useEffect } from 'react';
 import utils from '@core/utils';
 import i18n from '@core/translations/i18n';
-import { encryptAndSaveApiKey } from '@core/api/organizations';
-
-enum IntegrationType {
-  E_SERVICE = 'e-service',
-  PAGOPA_PRODUCT = 'pagoPa-product',
-  PDND_CLIENT = 'pdnd-client'
-}
+import { encryptAndSaveApiKey, getOrganizationApiKey } from '@core/api/organizations';
 
 const addIntegrationSchema = z.object({
   flagIntegrationType: z
@@ -54,16 +49,42 @@ const addIntegrationSchema = z.object({
 
 export type AddIntegrationFormData = z.infer<typeof addIntegrationSchema>;
 
-export const AddIntegration = () => {
+interface AddIntegrationProps {
+  mode?: 'edit' | 'add';
+}
+
+export const AddIntegration = (props: AddIntegrationProps) => {
+  const { mode = 'add' } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const keyTypeByURL = searchParams.get('keyType');
+  const serviceEnabledByURL = searchParams.get('serviceEnabled');
 
-  const { organizationId: organizationIdByURL } = useParams<{
+  const initialKeyType =
+    keyTypeByURL === OrganizationApiKeyType.IO ||
+    keyTypeByURL === OrganizationApiKeyType.GENERATE_NOTICE
+      ? keyTypeByURL
+      : undefined;
+
+  const initialServiceEnabled =
+    serviceEnabledByURL === 'true'
+      ? true
+      : false;
+  
+  const { organizationId: organizationIdByURL, IntegrationType: integrationTypeByURL } = useParams<{
     organizationId: string;
+    IntegrationType: IntegrationType;
   }>();
 
   const organizationId = Number(organizationIdByURL);
-  const { data } = getOrganizationApiKeys(organizationId);
+
+  const { data } = getOrganizationApiKeys(organizationId, mode === 'add');
+  const { data: organizationApiKey } = getOrganizationApiKey(
+      organizationId,
+      initialKeyType,
+      mode === 'edit'
+    );
 
   const availableApiKeys = data
     ? Object.values(OrganizationApiKeyType)
@@ -78,12 +99,14 @@ export const AddIntegration = () => {
     handleSubmit,
     watch,
     trigger,
+    resetField,
+    getFieldState,
     formState: { errors }
   } = useForm<AddIntegrationFormData>({
     resolver: zodResolver(
       addIntegrationSchema.superRefine((values, ctx) => {
         if (
-          values.flagIntegrationType === IntegrationType.PAGOPA_PRODUCT &&
+          values.flagIntegrationType === IntegrationType.PAGOPA_PRODUCT && mode === 'add' &&
           availableApiKeys.length === 0
         ) {
           ctx.addIssue({
@@ -107,16 +130,28 @@ export const AddIntegration = () => {
     ),
     mode: 'onSubmit',
     defaultValues: {
-      flagIntegrationType: undefined,
+      flagIntegrationType: integrationTypeByURL,
       PAGOPA_PRODUCT: {
-        keyType: undefined,
-        apiKey: '',
-        serviceEnabled: false
+        keyType: initialKeyType,
+        apiKey: organizationApiKey?.apiKey,
+        serviceEnabled: initialServiceEnabled
       }
     }
   });
 
   const flagIntegrationType = watch('flagIntegrationType');
+
+  useEffect(() => {
+    if (
+      mode === 'edit' &&
+      organizationApiKey?.apiKey !== undefined &&
+      !getFieldState('PAGOPA_PRODUCT.apiKey').isDirty
+    ) {
+      resetField('PAGOPA_PRODUCT.apiKey', {
+        defaultValue: organizationApiKey.apiKey
+      });
+    }
+  }, [mode, organizationApiKey?.apiKey, resetField, getFieldState]);
 
   useEffect(() => {
     if (flagIntegrationType !== undefined) {
@@ -163,13 +198,14 @@ export const AddIntegration = () => {
   return (
     <>
       <TitleComponent
-        title={t('integrations.add.title')}
-        description={t('integrations.add.subtitle')}
+        title={t(`integrations.${mode}.title`)}
+        description={t(`integrations.${mode}.subtitle`)}
       />
       <Typography variant="body1" color="error" sx={{ marginBottom: 2 }}>
-        {t('commons.requiredFieldDescription')}
+        {t('commons.requiredFieldDescriptionShort')}
       </Typography>
-      <WizardStepWrapper p={2}>
+      {
+        mode === 'add' && (<WizardStepWrapper p={2}>
         <Typography variant="h6" component="h2" mb={2}>
           {t('integrations.add.section')}
         </Typography>
@@ -227,12 +263,14 @@ export const AddIntegration = () => {
             {t(`${errors.flagIntegrationType.message}.message`)}
           </Alert>
         )}
-      </WizardStepWrapper>
-      {availableApiKeys.length > 0 &&
-        flagIntegrationType === IntegrationType.PAGOPA_PRODUCT && (
+      </WizardStepWrapper>)
+      }
+      {flagIntegrationType === IntegrationType.PAGOPA_PRODUCT &&
+        (mode === 'edit' || (mode === 'add' && availableApiKeys.length > 0)) && (
           <PagoPAIntegration
             availableApiKeys={availableApiKeys}
             control={control}
+            readOnly={mode === 'edit'}
           />
         )}
       <WizardStepButtons
