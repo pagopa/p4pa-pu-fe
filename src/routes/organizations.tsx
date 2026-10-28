@@ -11,6 +11,7 @@ import { SubUnitDetail } from './SubUnitDetail';
 import { SubUnitCreate } from './SubUnitCreate';
 import { AddIntegration } from './Organizations/AddIntegration';
 import { SubunitAssignOperator } from './SubunitAssignOperator';
+import { IntegrationMode } from './Organizations/enums';
 
 export const organizationsRoutes = [
   {
@@ -82,7 +83,7 @@ export const organizationsRoutes = [
         id: 'EDIT_INTEGRATION',
         element: (
           <AdminRouteGuard>
-            <AddIntegration mode="edit" />
+            <AddIntegration mode={IntegrationMode.EDIT} />
           </AdminRouteGuard>
         ),
         path: `:organizationId/integrations/edit/:IntegrationType`,
