@@ -102,26 +102,29 @@ export const MyOrganization = ({ omitOrgName }: { omitOrgName?: boolean }) => {
       field: 'id',
       headerName: t('operatorsList.myOrganizationDataGrid.id'),
       flex: 1,
-      minWidth: 100
+      minWidth: 100,
+      sortable: false
     },
     {
       field: 'nameAndLastName',
       headerName: t('operatorsList.myOrganizationDataGrid.nameAndLastName'),
       flex: 2,
-      minWidth: 200
+      minWidth: 200,
+      sortable: false
     },
     {
       field: 'fiscalCode',
       headerName: t('operatorsList.myOrganizationDataGrid.fiscalCode'),
       flex: 2,
-      minWidth: 200
+      minWidth: 200,
+      sortable: false
     },
     {
       field: 'enabledDebtTypes',
       headerName: t('operatorsList.myOrganizationDataGrid.enabledDebtTypes'),
       flex: 1,
       minWidth: 180,
-      sortable: true
+      sortable: false
     },
     {
       field: 'actions',

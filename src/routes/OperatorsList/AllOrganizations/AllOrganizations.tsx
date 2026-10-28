@@ -62,7 +62,8 @@ export const AllOrganizations = () => {
       field: 'operatorsCount',
       headerName: t('operatorsList.allOrganizationsDataGrid.operators'),
       flex: 1,
-      minWidth: 150
+      minWidth: 150,
+      sortable: false
     },
     {
       field: 'actions',
