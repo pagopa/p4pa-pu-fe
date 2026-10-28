@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import type { Control, Path, FieldValues, PathValue } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import { ErrorMessage } from './ErrorMessage';
@@ -39,9 +40,12 @@ export const _ControlledRadioGroup = <T extends FieldValues>({
   required,
   selectFirstOption = true,
   showErrorMessage = true,
+  divider,
   formControlLabelProps,
   ...props
 }: _ControlledRadioGroupProps<T>) => {
+  const labelId = `${name}-label`;
+
   return (
     <Controller
       name={name}
@@ -55,30 +59,32 @@ export const _ControlledRadioGroup = <T extends FieldValues>({
           disabled={disabled}
           sx={{ width: '100%' }}
         >
-          <FormLabel
-            component="legend"
-            id={`${name}-label`}
-            sx={{ fontWeight: 600, fontSize: 14, mb: 1 }}
-          >
-            {label}
-          </FormLabel>
+          {label && (
+            <FormLabel
+              component="legend"
+              id={labelId}
+              sx={{ fontWeight: 600, fontSize: 14, mb: 1 }}
+            >
+              {label}
+            </FormLabel>
+          )}
+          {/* aria-label / aria-labelledby passed by the caller take precedence */}
           <RadioGroup
             {...field}
             value={field.value ?? ''}
+            aria-labelledby={label ? labelId : undefined}
             {...props}
-            aria-labelledby={`${name}-label`}
           >
             {options.map(({ value, label }, index) => (
-              <>
-                {props.divider && index > 0 ? props.divider : null}
+              <Fragment key={String(value)}>
+                {divider && index > 0 ? divider : null}
                 <FormControlLabel
-                  key={value}
                   value={value}
                   control={<Radio />}
                   label={label}
                   {...formControlLabelProps}
                 />
-              </>
+              </Fragment>
             ))}
           </RadioGroup>
 

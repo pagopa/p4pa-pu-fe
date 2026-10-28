@@ -1,9 +1,13 @@
 import { z } from 'zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import type { OrganizationApiKeyType } from '@generated/core/client';
+import type {
+  OrganizationApiKeyType,
+  PdndClientDTO
+} from '@generated/core/client';
 import {
   organizationApiKeySchema,
+  pagedPdndClientViewSchema,
   pagedPdndServiceViewSchema,
   pdndClientNoSecretDTOSchema,
   pdndServiceViewSchema
@@ -124,5 +128,38 @@ export const deletePdndClient = (organizationId: number, clientId: string) =>
     mutationKey: ['deletePdndClient', organizationId, clientId],
     mutationFn: async () => {
       await utils.apiClient.bff.deletePdndClient(organizationId, clientId);
+    }
+  });
+
+export const savePdndClient = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['savePdndClient', organizationId],
+    mutationFn: async (data: PdndClientDTO) => {
+      const { data: client } = await utils.apiClient.bff.savePdndClient(
+        organizationId,
+        data
+      );
+      return client;
+    }
+  });
+
+export const getAllOrgSubUnitsPdndClients = (
+  organizationId: number,
+  enabled = true
+) =>
+  useQuery({
+    queryKey: ['getOrgSubUnitsPdndClients', organizationId],
+    enabled,
+    queryFn: async () => {
+      const { data } = await utils.apiClient.bff.getOrgSubUnitsPdndClients(
+        organizationId,
+        {
+          // TODO: should not be hardcoded
+          // an api should return all the subUnits
+          size: 100
+        }
+      );
+      parseAndLog(pagedPdndClientViewSchema, data);
+      return data;
     }
   });

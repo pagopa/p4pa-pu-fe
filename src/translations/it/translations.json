@@ -2477,12 +2477,38 @@
           }
         }
       },
+      "pdndClient": {
+        "label": "Client PDND",
+        "owner": {
+          "title": "Di chi è il client PDND?",
+          "description": "Indica l'ente o la sottounità per cui stai creando questo client.",
+          "organization": "Dell'ente",
+          "subUnit": "Di una sottounità dell'ente"
+        },
+        "subUnit": "Sottounità",
+        "configure": {
+          "title": "Configura il client",
+          "description": "Inserisci le informazioni fornite da PDND in fase di creazione di un client."
+        },
+        "generalInfo": "Informazioni generali",
+        "cryptoMaterial": "Materiale crittografico",
+        "fields": {
+          "clientName": "Nome del client",
+          "clientId": "ID del client",
+          "kid": "ID della chiave (KID)",
+          "publicKey": "Chiave pubblica",
+          "privateKey": "Chiave privata"
+        },
+        "errors": {
+          "noSubUnits": {
+            "title": "Non esistono sottounità per l'ente {{organizationName}}",
+            "message": "Crea prima una sottounità e riprova."
+          }
+        }
+      },
       "eService": {
         "label": "E-service PDND",
         "description": "SEND"
-      },
-      "pdndClient": {
-        "label": "Client PDND"
       },
       "errors": {
         "selectAtLeastOneOption": {
@@ -2586,10 +2612,10 @@
       "searchByFiscalCode": "Cerca per codice fiscale",
       "countLabel_one": "Selezionato {{count}} operatore",
       "countLabel_other": "Selezionati {{count}} operatori",
-       "dialog": {
+      "dialog": {
         "title": "Conferma associazione",
-          "message_one": "{{count}} operatore sarà associato alla sottounità <strong>{{subUnitCode}}</strong>.",
-          "message_other": "{{count}} operatori saranno associati alla sottounità <strong>{{subUnitCode}}</strong>.",
+        "message_one": "{{count}} operatore sarà associato alla sottounità <strong>{{subUnitCode}}</strong>.",
+        "message_other": "{{count}} operatori saranno associati alla sottounità <strong>{{subUnitCode}}</strong>.",
         "noSelection": "Nessun operatore selezionato"
       }
     },
