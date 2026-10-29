@@ -61,10 +61,8 @@ export default defineConfig({
       ],
       include: ['src/**/*.ts?(x)'],
       thresholds: {
-        global: {
-          lines: 80,
-          branches: 80
-        }
+        lines: 80,
+        branches: 80
       }
     },
     env: config({ path: './.env.test' }).parsed || {},

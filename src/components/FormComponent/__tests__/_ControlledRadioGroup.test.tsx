@@ -2,7 +2,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '../../../__tests__/renderers';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
-import { FieldErrors, useForm } from 'react-hook-form';
+import type { FieldErrors } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { _ControlledRadioGroup } from '../_ControlledRadioGroup';
 
 vi.mock('../ErrorMessage', () => ({

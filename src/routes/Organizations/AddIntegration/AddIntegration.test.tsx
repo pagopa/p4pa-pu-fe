@@ -11,12 +11,11 @@ import { MemoryRouter, useParams } from 'react-router';
 import { AddIntegration } from '.';
 import utils from '@core/utils';
 import i18n from '@core/translations/i18n';
-import {
-  KeyTypeEnum,
+import type {
   OrganizationApiKey,
-  OrganizationApiKeys,
-  OrganizationApiKeyType
+  OrganizationApiKeys
 } from '@generated/core/client';
+import { KeyTypeEnum, OrganizationApiKeyType } from '@generated/core/client';
 
 const render = (ui: React.ReactNode, initialEntry = '/') =>
   testingRender(ui, {
