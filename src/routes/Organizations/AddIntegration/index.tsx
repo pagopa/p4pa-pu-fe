@@ -1,5 +1,6 @@
 import Typography from '@mui/material/Typography';
-import { SubmitErrorHandler, useForm } from 'react-hook-form';
+import type { SubmitErrorHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { IntegrationType } from '../enums';
@@ -12,13 +13,17 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import Divider from '@mui/material/Divider';
 import PagoPAIntegration from './integrations/pagopa';
-import { KeyTypeEnum, OrganizationApiKeyType } from '@generated/core/client';
+import type { KeyTypeEnum } from '@generated/core/client';
+import { OrganizationApiKeyType } from '@generated/core/client';
 import { getOrganizationApiKeys } from '@core/api/integrations';
 import { Alert, AlertTitle } from '@mui/material';
 import { useEffect } from 'react';
 import utils from '@core/utils';
 import i18n from '@core/translations/i18n';
-import { encryptAndSaveApiKey, getOrganizationApiKey } from '@core/api/organizations';
+import {
+  encryptAndSaveApiKey,
+  getOrganizationApiKey
+} from '@core/api/organizations';
 
 const addIntegrationSchema = z.object({
   flagIntegrationType: z
@@ -49,9 +54,9 @@ const addIntegrationSchema = z.object({
 
 export type AddIntegrationFormData = z.infer<typeof addIntegrationSchema>;
 
-interface AddIntegrationProps {
+type AddIntegrationProps = {
   mode?: 'edit' | 'add';
-}
+};
 
 export const AddIntegration = (props: AddIntegrationProps) => {
   const { mode = 'add' } = props;
@@ -67,12 +72,12 @@ export const AddIntegration = (props: AddIntegrationProps) => {
       ? keyTypeByURL
       : undefined;
 
-  const initialServiceEnabled =
-    serviceEnabledByURL === 'true'
-      ? true
-      : false;
-  
-  const { organizationId: organizationIdByURL, IntegrationType: integrationTypeByURL } = useParams<{
+  const initialServiceEnabled = serviceEnabledByURL === 'true' ? true : false;
+
+  const {
+    organizationId: organizationIdByURL,
+    IntegrationType: integrationTypeByURL
+  } = useParams<{
     organizationId: string;
     IntegrationType: IntegrationType;
   }>();
@@ -81,10 +86,10 @@ export const AddIntegration = (props: AddIntegrationProps) => {
 
   const { data } = getOrganizationApiKeys(organizationId, mode === 'add');
   const { data: organizationApiKey } = getOrganizationApiKey(
-      organizationId,
-      initialKeyType,
-      mode === 'edit'
-    );
+    organizationId,
+    initialKeyType,
+    mode === 'edit'
+  );
 
   const availableApiKeys = data
     ? Object.values(OrganizationApiKeyType)
@@ -106,7 +111,8 @@ export const AddIntegration = (props: AddIntegrationProps) => {
     resolver: zodResolver(
       addIntegrationSchema.superRefine((values, ctx) => {
         if (
-          values.flagIntegrationType === IntegrationType.PAGOPA_PRODUCT && mode === 'add' &&
+          values.flagIntegrationType === IntegrationType.PAGOPA_PRODUCT &&
+          mode === 'add' &&
           availableApiKeys.length === 0
         ) {
           ctx.addIssue({
@@ -204,69 +210,72 @@ export const AddIntegration = (props: AddIntegrationProps) => {
       <Typography variant="body1" color="error" sx={{ marginBottom: 2 }}>
         {t('commons.requiredFieldDescriptionShort')}
       </Typography>
-      {
-        mode === 'add' && (<WizardStepWrapper p={2}>
-        <Typography variant="h6" component="h2" mb={2}>
-          {t('integrations.add.section')}
-        </Typography>
-        <FormComponent.ControlledRadioGroup
-          formControlLabelProps={{
-            labelPlacement: 'start',
-            sx: {
-              width: '100%',
-              mx: 0,
-              justifyContent: 'space-between'
-            }
-          }}
-          divider={<Divider sx={{ my: 1 }} />}
-          name="flagIntegrationType"
-          data-testid="flagNotifyOutcomePush"
-          control={control}
-          value={flagIntegrationType ?? ''}
-          disabled={false}
-          selectFirstOption={false}
-          showErrorMessage={false}
-          options={[
-            {
-              value: IntegrationType.PAGOPA_PRODUCT,
-              label: (
-                <FormComponent.RadioLabel
-                  label={t('integrations.add.pagoPaProduct.label')}
-                  description={t('integrations.add.pagoPaProduct.description')}
-                />
-              )
-            },
-            {
-              value: IntegrationType.E_SERVICE,
-              label: (
-                <FormComponent.RadioLabel
-                  label={t('integrations.add.eService.label')}
-                  description={t('integrations.add.eService.description')}
-                />
-              )
-            },
-            {
-              value: IntegrationType.PDND_CLIENT,
-              label: (
-                <FormComponent.RadioLabel
-                  label={t('integrations.add.pdndClient.label')}
-                />
-              )
-            }
-          ]}
-        />
-        {errors.flagIntegrationType?.message && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            <AlertTitle>
-              {t(`${errors.flagIntegrationType.message}.title`)}
-            </AlertTitle>
-            {t(`${errors.flagIntegrationType.message}.message`)}
-          </Alert>
-        )}
-      </WizardStepWrapper>)
-      }
+      {mode === 'add' && (
+        <WizardStepWrapper p={2}>
+          <Typography variant="h6" component="h2" mb={2}>
+            {t('integrations.add.section')}
+          </Typography>
+          <FormComponent.ControlledRadioGroup
+            formControlLabelProps={{
+              labelPlacement: 'start',
+              sx: {
+                width: '100%',
+                mx: 0,
+                justifyContent: 'space-between'
+              }
+            }}
+            divider={<Divider sx={{ my: 1 }} />}
+            name="flagIntegrationType"
+            data-testid="flagNotifyOutcomePush"
+            control={control}
+            value={flagIntegrationType ?? ''}
+            disabled={false}
+            selectFirstOption={false}
+            showErrorMessage={false}
+            options={[
+              {
+                value: IntegrationType.PAGOPA_PRODUCT,
+                label: (
+                  <FormComponent.RadioLabel
+                    label={t('integrations.add.pagoPaProduct.label')}
+                    description={t(
+                      'integrations.add.pagoPaProduct.description'
+                    )}
+                  />
+                )
+              },
+              {
+                value: IntegrationType.E_SERVICE,
+                label: (
+                  <FormComponent.RadioLabel
+                    label={t('integrations.add.eService.label')}
+                    description={t('integrations.add.eService.description')}
+                  />
+                )
+              },
+              {
+                value: IntegrationType.PDND_CLIENT,
+                label: (
+                  <FormComponent.RadioLabel
+                    label={t('integrations.add.pdndClient.label')}
+                  />
+                )
+              }
+            ]}
+          />
+          {errors.flagIntegrationType?.message && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              <AlertTitle>
+                {t(`${errors.flagIntegrationType.message}.title`)}
+              </AlertTitle>
+              {t(`${errors.flagIntegrationType.message}.message`)}
+            </Alert>
+          )}
+        </WizardStepWrapper>
+      )}
       {flagIntegrationType === IntegrationType.PAGOPA_PRODUCT &&
-        (mode === 'edit' || (mode === 'add' && availableApiKeys.length > 0)) && (
+        (mode === 'edit' ||
+          (mode === 'add' && availableApiKeys.length > 0)) && (
           <PagoPAIntegration
             availableApiKeys={availableApiKeys}
             control={control}

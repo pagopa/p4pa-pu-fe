@@ -78,7 +78,7 @@ export const organizationsRoutes = [
           }
         }
       },
-            {
+      {
         id: 'EDIT_INTEGRATION',
         element: (
           <AdminRouteGuard>

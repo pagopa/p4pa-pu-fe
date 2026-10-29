@@ -4,7 +4,8 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined';
 import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { OrganizationApiKey, OrganizationApiKeyType } from '@generated/core/data-contracts';
+import type { OrganizationApiKey } from '@generated/core/data-contracts';
+import { OrganizationApiKeyType } from '@generated/core/data-contracts';
 
 import {
   deleteOrganizationApiKey,
@@ -59,8 +60,8 @@ export const ApiKeyDialog = ({
   const parsedApiKey = String(organizationApiKey?.apiKey);
 
   const copy = (value: string) => {
-      copyWithFeedback(value, t('commons.copied'));
-    };
+    copyWithFeedback(value, t('commons.copied'));
+  };
 
   const handleDelete = async () => {
     try {
@@ -81,7 +82,10 @@ export const ApiKeyDialog = ({
       keyType: apiKey.keyType
     });
 
-    if (apiKey.keyType === OrganizationApiKeyType.IO && organizationApiKey?.serviceEnabled !== undefined) {
+    if (
+      apiKey.keyType === OrganizationApiKeyType.IO &&
+      organizationApiKey?.serviceEnabled !== undefined
+    ) {
       searchParams.set(
         'serviceEnabled',
         String(organizationApiKey.serviceEnabled)
