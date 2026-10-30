@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useStore } from '../store/GlobalStore';
 import { initialFilterValues } from '../store/FilterStore';
 import utils from '../utils';
-import { AxiosError } from 'axios';
+import type { AxiosError } from 'axios';
 import {
   transformChaptersData,
   createAssessmentRegistryIdGetter,

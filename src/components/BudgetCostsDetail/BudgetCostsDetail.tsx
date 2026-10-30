@@ -1,18 +1,15 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import {
-  Box,
-  Grid,
-  Stack,
-  Tab,
-  Tabs,
-  Typography,
-  useTheme
-} from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import {
-  DebtPositionTypeOrgBalanceCostDTO,
-  DebtPositionTypeOrgBalanceCostType
-} from '../../../generated/core/client';
+import type { DebtPositionTypeOrgBalanceCostDTO } from '../../../generated/core/client';
+import { DebtPositionTypeOrgBalanceCostType } from '../../../generated/core/client';
+
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
 
 type Props = {
   costs: Array<DebtPositionTypeOrgBalanceCostDTO>;

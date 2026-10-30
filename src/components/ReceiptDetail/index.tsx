@@ -1,13 +1,11 @@
-import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import DetailContainer, {
-  DetailData
-} from '../DetailContainer/DetailContainer';
-import TitleComponent, {
-  ActionMenuItem
-} from '../TitleComponent/TitleComponent';
-import { ReceiptDetailDTO } from '../../../generated/core/client';
+import type { DetailData } from '../DetailContainer/DetailContainer';
+import DetailContainer from '../DetailContainer/DetailContainer';
+import type { ActionMenuItem } from '../TitleComponent/TitleComponent';
+import TitleComponent from '../TitleComponent/TitleComponent';
+import type { ReceiptDetailDTO } from '../../../generated/core/client';
 import { ReceiptDetailWarningBanner } from './ReceiptDetailWarningBanner';
+import Grid from '@mui/material/Grid';
 
 type DetailProps = {
   pageTitle: string;

@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, test, expect, vi, beforeEach } from 'vitest';
-import { useForm } from 'react-hook-form';
+import { describe, test, expect, vi, beforeEach, type Mock } from 'vitest';
+import { useForm, type UseFormTrigger } from 'react-hook-form';
 import AmountField from './AmountField';
 
 vi.mock('react-i18next', () => ({
@@ -33,18 +33,24 @@ type FormData = {
   }>;
 };
 
+type OnAmountChange = (value: string) => void;
+type ValidateInstallmentAmount = (
+  index: number,
+  trigger: UseFormTrigger<FormData>
+) => void;
+
 const TestWrapper = ({
   defaultValue = '',
   disabled = false,
   error = undefined,
-  onAmountChangeMock = vi.fn(),
-  validateInstallmentAmountMock = vi.fn()
+  onAmountChangeMock = vi.fn<OnAmountChange>(),
+  validateInstallmentAmountMock = vi.fn<ValidateInstallmentAmount>()
 }: {
   defaultValue?: string;
   disabled?: boolean;
   error?: { message?: string };
-  onAmountChangeMock?: ReturnType<typeof vi.fn>;
-  validateInstallmentAmountMock?: ReturnType<typeof vi.fn>;
+  onAmountChangeMock?: Mock<OnAmountChange>;
+  validateInstallmentAmountMock?: Mock<ValidateInstallmentAmount>;
 }) => {
   const { control, trigger } = useForm<FormData>({
     defaultValues: {
@@ -68,12 +74,12 @@ const TestWrapper = ({
 };
 
 describe('AmountField', () => {
-  let onAmountChangeMock: ReturnType<typeof vi.fn>;
-  let validateInstallmentAmountMock: ReturnType<typeof vi.fn>;
+  let onAmountChangeMock: Mock<OnAmountChange>;
+  let validateInstallmentAmountMock: Mock<ValidateInstallmentAmount>;
 
   beforeEach(() => {
-    onAmountChangeMock = vi.fn();
-    validateInstallmentAmountMock = vi.fn();
+    onAmountChangeMock = vi.fn<OnAmountChange>();
+    validateInstallmentAmountMock = vi.fn<ValidateInstallmentAmount>();
   });
 
   test('should render the field correctly', () => {

@@ -1,9 +1,7 @@
-import {
-  ListItem,
-  ListItemText,
-  Typography,
-  TypographyOwnProps
-} from '@mui/material';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import type { TypographyOwnProps } from '@mui/material/Typography';
+import Typography from '@mui/material/Typography';
 
 export type DetailFieldProps = {
   id: string;

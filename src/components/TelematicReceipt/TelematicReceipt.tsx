@@ -1,7 +1,5 @@
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
-import { Download, Upload } from '@mui/icons-material';
-import { Box, Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
@@ -14,8 +12,8 @@ import {
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import utils from '../../utils';
 import useTelematicReceiptsFilters from '../../hooks/useTelematicReceiptsFilters';
-import { TelematicReceiptsFilters } from '../../api/receipts/mappings';
-import { FilterFieldValue } from '../../models/Filters';
+import type { TelematicReceiptsFilters } from '../../api/receipts/mappings';
+import type { FilterFieldValue } from '../../models/Filters';
 import { FilterFieldIds } from '../../models/SearchCardFields';
 import {
   isValidFiscalCodeOrPIVA,
@@ -27,6 +25,11 @@ import {
   setFieldError,
   stripErrorFields
 } from '../../utils/filterErrors';
+
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Download from '@mui/icons-material/Download';
+import Upload from '@mui/icons-material/Upload';
 
 type TelematicReceiptsFiltersWithErrors = TelematicReceiptsFilters & {
   fiscalCode_error?: string;

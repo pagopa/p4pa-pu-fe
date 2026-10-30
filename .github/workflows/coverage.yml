@@ -35,5 +35,5 @@ jobs:
           OPENAPI_URL: ${{ vars.OPENAPI_URL }}
           OPENAPI_FILESHARE_URL: ${{ vars.OPENAPI_FILESHARE_URL }}
       - name: Test and coverage
-        run: yarn coverage
+        run: yarn coverage --changed origin/${{ github.base_ref }}
       - uses: davelosert/vitest-coverage-report-action@c4bbc33a89b7ace0e63d35f1f7d4bcee31155a73 # v2.13.0 (node24)

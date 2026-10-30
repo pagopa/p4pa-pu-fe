@@ -1,4 +1,4 @@
-import { FilterItem } from '../components/FilterContainer/FilterContainer';
+import type { FilterItem } from '../components/FilterContainer/FilterContainer';
 import { useStore } from '../store/GlobalStore';
 import { useEffect, useState } from 'react';
 import {
@@ -6,7 +6,7 @@ import {
   noFilterIsSelected,
   removeAllFilters
 } from '../store/FilterStore';
-import { FilterValues } from '../models/Filters';
+import type { FilterValues } from '../models/Filters';
 import { useFullListMultifilters } from './useFullListMultifilters';
 
 export enum FilterCategory {

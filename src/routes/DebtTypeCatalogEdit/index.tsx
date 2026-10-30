@@ -1,17 +1,15 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Stepper } from '../../components/Stepper/types';
+import type { Stepper } from '../../components/Stepper/types';
 import { StepperContainer } from '../../components/Stepper';
 import { useNavigate, useParams } from 'react-router';
 import { PageRoutes } from '../../routes';
 import { useSignal } from '@preact/signals-react';
 import { patchDebtPositionType } from '../../api/debtPositionsTypes';
-import { DebtPositionTypeRequestBody } from '../../../generated/core/data-contracts';
+import type { DebtPositionTypeRequestBody } from '../../../generated/core/data-contracts';
 import { Step1Configuration } from '../DebtTypeCreate/components/Step1Configuration';
-import {
-  Step2Data,
-  Step2Settings
-} from '../DebtTypeCreate/components/Step2Settings';
+import type { Step2Data } from '../DebtTypeCreate/components/Step2Settings';
+import { Step2Settings } from '../DebtTypeCreate/components/Step2Settings';
 import { useStore } from '../../store/GlobalStore';
 import { getDebtPositionTypeDetail } from '../../api/debtPositionTypeDetail';
 import { STATE } from '../../store/types';

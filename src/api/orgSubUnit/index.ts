@@ -1,8 +1,8 @@
-import { FilteredRequest } from '@core/models/Filters';
+import type { FilteredRequest } from '@core/models/Filters';
 import utils from '@core/utils';
 import { parseAndLog } from '@core/utils/loaders';
 import { pagedOrgSubUnitSchema } from '@generated/core/zod-schema';
-import {
+import type {
   OrgSubUnitRequestBody,
   OrgSubUnitStatus,
   SubUnitType

@@ -1,12 +1,13 @@
 import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, MockedFunction } from 'vitest';
-import {
+import type { MockedFunction } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type {
   Control,
   UseFormGetValues,
   UseFormTrigger,
   UseFormSetValue
 } from 'react-hook-form';
-import { Installment } from '../models/paymentTypes';
+import type { Installment } from '../models/paymentTypes';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({

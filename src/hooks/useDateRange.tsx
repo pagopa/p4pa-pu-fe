@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { subMonths, startOfDay, endOfDay } from 'date-fns';
-import { DateValidationError } from '@mui/x-date-pickers/models';
+import type { DateValidationError } from '@mui/x-date-pickers/models';
 
 type DateRangeState = {
   from: Date | null;

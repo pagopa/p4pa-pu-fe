@@ -1,13 +1,11 @@
-import {
-  Box,
-  Button,
-  ButtonProps,
-  Divider,
-  Grid,
-  Typography,
-  Stack
-} from '@mui/material';
-import { ArrowForward } from '@mui/icons-material';
+import Box from '@mui/material/Box';
+import type { ButtonProps } from '@mui/material/Button';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
+import ArrowForward from '@mui/icons-material/ArrowForward';
 
 export type ActionCardProps = {
   actionButtonVariant?: ButtonProps['variant'];

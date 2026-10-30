@@ -1,26 +1,26 @@
 import { useTranslation } from 'react-i18next';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
-import { ChevronRight } from '@mui/icons-material';
 import CustomDataGrid, {
   DataGridContainer
 } from '../../../components/DataGrid/CustomDataGrid';
 import { useStore } from '../../../store/GlobalStore';
 import { generatePath, useNavigate, useParams } from 'react-router';
+import type { FilterItem } from '../../../components/FilterContainer/FilterContainer';
 import FilterContainer, {
-  COMPONENT_TYPE,
-  FilterItem
+  COMPONENT_TYPE
 } from '../../../components/FilterContainer/FilterContainer';
 import utils from '../../../utils';
 import Search from '@mui/icons-material/Search';
-import { BaseFilterValues } from '../../../models/Filters';
+import type { BaseFilterValues } from '../../../models/Filters';
 import { useSearch } from '../../../hooks/useSearch';
-import { OrganizationOperator } from '../../../../generated/core/data-contracts';
+import type { OrganizationOperator } from '../../../../generated/core/data-contracts';
 import { useOrganizationOperatorsSearch } from '../../../api/organizationOperators';
 import { PageRoutes } from '../..';
 import { setCustomBreadcrumbsItems } from '../../../store/AppStateStore';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
-import { IconButton } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import ChevronRight from '@mui/icons-material/ChevronRight';
 
 type OperatorFilters = {
   firstName?: string;
@@ -102,26 +102,29 @@ export const MyOrganization = ({ omitOrgName }: { omitOrgName?: boolean }) => {
       field: 'id',
       headerName: t('operatorsList.myOrganizationDataGrid.id'),
       flex: 1,
-      minWidth: 100
+      minWidth: 100,
+      sortable: false
     },
     {
       field: 'nameAndLastName',
       headerName: t('operatorsList.myOrganizationDataGrid.nameAndLastName'),
       flex: 2,
-      minWidth: 200
+      minWidth: 200,
+      sortable: false
     },
     {
       field: 'fiscalCode',
       headerName: t('operatorsList.myOrganizationDataGrid.fiscalCode'),
       flex: 2,
-      minWidth: 200
+      minWidth: 200,
+      sortable: false
     },
     {
       field: 'enabledDebtTypes',
       headerName: t('operatorsList.myOrganizationDataGrid.enabledDebtTypes'),
       flex: 1,
       minWidth: 180,
-      sortable: true
+      sortable: false
     },
     {
       field: 'actions',

@@ -1,11 +1,10 @@
-import { TextField, InputAdornment } from '@mui/material';
-import {
-  Controller,
+import type {
   Control,
   Path,
   FieldValues,
   UseFormTrigger
 } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { createAmountValidator } from '../../../../utils/fieldValidation';
 import {
@@ -13,6 +12,9 @@ import {
   handleAmountInputBlur,
   formatAmountForDisplay
 } from '../../../../utils/paymentUtility';
+
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 
 type AmountFieldProps<T extends FieldValues> = {
   control: Control<T>;

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { PagedPaidInstallmentsDTO } from '../api/classifications/paidInstallments/mappings';
+import type { PagedPaidInstallmentsDTO } from '../api/classifications/paidInstallments/mappings';
 
 /**
  * Hook for managing the state of payments in Step2

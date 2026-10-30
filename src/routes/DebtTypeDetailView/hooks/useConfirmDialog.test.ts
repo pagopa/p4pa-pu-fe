@@ -2,7 +2,8 @@
 /* eslint-disable sonarjs/no-nested-functions */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '../../../__tests__/renderers';
-import { useConfirmDialog, DialogAction } from './useConfirmDialog';
+import type { DialogAction } from './useConfirmDialog';
+import { useConfirmDialog } from './useConfirmDialog';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 
 i18nTestSetup({

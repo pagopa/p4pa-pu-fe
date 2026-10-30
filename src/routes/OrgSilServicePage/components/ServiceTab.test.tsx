@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ThemeProvider } from '@mui/material/styles';
-import { createTheme } from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { ServiceTabs } from './ServiceTab';
 
 vi.mock('react-i18next', () => ({

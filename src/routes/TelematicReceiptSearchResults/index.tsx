@@ -1,9 +1,8 @@
-import { Grid, Stack, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
-import { BaseFilterValues } from '../../models/Filters';
+import type { BaseFilterValues } from '../../models/Filters';
 import useTelematicReceiptsFilters from '../../hooks/useTelematicReceiptsFilters';
-import { PagedReceiptView } from '../../../generated/core/data-contracts';
+import type { PagedReceiptView } from '../../../generated/core/data-contracts';
 import { useState } from 'react';
 import {
   noFilterSetted,
@@ -12,7 +11,7 @@ import {
 import { getReceipts } from '../../api/receipts';
 import { useStore } from '../../store/GlobalStore';
 import { useSearch } from '../../hooks/useSearch';
-import { FieldValues } from 'react-hook-form';
+import type { FieldValues } from 'react-hook-form';
 import utils from '../../utils';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
@@ -28,6 +27,10 @@ import {
   setFieldError,
   stripErrorFields
 } from '../../utils/filterErrors';
+
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
 
 export type LocationState = {
   filters: BaseFilterValues;

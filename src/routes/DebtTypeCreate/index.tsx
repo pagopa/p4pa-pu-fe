@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Stepper } from '../../components/Stepper/types';
+import type { Stepper } from '../../components/Stepper/types';
 import { StepperContainer } from '../../components/Stepper';
-import { Step1Configuration, Step1Data } from './components/Step1Configuration';
-import { Step2Data, Step2Settings } from './components/Step2Settings';
+import type { Step1Data } from './components/Step1Configuration';
+import { Step1Configuration } from './components/Step1Configuration';
+import type { Step2Data } from './components/Step2Settings';
+import { Step2Settings } from './components/Step2Settings';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import { useSignal } from '@preact/signals-react';
@@ -12,7 +14,7 @@ import {
   postDebtPositionType,
   useDebtPositionTypeCodeValidation
 } from '../../api/debtPositionsTypes';
-import { DebtPositionTypeRequestBody } from '../../../generated/core/data-contracts';
+import type { DebtPositionTypeRequestBody } from '../../../generated/core/data-contracts';
 import { useStore } from '../../store/GlobalStore';
 import utils from '../../utils';
 

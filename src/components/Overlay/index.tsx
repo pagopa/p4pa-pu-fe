@@ -1,6 +1,9 @@
-import { CircularProgress, Grid, Portal } from '@mui/material';
 import React, { useEffect } from 'react';
 import { useIsFetching, useIsMutating } from '@tanstack/react-query';
+
+import CircularProgress from '@mui/material/CircularProgress';
+import Grid from '@mui/material/Grid';
+import Portal from '@mui/material/Portal';
 
 /** If the loading time is less than this value (ms), the spinner will not be shown */
 const min = 400;

@@ -38,7 +38,22 @@ export default tseslint.config([
       'sonarjs/assertions-in-tests': 'off',
       'sonarjs/todo-tag': 'warn',
       'sonarjs/cognitive-complexity': ['error', 30],
-      'sonarjs/regex-complexity': 'warn'
+      'sonarjs/regex-complexity': 'warn',
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@mui/icons-material',
+              message: 'Usa gli import per percorso: @mui/icons-material/Nome'
+            }
+          ]
+        }
+      ],
+      '@typescript-eslint/consistent-type-imports': [
+        'warn',
+        { prefer: 'type-imports' }
+      ]
     }
   },
   {

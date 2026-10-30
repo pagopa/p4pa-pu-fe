@@ -2,7 +2,7 @@ import { screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useForm } from 'react-hook-form';
 import { Step2ControlledTextField } from './Step2ControlledTextField';
-import { Step2Data } from '../../../../models/DebtPositionType';
+import type { Step2Data } from '../../../../models/DebtPositionType';
 import { SubjectType } from '../../../../utils/fieldValidation';
 import { render } from '../../../../__tests__/renderers';
 

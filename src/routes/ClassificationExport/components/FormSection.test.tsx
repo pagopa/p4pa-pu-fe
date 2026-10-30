@@ -1,14 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '../../../__tests__/renderers';
 import { FormSection } from './FormSection';
-import {
-  Receipt,
-  PlaylistAddCheck,
-  RequestPage,
-  Inventory,
-  AccountTree
-} from '@mui/icons-material';
-import { TextField, Button } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Receipt from '@mui/icons-material/Receipt';
+import PlaylistAddCheck from '@mui/icons-material/PlaylistAddCheck';
+import RequestPage from '@mui/icons-material/RequestPage';
+import Inventory from '@mui/icons-material/Inventory';
+import AccountTree from '@mui/icons-material/AccountTree';
 
 describe('FormSection', () => {
   describe('Basic Rendering', () => {

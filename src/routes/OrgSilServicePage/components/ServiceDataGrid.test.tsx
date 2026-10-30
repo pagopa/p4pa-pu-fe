@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ThemeProvider } from '@mui/material/styles';
-import { createTheme } from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { ServiceDataGrid } from './ServiceDataGrid';
-import {
-  OrgSilServiceType,
-  PagedOrgSilServiceView
-} from '../../../../generated/core/client';
+import type { PagedOrgSilServiceView } from '../../../../generated/core/client';
+import { OrgSilServiceType } from '../../../../generated/core/client';
 
 vi.mock('../../../components/DataGrid/CustomDataGrid', () => ({
   default: ({ rows, columns }: any) => (

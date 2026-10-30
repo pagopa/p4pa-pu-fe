@@ -5,7 +5,7 @@ import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../../components/FormComponent';
 import { OperatorsSelection } from '../../../../../generated/core/data-contracts';
-import { DebtTypeOrgForm } from '../../types';
+import type { DebtTypeOrgForm } from '../../types';
 import { OperatorSelector } from './components/OperatorSelector';
 
 export const Step5Operators = ({ edit }: { edit?: boolean }) => {

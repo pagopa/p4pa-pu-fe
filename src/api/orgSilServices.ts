@@ -3,10 +3,8 @@ import { z } from 'zod';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import { orgSilServiceExtendedDTOSchema } from '../../generated/core/zod-schema';
-import {
-  OrgSilServiceType,
-  OrgSilServiceExtendedDTO
-} from '../../generated/core/data-contracts';
+import type { OrgSilServiceExtendedDTO } from '../../generated/core/data-contracts';
+import { OrgSilServiceType } from '../../generated/core/data-contracts';
 
 const isValidService = (
   service: OrgSilServiceExtendedDTO

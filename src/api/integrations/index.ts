@@ -1,9 +1,13 @@
 import { z } from 'zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { OrganizationApiKeyType } from '@generated/core/client';
+import type {
+  OrganizationApiKeyType,
+  PdndClientDTO
+} from '@generated/core/client';
 import {
   organizationApiKeySchema,
+  pagedOrgSubUnitSchema,
   pagedPdndServiceViewSchema,
   pdndClientNoSecretDTOSchema,
   pdndServiceViewSchema
@@ -11,11 +15,15 @@ import {
 
 import utils from '@core/utils';
 import { parseAndLog } from '@core/utils/loaders';
-import { FilteredRequest } from '@core/models/Filters';
+import type { FilteredRequest } from '@core/models/Filters';
 
-export const getOrganizationApiKeys = (organizationId: number) =>
+export const getOrganizationApiKeys = (
+  organizationId: number,
+  enabled = true
+) =>
   useQuery({
     queryKey: ['organizationApiKeys', organizationId],
+    enabled,
     queryFn: async () => {
       const { data } =
         await utils.apiClient.bff.getOrganizationApiKeys(organizationId);
@@ -120,5 +128,35 @@ export const deletePdndClient = (organizationId: number, clientId: string) =>
     mutationKey: ['deletePdndClient', organizationId, clientId],
     mutationFn: async () => {
       await utils.apiClient.bff.deletePdndClient(organizationId, clientId);
+    }
+  });
+
+export const savePdndClient = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['savePdndClient', organizationId],
+    mutationFn: async (data: PdndClientDTO) => {
+      const { data: client } = await utils.apiClient.bff.savePdndClient(
+        organizationId,
+        data
+      );
+      return client;
+    }
+  });
+
+export const getAllOrgSubUnits = (organizationId: number, enabled = true) =>
+  useQuery({
+    queryKey: ['getAllOrgSubUnits', organizationId],
+    enabled,
+    queryFn: async () => {
+      const { data } = await utils.apiClient.bff.getPagedOrgSubUnits(
+        organizationId,
+        {
+          // TODO: should not be hardcoded
+          // api should return all the subUnits
+          size: 100
+        }
+      );
+      parseAndLog(pagedOrgSubUnitSchema, data);
+      return data;
     }
   });

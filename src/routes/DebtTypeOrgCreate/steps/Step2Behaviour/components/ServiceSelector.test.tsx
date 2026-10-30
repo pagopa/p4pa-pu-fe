@@ -4,7 +4,7 @@ import { render, screen } from '../../../../../__tests__/renderers';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ServiceSelector } from './ServiceSelector';
 import { i18nTestSetup } from '../../../../../__tests__/i18nTestSetup';
-import { DebtTypeOrgForm } from '../../../types';
+import type { DebtTypeOrgForm } from '../../../types';
 
 vi.mock('../../../hooks/useServiceSelectorState');
 

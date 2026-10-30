@@ -9,9 +9,9 @@ import {
   pagedOrganizationOperatorSchema,
   pagedOrganizationWithDebtPositionTypeOrgAndOperatorsCountSchema
 } from '../../../generated/core/zod-schema';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { createMock } from 'zodock';
-import { FilteredRequest } from '../../models/Filters';
+import type { FilteredRequest } from '../../models/Filters';
 import * as loaders from '../../utils/loaders';
 
 vi.mock('../../utils', () => ({

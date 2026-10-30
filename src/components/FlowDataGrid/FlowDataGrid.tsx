@@ -1,12 +1,12 @@
-import {
+import type {
   GridColDef,
   GridRenderCellParams,
   GridValidRowModel
 } from '@mui/x-data-grid';
-import { IconButton } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from './../DataGrid/CustomDataGrid';
+import IconButton from '@mui/material/IconButton';
 
 type FlowDataRow = {
   id: number;

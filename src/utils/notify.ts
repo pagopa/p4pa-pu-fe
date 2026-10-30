@@ -1,5 +1,5 @@
+import { type AlertProps } from '@mui/material/Alert/Alert';
 import { signal } from '@preact/signals-react';
-import { AlertProps } from '@mui/material';
 
 /** emits a notification */
 const emit = (text: string, severity: AlertProps['severity'] = 'error') => {

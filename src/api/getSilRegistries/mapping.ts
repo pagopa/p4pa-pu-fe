@@ -1,4 +1,4 @@
-import { SilFilterValues } from '../../routes/Events/configs';
+import type { SilFilterValues } from '../../routes/Events/configs';
 import utils from '../../utils';
 
 export type SilRegistriesFilteredRequest = {

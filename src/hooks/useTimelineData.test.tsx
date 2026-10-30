@@ -1,11 +1,11 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 import { renderHook } from '../__tests__/renderers';
 import { i18nTestSetup } from '../__tests__/i18nTestSetup';
+import type { RegistryItem } from './useTimelineData';
 import {
   useTimelineData,
   getEventStatusColor,
-  getEventDisplayInfo,
-  RegistryItem
+  getEventDisplayInfo
 } from './useTimelineData';
 import { PaymentEventType } from '../../generated/core/data-contracts';
 

@@ -1,7 +1,8 @@
 import { fireEvent, render, screen } from '../../__tests__/renderers';
 import { describe, expect, it, vi } from 'vitest';
 import TitleComponent from './TitleComponent';
-import { Add, Edit } from '@mui/icons-material';
+import Add from '@mui/icons-material/Add';
+import Edit from '@mui/icons-material/Edit';
 
 describe('TitleComponent', () => {
   const defaultProps = {

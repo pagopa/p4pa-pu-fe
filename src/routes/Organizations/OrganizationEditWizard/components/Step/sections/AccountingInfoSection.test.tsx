@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useForm } from 'react-hook-form';
 import { AccountingInfoSection } from './AccountingInfoSection';
-import {
+import type {
   UnifiedFormData,
   UnifiedFormValues
 } from '../../../../../../models/OrganizationEditTypes';

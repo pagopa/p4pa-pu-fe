@@ -1,19 +1,18 @@
-import { Download } from '@mui/icons-material';
-import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLoaderData, useNavigate } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import DetailContainer, {
-  DetailData
-} from '../../components/DetailContainer/DetailContainer';
+import type { DetailData } from '../../components/DetailContainer/DetailContainer';
+import DetailContainer from '../../components/DetailContainer/DetailContainer';
 import { getTreasuryDetail } from '../../api/treasuryDetail';
 import { useEffect } from 'react';
 import { PageRoutes } from '../../routes';
 import { getIngestionFlowFile } from '../../api/ingestionFlowFiles';
 import { downloadBlob } from '../../utils/download';
 import utils from '../../utils';
+import Grid from '@mui/material/Grid';
+import Download from '@mui/icons-material/Download';
 
 export const TreasuryDetail = () => {
   const { t } = useTranslation();

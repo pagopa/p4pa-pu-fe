@@ -1,7 +1,9 @@
-import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import utils from '../../utils';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 export const ErrorPage = () => {
   const { t } = useTranslation();

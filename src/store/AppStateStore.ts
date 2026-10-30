@@ -1,6 +1,6 @@
 import { signal } from '@preact/signals-react';
-import { AppState } from '../models/AppState';
-import { BredcrumbItem } from '../components/Breadcrumbs/Breadcrumbs';
+import type { AppState } from '../models/AppState';
+import type { BredcrumbItem } from '../components/Breadcrumbs/Breadcrumbs';
 
 export const appState = signal<AppState>({
   loading: false,

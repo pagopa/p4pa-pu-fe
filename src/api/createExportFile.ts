@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import {
+import type {
   ClassificationsExportFileRequestDTO,
   PaidExportFileRequest,
   ReceiptsArchivingExportFileRequest,

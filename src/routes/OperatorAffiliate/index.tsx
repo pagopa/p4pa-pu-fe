@@ -5,10 +5,10 @@ import {
 } from '../../api/organizationOperators';
 import { PageRoutes } from '..';
 import { useSearch } from '../../hooks/useSearch';
-import { GridColDef } from '@mui/x-data-grid';
+import type { GridColDef } from '@mui/x-data-grid';
 import { Trans, useTranslation } from 'react-i18next';
 import { GridSelector } from '../../components/GridSelector';
-import { DebtPositionTypeOrgDTO } from '../../../generated/core/data-contracts';
+import type { DebtPositionTypeOrgDTO } from '../../../generated/core/data-contracts';
 import { useState } from 'react';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import FilterContainer, {
@@ -16,7 +16,7 @@ import FilterContainer, {
 } from '../../components/FilterContainer/FilterContainer';
 import Search from '@mui/icons-material/Search';
 import { useDebtPositionTypesByOrg } from '../../hooks/useDebtPositionTypesByOrg';
-import { FilterFieldValue } from '../../models/Filters';
+import type { FilterFieldValue } from '../../models/Filters';
 import WizardStepButtons from '../../components/Wizard/WizardStepButtons';
 import utils from '../../utils';
 

@@ -1,10 +1,8 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { subDays } from 'date-fns';
 import { toStartOfDay, toEndOfDay } from '../utils/formatters';
-import {
-  convertFiltersToAPI,
-  PaymentsUIFilters
-} from '../api/classifications/paidInstallments/mappings';
+import type { PaymentsUIFilters } from '../api/classifications/paidInstallments/mappings';
+import { convertFiltersToAPI } from '../api/classifications/paidInstallments/mappings';
 
 type UsePaymentsTableFiltersProps = {
   initialFilters?: Partial<PaymentsUIFilters>;

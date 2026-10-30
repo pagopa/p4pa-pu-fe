@@ -1,4 +1,4 @@
-import { FilteredRequest } from '../../models/Filters';
+import type { FilteredRequest } from '../../models/Filters';
 import utils from '../../utils';
 
 type GetExportFilesQueryParams = Parameters<

@@ -1,8 +1,9 @@
-import { Control, Path } from 'react-hook-form';
+import type { Control, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import Stack from '@mui/material/Stack';
 import { FormComponent } from '../../../../../components/FormComponent';
-import { DebtTypeOrgForm, PaymentMethodOption } from '../../../types';
+import type { DebtTypeOrgForm } from '../../../types';
+import { PaymentMethodOption } from '../../../types';
 
 export type PaymentMethodProps = {
   control: Control<DebtTypeOrgForm>;

@@ -1,6 +1,6 @@
 import { computed, signal } from '@preact/signals-react';
 
-import { OrganizationDTO } from '../../generated/core/data-contracts';
+import type { OrganizationDTO } from '../../generated/core/data-contracts';
 import { organizationIdState } from './OrganizationIdStore';
 
 // Initialize the persistent store

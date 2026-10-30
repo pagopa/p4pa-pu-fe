@@ -1,9 +1,9 @@
 import { render, screen, fireEvent, waitFor } from '../../__tests__/renderers';
 import { vi } from 'vitest';
 import { DebtTypeCreate } from '../DebtTypeCreate';
-import { Step1Props } from './components/Step1Configuration';
-import { Step2Props } from './components/Step2Settings';
-import { StepperContainerProps } from '../../components/Stepper';
+import type { Step1Props } from './components/Step1Configuration';
+import type { Step2Props } from './components/Step2Settings';
+import type { StepperContainerProps } from '../../components/Stepper';
 import { PageRoutes } from '..';
 
 vi.mock('./components/Step1Configuration', () => ({

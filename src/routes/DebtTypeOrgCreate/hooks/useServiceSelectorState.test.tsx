@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '../../../__tests__/renderers';
 import { useServiceSelectorState } from './useServiceSelectorState';
-import { OrgSilServiceExtendedDTO } from '../../../../generated/core/data-contracts';
+import type { OrgSilServiceExtendedDTO } from '../../../../generated/core/data-contracts';
 
 describe('useServiceSelectorState', () => {
   const mockServices: Array<OrgSilServiceExtendedDTO> = [

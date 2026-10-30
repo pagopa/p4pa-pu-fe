@@ -1,4 +1,4 @@
-import { TaxonomyFilters } from '../../models/Taxonomy';
+import type { TaxonomyFilters } from '../../models/Taxonomy';
 
 export type TaxonomyFilteredRequest = {
   filters: TaxonomyFilters;

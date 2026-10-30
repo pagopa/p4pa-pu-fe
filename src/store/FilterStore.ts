@@ -1,6 +1,6 @@
 import { computed, signal } from '@preact/signals-react';
-import { FilterValues } from '../models/Filters';
-import { FilterMap } from '../hooks/useMultiFilters';
+import type { FilterValues } from '../models/Filters';
+import type { FilterMap } from '../hooks/useMultiFilters';
 import { noFilterSetted } from '../utils/filtersValidation';
 import URI from '../utils/URI';
 

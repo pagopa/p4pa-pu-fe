@@ -1,5 +1,5 @@
-import { FieldValues, FormProvider, useForm } from 'react-hook-form';
-import { Grid, Stack, useTheme } from '@mui/material';
+import type { FieldValues } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -8,13 +8,17 @@ import {
   noFilterSetted,
   shouldShowGeneralError
 } from '../../../utils/filtersValidation';
-import { PagedPaymentsReportingView } from '../../../../generated/core/data-contracts';
+import type { PagedPaymentsReportingView } from '../../../../generated/core/data-contracts';
 import { ReportingFilters } from '../components/ReportingFilters';
 import SearchResultsDataGrid from './ReportingDataGrid';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 import { useSearch } from '../../../hooks/useSearch';
 import { useStore } from '../../../store/GlobalStore';
 import utils from '../../../utils';
+
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
 
 export type LocationState = {
   filters: FieldValues;

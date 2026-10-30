@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router';
 import { useStore } from '../../../store/GlobalStore';
 import spontaneousFormApi from '../../../api/spontaneousForm';
 import { PageRoutes } from '../..';
-import { SpontaneousFormCreateData } from '../SpontaneousFormForm/schemas/spontaneousFormCreateSchema';
+import type { SpontaneousFormCreateData } from '../SpontaneousFormForm/schemas/spontaneousFormCreateSchema';
 import SpontaneousFormForm from '../SpontaneousFormForm/SpontaneousFormForm';
 
 const SpontaneousFormEdit = () => {

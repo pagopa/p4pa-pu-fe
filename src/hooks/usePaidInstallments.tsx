@@ -2,9 +2,9 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useStore } from '../store/GlobalStore';
 import utils from '../utils';
-import { AxiosError } from 'axios';
+import type { AxiosError } from 'axios';
 import { getPaidInstallments } from '../api/classifications/paidInstallments';
-import {
+import type {
   PaidInstallmentsFilteredRequest,
   PagedPaidInstallmentsDTO,
   PaidInstallmentsFilters

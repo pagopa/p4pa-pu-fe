@@ -1,4 +1,4 @@
-import { FilterValues } from '../../models/Filters';
+import type { FilterValues } from '../../models/Filters';
 import utils from '../../utils';
 
 export type TreasuriesFilteredRequest = {

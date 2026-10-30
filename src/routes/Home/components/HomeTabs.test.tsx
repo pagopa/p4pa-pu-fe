@@ -2,7 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor, within } from '../../../__tests__/renderers';
 import userEvent from '@testing-library/user-event';
 import { HomeTabs } from './HomeTabs';
-import { TABS, tabsConfigProps, USER_PROFILES } from '../models';
+import type { tabsConfigProps } from '../models';
+import { TABS, USER_PROFILES } from '../models';
 
 vi.mock('../../../utils', () => ({
   default: {

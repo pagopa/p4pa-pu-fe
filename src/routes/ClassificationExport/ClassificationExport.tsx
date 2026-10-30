@@ -1,13 +1,4 @@
 import { useState, useCallback } from 'react';
-import { Typography, Box, Paper, Grid, Button } from '@mui/material';
-import {
-  Receipt,
-  PlaylistAddCheck,
-  RequestPage,
-  Inventory,
-  AccountTree,
-  ArrowBack
-} from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { FormProvider } from 'react-hook-form';
@@ -21,6 +12,18 @@ import { createClassificationsExportFile } from '../../api/createExportFile';
 import { PageRoutes } from '../../routes';
 import { useStore } from '../../store/GlobalStore';
 import utils from '../../utils';
+
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import Receipt from '@mui/icons-material/Receipt';
+import PlaylistAddCheck from '@mui/icons-material/PlaylistAddCheck';
+import RequestPage from '@mui/icons-material/RequestPage';
+import Inventory from '@mui/icons-material/Inventory';
+import AccountTree from '@mui/icons-material/AccountTree';
+import ArrowBack from '@mui/icons-material/ArrowBack';
 
 const ALL_CLASSIFICATIONS_VALUE = 'ALL_CLASSIFICATIONS';
 

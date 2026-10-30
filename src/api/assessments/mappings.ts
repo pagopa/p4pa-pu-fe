@@ -1,9 +1,9 @@
 import { format } from 'date-fns';
-import {
+import type {
   AssessmentsRegistryStatus,
   AssessmentStatus
 } from '../../../generated/core/data-contracts';
-import { FilteredRequest, FilterValues } from '../../models/Filters';
+import type { FilteredRequest, FilterValues } from '../../models/Filters';
 import utils from '../../utils';
 
 type getAssessmentsRegistriesQueryParameters = Parameters<

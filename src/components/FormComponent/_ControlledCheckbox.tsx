@@ -1,12 +1,10 @@
-import { Controller, Control, FieldValues, Path } from 'react-hook-form';
-import {
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Typography,
-  Stack,
-  CheckboxProps
-} from '@mui/material';
+import type { Control, FieldValues, Path } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
+import Checkbox, { type CheckboxProps } from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 
 export type _ControlledCheckboxProps<T extends FieldValues> = {
   name: Path<T>;

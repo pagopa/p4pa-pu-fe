@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '../__tests__/renderers';
 import useDebtTypesFilters from './useDebtTypesFilters';
-import { GridSortModel } from '@mui/x-data-grid';
+import type { GridSortModel } from '@mui/x-data-grid';
 
 describe('useDebtTypesFilters', () => {
   const mockOnFiltersChange = vi.fn();

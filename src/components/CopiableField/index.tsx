@@ -1,8 +1,11 @@
 import ContentCopyIcon from '@mui/icons-material/ContentCopyOutlined';
-import { IconButton, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 import { copyWithFeedback } from '@core/utils/clipboard';
+
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 type CopiableFieldProps = {
   label: string;

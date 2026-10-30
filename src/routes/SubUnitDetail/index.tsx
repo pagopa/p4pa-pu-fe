@@ -1,16 +1,12 @@
-import { Stack } from '@mui/material';
-import { FieldValues } from 'react-hook-form';
+import type { FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
+import type { PagedOrgSubUnitOperators } from '@generated/core/data-contracts';
+import { OrgSubUnitStatus } from '@generated/core/data-contracts';
 
-import {
-  OrgSubUnitStatus,
-  PagedOrgSubUnitOperators
-} from '@generated/core/data-contracts';
+import type { ActionMenuItem } from '@core/components/TitleComponent/TitleComponent';
+import TitleComponent from '@core/components/TitleComponent/TitleComponent';
 
-import TitleComponent, {
-  ActionMenuItem
-} from '@core/components/TitleComponent/TitleComponent';
 import { useSearch } from '@core/hooks/useSearch';
 import utils from '@core/utils';
 import { PageRoutes } from '..';
@@ -25,6 +21,7 @@ import { useEffect, useState } from 'react';
 import { SubUnitSummary } from './components/SubUnitSummary';
 import { setCustomBreadcrumbsItems } from '@core/store/AppStateStore';
 import Add from '@mui/icons-material/Add';
+import Stack from '@mui/material/Stack';
 
 export const SubUnitDetail = () => {
   const { t } = useTranslation();

@@ -1,21 +1,24 @@
 import { useParams } from 'react-router';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { Button, Stack, Typography } from '@mui/material';
-import { GridColDef } from '@mui/x-data-grid';
+import type { GridColDef } from '@mui/x-data-grid';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { PdndServiceView } from '@generated/core/data-contracts';
+import type { PdndServiceView } from '@generated/core/data-contracts';
 
 import { getOrgSubUnitsPdndServices } from '@core/api/integrations';
 import CustomDataGrid from '@core/components/DataGrid/CustomDataGrid';
+import type { FilterItem } from '@core/components/FilterContainer/FilterContainer';
 import FilterContainer, {
-  COMPONENT_TYPE,
-  FilterItem
+  COMPONENT_TYPE
 } from '@core/components/FilterContainer/FilterContainer';
 import { useSearch } from '@core/hooks/useSearch';
 
 import { PdndSendServiceDialog } from '../Dialogs/ServiceDialog';
+
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 type Filters = { subUnitCode?: string };
 

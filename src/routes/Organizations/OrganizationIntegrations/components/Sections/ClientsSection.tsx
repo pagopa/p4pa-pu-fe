@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { PdndClientNoSecretDTO } from '@generated/core/client';
+import type { PdndClientNoSecretDTO } from '@generated/core/client';
 
 import { I18N_PREFIX } from '../..';
 import { Field, Row, Section } from '../Containers';

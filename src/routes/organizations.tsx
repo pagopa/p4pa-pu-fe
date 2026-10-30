@@ -11,6 +11,7 @@ import { SubUnitDetail } from './SubUnitDetail';
 import { SubUnitCreate } from './SubUnitCreate';
 import { AddIntegration } from './Organizations/AddIntegration';
 import { SubunitAssignOperator } from './SubunitAssignOperator';
+import { IntegrationMode } from './Organizations/enums';
 
 export const organizationsRoutes = [
   {
@@ -69,6 +70,23 @@ export const organizationsRoutes = [
           </AdminRouteGuard>
         ),
         path: `:organizationId/integrations/add`,
+        handle: {
+          backButton: true,
+          backButtonText: 'commons.exit',
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
+        }
+      },
+      {
+        id: 'EDIT_INTEGRATION',
+        element: (
+          <AdminRouteGuard>
+            <AddIntegration mode={IntegrationMode.EDIT} />
+          </AdminRouteGuard>
+        ),
+        path: `:organizationId/integrations/edit/:IntegrationType`,
         handle: {
           backButton: true,
           backButtonText: 'commons.exit',

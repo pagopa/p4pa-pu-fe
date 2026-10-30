@@ -1,4 +1,4 @@
-import { RouteHandleObject } from '../models/Routes';
+import type { RouteHandleObject } from '../models/Routes';
 import { Classifications } from '../components/Classifications';
 import ClassificationDetails from '../components/ClassificationDetail';
 import ClassificationsExportFlowOverview from './ClassificationsExportFlowOverview';

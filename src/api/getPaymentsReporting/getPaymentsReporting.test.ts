@@ -1,7 +1,8 @@
 import utils from '../../utils';
 import * as mappings from './mappings';
-import { AxiosResponse } from 'axios';
-import { describe, expect, it, Mock, vi } from 'vitest';
+import type { AxiosResponse } from 'axios';
+import type { Mock } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { getPaymentsReporting } from '../getPaymentsReporting';
 import { renderHook, waitFor } from '../../__tests__/renderers';
 

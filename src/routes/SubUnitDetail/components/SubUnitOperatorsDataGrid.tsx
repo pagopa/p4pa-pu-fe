@@ -1,17 +1,16 @@
 import { useState } from 'react';
-import { GridColDef } from '@mui/x-data-grid';
+import type { GridColDef } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForwardIos';
 
-import {
+import type {
   OrgSubUnitOperator,
   PagedOrgSubUnitOperators
 } from '@generated/core/data-contracts';
 
-import ActionMenu, {
-  MenuItemProps
-} from '@core/components/ActionMenu/ActionMenu';
+import type { MenuItemProps } from '@core/components/ActionMenu/ActionMenu';
+import ActionMenu from '@core/components/ActionMenu/ActionMenu';
 import CustomDataGrid from '@core/components/DataGrid/CustomDataGrid';
 import GenericDialog from '@core/components/GenericDialog/GenericDialog';
 import { deleteSingleOperatorFromOrgSubUnit } from '@core/api/orgSubUnit';

@@ -1,8 +1,6 @@
-import { Search } from '@mui/icons-material';
 import { useParams, useNavigate, useLocation } from 'react-router';
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import { Variant } from '@mui/material/styles/createTypography';
-import { Grid, Typography, useTheme } from '@mui/material';
+import type { Variant } from '@mui/material/styles/createTypography';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
 import { hasPartialDateRangeErrors } from '../../../utils/filtersValidation';
@@ -19,15 +17,20 @@ import {
   formatDateTime,
   moneyFormat
 } from '../../../utils/formatters';
-import { PaymentsReportingWithReceiptView } from '../../../../generated/core/client';
+import type { PaymentsReportingWithReceiptView } from '../../../../generated/core/client';
 import { PageRoutes } from '../../../routes';
 import { getPaymentsReportingRows } from '../../../api/reporting';
 import { useSearch } from '../../../hooks/useSearch';
 import utils from '../../../utils';
-import { FieldValues } from 'react-hook-form';
+import type { FieldValues } from 'react-hook-form';
 import { FilterFieldIds } from '../../../models/SearchCardFields';
 import { getIngestionFlowFile } from '../../../api/ingestionFlowFiles';
 import { downloadBlob } from '../../../utils/download';
+
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import Search from '@mui/icons-material/Search';
 
 export const ReportingDetail = () => {
   const { t } = useTranslation();

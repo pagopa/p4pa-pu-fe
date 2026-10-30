@@ -4,7 +4,7 @@ import SearchCard from '../../../components/SearchCard/SearchCard';
 import { tabs } from '../configs';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '../..';
-import { RegistryType } from '../configs';
+import type { RegistryType } from '../configs';
 import { useCallback, useState } from 'react';
 import { ErrorMessage } from '../../../components/ErrorMessage/ErrorMessage';
 import {
@@ -12,7 +12,7 @@ import {
   shouldShowGeneralError
 } from '../../../utils/filtersValidation';
 import utils from '../../../utils';
-import { FilterFieldValue } from '../../../models/Filters';
+import type { FilterFieldValue } from '../../../models/Filters';
 
 export const EventPage = () => {
   const { t } = useTranslation();

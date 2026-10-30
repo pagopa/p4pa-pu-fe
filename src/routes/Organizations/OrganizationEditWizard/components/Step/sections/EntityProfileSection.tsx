@@ -1,19 +1,18 @@
-/**
- * Entity Profile Section Component
- * Displays organization profile fields: name, fiscal code, email, and logo
- * Extracted from Step1EntityProfile for reuse in unified form
- */
-
-import { Box, Grid, TextField, Typography } from '@mui/material';
-import { Visibility } from '@mui/icons-material';
-import { Controller, Control, FieldErrors } from 'react-hook-form';
-import {
+import type { Control, FieldErrors } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
+import type {
   UnifiedFormData,
   UnifiedFormValues
 } from '../../../../../../models/OrganizationEditTypes';
 import { isValidEmail } from '../../../../../../utils/fieldValidation';
 import { FormComponent } from '../../../../../../components/FormComponent';
 import { theme } from '@pagopa/mui-italia';
+
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import Visibility from '@mui/icons-material/Visibility';
 
 type EntityProfileSectionProps = {
   control: Control<UnifiedFormValues>;

@@ -1,16 +1,31 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import {
-  render,
-  renderHook,
-  RenderHookOptions,
-  RenderOptions
-} from '@testing-library/react';
+import type { RenderHookOptions, RenderOptions } from '@testing-library/react';
+import { render, renderHook } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { it } from 'date-fns/locale/it';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
-import { Theme } from '../utils/theme';
 import { StoreProvider } from '../store/GlobalStore';
+import createTheme from '@mui/material/styles/createTheme';
+import ThemeProvider from '@mui/material/styles/ThemeProvider';
+import style from '@core/utils/style';
+
+const theme = createTheme({
+  ...style.theme,
+  components: {
+    MuiModal: {
+      defaultProps: {
+        disableAutoFocus: true,
+        disableEnforceFocus: true
+      }
+    },
+    MuiDialog: {
+      defaultProps: {
+        transitionDuration: 0
+      }
+    }
+  }
+});
 
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
   const queryClient = new QueryClient();
@@ -19,7 +34,7 @@ const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
       <QueryClientProvider client={queryClient}>
         <StoreProvider>
           <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
-            <Theme>{children}</Theme>
+            <ThemeProvider theme={theme}>{children}</ThemeProvider>
           </LocalizationProvider>
         </StoreProvider>
       </QueryClientProvider>

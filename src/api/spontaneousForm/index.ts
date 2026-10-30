@@ -6,8 +6,9 @@ import {
   spontaneousFormDetailDTOSchema,
   spontaneousFormSchema
 } from '../../../generated/core/zod-schema';
-import { SpontaneousForm } from '../../../generated/core/client';
-import { buildQueryParams, SpontaneousFormsFilteredRequest } from './mappings';
+import type { SpontaneousForm } from '../../../generated/core/client';
+import type { SpontaneousFormsFilteredRequest } from './mappings';
+import { buildQueryParams } from './mappings';
 
 const getSpontaneousForms = ({ organizationId }: { organizationId: number }) =>
   useMutation({

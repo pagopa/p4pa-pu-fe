@@ -1,8 +1,10 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { render } from '../../../__tests__/renderers';
-import { PaymentsTable, PaymentsTableProps } from './PaymentsTable';
-import {
+import type { PaymentsTableProps } from './PaymentsTable';
+import { PaymentsTable } from './PaymentsTable';
+import type {
   PagedPaidInstallmentsDTO,
   PaidInstallmentDTO,
   PaymentsUIFilters

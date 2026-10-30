@@ -6,7 +6,7 @@ import {
   useDashboardByIuv,
   useDashboardByFiscalCode
 } from '.';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 
 vi.mock('../../utils', () => ({
   default: {

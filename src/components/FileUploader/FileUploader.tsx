@@ -1,24 +1,22 @@
-import {
-  Box,
-  Button,
-  Typography,
-  IconButton,
-  LinearProgress,
-  Grid,
-  Alert,
-  alpha
-} from '@mui/material';
-import {
-  CloudUpload,
-  AttachFile,
-  Close,
-  InsertDriveFile
-} from '@mui/icons-material';
 import { theme } from '@pagopa/mui-italia';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isExtensionAllowed } from '../../utils/filevalidation';
 import { formatFileSize } from '../../utils/formatters';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import LinearProgress from '@mui/material/LinearProgress';
+import Grid from '@mui/material/Grid';
+import Alert from '@mui/material/Alert';
+import { alpha } from '@mui/material/styles';
+import CloudUpload from '@mui/icons-material/CloudUpload';
+import AttachFile from '@mui/icons-material/AttachFile';
+import Close from '@mui/icons-material/Close';
+import InsertDriveFile from '@mui/icons-material/InsertDriveFile';
 
 export type FileUploaderProps = {
   uploading: boolean;

@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fireEvent, render, screen } from '../../../__tests__/renderers';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
-import { _DateRange, _DateRangeProps } from '../_DateRange';
+import type { _DateRangeProps } from '../_DateRange';
+import { _DateRange } from '../_DateRange';
 
 const mockTranslations = {
   'dates.from': 'Da',

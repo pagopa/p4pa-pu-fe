@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildBeneficiaryFieldPath } from '../BeneficiaryFieldHelpers';
-import { FieldValues, Path } from 'react-hook-form';
+import type { FieldValues, Path } from 'react-hook-form';
 
 describe('BeneficiaryFieldHelpers', () => {
   describe('buildBeneficiaryFieldPath', () => {

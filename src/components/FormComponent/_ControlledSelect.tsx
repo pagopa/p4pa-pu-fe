@@ -1,16 +1,17 @@
-import {
-  Controller,
+import type {
   Control,
   Path,
   FieldValues,
   RegisterOptions
 } from 'react-hook-form';
-import { _Select, _SelectProps, SelectOptions } from './_Select';
-import { UseQueryResult } from '@tanstack/react-query';
+import { Controller } from 'react-hook-form';
+import type { _SelectProps, SelectOptions } from './_Select';
+import { _Select } from './_Select';
+import type { UseQueryResult } from '@tanstack/react-query';
 import { ErrorMessage } from './ErrorMessage';
 import utils from '../../utils';
 import { useTranslation } from 'react-i18next';
-import { FilterFieldValue } from '../../models/Filters';
+import type { FilterFieldValue } from '../../models/Filters';
 
 export type _ControlledSelectProps<T extends FieldValues> = _SelectProps & {
   name: Path<T>;

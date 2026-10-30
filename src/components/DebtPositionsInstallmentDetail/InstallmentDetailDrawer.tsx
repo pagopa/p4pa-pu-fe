@@ -1,10 +1,14 @@
-import { List, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 import { getTransfers } from '../../api/transfers';
 import { moneyFormat } from '../../utils/formatters';
-import { TransferDTO } from '../../../generated/core/data-contracts';
-import { Drawer, DrawerProps } from '../Drawer';
+import type { TransferDTO } from '../../../generated/core/data-contracts';
+import type { DrawerProps } from '../Drawer';
+import { Drawer } from '../Drawer';
+
+import List from '@mui/material/List';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 export type InstallmentDetailDrawerProps = DrawerProps & {
   organizationId: number;

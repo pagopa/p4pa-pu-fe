@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import { vi, describe, it, expect, afterEach } from 'vitest';
 import { STATE } from './types';
 import { useStore, StoreProvider } from './GlobalStore';
-import 'vitest-dom/extend-expect';
 import { initialFilterValues } from './FilterStore';
 
 vi.mock('./OrganizationIdStore', () => ({
@@ -61,7 +60,7 @@ describe('StoreContext', () => {
       return null;
     };
 
-    expect(() => render(<TestComponent />)).toThrowError(
+    expect(() => render(<TestComponent />)).toThrow(
       'useStore must be used within a StoreProvider'
     );
   });

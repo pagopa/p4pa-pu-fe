@@ -1,18 +1,13 @@
-import { Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import AssessmentSearchResultsDataGrid from './AssessmentSearchResultsDataGrid';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { ButtonNaked } from '@pagopa/mui-italia';
-import { FilterAlt } from '@mui/icons-material';
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
-import {
-  FilterCategory,
-  FilterMap,
-  useMultiFilters
-} from '../../hooks/useMultiFilters';
+import type { FilterMap } from '../../hooks/useMultiFilters';
+import { FilterCategory, useMultiFilters } from '../../hooks/useMultiFilters';
 import { FilterDrawer } from '../../components/Drawer/FilterDrawer';
-import { BaseFilterValues } from '../../models/Filters';
+import type { BaseFilterValues } from '../../models/Filters';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '..';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
@@ -20,6 +15,10 @@ import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
 import { getAssessments } from '../../api/assessments';
 import { shouldShowGeneralError } from '../../utils/filtersValidation';
+
+import Grid from '@mui/material/Grid';
+import { useTheme } from '@mui/material/styles';
+import FilterAlt from '@mui/icons-material/FilterAlt';
 
 export type LocationState = {
   category: string;

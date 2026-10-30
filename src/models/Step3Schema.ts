@@ -1,15 +1,11 @@
 import { z } from 'zod';
-import { TFunction } from 'i18next';
-import { Beneficiary } from './paymentTypes';
-import {
-  Step1Data,
-  Step2Data,
-  Step3Data,
-  DebtPositionTypeEnum
-} from './DebtPositionType';
+import type { TFunction } from 'i18next';
+import type { Beneficiary } from './paymentTypes';
+import type { Step1Data, Step2Data, Step3Data } from './DebtPositionType';
+import { DebtPositionTypeEnum } from './DebtPositionType';
 import { formatDate } from '../utils/formatters';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Resolver } from 'react-hook-form';
+import type { Resolver } from 'react-hook-form';
 import {
   createEntityNameFieldSchema,
   createAmountFieldSchema,
@@ -25,15 +21,15 @@ import {
   createInstallmentDueDateFieldSchema
 } from './InstallmentSchema';
 import { formatDateForApi } from '../utils/paymentUtility';
-import {
+import type {
   ManageDebtPositionDTO,
   ManageInstallmentDTO,
-  Action,
   InstallmentDTO,
   TransferDTO,
   DebtPositionDetailDTO,
   PersonDTO
 } from '../../generated/core/data-contracts';
+import { Action } from '../../generated/core/data-contracts';
 
 /**
  * Base type for the installment structure in the form

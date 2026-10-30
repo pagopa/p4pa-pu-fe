@@ -1,12 +1,12 @@
-import React from 'react';
+import type React from 'react';
 import { useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Box } from '@mui/material';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { theme } from '@pagopa/mui-italia';
+import Box from '@mui/material/Box';
 
 type CallbackType = 'ok' | 'ko' | 'cancel';
 

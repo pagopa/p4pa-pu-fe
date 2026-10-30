@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ApiKeyDialog } from './ApiKeyDialog';
-import { OrganizationApiKey } from '@generated/core/data-contracts';
+import type { OrganizationApiKey } from '@generated/core/data-contracts';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
 import { fireEvent, render, screen } from '@core/__tests__/renderers';
 import {

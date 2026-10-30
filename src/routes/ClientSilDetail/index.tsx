@@ -1,18 +1,21 @@
-import { Box, Button, Stack } from '@mui/material';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { Delete } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import DetailAccordion from '../../components/DetailAccordion/DetailAccordion';
-import { DetailSectionProps } from '../../components/DetailContainer/DetailContainer';
+import type { DetailSectionProps } from '../../components/DetailContainer/DetailContainer';
 import { useStore } from '../../store/GlobalStore';
 import { useNavigate, useParams } from 'react-router';
 import { useCallback, useEffect, useState } from 'react';
-import { ClientDTO } from '../../../generated/core/data-contracts';
+import type { ClientDTO } from '../../../generated/core/data-contracts';
 import { getClientDetail } from '../../api/clientSil';
 import { PageRoutes } from '..';
 import ClientSecret from './ClientSecret';
 import clientSilApi from '../../api/clientSil';
 import utils from '../../utils';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Delete from '@mui/icons-material/Delete';
 
 function truncTitle(str: string, maxLength = 30) {
   if (str.length > maxLength) {

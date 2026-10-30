@@ -1,4 +1,3 @@
-import { Download } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
@@ -6,6 +5,7 @@ import { PageRoutes } from '../../routes';
 import ReceiptDetail from '../../components/ReceiptDetail';
 import { useReceiptDetail } from '../../hooks/useReceiptDetail';
 import { useReceiptDownload } from './useReceiptDownload';
+import Download from '@mui/icons-material/Download';
 
 export const TelematicReceiptDetail = () => {
   const { t } = useTranslation();

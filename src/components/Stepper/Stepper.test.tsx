@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Stepper } from './types';
+import type { Stepper } from './types';
 import { vi } from 'vitest';
 import { StepperContainer } from '../Stepper';
 

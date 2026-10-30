@@ -8,7 +8,7 @@ import {
 } from './index';
 import { buildQueryParams } from './mappings';
 import type { ClientSilFilteredRequest } from './mappings';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 
 vi.mock('../../utils', () => ({
   default: {

@@ -1,4 +1,5 @@
-import { describe, it, Mock, vi, beforeEach } from 'vitest';
+import type { Mock } from 'vitest';
+import { describe, it, vi, beforeEach } from 'vitest';
 import DebtPositionsInstallmentDetail from '.';
 import { render } from '../../__tests__/renderers';
 import { useLocation, useNavigate } from 'react-router';

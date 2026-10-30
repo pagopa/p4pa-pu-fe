@@ -10,17 +10,19 @@ import {
   pagedDebtPositionViewSchema,
   pagedInstallmentViewSchema
 } from '../../../generated/core/zod-schema';
-import { AxiosError } from 'axios';
-import {
+import type { AxiosError } from 'axios';
+import type {
   DebtPositionDTO,
   ManageDebtPositionDTO
 } from '../../../generated/core/data-contracts';
 import { extractFilename } from '../../utils/formatters';
-import {
-  buildDebtPositionsQueryParams,
-  buildInstallmentsQueryParams,
+import type {
   DebtPositionFilteredRequest,
   InstallmentsFilteredRequest
+} from './mapping';
+import {
+  buildDebtPositionsQueryParams,
+  buildInstallmentsQueryParams
 } from './mapping';
 import { z } from 'zod';
 

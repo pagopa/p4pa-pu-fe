@@ -1,9 +1,11 @@
-import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { ResourceType } from '../../utils/resources';
+import type { ResourceType } from '../../utils/resources';
 import ReactMarkdown from 'react-markdown';
 import loaders from '../../utils/loaders';
 import { configFeState } from '../../store/ConfigFeStore';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 type Props = {
   resource: ResourceType;

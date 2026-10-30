@@ -1,14 +1,20 @@
-import { Box, Grid, Stack, Tab, Tabs, Typography } from '@mui/material';
 import MultiFilter from '../MultiFilter/MultiFilter';
-import FilterContainer, {
-  FilterItem
-} from '../FilterContainer/FilterContainer';
-import { FilterCategory, FilterMap } from '../../hooks/useMultiFilters';
-import { ButtonProps, FormComponent } from '../FormComponent';
+import type { FilterItem } from '../FilterContainer/FilterContainer';
+import FilterContainer from '../FilterContainer/FilterContainer';
+import type { FilterCategory, FilterMap } from '../../hooks/useMultiFilters';
+import type { ButtonProps } from '../FormComponent';
+import { FormComponent } from '../FormComponent';
 import { useState, useEffect } from 'react';
-import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
+import type { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 import { selectedFilters } from '../../store/FilterStore';
 import MultifilterInitSelect from '../MultiFilter/MultifilterInitSelect';
+
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import Typography from '@mui/material/Typography';
 
 export type TabsConfig = {
   label: string;

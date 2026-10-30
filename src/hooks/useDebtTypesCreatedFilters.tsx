@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
-import { GridSortModel } from '@mui/x-data-grid';
-import { PaginationParams } from '../models/Filters';
+import type { GridSortModel } from '@mui/x-data-grid';
+import type { PaginationParams } from '../models/Filters';
 
 export type FilterValue = string | number | boolean | Array<string>;
 export type FilterParams = Record<string, FilterValue>;

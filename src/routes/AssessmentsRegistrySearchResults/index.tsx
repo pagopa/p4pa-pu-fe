@@ -1,14 +1,9 @@
-import { Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { ButtonNaked } from '@pagopa/mui-italia';
-import { FilterAlt } from '@mui/icons-material';
 import { useState } from 'react';
-import {
-  FilterCategory,
-  FilterMap,
-  useMultiFilters
-} from '../../hooks/useMultiFilters';
-import { BaseFilterValues } from '../../models/Filters';
+import type { FilterMap } from '../../hooks/useMultiFilters';
+import { FilterCategory, useMultiFilters } from '../../hooks/useMultiFilters';
+import type { BaseFilterValues } from '../../models/Filters';
 import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
@@ -17,6 +12,10 @@ import { SearchResultsDataGrid } from './SearchResultDataGrid';
 import { getAssessmentsRegistries } from '../../api/assessments';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '..';
+
+import Grid from '@mui/material/Grid';
+import { useTheme } from '@mui/material/styles';
+import FilterAlt from '@mui/icons-material/FilterAlt';
 
 export type LocationState = {
   category: string;

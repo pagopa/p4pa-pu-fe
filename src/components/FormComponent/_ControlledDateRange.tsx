@@ -1,5 +1,7 @@
-import { Controller, Control, FieldValues, Path } from 'react-hook-form';
-import { _DateRange, _DateRangeProps } from './_DateRange';
+import type { Control, FieldValues, Path } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
+import type { _DateRangeProps } from './_DateRange';
+import { _DateRange } from './_DateRange';
 
 export type _ControlledDateRangeProps<T extends FieldValues> =
   _DateRangeProps & {

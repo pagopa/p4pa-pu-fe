@@ -1,10 +1,10 @@
-import {
+import type {
   UseFormSetValue,
   UseFormTrigger,
   UseFormGetValues,
   Path
 } from 'react-hook-form';
-import { Step3FormValues } from '../models/Step3Schema';
+import type { Step3FormValues } from '../models/Step3Schema';
 import type { Installment } from '../models/paymentTypes';
 import {
   syncInstallmentBeneficiaries,

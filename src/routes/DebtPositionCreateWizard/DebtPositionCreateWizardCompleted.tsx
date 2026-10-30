@@ -1,16 +1,19 @@
-import { Box, Typography, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
 import config from '../../utils/config';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { theme } from '@pagopa/mui-italia';
 import { DebtPositionStatus } from '../../../generated/core/data-contracts';
-import { Download } from '@mui/icons-material';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import debtPositions from '../../api/debtPositions';
 import utils from '../../utils';
 import { downloadBlob } from '../../utils/download';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Download from '@mui/icons-material/Download';
 
 type DebtPositionCompletionState = {
   readonly description?: string;

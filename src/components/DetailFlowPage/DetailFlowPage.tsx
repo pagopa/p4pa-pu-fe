@@ -1,12 +1,11 @@
-import { Download } from '@mui/icons-material';
-import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import DetailContainer, {
-  DetailData
-} from '../DetailContainer/DetailContainer';
+import type { DetailData } from '../DetailContainer/DetailContainer';
+import DetailContainer from '../DetailContainer/DetailContainer';
 import { detailConfig } from '../../models/DetailFlowConfig';
 import { useParams } from 'react-router';
+import Grid from '@mui/material/Grid';
+import Download from '@mui/icons-material/Download';
 
 export const DetailFlowPage = () => {
   const { t } = useTranslation();

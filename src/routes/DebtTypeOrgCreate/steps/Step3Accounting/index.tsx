@@ -6,7 +6,7 @@ import BookIcon from '@mui/icons-material/Book';
 import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../../components/FormComponent';
-import { DebtTypeOrgForm } from '../../types';
+import type { DebtTypeOrgForm } from '../../types';
 import { BudgetItems } from './components/BudgetItems';
 
 export const Step3Accounting = ({ edit }: { edit?: boolean }) => {

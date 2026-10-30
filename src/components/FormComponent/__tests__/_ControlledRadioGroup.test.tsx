@@ -2,6 +2,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '../../../__tests__/renderers';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
+import type { FieldErrors } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import { _ControlledRadioGroup } from '../_ControlledRadioGroup';
 
@@ -24,6 +25,76 @@ const OPTIONS = [
 ] as const;
 
 describe('_ControlledRadioGroup', () => {
+  it.each([true, false])(
+    'preserves validation when showErrorMessage is %s',
+    (showErrorMessage) => {
+      const validationErrors: FieldErrors<FormValues> = {
+        choice: { type: 'custom', message: 'validation.error' }
+      };
+      const Form = () => {
+        const {
+          control,
+          formState: { errors }
+        } = useForm<FormValues>({
+          errors: validationErrors
+        });
+        return (
+          <>
+            <_ControlledRadioGroup
+              name="choice"
+              control={control}
+              options={[...OPTIONS]}
+              showErrorMessage={showErrorMessage}
+            />
+            {errors.choice && <div role="alert">{errors.choice.message}</div>}
+          </>
+        );
+      };
+
+      render(<Form />);
+
+      expect(screen.getByRole('alert')).toHaveTextContent('validation.error');
+      if (showErrorMessage) {
+        expect(screen.getByTestId('error-msg')).toHaveTextContent(
+          'validation.error'
+        );
+      } else {
+        expect(screen.queryByTestId('error-msg')).not.toBeInTheDocument();
+      }
+    }
+  );
+
+  it('leaves the optional field unset when selecting the first option is disabled', () => {
+    const Form = () => {
+      const { control, watch } = useForm<{ choice?: string }>();
+      return (
+        <>
+          <_ControlledRadioGroup
+            name="choice"
+            control={control}
+            options={[...OPTIONS]}
+            selectFirstOption={false}
+          />
+          <output data-testid="choice-value">
+            {watch('choice') ?? 'undefined'}
+          </output>
+        </>
+      );
+    };
+
+    render(<Form />);
+
+    screen.getAllByRole('radio').forEach((radio) => {
+      expect(radio).not.toBeChecked();
+    });
+    expect(screen.getByTestId('choice-value')).toHaveTextContent('undefined');
+
+    fireEvent.click(screen.getByLabelText('Option B'));
+
+    expect(screen.getByLabelText('Option B')).toBeChecked();
+    expect(screen.getByTestId('choice-value')).toHaveTextContent('b');
+  });
+
   it('renders label and options, uses RHF default value when provided', () => {
     const Form = () => {
       const { control } = useForm<FormValues>({

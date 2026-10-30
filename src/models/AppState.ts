@@ -1,4 +1,4 @@
-import { BredcrumbItem } from '../components/Breadcrumbs/Breadcrumbs';
+import type { BredcrumbItem } from '../components/Breadcrumbs/Breadcrumbs';
 
 export type AppState = {
   loading: boolean;

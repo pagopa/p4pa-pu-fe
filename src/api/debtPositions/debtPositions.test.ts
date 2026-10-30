@@ -2,15 +2,16 @@ import utils from '../../utils';
 import debtPositions from '../debtPositions';
 import * as mapping from '../debtPositions/mapping';
 import { createMock } from 'zodock';
-import { AxiosResponse } from 'axios';
-import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
+import type { AxiosResponse } from 'axios';
+import type { Mock } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../../__tests__/renderers';
 import { DebtPositionStatus } from '../../../generated/core/data-contracts';
 import {
   pagedDebtPositionViewSchema,
   pagedInstallmentViewSchema
 } from '../../../generated/core/zod-schema';
-import {
+import type {
   DebtPositionFilteredRequest,
   InstallmentsFilteredRequest
 } from '../debtPositions/mapping';

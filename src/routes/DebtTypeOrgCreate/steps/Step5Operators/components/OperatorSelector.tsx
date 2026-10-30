@@ -1,22 +1,25 @@
-import { Box, Button, Alert } from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
-import {
+import type {
   GridColDef,
   GridRowParams,
   GridRowSelectionModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import { CopyAll } from '@mui/icons-material';
 import { useMemo, useEffect, useCallback, useState } from 'react';
-import { DebtPositionTypeOrgOperatorDTO } from '../../../../../../generated/core/client';
+import type { DebtPositionTypeOrgOperatorDTO } from '../../../../../../generated/core/client';
 import CustomDataGrid from '../../../../../components/DataGrid/CustomDataGrid';
 import { useFormContext } from 'react-hook-form';
-import { DebtTypeOrgForm } from '../../../types';
+import type { DebtTypeOrgForm } from '../../../types';
 import { OperatorsSelection } from '../../../../../../generated/core/data-contracts';
 import { useStore } from '../../../../../store/GlobalStore';
 import { useSearch } from '../../../../../hooks/useSearch';
 import { getDebtPositionTypeOrgOperators } from '../../../../../api/debtPositionTypeOrgOperators';
 import { useParams } from 'react-router';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Alert from '@mui/material/Alert';
+import CopyAll from '@mui/icons-material/CopyAll';
 
 const getOperatorId = (operator: DebtPositionTypeOrgOperatorDTO) =>
   operator.mappedExternalUserId || operator.operatorId || '';

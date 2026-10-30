@@ -1,6 +1,7 @@
 /* eslint-disable sonarjs/no-nested-functions */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { orgSilServiceFormSchema, OrgSilServiceFormData } from './schema';
+import type { OrgSilServiceFormData } from './schema';
+import { orgSilServiceFormSchema } from './schema';
 import {
   OrgSilServiceType,
   JwtAlgorithm

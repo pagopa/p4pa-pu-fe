@@ -1,9 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '../__tests__/renderers';
-import {
-  useGlobalPaymentSelection,
-  UseGlobalPaymentSelectionParams
-} from './useGlobalPaymentSelection';
+import type { UseGlobalPaymentSelectionParams } from './useGlobalPaymentSelection';
+import { useGlobalPaymentSelection } from './useGlobalPaymentSelection';
 
 describe('useGlobalPaymentSelection', () => {
   const mockSetValue = vi.fn();

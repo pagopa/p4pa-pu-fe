@@ -7,14 +7,14 @@ import {
   unifiedFormDataToFormValues,
   mapStep2ValuesToFieldData
 } from '../organizationFormTransformers';
-import {
+import type {
   UnifiedFormData,
-  UnifiedFormValues,
-  LANGUAGE_OPTIONS
+  UnifiedFormValues
 } from '../../models/OrganizationEditTypes';
+import { LANGUAGE_OPTIONS } from '../../models/OrganizationEditTypes';
+import type { OrganizationDetail } from '../../../generated/core/data-contracts';
 import {
   OrganizationAdditionalLanguage,
-  OrganizationDetail,
   OrganizationStatus
 } from '../../../generated/core/data-contracts';
 

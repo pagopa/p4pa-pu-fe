@@ -1,13 +1,9 @@
-import { Box, Button, Stack } from '@mui/material';
-import { Delete, Edit } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { DetailAccordion } from '../../components/DetailAccordion/DetailAccordion';
-import {
-  AccordionSectionConfig,
-  getAccordionSectionsConfig
-} from '../../models/DebtTypeCatalogSectionsConfig';
+import type { AccordionSectionConfig } from '../../models/DebtTypeCatalogSectionsConfig';
+import { getAccordionSectionsConfig } from '../../models/DebtTypeCatalogSectionsConfig';
 import { useEffect, useState } from 'react';
 import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import { STATE } from '../../store/types';
@@ -16,6 +12,12 @@ import { getDebtPositionTypeDetail } from '../../api/debtPositionTypeDetail';
 import debtPositions from '../../api/debtPositions';
 import { PageRoutes } from '../../routes';
 import { isAxiosError } from 'axios';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Delete from '@mui/icons-material/Delete';
+import Edit from '@mui/icons-material/Edit';
 
 export const DebtTypeCatalogDetailView = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);

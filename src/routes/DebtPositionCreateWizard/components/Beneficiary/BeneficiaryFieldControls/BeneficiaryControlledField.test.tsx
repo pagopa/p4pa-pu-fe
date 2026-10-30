@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { BeneficiaryControlledField } from './BeneficiaryControlledField';
-import {
+import type {
   Control,
   ControllerRenderProps,
   FieldValues,

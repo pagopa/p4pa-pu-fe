@@ -1,7 +1,8 @@
 import { setupInterceptors } from '../interceptors';
-import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { Client } from '../../models/Client';
-import {
+import type { Mock } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { Client } from '../../models/Client';
+import type {
   AxiosError,
   AxiosResponse,
   InternalAxiosRequestConfig,
@@ -176,13 +177,13 @@ describe('Request interceptor behavior', () => {
     expect(result.headers['Authorization']).toBe(`Bearer ${accessToken}`);
   });
 
-  it('should handle request error', () => {
+  it('should handle request error', async () => {
     setupInterceptors(client);
     const errorHandler = (client.instance.interceptors.request.use as Mock).mock
       .calls[0][1];
     const error = new Error('Request error');
 
-    expect(errorHandler(error)).rejects.toBe(error);
+    await expect(errorHandler(error)).rejects.toBe(error);
   });
 });
 

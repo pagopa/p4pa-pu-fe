@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { renderHook } from '../../../__tests__/renderers';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 import { getOrgSilServiceSectionsConfig } from './OrgSilServiceSectionConfigs';
+import type { OrgSilServiceDecryptedDTO } from '../../../../generated/core/data-contracts';
 import {
   JwtAlgorithm,
-  OrgSilServiceDecryptedDTO,
   OrgSilServiceType
 } from '../../../../generated/core/data-contracts';
 

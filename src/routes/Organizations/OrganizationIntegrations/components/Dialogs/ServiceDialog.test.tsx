@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { deletePdndService } from '@core/api/integrations';
-import { PdndServiceView } from '@generated/core/data-contracts';
+import type { PdndServiceView } from '@generated/core/data-contracts';
 import notify from '@core/utils/notify';
 
 import { PdndSendServiceDialog } from './ServiceDialog';

@@ -1,14 +1,13 @@
 import React from 'react';
-import {
-  IconButton,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
-  styled
-} from '@mui/material';
 import MoreVert from '@mui/icons-material/MoreVert';
 import { useTranslation } from 'react-i18next';
+
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import { styled } from '@mui/material/styles';
 
 type variant = 'default' | 'error' | 'main';
 

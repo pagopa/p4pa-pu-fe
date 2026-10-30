@@ -1,6 +1,10 @@
-import React from 'react';
-import { Box, Tab, Tabs, useTheme } from '@mui/material';
+import type React from 'react';
 import { useTranslation } from 'react-i18next';
+
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import { useTheme } from '@mui/material/styles';
 
 type ServiceTabsProps = {
   activeTab: number;

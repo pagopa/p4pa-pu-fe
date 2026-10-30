@@ -1,4 +1,4 @@
-import { Languages } from '@pagopa/mui-italia';
+import type { Languages } from '@pagopa/mui-italia';
 
 const langMap = {
   it: 'Italiano',

@@ -1,15 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import {
-  Container,
-  Grid,
-  Typography,
-  Paper,
-  Alert,
-  useTheme
-} from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import DynamicFieldsDataGrid from './components/DynamicFieldsDataGrid';
 import ExternalLink from '../../components/ExternalLink/ExternalLink';
+
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import Alert from '@mui/material/Alert';
+import { useTheme } from '@mui/material/styles';
 
 type DynamicFieldRow = {
   id: number;

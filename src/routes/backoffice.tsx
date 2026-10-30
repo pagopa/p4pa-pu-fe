@@ -1,6 +1,6 @@
 import config from '../utils/config';
 import TaxonomyPage from './Taxonomy';
-import { RouteHandleObject } from '../models/Routes';
+import type { RouteHandleObject } from '../models/Routes';
 import TaxonomyDetailPage from './TaxonomyDetail';
 import { Navigate, Outlet } from 'react-router';
 import {

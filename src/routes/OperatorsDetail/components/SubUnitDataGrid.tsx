@@ -1,11 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
-import { OrgSubUnit, PagedOrgSubUnit } from '../../../../generated/core/client';
-import { GridColDef } from '@mui/x-data-grid';
+import type {
+  OrgSubUnit,
+  PagedOrgSubUnit
+} from '../../../../generated/core/client';
+import type { GridColDef } from '@mui/x-data-grid';
 import EmptyDetailContainer from '../../../components/DebtPositionsInstallmentDetail/EmptyDetailContainer';
-import { RemoveCircleOutline } from '@mui/icons-material';
 import utils from '@core/utils';
-import { Button, Chip } from '@mui/material';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import RemoveCircleOutline from '@mui/icons-material/RemoveCircleOutline';
 
 type PagedOrgSubUnitDataGridProps = {
   data?: PagedOrgSubUnit;

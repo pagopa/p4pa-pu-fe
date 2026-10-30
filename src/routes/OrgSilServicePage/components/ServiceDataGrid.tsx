@@ -1,14 +1,17 @@
-import React from 'react';
-import { Box, IconButton, useTheme } from '@mui/material';
-import { ChevronRight } from '@mui/icons-material';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import type React from 'react';
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import {
-  OrgSilServiceType,
+import type {
   OrgSilServiceView,
   PagedOrgSilServiceView
 } from '../../../../generated/core/client';
+import { OrgSilServiceType } from '../../../../generated/core/client';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
+
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import { useTheme } from '@mui/material/styles';
+import ChevronRight from '@mui/icons-material/ChevronRight';
 
 type ServiceDataGridProps = {
   data?: PagedOrgSilServiceView;

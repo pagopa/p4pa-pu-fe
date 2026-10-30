@@ -1,4 +1,4 @@
-import { RouteHandleObject } from '../models/Routes';
+import type { RouteHandleObject } from '../models/Routes';
 import Assessment from '../components/Assessment';
 import AssessmentSearchResults from './AssessmentSearchResults';
 import AssessmentDetail from './AssessmentDetail/AssessmentDetail';

@@ -1,22 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import utils from '../../utils';
-import TitleComponent, {
-  ActionMenuItem
-} from '../../components/TitleComponent/TitleComponent';
+import type { ActionMenuItem } from '../../components/TitleComponent/TitleComponent';
+import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { useTranslation } from 'react-i18next';
 import { useStore } from '../../store/GlobalStore';
 import { PageRoutes } from '..';
 import { useNavigate } from 'react-router';
 import AddIcon from '@mui/icons-material/Add';
-import {
-  Box,
-  FormControl,
-  FormControlLabel,
-  Link,
-  Radio,
-  RadioGroup,
-  Typography
-} from '@mui/material';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import PersonIcon from '@mui/icons-material/Person';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
@@ -27,13 +17,12 @@ import {
   useDashboardByIuv,
   useDashboardByFiscalCode
 } from '../../api/home';
-import {
+import type {
   DashboardResult,
-  TABS,
   tabsConfigProps,
-  tabsPerProfile,
-  USER_PROFILES
+  tabsPerProfile
 } from './models';
+import { TABS, USER_PROFILES } from './models';
 import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { HomeTabs } from './components/HomeTabs';
@@ -48,6 +37,14 @@ import {
 } from '../../utils/userPreferences';
 import type { UserProfilePreference } from '../../utils/userPreferences';
 import { visuallyHidden } from '@mui/utils';
+
+import Box from '@mui/material/Box';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Link from '@mui/material/Link';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Typography from '@mui/material/Typography';
 
 const Home = () => {
   const { t } = useTranslation();

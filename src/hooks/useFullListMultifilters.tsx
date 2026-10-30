@@ -1,16 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import {
-  COMPONENT_TYPE,
-  SelectChangeEvent
-} from '../components/FilterContainer/FilterContainer';
-import { FilterMap } from './useMultiFilters';
+import type { SelectChangeEvent } from '../components/FilterContainer/FilterContainer';
+import { COMPONENT_TYPE } from '../components/FilterContainer/FilterContainer';
+import type { FilterMap } from './useMultiFilters';
 import { useStore } from '../store/GlobalStore';
-import { ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
 import { setFilterValues } from '../store/FilterStore';
 import { getDebtPositionTypeOrgs } from '../api/debtPositionsTypeOrg';
 import { LabelEnum } from '../../generated/core/client';
 import { AssessmentsRegistryStatus } from '../../generated/core/data-contracts';
-import { FilterFieldValue } from '../models/Filters';
+import type { FilterFieldValue } from '../models/Filters';
 
 export const useFullListMultifilters = () => {
   const { t } = useTranslation();

@@ -1,7 +1,7 @@
-import { ComponentType } from 'react';
-import { LoaderFunction, RouteObject } from 'react-router';
-import { RouteHandleObject } from '@core/models/Routes';
-import { ISidebarMenuItem } from './SidebarMenuItem';
+import type { ComponentType } from 'react';
+import type { LoaderFunction, RouteObject } from 'react-router';
+import type { RouteHandleObject } from '@core/models/Routes';
+import type { ISidebarMenuItem } from './SidebarMenuItem';
 
 export type ExtensionRoute = RouteObject & {
   path: string;

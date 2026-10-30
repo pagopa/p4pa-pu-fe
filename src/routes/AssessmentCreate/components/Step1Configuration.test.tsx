@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useDebtPositionsTypeOrg } from '../../../hooks/useDebtPositionsTypeOrg';

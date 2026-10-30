@@ -1,13 +1,13 @@
 import { useNavigate } from 'react-router';
 import { Header } from './index';
-import { Mock } from 'vitest';
+import type { Mock } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '../../__tests__/renderers';
 import { PageRoutes } from '../../routes';
 import { setUserInfo } from '../../store/UserInfoStore';
 import { organizationsState } from '../../store/OrganizationsStore';
+import type { OrganizationDTO } from '../../../generated/core/data-contracts';
 import {
   OperatorRole,
-  OrganizationDTO,
   OrganizationStatus
 } from '../../../generated/core/data-contracts';
 

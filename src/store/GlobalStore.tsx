@@ -1,5 +1,8 @@
-import React, { createContext, useContext, ReactNode } from 'react';
-import { STATE, State, StoreContextProps } from './types';
+import type { ReactNode } from 'react';
+import type React from 'react';
+import { createContext, useContext } from 'react';
+import type { State, StoreContextProps } from './types';
+import { STATE } from './types';
 import { organizationIdState } from './OrganizationIdStore';
 import { userInfoState } from './UserInfoStore';
 import { configFeState } from './ConfigFeStore';

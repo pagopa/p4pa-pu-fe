@@ -1,7 +1,8 @@
-import { RootLinkType } from '@pagopa/mui-italia';
-import { z, ZodError } from 'zod';
+import type { RootLinkType } from '@pagopa/mui-italia';
+import type { ZodError } from 'zod';
+import { z } from 'zod';
 import queryString from 'query-string';
-import { CustomParamsSerializer } from 'axios';
+import type { CustomParamsSerializer } from 'axios';
 
 /** Useful default values  */
 /** APIHOST default value works in conjunction with the proxy server. See the .proxyrc file */

@@ -1,5 +1,10 @@
-import { Box, Typography, Button, useTheme } from '@mui/material';
-import React, { ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import type React from 'react';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import { useTheme } from '@mui/material/styles';
 
 type EmptyDataGridProps = {
   title: string;

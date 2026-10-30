@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { FieldErrors } from 'react-hook-form';
+import type { FieldErrors } from 'react-hook-form';
 import {
   isEmpty,
   getErrorData,

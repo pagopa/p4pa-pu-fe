@@ -1,11 +1,13 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor, act } from '../../../__tests__/renderers';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import utils from '../../../utils';
 import { parseAndLog } from '../../../utils/loaders';
 import { pagedClassificationPaidInstallmentsViewSchema } from '../../../../generated/core/zod-schema';
 import { getPaidInstallments } from './index';
-import { PaidInstallmentsFilteredRequest, buildQueryParams } from './mappings';
+import type { PaidInstallmentsFilteredRequest } from './mappings';
+import { buildQueryParams } from './mappings';
 
 vi.mock('../../../utils', () => ({
   default: {

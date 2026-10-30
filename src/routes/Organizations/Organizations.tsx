@@ -1,5 +1,3 @@
-import { Search } from '@mui/icons-material';
-import { Box, Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
@@ -9,9 +7,14 @@ import FilterContainer, {
 import { getOrganizationsByBrokerIdAndFilters } from '../../api/organizations';
 import utils from '../../utils';
 import { useSearch } from '../../hooks/useSearch';
-import { PagedOrganizationWithDebtPositionTypeOrgAndOperatorsCount } from '../../../generated/core/data-contracts';
+import type { PagedOrganizationWithDebtPositionTypeOrgAndOperatorsCount } from '../../../generated/core/data-contracts';
 import OrganizationsDatagrid from './components/OrganizationsDatagrid';
-import { OrganizationsFilters } from '../../api/organizations/mappings';
+import type { OrganizationsFilters } from '../../api/organizations/mappings';
+
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import { useTheme } from '@mui/material/styles';
+import Search from '@mui/icons-material/Search';
 
 export const Organizations = () => {
   const theme = useTheme();

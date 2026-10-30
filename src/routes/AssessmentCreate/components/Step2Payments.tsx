@@ -1,7 +1,5 @@
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Stack, Alert, Button, Box } from '@mui/material';
-import { CopyAll } from '@mui/icons-material';
 import {
   useEffect,
   useCallback,
@@ -32,9 +30,15 @@ import type {
   PaymentsUIFilters
 } from '../../../api/classifications/paidInstallments/mappings';
 import { convertFiltersToAPI } from '../../../api/classifications/paidInstallments/mappings';
-import { assessmentsRowsDetailSchema } from '../../../../generated/core/zod-schema';
-import { z } from 'zod';
+import type { assessmentsRowsDetailSchema } from '../../../../generated/core/zod-schema';
+import type { z } from 'zod';
 import utils from '../../../utils';
+
+import Stack from '@mui/material/Stack';
+import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import CopyAll from '@mui/icons-material/CopyAll';
 
 type AssessmentsRowsDetail = z.infer<typeof assessmentsRowsDetailSchema>;
 

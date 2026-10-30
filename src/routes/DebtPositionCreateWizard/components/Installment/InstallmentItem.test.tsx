@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import {
+import type {
   Control,
   FieldArrayWithId,
   FieldErrors,
@@ -9,7 +9,8 @@ import {
   UseFormTrigger,
   FieldArrayPath
 } from 'react-hook-form';
-import InstallmentItem, { ValidationFunctions } from './InstallmentItem';
+import type { ValidationFunctions } from './InstallmentItem';
+import InstallmentItem from './InstallmentItem';
 
 const mockHandleInstallmentAmountChange = vi.fn();
 const mockToggleMultibeneficiary = vi.fn();

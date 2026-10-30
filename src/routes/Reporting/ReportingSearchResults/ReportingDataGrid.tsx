@@ -1,13 +1,12 @@
-import {
+import type {
   GridColDef,
   GridRenderCellParams,
   GridValidRowModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import { FileDownload, Visibility } from '@mui/icons-material';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../../routes';
-import { PagedPaymentsReportingView } from '../../../../generated/core/data-contracts';
+import type { PagedPaymentsReportingView } from '../../../../generated/core/data-contracts';
 import { moneyFormat } from '../../../utils/formatters';
 import ActionMenu from '../../../components/ActionMenu/ActionMenu';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
@@ -15,6 +14,9 @@ import utils from '../../../utils';
 import { useStore } from '../../../store/GlobalStore';
 import { getIngestionFlowFile } from '../../../api/ingestionFlowFiles';
 import { downloadBlob } from '../../../utils/download';
+
+import FileDownload from '@mui/icons-material/FileDownload';
+import Visibility from '@mui/icons-material/Visibility';
 
 type SearchResultDataRow = {
   id: number;

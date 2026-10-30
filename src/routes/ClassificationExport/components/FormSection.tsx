@@ -1,6 +1,9 @@
-import React from 'react';
-import { Box, Typography, Grid } from '@mui/material';
+import type React from 'react';
 import { theme } from '@pagopa/mui-italia';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
 
 type FormSectionProps = {
   icon: React.ReactNode;

@@ -1,33 +1,39 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
-import { Grid, Typography, useTheme, Button, Box, Chip } from '@mui/material';
-import { Add, RemoveCircleOutline } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { hasPartialDateRangeErrors } from '../../utils/filtersValidation';
-import DetailContainer, {
-  DetailData
-} from '../../components/DetailContainer/DetailContainer';
+import type { DetailData } from '../../components/DetailContainer/DetailContainer';
+import DetailContainer from '../../components/DetailContainer/DetailContainer';
 import { useParams, useNavigate, generatePath } from 'react-router';
 import FilterContainer, {
   COMPONENT_TYPE
 } from '../../components/FilterContainer/FilterContainer';
-import { Search } from '@mui/icons-material';
 import AssessmentDetailDataGrid from './components/AssessmentDetailDataGrid';
 import { useStore } from '../../store/GlobalStore';
 import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/assessmentDetail';
-import { AssessmentsDetail } from '../../../generated/core/client';
-import { Variant } from '@mui/material/styles/createTypography';
+import type { AssessmentsDetail } from '../../../generated/core/client';
+import type { Variant } from '@mui/material/styles/createTypography';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { getAssessmentStatusChipProps } from '../../utils/assessmentHelpers';
 import AssesmentActionMenu from '../../components/Assessment/AssessmentActionMenu';
 import { setAppState } from '../../store/AppStateStore';
-import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
+import type { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
 import utils from '../../utils';
-import { FieldValues } from 'react-hook-form';
+import type { FieldValues } from 'react-hook-form';
 import { useSearch } from '../../hooks/useSearch';
-import { FilterFieldValue } from '../../models/Filters';
-import { AssessmentDetailFilters } from '../../api/assessments/mappings';
+import type { FilterFieldValue } from '../../models/Filters';
+import type { AssessmentDetailFilters } from '../../api/assessments/mappings';
 import { FilterFieldIds } from '../../models/SearchCardFields';
+
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Add from '@mui/icons-material/Add';
+import RemoveCircleOutline from '@mui/icons-material/RemoveCircleOutline';
+import Search from '@mui/icons-material/Search';
 
 export const AssessmentDetail = () => {
   const { t } = useTranslation();

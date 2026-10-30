@@ -1,26 +1,24 @@
-import { IconButton } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useState } from 'react';
-import { ArrowForwardIos } from '@mui/icons-material';
 import CustomDataGrid, {
   DataGridContainer
 } from '../../../components/DataGrid/CustomDataGrid';
-import {
-  OrganizationsWithDebtPositionTypeOrgCountFilters,
-  useManagedOrgsSearch
-} from '../../../api/debtTypesCreated';
-import { OrganizationWithDebtPositionTypeOrgCount } from '../../../../generated/core/data-contracts';
+import type { OrganizationsWithDebtPositionTypeOrgCountFilters } from '../../../api/debtTypesCreated';
+import { useManagedOrgsSearch } from '../../../api/debtTypesCreated';
+import type { OrganizationWithDebtPositionTypeOrgCount } from '../../../../generated/core/data-contracts';
 import { useStore } from '../../../store/GlobalStore';
 import utils from '../../../utils';
 import { useSearch } from '../../../hooks/useSearch';
+import type { FilterItem } from '../../../components/FilterContainer/FilterContainer';
 import FilterContainer, {
-  COMPONENT_TYPE,
-  FilterItem
+  COMPONENT_TYPE
 } from '../../../components/FilterContainer/FilterContainer';
 import Search from '@mui/icons-material/Search';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../..';
+import IconButton from '@mui/material/IconButton';
+import ArrowForwardIos from '@mui/icons-material/ArrowForwardIos';
 
 export const ManagedOrgs = () => {
   const { t } = useTranslation();

@@ -1,4 +1,4 @@
-import {
+import type {
   DebtPositionTypeOrgBalanceCostDTO,
   OperatorsSelection
 } from '@generated/core/data-contracts';

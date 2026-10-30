@@ -9,7 +9,7 @@ import {
   pagedDebtPositionTypeOrgWithCountSchema,
   pagedOrganizationWithDebtPositionTypeOrgCountSchema
 } from '../../generated/core/zod-schema';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { createMock } from 'zodock';
 
 vi.mock('../utils', () => ({

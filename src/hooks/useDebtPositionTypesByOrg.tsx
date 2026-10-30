@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import utils from '../utils';
 import { getDebtPositionTypesByOrganizationId } from '../api/debtPositionsTypes';
-import { AxiosError } from 'axios';
+import type { AxiosError } from 'axios';
 
 export const useDebtPositionTypesByOrg = ({
   organizationId

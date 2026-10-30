@@ -7,8 +7,7 @@ import {
   useSearchParams
 } from 'react-router';
 import { FormProvider, useWatch } from 'react-hook-form';
-import { Typography, Box } from '@mui/material';
-import { Stepper } from '../../components/Stepper/types';
+import type { Stepper } from '../../components/Stepper/types';
 import { StepperContainer } from '../../components/Stepper';
 import WizardStepButtons from '../../components/Wizard/WizardStepButtons';
 import { PageRoutes } from '../../routes';
@@ -17,16 +16,19 @@ import { createAssessment } from '../../api/assessments';
 import { useStepperLogic } from '../../hooks/useStepperLogic';
 import utils from '../../utils';
 import { Step1Configuration } from './components/Step1Configuration';
+import type { Step2PaymentsRef } from './components/Step2Payments';
 import {
   Step2Payments,
-  validateStep2Payments,
-  Step2PaymentsRef
+  validateStep2Payments
 } from './components/Step2Payments';
 import { Step3AssignChapter } from './components/Step3AssignChapter';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AxiosError } from 'axios';
+
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 const assessmentFormSchema = z.object({
   debtPositionTypeOrgCode: z

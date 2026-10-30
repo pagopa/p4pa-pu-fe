@@ -1,16 +1,16 @@
-import {
+import type {
   GridColDef,
   GridRenderCellParams,
   GridValidRowModel
 } from '@mui/x-data-grid';
-import { IconButton } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight } from '@mui/icons-material';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import type {
   ClientDTOPage,
   ClientNoSecretDTO
 } from '../../../../generated/core/client';
+import IconButton from '@mui/material/IconButton';
+import ChevronRight from '@mui/icons-material/ChevronRight';
 
 type ClientSilDataRow = ClientNoSecretDTO & GridValidRowModel;
 

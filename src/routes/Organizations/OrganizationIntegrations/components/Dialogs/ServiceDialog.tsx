@@ -1,14 +1,17 @@
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { Button, Divider, Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
-import { PdndServiceView } from '@generated/core/data-contracts';
+import type { PdndServiceView } from '@generated/core/data-contracts';
 
 import { BaseDialog } from '@core/components/BaseDialog';
 import { deletePdndService } from '@core/api/integrations';
 import notify from '@core/utils/notify';
 import { CopiableField } from '@core/components/CopiableField';
 import { Field } from '../Containers';
+
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Stack from '@mui/material/Stack';
 
 type ServiceDialogProps = {
   service: PdndServiceView;

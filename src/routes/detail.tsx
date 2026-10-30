@@ -1,4 +1,4 @@
-import { RouteHandleObject } from '../models/Routes';
+import type { RouteHandleObject } from '../models/Routes';
 import DetailFlowPage from './DetailFlowPage';
 
 export const detailRoutes = [

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { format } from 'date-fns/format';
 import { it } from 'date-fns/locale';
-import { Stack, Typography, Divider } from '@mui/material';
 import { InstitutionIcon } from '../../assets/icons/institution';
 import { QuestionIcon } from '../../assets/icons/question';
 import { ReceiptIcon } from '../../assets/icons/receipt';
@@ -9,6 +8,10 @@ import { BackIcon } from '../../assets/icons/back';
 import { useTranslation } from 'react-i18next';
 import { MarkdownPreview } from '../MarkdownPreview';
 import { MousePopup } from '../AppPreview/MousePopup';
+
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
 
 type NotificationPreviewProps = {
   title?: string;

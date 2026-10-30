@@ -1,7 +1,12 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { addFilterRow, KeyofFilterMap } from '../../store/FilterStore';
-import { FilterMap } from '../../hooks/useMultiFilters';
+import type { KeyofFilterMap } from '../../store/FilterStore';
+import { addFilterRow } from '../../store/FilterStore';
+import type { FilterMap } from '../../hooks/useMultiFilters';
+
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 
 type MultifilterInitSelectProps = {
   multiFilterConfig: FilterMap;

@@ -1010,6 +1010,7 @@
     "remove": "Rimuovi",
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
+    "requiredFieldDescriptionShort": "* Campo obbligatorio",
     "results": "Risultati",
     "roles": {
       "ROLE_ADMIN": "Amministratore",
@@ -2449,16 +2450,80 @@
       "subtitle": "Dopo la creazione, potrai sempre modificare o eliminare l’integrazione.",
       "section": "Seleziona il tipo di integrazione",
       "pagoPaProduct": {
+        "title": "Seleziona il prodotto PagoPA",
+        "subtitle": "Indica quale prodotto vuoi integrare",
         "label": "Prodotto PagoPA",
-        "description": "IO, Stampa avvisi"
+        "products": "Prodotto PagoPA",
+        "description": "IO, Stampa avvisi",
+        "IO": "IO",
+        "GENERATE_NOTICE": "Stampa avvisi",
+        "config": {
+          "title": "Configura il prodotto PagoPA",
+          "subtitle": "Completa le informazioni",
+          "apiKey": "API Key",
+          "IO": {
+            "title": "Notifiche invio messaggio",
+            "subtitle": "Permette di inviare notifiche al destinatario"
+          }
+        },
+        "errors": {
+          "noIntegrationAvailable": {
+            "title": "Hai già configurato tutti i prodotti PagoPA",
+            "message": "Seleziona un altro tipo di integrazione per continuare."
+          },
+          "apiKey": {
+            "title": "Inserisci la chiave API",
+            "message": "La chiave API non può essere vuota."
+          }
+        }
+      },
+      "pdndClient": {
+        "label": "Client PDND",
+        "owner": {
+          "title": "Di chi è il client PDND?",
+          "description": "Indica l'ente o la sottounità per cui stai creando questo client.",
+          "organization": "Dell'ente",
+          "subUnit": "Di una sottounità dell'ente"
+        },
+        "subUnit": "Sottounità",
+        "configure": {
+          "title": "Configura il client",
+          "description": "Inserisci le informazioni fornite da PDND in fase di creazione di un client."
+        },
+        "generalInfo": "Informazioni generali",
+        "cryptoMaterial": "Materiale crittografico",
+        "fields": {
+          "clientName": "Nome del client",
+          "clientId": "ID del client",
+          "kid": "ID della chiave (KID)",
+          "publicKey": "Chiave pubblica",
+          "privateKey": "Chiave privata"
+        },
+        "errors": {
+          "noSubUnits": {
+            "title": "Non esistono sottounità per l'ente {{organizationName}}",
+            "message": "Crea prima una sottounità e riprova."
+          }
+        }
       },
       "eService": {
         "label": "E-service PDND",
         "description": "SEND"
       },
-      "pdndClient": {
-        "label": "Client PDND"
+      "errors": {
+        "selectAtLeastOneOption": {
+          "title": "Completa la configurazione per continuare",
+          "message": "Devi selezionare almeno un tipo di integrazione"
+        },
+        "saveIntegration": {
+          "title": "Errore durante il salvataggio",
+          "message": "Si è verificato un errore durante il salvataggio dell'integrazione."
+        }
       }
+    },
+    "edit": {
+      "title": "Modifica integrazione",
+      "subtitle": "Modifica i campi disponibili e salva le modifiche."
     }
   },
   "organizations": {
@@ -2547,10 +2612,10 @@
       "searchByFiscalCode": "Cerca per codice fiscale",
       "countLabel_one": "Selezionato {{count}} operatore",
       "countLabel_other": "Selezionati {{count}} operatori",
-       "dialog": {
+      "dialog": {
         "title": "Conferma associazione",
-          "message_one": "{{count}} operatore sarà associato alla sottounità <strong>{{subUnitCode}}</strong>.",
-          "message_other": "{{count}} operatori saranno associati alla sottounità <strong>{{subUnitCode}}</strong>.",
+        "message_one": "{{count}} operatore sarà associato alla sottounità <strong>{{subUnitCode}}</strong>.",
+        "message_other": "{{count}} operatori saranno associati alla sottounità <strong>{{subUnitCode}}</strong>.",
         "noSelection": "Nessun operatore selezionato"
       }
     },

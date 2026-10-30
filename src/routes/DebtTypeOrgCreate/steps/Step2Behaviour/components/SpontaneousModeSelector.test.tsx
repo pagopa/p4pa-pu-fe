@@ -3,7 +3,8 @@ import { render, screen } from '../../../../../__tests__/renderers';
 import { FormProvider, useForm } from 'react-hook-form';
 import { SpontaneousModeSelector } from './SpontaneousModeSelector';
 import { i18nTestSetup } from '../../../../../__tests__/i18nTestSetup';
-import { DebtTypeOrgForm, SpontaneousMode } from '../../../types';
+import type { DebtTypeOrgForm } from '../../../types';
+import { SpontaneousMode } from '../../../types';
 
 const TestWrapper = ({
   children,

@@ -2,11 +2,10 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopyOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined';
 import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
-import { Button, Divider, IconButton, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { OrganizationApiKey } from '@generated/core/data-contracts';
+import type { OrganizationApiKey } from '@generated/core/data-contracts';
+import { OrganizationApiKeyType } from '@generated/core/data-contracts';
 
 import {
   deleteOrganizationApiKey,
@@ -14,9 +13,18 @@ import {
 } from '@core/api/integrations';
 import { BaseDialog } from '@core/components/BaseDialog';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
-import { copyWithFeedback } from '@core/utils/clipboard';
 import notify from '@core/utils/notify';
 import { KeyTypeEnum } from '@generated/core/client';
+import { generatePath, useNavigate } from 'react-router';
+import { PageRoutes } from '@core/routes';
+import { IntegrationType } from '@core/routes/Organizations/enums';
+import { copyWithFeedback } from '@core/utils/clipboard';
+
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 type ApiKeyDialogProps = {
   apiKey: OrganizationApiKey;
@@ -51,6 +59,10 @@ export const ApiKeyDialog = ({
   const deleteApiKey = deleteOrganizationApiKey(organizationId, apiKey.keyType);
   const parsedApiKey = String(organizationApiKey?.apiKey);
 
+  const copy = (value: string) => {
+    copyWithFeedback(value, t('commons.copied'));
+  };
+
   const handleDelete = async () => {
     try {
       await deleteApiKey.mutateAsync();
@@ -63,8 +75,28 @@ export const ApiKeyDialog = ({
     }
   };
 
-  const copy = (value: string) => {
-    copyWithFeedback(value, t('commons.copied'));
+  const navigate = useNavigate();
+
+  const handleEdit = () => {
+    const searchParams = new URLSearchParams({
+      keyType: apiKey.keyType
+    });
+
+    if (
+      apiKey.keyType === OrganizationApiKeyType.IO &&
+      organizationApiKey?.serviceEnabled !== undefined
+    ) {
+      searchParams.set(
+        'serviceEnabled',
+        String(organizationApiKey.serviceEnabled)
+      );
+    }
+    navigate(
+      `${generatePath(PageRoutes.EDIT_INTEGRATION, {
+        organizationId: String(organizationId),
+        IntegrationType: IntegrationType.PAGOPA_PRODUCT
+      })}?${searchParams.toString()}`
+    );
   };
 
   return (
@@ -74,14 +106,24 @@ export const ApiKeyDialog = ({
       title={t(`integrations.keyTypes.${apiKey.keyType}`)}
       description={t('integrations.dialogDescription')}
       actions={
-        <Button
-          color="error"
-          startIcon={<DeleteOutlineIcon />}
-          disabled={deleteApiKey.isPending}
-          onClick={handleDelete}
-        >
-          {t('commons.delete')}
-        </Button>
+        <>
+          <Button
+            color="error"
+            startIcon={<DeleteOutlineIcon />}
+            disabled={deleteApiKey.isPending}
+            onClick={handleDelete}
+          >
+            {t('commons.delete')}
+          </Button>
+          <Button
+            color="primary"
+            variant="outlined"
+            disabled={deleteApiKey.isPending}
+            onClick={handleEdit}
+          >
+            {t('commons.edit')}
+          </Button>
+        </>
       }
     >
       <Stack gap={1}>

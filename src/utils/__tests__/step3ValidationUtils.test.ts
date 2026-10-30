@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
+import type {
   UseFormSetValue,
   UseFormTrigger,
   UseFormGetValues
@@ -13,7 +13,7 @@ import {
   type ValidateBusinessLogicParams,
   type ValidateInstallmentsDataParams
 } from '../step3ValidationUtils';
-import { Step3FormValues } from '../../models/Step3Schema';
+import type { Step3FormValues } from '../../models/Step3Schema';
 import type { Installment, Beneficiary } from '../../models/paymentTypes';
 import { DebtPositionTypeEnum } from '../../models/DebtPositionType';
 

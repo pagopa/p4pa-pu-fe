@@ -1,4 +1,4 @@
-import { FieldErrors, FieldValues, Path } from 'react-hook-form';
+import type { FieldErrors, FieldValues, Path } from 'react-hook-form';
 import type { BeneficiaryValidationContext } from '../models/paymentTypes';
 
 // ===== VALIDATION TYPES =====

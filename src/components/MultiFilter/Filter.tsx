@@ -1,11 +1,11 @@
-import { Stack } from '@mui/material';
 import { useRef, useEffect } from 'react';
 import { FormComponent } from '../FormComponent';
 import FilterContainer from '../FilterContainer/FilterContainer';
-import { FilterMap } from '../../hooks/useMultiFilters';
+import type { FilterMap } from '../../hooks/useMultiFilters';
 import { useTranslation } from 'react-i18next';
-import { KeyofFilterMap } from '../../store/FilterStore';
-import { FilterFieldValue } from '../../models/Filters';
+import type { KeyofFilterMap } from '../../store/FilterStore';
+import type { FilterFieldValue } from '../../models/Filters';
+import Stack from '@mui/material/Stack';
 
 export type FilterProps = {
   filterMap: FilterMap;

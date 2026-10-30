@@ -7,7 +7,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { NotificationConfigSelector } from './NotificationConfigSelector';
 import { setOrganizationId } from '../../../../../store/OrganizationIdStore';
 import { i18nTestSetup } from '../../../../../__tests__/i18nTestSetup';
-import { DebtTypeOrgForm } from '../../../types';
+import type { DebtTypeOrgForm } from '../../../types';
 
 vi.mock('../../../hooks/useOrgSilServices', () => ({
   useNotificationServices: vi.fn()

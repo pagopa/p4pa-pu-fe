@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Grid, styled, useTheme, Box, Typography } from '@mui/material';
-import {
-  DataGrid,
+import type {
   DataGridProps,
   GridColDef,
   GridValidRowModel,
   GridSortModel
 } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import { theme } from '@pagopa/mui-italia';
 import CustomPagination from './CustomPagination';
 import utils from '../../utils';
@@ -14,6 +13,10 @@ import { useHashParamsListener } from '../../hooks/useHashParamsListener';
 import { useTranslation } from 'react-i18next';
 import { HiddenDiv } from '../HiddenDiv';
 import { itIT } from '@mui/x-data-grid/locales';
+import Grid from '@mui/material/Grid';
+import { styled, useTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 const StyledDataGrid = styled(DataGrid)({
   border: 'none !important',
   '& .MuiDataGrid-columnHeader': {

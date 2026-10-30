@@ -1,8 +1,9 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import type { Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../__tests__/renderers';
 import { SearchType } from '../models/DebtPositions';
 import useDebtPositionFilters from './useDebtPositionsFilters';
-import {
+import type {
   ButtonField,
   SelectField
 } from '../components/FilterContainer/FilterContainer';

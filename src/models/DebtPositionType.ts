@@ -1,6 +1,6 @@
-import { Beneficiary, Installment } from './paymentTypes';
+import type { Beneficiary, Installment } from './paymentTypes';
 
-import { PaymentOption } from './paymentTypes';
+import type { PaymentOption } from './paymentTypes';
 
 export type DebtPositionType = {
   label: string;

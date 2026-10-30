@@ -1,6 +1,7 @@
 import utils from '../utils';
-import { AxiosResponse } from 'axios';
-import { describe, expect, it, vi, Mock, beforeEach } from 'vitest';
+import type { AxiosResponse } from 'axios';
+import type { Mock } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import * as reactQuery from '@tanstack/react-query';
 import { getPaymentsReportingDetail } from './getPaymentsReportingDetail';
 

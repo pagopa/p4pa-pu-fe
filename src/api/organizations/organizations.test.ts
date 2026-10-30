@@ -2,17 +2,19 @@ import utils from '../../utils';
 import { act, renderHook, waitFor } from '../../__tests__/renderers';
 import {
   getOrganizationDetail,
+  getOrganizationApiKey,
   getOrganizationsByBrokerIdAndFilters,
   updateOrganization
 } from './';
-import { AxiosResponse } from 'axios';
+import type { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
 import { randomUUID } from 'node:crypto';
-import { OrganizationsFilteredRequest } from './mappings';
+import type { OrganizationsFilteredRequest } from './mappings';
 import {
   OrganizationStatus,
   OrganizationAdditionalLanguage
 } from '../../../generated/core/data-contracts';
+import { OrganizationApiKeyType } from '@generated/core/client';
 
 vi.mock('../../utils', () => ({
   default: {
@@ -20,11 +22,43 @@ vi.mock('../../utils', () => ({
       bff: {
         getOrganizationsByBrokerIdAndFilters: vi.fn(),
         getOrganizationDetail: vi.fn(),
+        getOrganizationApiKey: vi.fn(),
         updateOrganization: vi.fn()
       }
     }
   }
 }));
+
+describe('getOrganizationApiKey', () => {
+  it.each([
+    { keyType: OrganizationApiKeyType.IO, enabled: false },
+    { keyType: undefined, enabled: true }
+  ])(
+    'does not fetch for $keyType when enabled=$enabled',
+    ({ keyType, enabled }) => {
+      const { result } = renderHook(() =>
+        getOrganizationApiKey(33, keyType, enabled)
+      );
+      expect(result.current.fetchStatus).toBe('idle');
+      expect(utils.apiClient.bff.getOrganizationApiKey).not.toHaveBeenCalled();
+    }
+  );
+
+  it('fetches when enabled with a valid key type', async () => {
+    const data = { keyType: OrganizationApiKeyType.IO, apiKey: 'test-key' };
+    vi.mocked(utils.apiClient.bff.getOrganizationApiKey).mockResolvedValue({
+      data
+    } as AxiosResponse);
+    const { result } = renderHook(() =>
+      getOrganizationApiKey(33, OrganizationApiKeyType.IO, true)
+    );
+    await waitFor(() => expect(result.current.data).toEqual(data));
+    expect(utils.apiClient.bff.getOrganizationApiKey).toHaveBeenCalledWith(
+      33,
+      OrganizationApiKeyType.IO
+    );
+  });
+});
 
 const mockGetOrganizationsByBrokerIdAndFilters = vi.mocked(
   utils.apiClient.bff.getOrganizationsByBrokerIdAndFilters

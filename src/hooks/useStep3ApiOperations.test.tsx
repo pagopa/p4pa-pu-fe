@@ -1,22 +1,24 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { useStep3ApiOperations } from './useStep3ApiOperations';
-import { UseMutationResult } from '@tanstack/react-query';
-import {
+import type { UseMutationResult } from '@tanstack/react-query';
+import type {
   DebtPositionDTO,
   DebtPositionDetailDTO,
-  ManageDebtPositionDTO,
+  ManageDebtPositionDTO
+} from '../../generated/core/data-contracts';
+import {
   DebtPositionStatus,
   DebtPositionOrigin,
   PaymentOptionType
 } from '../../generated/core/data-contracts';
-import {
+import type {
   Step1Data,
   Step2Data,
-  Step3Data,
-  DebtPositionTypeEnum
+  Step3Data
 } from '../models/DebtPositionType';
-import { Step3FormValues } from '../models/Step3Schema';
+import { DebtPositionTypeEnum } from '../models/DebtPositionType';
+import type { Step3FormValues } from '../models/Step3Schema';
 import { PageRoutes } from '../routes';
 
 vi.mock('react-i18next', () => ({

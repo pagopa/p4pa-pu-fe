@@ -1,25 +1,24 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Controller } from 'react-hook-form';
-import {
-  Grid,
-  MenuItem,
-  TextField,
-  Typography,
-  FormControlLabel,
-  Switch,
-  Box
-} from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
 import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { SubjectType } from '../../../../utils/fieldValidation';
-import { Step2Data } from '../../../../models/DebtPositionType';
+import type { Step2Data } from '../../../../models/DebtPositionType';
 import { createNestedStep2AddDebtorSchema } from '../../../../models/Step2AddDebtorSchema';
 import { Step2ControlledTextField } from './Step2ControlledTextField';
 import { useStep2Form } from '../../../../hooks/useStep2Form';
 import { ITALIAN_PROVINCES } from '../../../../models/Province';
+
+import Grid from '@mui/material/Grid';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import Box from '@mui/material/Box';
 
 type Step2DataField = keyof Step2Data;
 type NestedFieldName = `${Step2DataField}.value`;

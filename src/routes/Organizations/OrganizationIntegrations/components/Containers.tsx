@@ -1,15 +1,15 @@
-import { ReactNode, useId } from 'react';
-import {
-  TypographyProps,
-  Stack,
-  Typography,
-  Tooltip,
-  Paper,
-  Button
-} from '@mui/material';
+import type { ReactNode } from 'react';
+import { useId } from 'react';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useTranslation } from 'react-i18next';
 import { I18N_PREFIX } from '..';
+
+import Stack from '@mui/material/Stack';
+import type { TypographyProps } from '@mui/material/Typography';
+import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
 
 export const Field = ({
   label,

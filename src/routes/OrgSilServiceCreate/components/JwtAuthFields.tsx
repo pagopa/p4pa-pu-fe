@@ -1,8 +1,8 @@
-import { Stack } from '@mui/material';
-import { Control } from 'react-hook-form';
+import type { Control } from 'react-hook-form';
 import { FormComponent } from '../../../components/FormComponent';
-import { OrgSilServiceFormData } from '../schema';
+import type { OrgSilServiceFormData } from '../schema';
 import { JWT_ALGORITHM_OPTIONS } from '../utils/orgSilServiceFormUtils';
+import Stack from '@mui/material/Stack';
 
 type JwtAuthFieldsProps = {
   control: Control<OrgSilServiceFormData>;

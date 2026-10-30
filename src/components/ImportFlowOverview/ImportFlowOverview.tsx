@@ -1,8 +1,6 @@
-import { Box, IconButton, Stack, useTheme } from '@mui/material';
-import { Search, Upload } from '@mui/icons-material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import FilterContainer, {
   COMPONENT_TYPE
@@ -11,10 +9,9 @@ import ActionMenu from '../ActionMenu/ActionMenu';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
+import type { BaseFilterValues, FlowStatus } from '../../models/Filters';
 import {
-  BaseFilterValues,
   DOWNLOAD_STATES,
-  FlowStatus,
   MENU_STATES,
   STATE_COLORS
 } from '../../models/Filters';
@@ -25,8 +22,8 @@ import {
   getIngestionFlowFileNotice,
   getIngestionFlowFiles
 } from '../../api/ingestionFlowFiles';
+import type { IngestionFlowFile } from '../../../generated/core/client';
 import {
-  IngestionFlowFile,
   IngestionFlowFileStatus,
   IngestionFlowFileTypeEnum
 } from '../../../generated/core/client';
@@ -42,8 +39,15 @@ import {
   shouldShowGeneralError
 } from '../../utils/filtersValidation';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
-import { FlowFilesFilters } from '../../api/ingestionFlowFiles/mappings';
-import { PagedIngestionFlowFile } from '../../../generated/core/data-contracts';
+import type { FlowFilesFilters } from '../../api/ingestionFlowFiles/mappings';
+import type { PagedIngestionFlowFile } from '../../../generated/core/data-contracts';
+
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
+import Search from '@mui/icons-material/Search';
+import Upload from '@mui/icons-material/Upload';
 
 export type ImportFlowOverviewProps = {
   routingCategory: string;

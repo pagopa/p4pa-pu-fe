@@ -1,12 +1,9 @@
 import { useCallback } from 'react';
-import { CreateDebtPositionTypeOrg } from '../../../api/debtPositionsTypeOrg';
-import {
-  DebtTypeOrgForm,
-  PaymentMethodOption,
-  SpontaneousMode
-} from '../types';
+import type { CreateDebtPositionTypeOrg } from '../../../api/debtPositionsTypeOrg';
+import type { DebtTypeOrgForm } from '../types';
+import { PaymentMethodOption, SpontaneousMode } from '../types';
 import { euroToCents } from '../../../utils/formatters';
-import { DebtPositionTypeOrgBalanceCostDTO } from '@generated/core/data-contracts';
+import type { DebtPositionTypeOrgBalanceCostDTO } from '@generated/core/data-contracts';
 
 type OriginalDebtTypeOrgData = {
   debtPositionTypeOrgId?: number;

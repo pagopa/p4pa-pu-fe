@@ -1,6 +1,6 @@
 import Stack from '@mui/material/Stack';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import { Stepper } from './types';
+import type { Stepper } from './types';
 import { StepBar } from './StepBar';
 
 export type StepperContainerProps = Stepper & {

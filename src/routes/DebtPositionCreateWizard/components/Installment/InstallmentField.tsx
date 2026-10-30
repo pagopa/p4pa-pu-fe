@@ -1,6 +1,4 @@
-import { Box, Button, Typography, Grid, Paper, Divider } from '@mui/material';
-import { Add } from '@mui/icons-material';
-import {
+import type {
   Control,
   FieldErrors,
   FieldValues,
@@ -14,7 +12,15 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useInstallmentManagement } from '../../../../hooks/useInstallmentManagement';
 import InstallmentItem from './InstallmentItem';
-import { Installment } from '../../../../models/paymentTypes';
+import type { Installment } from '../../../../models/paymentTypes';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Divider from '@mui/material/Divider';
+import Add from '@mui/icons-material/Add';
 
 // Update the type to match what is actually provided
 export type ValidationFunctions = {

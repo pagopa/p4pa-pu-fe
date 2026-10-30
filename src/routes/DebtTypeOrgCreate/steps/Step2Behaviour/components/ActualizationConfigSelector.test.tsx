@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '../../../../../__tests__/renderers';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ActualizationConfigSelector } from './ActualizationConfigSelector';
-import { DebtTypeOrgForm } from '../../../types';
+import type { DebtTypeOrgForm } from '../../../types';
 import { useActualizationServices } from '../../../hooks/useOrgSilServices';
 
 vi.mock('../../../hooks/useOrgSilServices', () => ({

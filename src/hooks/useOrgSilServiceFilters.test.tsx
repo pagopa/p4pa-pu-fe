@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { useOrgSilServiceFilters } from './useOrgSilServiceFilters';
-import {
+import type {
   COMPONENT_TYPE,
   FilterItem
 } from '../components/FilterContainer/FilterContainer';

@@ -1,14 +1,17 @@
-import React from 'react';
+import type React from 'react';
 import { useParams } from 'react-router';
-import { Box, Alert, Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import DetailContainer from '../../components/DetailContainer/DetailContainer';
 import { useRegistry } from '../../api/registryDetail';
 import { mapRegistryToDetailSections } from './registryDetailConfig';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
-import { RegistryType } from '../Events/configs';
+import type { RegistryType } from '../Events/configs';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
+
+import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
+import Grid from '@mui/material/Grid';
 
 export const RegistryDetailPage: React.FC = () => {
   const { t } = useTranslation();

@@ -1,9 +1,14 @@
-import React from 'react';
-import { Box, Typography, Alert, Stack } from '@mui/material';
+import type React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ClassificationDetailDTO } from '../../../generated/core/data-contracts';
-import { CheckBox, DisabledByDefault } from '@mui/icons-material';
+import type { ClassificationDetailDTO } from '../../../generated/core/data-contracts';
 import { useClassificationAlert } from './hooks/useClassificationAlert';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
+import CheckBox from '@mui/icons-material/CheckBox';
+import DisabledByDefault from '@mui/icons-material/DisabledByDefault';
 
 type StatusBarProps = {
   classificationData: ClassificationDetailDTO;

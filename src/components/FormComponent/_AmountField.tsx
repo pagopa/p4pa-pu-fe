@@ -1,6 +1,7 @@
 import EuroRoundedIcon from '@mui/icons-material/EuroRounded';
 import { useEffect, useRef, useState } from 'react';
-import { _TextField, _TextFieldProps } from './_TextField';
+import type { _TextFieldProps } from './_TextField';
+import { _TextField } from './_TextField';
 import {
   formatAmountForDisplay,
   isValidAmountInput,

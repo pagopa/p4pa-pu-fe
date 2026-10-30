@@ -1,14 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { IconButton } from '@mui/material';
-import { ChevronRight } from '@mui/icons-material';
-import {
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import type {
   PagedSpontaneousForm,
   SpontaneousForm
 } from '../../../../../generated/core/data-contracts';
 import CustomDataGrid from '../../../../components/DataGrid/CustomDataGrid';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../..';
+import IconButton from '@mui/material/IconButton';
+import ChevronRight from '@mui/icons-material/ChevronRight';
 
 export type SpontaneousFormDataGridProps = {
   data: PagedSpontaneousForm;

@@ -1,8 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
-import DetailContainer, {
-  DetailSectionProps
-} from '../DetailContainer/DetailContainer';
+import type { DetailSectionProps } from '../DetailContainer/DetailContainer';
+import DetailContainer from '../DetailContainer/DetailContainer';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({

@@ -10,8 +10,8 @@ import {
 } from '../../../generated/core/zod-schema';
 import { createMock } from 'zodock';
 import debtPositions from '../../api/debtPositions';
-import { DebtPositionDetailDTO } from '../../../generated/core/client';
-import { UseQueryResult } from '@tanstack/react-query';
+import type { DebtPositionDetailDTO } from '../../../generated/core/client';
+import type { UseQueryResult } from '@tanstack/react-query';
 import {
   InstallmentStatus,
   PaymentOptionType,
@@ -19,7 +19,7 @@ import {
   DebtPositionStatus,
   DebtPositionOrigin
 } from '../../../generated/core/data-contracts';
-import * as utils from '../../utils/download';
+import { downloadBlob } from '@core/utils/download';
 
 const mockDebtPositionDetail = createMock(debtPositionDetailDTOSchema);
 
@@ -143,17 +143,6 @@ vi.mock('../../api/debtPositions', () => ({
 
 vi.mock('../../utils/download', () => ({
   downloadBlob: vi.fn()
-}));
-
-vi.mock('../../utils', () => ({
-  default: {
-    notify: {
-      emit: vi.fn()
-    },
-    config: {
-      deployPath: '/piattaformaunitaria'
-    }
-  }
 }));
 
 beforeEach(() => {
@@ -383,7 +372,7 @@ describe('DebtPositionDetail Component', () => {
 
       await vi.waitFor(() => {
         expect(mockMutate).toHaveBeenCalledWith(10);
-        expect(utils.downloadBlob).toHaveBeenCalledWith(
+        expect(downloadBlob).toHaveBeenCalledWith(
           mockResult.data,
           mockResult.fileName
         );
@@ -406,7 +395,7 @@ describe('DebtPositionDetail Component', () => {
 
       await vi.waitFor(() => {
         expect(mockMutate).toHaveBeenCalledWith(10);
-        expect(utils.downloadBlob).toHaveBeenCalledWith(
+        expect(downloadBlob).toHaveBeenCalledWith(
           mockResult.data,
           mockResult.fileName
         );
@@ -458,7 +447,7 @@ describe('DebtPositionDetail Component', () => {
 
       await vi.waitFor(() => {
         expect(mockMutate).toHaveBeenCalledWith(10);
-        expect(utils.downloadBlob).not.toHaveBeenCalled();
+        expect(downloadBlob).not.toHaveBeenCalled();
         expect(console.error).toHaveBeenCalled();
       });
     }
@@ -492,7 +481,7 @@ describe('DebtPositionDetail Component', () => {
     }
   });
 
-  it('shows delete confirmation dialog when delete option is clicked', async () => {
+  it('shows delete confirmation dialog when delete option is clicked', () => {
     mockDebtPositionDetail.status = DebtPositionStatus.DRAFT;
 
     render(<DebtPositionDetail />);
@@ -503,29 +492,25 @@ describe('DebtPositionDetail Component', () => {
     if (menuButton) {
       fireEvent.click(menuButton);
 
-      await vi.waitFor(() => {
-        const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
-        expect(deleteOption).toBeVisible();
+      const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
+      expect(deleteOption).toBeVisible();
 
-        if (deleteOption) {
-          fireEvent.click(deleteOption);
-        }
-      });
+      if (deleteOption) {
+        fireEvent.click(deleteOption);
+      }
 
-      await vi.waitFor(() => {
-        const dialogTitle = screen.getByText('Confirm Delete');
-        expect(dialogTitle).toBeVisible();
+      const dialogTitle = screen.getByText('Confirm Delete');
+      expect(dialogTitle).toBeVisible();
 
-        const deleteButton = screen.getByRole('button', { name: 'Delete' });
-        expect(deleteButton).toBeVisible();
+      const deleteButton = screen.getByRole('button', { name: 'Delete' });
+      expect(deleteButton).toBeVisible();
 
-        const closeButton = screen.getByRole('button', { name: 'Close' });
-        expect(closeButton).toBeVisible();
-      });
+      const closeButton = screen.getByRole('button', { name: 'Close' });
+      expect(closeButton).toBeVisible();
     }
   });
 
-  it('calls deleteDebtPosition when delete is confirmed', async () => {
+  it('calls deleteDebtPosition when delete is confirmed', () => {
     mockDebtPositionDetail.status = DebtPositionStatus.DRAFT;
 
     render(<DebtPositionDetail />);
@@ -536,30 +521,24 @@ describe('DebtPositionDetail Component', () => {
     if (menuButton) {
       fireEvent.click(menuButton);
 
-      await vi.waitFor(() => {
-        const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
-        if (deleteOption) {
-          fireEvent.click(deleteOption);
-        }
-      });
+      const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
+      if (deleteOption) {
+        fireEvent.click(deleteOption);
+      }
 
-      await vi.waitFor(() => {
-        const dialogTitle = screen.getByText('Confirm Delete');
-        expect(dialogTitle).toBeVisible();
-      });
+      const dialogTitle = screen.getByText('Confirm Delete');
+      expect(dialogTitle).toBeVisible();
 
       const deleteButton = screen.getByRole('button', { name: 'Delete' });
       expect(deleteButton).toBeVisible();
 
       fireEvent.click(deleteButton);
 
-      await vi.waitFor(() => {
-        expect(deleteMockMutateAsync).toHaveBeenCalled();
-      });
+      expect(deleteMockMutateAsync).toHaveBeenCalled();
     }
   });
 
-  it('closes dialog without deleting when cancel is clicked', async () => {
+  it('closes dialog without deleting when cancel is clicked', () => {
     mockDebtPositionDetail.status = DebtPositionStatus.DRAFT;
 
     render(<DebtPositionDetail />);
@@ -570,26 +549,20 @@ describe('DebtPositionDetail Component', () => {
     if (menuButton) {
       fireEvent.click(menuButton);
 
-      await vi.waitFor(() => {
-        const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
-        if (deleteOption) {
-          fireEvent.click(deleteOption);
-        }
-      });
+      const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
+      if (deleteOption) {
+        fireEvent.click(deleteOption);
+      }
 
-      await vi.waitFor(() => {
-        const dialogTitle = screen.getByText('Confirm Delete');
-        expect(dialogTitle).toBeVisible();
-      });
+      const dialogTitle = screen.getByText('Confirm Delete');
+      expect(dialogTitle).toBeVisible();
 
       const closeButton = screen.getByRole('button', { name: 'Close' });
       expect(closeButton).toBeVisible();
 
       fireEvent.click(closeButton);
 
-      await vi.waitFor(() => {
-        expect(screen.queryByText('Confirm Delete')).not.toBeInTheDocument();
-      });
+      expect(screen.queryByText('Confirm Delete')).not.toBeInTheDocument();
 
       expect(deleteMockMutateAsync).not.toHaveBeenCalled();
     }

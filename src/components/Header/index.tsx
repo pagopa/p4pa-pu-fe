@@ -1,10 +1,5 @@
-import {
-  HeaderAccount,
-  HeaderProduct,
-  JwtUser,
-  ProductEntity,
-  UserAction
-} from '@pagopa/mui-italia';
+import type { JwtUser, ProductEntity, UserAction } from '@pagopa/mui-italia';
+import { HeaderAccount, HeaderProduct } from '@pagopa/mui-italia';
 import utils from '../../utils';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
@@ -14,11 +9,11 @@ import { STATE } from '../../store/types';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { setOperatorRole } from '../../store/OperatorRoleStore';
 import { useTranslation } from 'react-i18next';
-import { OperatorRole } from '../../../generated/core/client';
+import type { OperatorRole } from '../../../generated/core/client';
 import { PageRoutes } from '../../routes';
 import config from '../../utils/config';
 import { OrganizationStatus } from '../../../generated/core/data-contracts';
-import { PartySwitchItem } from '@pagopa/mui-italia/components/PartySwitch';
+import type { PartySwitchItem } from '@pagopa/mui-italia/components/PartySwitch';
 
 export type HeaderProps = {
   onAssistanceClick?: () => void;

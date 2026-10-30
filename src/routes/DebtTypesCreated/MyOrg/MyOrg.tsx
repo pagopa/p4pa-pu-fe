@@ -1,28 +1,29 @@
-import { Box, Chip, IconButton } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import { useTranslation } from 'react-i18next';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useState } from 'react';
-import { ArrowForwardIos } from '@mui/icons-material';
 import CustomDataGrid, {
   DataGridContainer
 } from '../../../components/DataGrid/CustomDataGrid';
-import {
-  DebtPositionTypeOrgWithCountFilters,
-  useDebtPositionTypeOrgSearch
-} from '../../../api/debtTypesCreated';
-import { DebtPositionTypeOrgWithCount } from '../../../../generated/core/data-contracts';
+import type { DebtPositionTypeOrgWithCountFilters } from '../../../api/debtTypesCreated';
+import { useDebtPositionTypeOrgSearch } from '../../../api/debtTypesCreated';
+import type { DebtPositionTypeOrgWithCount } from '../../../../generated/core/data-contracts';
 import { useStore } from '../../../store/GlobalStore';
 import { formatDateTime } from '../../../utils/formatters';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { PageRoutes } from '../../../routes';
 import { useSearch } from '../../../hooks/useSearch';
+import type { FilterItem } from '../../../components/FilterContainer/FilterContainer';
 import FilterContainer, {
-  COMPONENT_TYPE,
-  FilterItem
+  COMPONENT_TYPE
 } from '../../../components/FilterContainer/FilterContainer';
 import utils from '../../../utils';
 import Search from '@mui/icons-material/Search';
+
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import ArrowForwardIos from '@mui/icons-material/ArrowForwardIos';
 
 export const MyOrg = () => {
   const { t } = useTranslation();

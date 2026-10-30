@@ -1,12 +1,11 @@
-import {
-  Stepper as MuiStepper,
-  Stack,
-  Step,
-  StepLabel,
-  Typography
-} from '@mui/material';
-import { Stepper } from './types';
+import type { Stepper } from './types';
 import { useTranslation } from 'react-i18next';
+
+import MuiStepper from '@mui/material/Stepper';
+import Stack from '@mui/material/Stack';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import Typography from '@mui/material/Typography';
 
 export type StepBarProps = Stepper;
 

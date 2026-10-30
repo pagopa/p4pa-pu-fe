@@ -1,8 +1,8 @@
-import { useTheme } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
 import rehypeRaw from 'rehype-raw';
 import './markdownpreview.css';
+import { useTheme } from '@mui/material/styles';
 
 type MarkdownPreviewProps = {
   message?: string;

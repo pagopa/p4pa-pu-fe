@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { useOrgSilServiceForm } from './useOrgSilServiceForm';
 import { OrgSilServiceType } from '../../../../generated/core/data-contracts';
-import { OrgSilServiceFormData } from '../schema';
+import type { OrgSilServiceFormData } from '../schema';
 import { PageRoutes } from '../..';
 
 const mockNavigate = vi.fn();
