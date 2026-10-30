@@ -7,7 +7,7 @@ import type {
 } from '@generated/core/client';
 import {
   organizationApiKeySchema,
-  pagedPdndClientViewSchema,
+  pagedOrgSubUnitSchema,
   pagedPdndServiceViewSchema,
   pdndClientNoSecretDTOSchema,
   pdndServiceViewSchema
@@ -143,23 +143,20 @@ export const savePdndClient = (organizationId: number) =>
     }
   });
 
-export const getAllOrgSubUnitsPdndClients = (
-  organizationId: number,
-  enabled = true
-) =>
+export const getAllOrgSubUnits = (organizationId: number, enabled = true) =>
   useQuery({
-    queryKey: ['getOrgSubUnitsPdndClients', organizationId],
+    queryKey: ['getAllOrgSubUnits', organizationId],
     enabled,
     queryFn: async () => {
-      const { data } = await utils.apiClient.bff.getOrgSubUnitsPdndClients(
+      const { data } = await utils.apiClient.bff.getPagedOrgSubUnits(
         organizationId,
         {
           // TODO: should not be hardcoded
-          // an api should return all the subUnits
+          // api should return all the subUnits
           size: 100
         }
       );
-      parseAndLog(pagedPdndClientViewSchema, data);
+      parseAndLog(pagedOrgSubUnitSchema, data);
       return data;
     }
   });

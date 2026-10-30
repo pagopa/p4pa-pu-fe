@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 
 import {
-  getAllOrgSubUnitsPdndClients,
+  getAllOrgSubUnits,
   getOrganizationApiKeys,
   savePdndClient
 } from '@core/api/integrations';
@@ -118,7 +118,7 @@ export const AddIntegration = ({
   const pdndOwnerType = watch('PDND_CLIENT.ownerType');
 
   // Sub-units are needed only when the PDND client belongs to a sub-unit
-  const { data: subUnits } = getAllOrgSubUnitsPdndClients(
+  const { data: subUnits } = getAllOrgSubUnits(
     organizationId,
     flagIntegrationType === IntegrationType.PDND_CLIENT &&
       pdndOwnerType === PdndOwnerType.SUB_UNIT

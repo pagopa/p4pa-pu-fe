@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 import { FormComponent } from '@core/components/FormComponent';
 import WizardStepWrapper from '@core/components/Wizard/WizardStepWrapper';
-import type { PdndClientView } from '@generated/core/data-contracts';
+import type { OrgSubUnit } from '@generated/core/data-contracts';
 
 import { PdndOwnerType } from '../../enums';
 import type { AddIntegrationFormData } from '../AddIntegrationSchema';
@@ -18,8 +18,8 @@ import { MIAlert } from '@pagopa/mui-italia/components/MIAlert';
 type PdndClientIntegrationProps = {
   control: Control<AddIntegrationFormData>;
   organizationName: string;
-  // undefined while the sub-units are not loaded yet
-  subUnits?: Array<PdndClientView>;
+  // undefined while the sub-units are not loaded
+  subUnits?: Array<OrgSubUnit>;
 };
 
 const GENERAL_INFO_FIELDS = ['clientName', 'clientId', 'kid'] as const;
