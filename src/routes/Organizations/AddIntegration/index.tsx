@@ -1,78 +1,54 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import Typography from '@mui/material/Typography';
+import { useEffect, useMemo } from 'react';
 import type { SubmitErrorHandler } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { IntegrationType } from '../enums';
-
-import { FormComponent } from '@core/components/FormComponent';
-import TitleComponent from '@core/components/TitleComponent/TitleComponent';
-import WizardStepButtons from '@core/components/Wizard/WizardStepButtons';
-import WizardStepWrapper from '@core/components/Wizard/WizardStepWrapper';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
-import Divider from '@mui/material/Divider';
-import PagoPAIntegration from './integrations/pagopa';
-import type { KeyTypeEnum } from '@generated/core/client';
-import { OrganizationApiKeyType } from '@generated/core/client';
-import { getOrganizationApiKeys } from '@core/api/integrations';
-import { Alert, AlertTitle } from '@mui/material';
-import { useEffect } from 'react';
-import utils from '@core/utils';
-import i18n from '@core/translations/i18n';
+
+import {
+  getAllOrgSubUnits,
+  getOrganizationApiKeys,
+  savePdndClient
+} from '@core/api/integrations';
 import {
   encryptAndSaveApiKey,
   getOrganizationApiKey
 } from '@core/api/organizations';
+import TitleComponent from '@core/components/TitleComponent/TitleComponent';
+import WizardStepButtons from '@core/components/Wizard/WizardStepButtons';
+import utils from '@core/utils';
+import type { KeyTypeEnum } from '@generated/core/client';
+import { OrganizationApiKeyType } from '@generated/core/client';
 
-const addIntegrationSchema = z.object({
-  flagIntegrationType: z
-    .nativeEnum(IntegrationType, {
-      errorMap: () => ({ message: 'commons.validation.selectAtLeastOneOption' })
-    })
-    .optional()
-    .superRefine((value) => {
-      if (value === undefined) {
-        utils.notify.emit(
-          i18n.t('integrations.add.errors.selectAtLeastOneOption.title')
-        );
-      }
-    }),
-  PAGOPA_PRODUCT: z
-    .object({
-      keyType: z
-        .union([
-          z.literal(OrganizationApiKeyType.IO),
-          z.literal(OrganizationApiKeyType.GENERATE_NOTICE)
-        ])
-        .optional(),
-      apiKey: z.string().optional(),
-      serviceEnabled: z.boolean().optional()
-    })
-    .optional()
-});
-
-export type AddIntegrationFormData = z.infer<typeof addIntegrationSchema>;
+import { IntegrationMode, IntegrationType, PdndOwnerType } from '../enums';
+import PagoPAIntegration from './integrations/pagopa';
+import type {
+  AddIntegrationFormData,
+  PagoPAFormData,
+  PdndFormData
+} from './AddIntegrationSchema';
+import {
+  isPagoPAKeyType,
+  createAddIntegrationSchema,
+  DEFAULT_PDND_VALUES
+} from './AddIntegrationSchema';
+import { PdndClientIntegration } from './integrations/client';
+import { IntegrationTypeSelector } from './components/IntegretionTypeSelector';
 
 type AddIntegrationProps = {
-  mode?: 'edit' | 'add';
+  mode?: IntegrationMode;
 };
 
-export const AddIntegration = (props: AddIntegrationProps) => {
-  const { mode = 'add' } = props;
+export const AddIntegration = ({
+  mode = IntegrationMode.ADD
+}: AddIntegrationProps) => {
+  const isEditMode = mode === IntegrationMode.EDIT;
+  const isAddMode = mode === IntegrationMode.ADD;
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const keyTypeByURL = searchParams.get('keyType');
-  const serviceEnabledByURL = searchParams.get('serviceEnabled');
-
-  const initialKeyType =
-    keyTypeByURL === OrganizationApiKeyType.IO ||
-    keyTypeByURL === OrganizationApiKeyType.GENERATE_NOTICE
-      ? keyTypeByURL
-      : undefined;
-
-  const initialServiceEnabled = serviceEnabledByURL === 'true' ? true : false;
 
   const {
     organizationId: organizationIdByURL,
@@ -81,23 +57,40 @@ export const AddIntegration = (props: AddIntegrationProps) => {
     organizationId: string;
     IntegrationType: IntegrationType;
   }>();
-
   const organizationId = Number(organizationIdByURL);
 
-  const { data } = getOrganizationApiKeys(organizationId, mode === 'add');
+  const keyTypeByURL = searchParams.get('keyType');
+  const initialKeyType = isPagoPAKeyType(keyTypeByURL)
+    ? keyTypeByURL
+    : undefined;
+  const initialServiceEnabled = searchParams.get('serviceEnabled') === 'true';
+
+  const { data: existingApiKeys } = getOrganizationApiKeys(
+    organizationId,
+    isAddMode
+  );
   const { data: organizationApiKey } = getOrganizationApiKey(
     organizationId,
     initialKeyType,
-    mode === 'edit'
+    isEditMode
   );
 
-  const availableApiKeys = data
+  const availableApiKeys = existingApiKeys
     ? Object.values(OrganizationApiKeyType)
-        .filter((keyType) => !data.some((key) => key.keyType === keyType))
+        .filter(
+          (keyType) => !existingApiKeys.some((key) => key.keyType === keyType)
+        )
         .filter((keyType) => keyType !== OrganizationApiKeyType.SEND)
     : [];
 
-  const savedIntegrationTypeMutation = encryptAndSaveApiKey(organizationId);
+  const savePagoPAMutation = encryptAndSaveApiKey(organizationId);
+  const saveClientMutation = savePdndClient(organizationId);
+
+  const noKeyAvailableToAdd = isAddMode && availableApiKeys.length === 0;
+  const schema = useMemo(
+    () => createAddIntegrationSchema(noKeyAvailableToAdd),
+    [noKeyAvailableToAdd]
+  );
 
   const {
     control,
@@ -108,32 +101,7 @@ export const AddIntegration = (props: AddIntegrationProps) => {
     getFieldState,
     formState: { errors }
   } = useForm<AddIntegrationFormData>({
-    resolver: zodResolver(
-      addIntegrationSchema.superRefine((values, ctx) => {
-        if (
-          values.flagIntegrationType === IntegrationType.PAGOPA_PRODUCT &&
-          mode === 'add' &&
-          availableApiKeys.length === 0
-        ) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['flagIntegrationType'],
-            message:
-              'integrations.add.pagoPaProduct.errors.noIntegrationAvailable'
-          });
-        }
-        if (
-          values.flagIntegrationType === IntegrationType.PAGOPA_PRODUCT &&
-          !values.PAGOPA_PRODUCT?.apiKey
-        ) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['PAGOPA_PRODUCT', 'apiKey'],
-            message: 'integrations.add.pagoPaProduct.errors.apiKey.title'
-          });
-        }
-      })
-    ),
+    resolver: zodResolver(schema),
     mode: 'onSubmit',
     defaultValues: {
       flagIntegrationType: integrationTypeByURL,
@@ -141,15 +109,26 @@ export const AddIntegration = (props: AddIntegrationProps) => {
         keyType: initialKeyType,
         apiKey: organizationApiKey?.apiKey,
         serviceEnabled: initialServiceEnabled
-      }
+      },
+      PDND_CLIENT: DEFAULT_PDND_VALUES
     }
   });
 
   const flagIntegrationType = watch('flagIntegrationType');
+  const pdndOwnerType = watch('PDND_CLIENT.ownerType');
 
+  // Sub-units are needed only when the PDND client belongs to a sub-unit
+  const { data: subUnits } = getAllOrgSubUnits(
+    organizationId,
+    flagIntegrationType === IntegrationType.PDND_CLIENT &&
+      pdndOwnerType === PdndOwnerType.SUB_UNIT
+  );
+
+  // In edit mode the API key is loaded asynchronously: sync it into the form
+  // unless the user has already typed something.
   useEffect(() => {
     if (
-      mode === 'edit' &&
+      isEditMode &&
       organizationApiKey?.apiKey !== undefined &&
       !getFieldState('PAGOPA_PRODUCT.apiKey').isDirty
     ) {
@@ -157,34 +136,66 @@ export const AddIntegration = (props: AddIntegrationProps) => {
         defaultValue: organizationApiKey.apiKey
       });
     }
-  }, [mode, organizationApiKey?.apiKey, resetField, getFieldState]);
+  }, [isEditMode, organizationApiKey?.apiKey, resetField, getFieldState]);
 
+  // Re-validate the selected type when the number of available keys changes.
   useEffect(() => {
     if (flagIntegrationType !== undefined) {
       void trigger('flagIntegrationType');
     }
   }, [flagIntegrationType, availableApiKeys.length, trigger]);
 
-  const onBack = () => {
-    navigate(-1);
+  const submitPagoPA = async (values?: PagoPAFormData) => {
+    if (!values?.apiKey || !values.keyType) {
+      throw new Error('Missing API key or type for PagoPA product');
+    }
+    await savePagoPAMutation.mutateAsync({
+      apiKey: values.apiKey,
+      keyType: values.keyType as unknown as KeyTypeEnum,
+      // serviceEnabled applies only to IO keys
+      ...(values.keyType === OrganizationApiKeyType.IO && {
+        serviceEnabled: values.serviceEnabled ?? false
+      })
+    });
   };
 
-  const onSubmit = async (data: AddIntegrationFormData) => {
+  const submitPdnd = async (values?: PdndFormData) => {
+    const { clientName, clientId, kid, publicKey, privateKey } = values ?? {};
+
+    if (!clientName || !clientId || !kid || !publicKey || !privateKey) {
+      throw new Error('Missing data for PDND client');
+    }
+
+    await saveClientMutation.mutateAsync({
+      organizationId,
+      clientName,
+      clientId,
+      kid,
+      publicKey,
+      privateKey,
+      // subUnitCode is sent only when the client belongs to a sub-unit
+      ...(values?.ownerType === PdndOwnerType.SUB_UNIT && {
+        subUnitCode: values.subUnitCode
+      })
+    });
+  };
+
+  const onBack = () => navigate(-1);
+
+  const onSubmit = async (formData: AddIntegrationFormData) => {
     try {
-      if (data.flagIntegrationType === IntegrationType.PAGOPA_PRODUCT) {
-        if (!data.PAGOPA_PRODUCT?.apiKey || !data.PAGOPA_PRODUCT?.keyType) {
-          throw new Error('Missing API key or type for PagoPA product');
-        }
-        await savedIntegrationTypeMutation.mutateAsync({
-          apiKey: data.PAGOPA_PRODUCT.apiKey,
-          keyType: data.PAGOPA_PRODUCT.keyType as unknown as KeyTypeEnum,
-          ...(data.PAGOPA_PRODUCT.keyType === OrganizationApiKeyType.IO && {
-            serviceEnabled: data.PAGOPA_PRODUCT.serviceEnabled ?? false
-          })
-        });
-        navigate(-1);
-        utils.notify.emit(t('commons.done'), 'success');
+      switch (formData.flagIntegrationType) {
+        case IntegrationType.PAGOPA_PRODUCT:
+          await submitPagoPA(formData.PAGOPA_PRODUCT);
+          break;
+        case IntegrationType.PDND_CLIENT:
+          await submitPdnd(formData.PDND_CLIENT);
+          break;
+        default:
+          return;
       }
+      navigate(-1);
+      utils.notify.emit(t('commons.done'), 'success');
     } catch (error) {
       utils.notify.emit(t('integrations.add.errors.saveIntegration.message'));
       console.error(error);
@@ -201,6 +212,12 @@ export const AddIntegration = (props: AddIntegrationProps) => {
     }
   };
 
+  const showPagoPAForm =
+    flagIntegrationType === IntegrationType.PAGOPA_PRODUCT &&
+    (isEditMode || availableApiKeys.length > 0);
+
+  const showPdndForm = flagIntegrationType === IntegrationType.PDND_CLIENT;
+
   return (
     <>
       <TitleComponent
@@ -210,78 +227,31 @@ export const AddIntegration = (props: AddIntegrationProps) => {
       <Typography variant="body1" color="error" sx={{ marginBottom: 2 }}>
         {t('commons.requiredFieldDescriptionShort')}
       </Typography>
-      {mode === 'add' && (
-        <WizardStepWrapper p={2}>
-          <Typography variant="h6" component="h2" mb={2}>
-            {t('integrations.add.section')}
-          </Typography>
-          <FormComponent.ControlledRadioGroup
-            formControlLabelProps={{
-              labelPlacement: 'start',
-              sx: {
-                width: '100%',
-                mx: 0,
-                justifyContent: 'space-between'
-              }
-            }}
-            divider={<Divider sx={{ my: 1 }} />}
-            name="flagIntegrationType"
-            data-testid="flagNotifyOutcomePush"
-            control={control}
-            value={flagIntegrationType ?? ''}
-            disabled={false}
-            selectFirstOption={false}
-            showErrorMessage={false}
-            options={[
-              {
-                value: IntegrationType.PAGOPA_PRODUCT,
-                label: (
-                  <FormComponent.RadioLabel
-                    label={t('integrations.add.pagoPaProduct.label')}
-                    description={t(
-                      'integrations.add.pagoPaProduct.description'
-                    )}
-                  />
-                )
-              },
-              {
-                value: IntegrationType.E_SERVICE,
-                label: (
-                  <FormComponent.RadioLabel
-                    label={t('integrations.add.eService.label')}
-                    description={t('integrations.add.eService.description')}
-                  />
-                )
-              },
-              {
-                value: IntegrationType.PDND_CLIENT,
-                label: (
-                  <FormComponent.RadioLabel
-                    label={t('integrations.add.pdndClient.label')}
-                  />
-                )
-              }
-            ]}
-          />
-          {errors.flagIntegrationType?.message && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              <AlertTitle>
-                {t(`${errors.flagIntegrationType.message}.title`)}
-              </AlertTitle>
-              {t(`${errors.flagIntegrationType.message}.message`)}
-            </Alert>
-          )}
-        </WizardStepWrapper>
+
+      {isAddMode && (
+        <IntegrationTypeSelector
+          control={control}
+          value={flagIntegrationType}
+          errorMessage={errors.flagIntegrationType?.message}
+        />
       )}
-      {flagIntegrationType === IntegrationType.PAGOPA_PRODUCT &&
-        (mode === 'edit' ||
-          (mode === 'add' && availableApiKeys.length > 0)) && (
-          <PagoPAIntegration
-            availableApiKeys={availableApiKeys}
-            control={control}
-            readOnly={mode === 'edit'}
-          />
-        )}
+
+      {showPagoPAForm && (
+        <PagoPAIntegration
+          availableApiKeys={availableApiKeys}
+          control={control}
+          readOnly={isEditMode}
+        />
+      )}
+
+      {showPdndForm && (
+        <PdndClientIntegration
+          control={control}
+          organizationName={String(organizationId)}
+          subUnits={subUnits?.content}
+        />
+      )}
+
       <WizardStepButtons
         onBack={onBack}
         onNext={handleSubmit(onSubmit, onInvalidSubmit)}

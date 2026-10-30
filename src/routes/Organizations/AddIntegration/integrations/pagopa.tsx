@@ -13,8 +13,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import type { Control } from 'react-hook-form';
 import { useController } from 'react-hook-form';
-import type { AddIntegrationFormData } from '..';
 import { useEffect } from 'react';
+import type { AddIntegrationFormData } from '../AddIntegrationSchema';
 
 const Product = ({
   control,

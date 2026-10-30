@@ -3,7 +3,8 @@ import {
   fireEvent,
   render as testingRender,
   screen,
-  waitFor
+  waitFor,
+  within
 } from '@testing-library/react';
 import { type Control, useController } from 'react-hook-form';
 import { MemoryRouter, useParams } from 'react-router';
@@ -16,6 +17,11 @@ import type {
   OrganizationApiKeys
 } from '@generated/core/client';
 import { KeyTypeEnum, OrganizationApiKeyType } from '@generated/core/client';
+import type {
+  PdndClientDTO,
+  PdndClientView
+} from '@generated/core/data-contracts';
+import { IntegrationMode, IntegrationType, PdndOwnerType } from '../enums';
 
 const render = (ui: React.ReactNode, initialEntry = '/') =>
   testingRender(ui, {
@@ -29,6 +35,9 @@ const {
   mockGetOrganizationApiKey,
   mockEncryptAndSaveApiKey,
   mockMutateAsync,
+  mockGetAllOrgSubUnits,
+  mockSavePdndClient,
+  mockSavePdndMutateAsync,
   mockNavigate
 } = vi.hoisted(() => ({
   mockGetOrganizationApiKey:
@@ -42,11 +51,22 @@ const {
     >(),
   mockEncryptAndSaveApiKey: vi.fn(),
   mockMutateAsync: vi.fn<(data: OrganizationApiKeys) => Promise<void>>(),
+  mockGetAllOrgSubUnits:
+    vi.fn<
+      (
+        organizationId: number,
+        enabled?: boolean
+      ) => { data: { content: Array<PdndClientView> } | undefined }
+    >(),
+  mockSavePdndClient: vi.fn(),
+  mockSavePdndMutateAsync: vi.fn<(data: PdndClientDTO) => Promise<void>>(),
   mockNavigate: vi.fn()
 }));
 
 vi.mock('@core/api/integrations', () => ({
-  getOrganizationApiKeys: mockGetOrganizationApiKeys
+  getOrganizationApiKeys: mockGetOrganizationApiKeys,
+  getAllOrgSubUnits: mockGetAllOrgSubUnits,
+  savePdndClient: mockSavePdndClient
 }));
 
 vi.mock('@core/api/organizations', () => ({
@@ -54,14 +74,11 @@ vi.mock('@core/api/organizations', () => ({
   encryptAndSaveApiKey: mockEncryptAndSaveApiKey
 }));
 
-vi.mock('react-router', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('react-router')>();
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-    useParams: vi.fn()
-  };
-});
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: () => mockNavigate,
+  useParams: vi.fn()
+}));
 
 vi.mock('@core/components/TitleComponent/TitleComponent', () => ({
   default: ({ title }: { title: string }) => <h1>{title}</h1>
@@ -89,13 +106,11 @@ vi.mock('@core/components/FormComponent', () => ({
     ControlledRadioGroup: ({
       name,
       control,
-      options,
-      value
+      options
     }: {
       name: string;
       control: Control<Record<string, unknown>>;
       options: Array<{ value: string; label: React.ReactNode }>;
-      value: string;
     }) => {
       const { field } = useController({ name, control });
       return (
@@ -107,12 +122,87 @@ vi.mock('@core/components/FormComponent', () => ({
                 name={name}
                 data-testid={`option-${option.value}`}
                 value={option.value}
-                checked={value === option.value}
+                checked={field.value === option.value}
                 onChange={() => field.onChange(option.value)}
               />
               {option.label}
             </label>
           ))}
+        </div>
+      );
+    },
+    ControlledSelect: ({
+      name,
+      control,
+      label,
+      options
+    }: {
+      name: string;
+      control: Control<Record<string, unknown>>;
+      label: string;
+      options: Array<{ value: string; label: string }>;
+    }) => {
+      const { field, fieldState } = useController({ name, control });
+      return (
+        <div>
+          <label htmlFor={name}>{label}</label>
+          <select
+            id={name}
+            data-testid={name}
+            value={String(field.value ?? '')}
+            onChange={(event) => field.onChange(event.target.value)}
+          >
+            <option value="" />
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          {fieldState.error && (
+            <span data-testid={`${name}-error`}>
+              {fieldState.error.message}
+            </span>
+          )}
+        </div>
+      );
+    },
+    ControlledTextField: ({
+      name,
+      control,
+      label,
+      multiline
+    }: {
+      name: string;
+      control: Control<Record<string, unknown>>;
+      label: string;
+      multiline?: boolean;
+    }) => {
+      const { field, fieldState } = useController({ name, control });
+      const value = String(field.value ?? '');
+      return (
+        <div>
+          <label htmlFor={name}>{label}</label>
+          {multiline ? (
+            <textarea
+              id={name}
+              data-testid={name}
+              value={value}
+              onChange={field.onChange}
+            />
+          ) : (
+            <input
+              id={name}
+              data-testid={name}
+              value={value}
+              onChange={field.onChange}
+            />
+          )}
+          {fieldState.error && (
+            <span data-testid={`${name}-error`}>
+              {fieldState.error.message}
+            </span>
+          )}
         </div>
       );
     },
@@ -131,19 +221,30 @@ vi.mock('@core/components/FormComponent', () => ({
   }
 }));
 
+const toSubUnit = (subUnitCode: string, subUnitName: string) =>
+  ({ subUnitCode, subUnitName }) as PdndClientView;
+
+const SUB_UNITS = [
+  toSubUnit('SU1', 'Sub unit one'),
+  toSubUnit('SU2', 'Sub unit two')
+];
+
 describe('AddIntegration', () => {
   it('fills the API key when it loads without overwriting later user edits', async () => {
     vi.mocked(useParams).mockReturnValue({
       organizationId: '33',
       IntegrationType: 'pagoPa-product'
     });
-    const { rerender } = render(<AddIntegration mode="edit" />, '/?keyType=IO');
+    const { rerender } = render(
+      <AddIntegration mode={IntegrationMode.EDIT} />,
+      '/?keyType=IO'
+    );
     expect(screen.getByRole('textbox')).toHaveValue('');
 
     mockGetOrganizationApiKey.mockReturnValue({
       data: { apiKey: 'loaded-key' }
     });
-    rerender(<AddIntegration mode="edit" />);
+    rerender(<AddIntegration mode={IntegrationMode.EDIT} />);
     await waitFor(() => {
       expect(screen.getByRole('textbox')).toHaveValue('loaded-key');
     });
@@ -154,7 +255,7 @@ describe('AddIntegration', () => {
     mockGetOrganizationApiKey.mockReturnValue({
       data: { apiKey: 'refetched-key' }
     });
-    rerender(<AddIntegration mode="edit" />);
+    rerender(<AddIntegration mode={IntegrationMode.EDIT} />);
     expect(screen.getByRole('textbox')).toHaveValue('edited-key');
   });
 
@@ -163,14 +264,17 @@ describe('AddIntegration', () => {
       organizationId: '33',
       IntegrationType: 'pagoPa-product'
     });
-    const { rerender } = render(<AddIntegration mode="edit" />, '/?keyType=IO');
+    const { rerender } = render(
+      <AddIntegration mode={IntegrationMode.EDIT} />,
+      '/?keyType=IO'
+    );
     fireEvent.change(screen.getByRole('textbox'), {
       target: { value: 'user-key' }
     });
     mockGetOrganizationApiKey.mockReturnValue({
       data: { apiKey: 'loaded-key' }
     });
-    rerender(<AddIntegration mode="edit" />);
+    rerender(<AddIntegration mode={IntegrationMode.EDIT} />);
     expect(screen.getByRole('textbox')).toHaveValue('user-key');
   });
 
@@ -183,7 +287,10 @@ describe('AddIntegration', () => {
       });
       mockGetOrganizationApiKeys.mockReturnValue({ data: [] });
 
-      render(<AddIntegration mode="edit" />, `/?keyType=${keyType}`);
+      render(
+        <AddIntegration mode={IntegrationMode.EDIT} />,
+        `/?keyType=${keyType}`
+      );
 
       const select = screen.getByRole('combobox');
       expect(select).toHaveTextContent(keyType);
@@ -207,7 +314,10 @@ describe('AddIntegration', () => {
   });
 
   it('disables the configured keys query in edit mode and enables it in add mode', () => {
-    const { rerender } = render(<AddIntegration mode="edit" />, '/?keyType=IO');
+    const { rerender } = render(
+      <AddIntegration mode={IntegrationMode.EDIT} />,
+      '/?keyType=IO'
+    );
     expect(mockGetOrganizationApiKeys).toHaveBeenLastCalledWith(33, false);
     expect(mockGetOrganizationApiKey).toHaveBeenLastCalledWith(
       33,
@@ -215,7 +325,7 @@ describe('AddIntegration', () => {
       true
     );
 
-    rerender(<AddIntegration mode="add" />);
+    rerender(<AddIntegration mode={IntegrationMode.ADD} />);
     expect(mockGetOrganizationApiKeys).toHaveBeenLastCalledWith(33, true);
     expect(mockGetOrganizationApiKey).toHaveBeenLastCalledWith(
       33,
@@ -231,6 +341,13 @@ describe('AddIntegration', () => {
     mockGetOrganizationApiKeys.mockReturnValue({ data: [] });
     mockEncryptAndSaveApiKey.mockReturnValue({ mutateAsync: mockMutateAsync });
     mockMutateAsync.mockResolvedValue(undefined);
+    mockGetAllOrgSubUnits.mockReturnValue({
+      data: { content: SUB_UNITS }
+    });
+    mockSavePdndClient.mockReturnValue({
+      mutateAsync: mockSavePdndMutateAsync
+    });
+    mockSavePdndMutateAsync.mockResolvedValue(undefined);
     vi.spyOn(utils.notify, 'emit').mockImplementation(() => undefined);
   });
 
@@ -249,6 +366,7 @@ describe('AddIntegration', () => {
     expect(utils.notify.emit).not.toHaveBeenCalled();
     expect(mockGetOrganizationApiKeys).toHaveBeenCalledWith(33, true);
     expect(mockEncryptAndSaveApiKey).toHaveBeenCalledWith(33);
+    expect(mockSavePdndClient).toHaveBeenCalledWith(33);
   });
 
   it('notifies when submitting without selecting an integration', async () => {
@@ -261,6 +379,7 @@ describe('AddIntegration', () => {
       );
     });
     expect(mockMutateAsync).not.toHaveBeenCalled();
+    expect(mockSavePdndMutateAsync).not.toHaveBeenCalled();
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
@@ -346,6 +465,7 @@ describe('AddIntegration', () => {
         keyType: KeyTypeEnum.IO,
         serviceEnabled
       });
+      expect(mockSavePdndMutateAsync).not.toHaveBeenCalled();
       expect(utils.notify.emit).toHaveBeenCalledWith('commons.done', 'success');
     }
   );
@@ -402,5 +522,215 @@ describe('AddIntegration', () => {
     fireEvent.click(screen.getByTestId('back-button'));
     expect(mockNavigate).toHaveBeenCalledWith(-1);
     expect(mockMutateAsync).not.toHaveBeenCalled();
+  });
+
+  describe('PDND client', () => {
+    const CLIENT_FIELDS = {
+      clientName: 'My client',
+      clientId: 'client-id',
+      kid: 'key-id',
+      publicKey: 'public-key',
+      privateKey: 'private-key'
+    };
+
+    const selectPdnd = () =>
+      fireEvent.click(
+        screen.getByTestId(`option-${IntegrationType.PDND_CLIENT}`)
+      );
+    const selectOwner = (owner: PdndOwnerType) =>
+      fireEvent.click(screen.getByTestId(`option-${owner}`));
+    const input = (name: string) => screen.getByTestId(`PDND_CLIENT.${name}`);
+    const fillClient = () => {
+      Object.entries(CLIENT_FIELDS).forEach(([name, value]) => {
+        fireEvent.change(input(name), { target: { value } });
+      });
+    };
+    const submit = () => fireEvent.click(screen.getByTestId('next-button'));
+
+    it('shows the client form with the organization owner preselected', () => {
+      render(<AddIntegration />);
+      selectPdnd();
+
+      expect(
+        screen.getByTestId(`option-${PdndOwnerType.ORGANIZATION}`)
+      ).toBeChecked();
+      expect(
+        screen.getByTestId(`option-${PdndOwnerType.SUB_UNIT}`)
+      ).not.toBeChecked();
+      Object.keys(CLIENT_FIELDS).forEach((name) => {
+        expect(input(name)).toBeInTheDocument();
+      });
+      expect(
+        screen.queryByTestId('PDND_CLIENT.subUnitCode')
+      ).not.toBeInTheDocument();
+    });
+
+    it('queries the sub-units only when the sub-unit owner is selected', () => {
+      render(<AddIntegration />);
+      expect(mockGetAllOrgSubUnits).toHaveBeenLastCalledWith(33, false);
+
+      selectPdnd();
+      expect(mockGetAllOrgSubUnits).toHaveBeenLastCalledWith(33, false);
+
+      selectOwner(PdndOwnerType.SUB_UNIT);
+      expect(mockGetAllOrgSubUnits).toHaveBeenLastCalledWith(33, true);
+
+      selectOwner(PdndOwnerType.ORGANIZATION);
+      expect(mockGetAllOrgSubUnits).toHaveBeenLastCalledWith(33, false);
+    });
+
+    it('never queries the sub-units for the other integration types', () => {
+      render(<AddIntegration />);
+      fireEvent.click(screen.getByTestId('option-pagoPa-product'));
+      fireEvent.click(screen.getByTestId('option-e-service'));
+
+      expect(mockGetAllOrgSubUnits).not.toHaveBeenCalledWith(33, true);
+    });
+
+    it('lists the sub-units for the sub-unit owner', () => {
+      render(<AddIntegration />);
+      selectPdnd();
+      selectOwner(PdndOwnerType.SUB_UNIT);
+
+      const select = screen.getByTestId('PDND_CLIENT.subUnitCode');
+      expect(
+        within(select).getByRole('option', { name: 'Sub unit one' })
+      ).toBeInTheDocument();
+      expect(
+        within(select).getByRole('option', { name: 'Sub unit two' })
+      ).toBeInTheDocument();
+    });
+
+    it('saves an organization client without a sub-unit code', async () => {
+      render(<AddIntegration />);
+      selectPdnd();
+      fillClient();
+      submit();
+
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith(-1);
+      });
+      expect(mockSavePdndMutateAsync).toHaveBeenCalledExactlyOnceWith({
+        organizationId: 33,
+        ...CLIENT_FIELDS
+      });
+      expect(mockMutateAsync).not.toHaveBeenCalled();
+      expect(utils.notify.emit).toHaveBeenCalledWith('commons.done', 'success');
+    });
+
+    it('saves a sub-unit client with the selected sub-unit', async () => {
+      render(<AddIntegration />);
+      selectPdnd();
+      selectOwner(PdndOwnerType.SUB_UNIT);
+      fireEvent.change(input('subUnitCode'), { target: { value: 'SU1' } });
+      fillClient();
+      submit();
+
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith(-1);
+      });
+      expect(mockSavePdndMutateAsync).toHaveBeenCalledExactlyOnceWith({
+        organizationId: 33,
+        ...CLIENT_FIELDS,
+        subUnitCode: 'SU1'
+      });
+    });
+
+    it('does not send a stale sub-unit after switching back to the organization', async () => {
+      render(<AddIntegration />);
+      selectPdnd();
+      selectOwner(PdndOwnerType.SUB_UNIT);
+      fireEvent.change(input('subUnitCode'), { target: { value: 'SU1' } });
+      selectOwner(PdndOwnerType.ORGANIZATION);
+      fillClient();
+      submit();
+
+      await waitFor(() => {
+        expect(mockSavePdndMutateAsync).toHaveBeenCalledExactlyOnceWith({
+          organizationId: 33,
+          ...CLIENT_FIELDS
+        });
+      });
+    });
+
+    it('shows inline errors and does not save when required fields are empty', async () => {
+      render(<AddIntegration />);
+      selectPdnd();
+      submit();
+
+      await waitFor(() => {
+        expect(input('clientName-error')).toHaveTextContent('commons.required');
+      });
+      Object.keys(CLIENT_FIELDS).forEach((name) => {
+        expect(input(`${name}-error`)).toHaveTextContent('commons.required');
+      });
+      expect(mockSavePdndMutateAsync).not.toHaveBeenCalled();
+      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(utils.notify.emit).not.toHaveBeenCalled();
+    });
+
+    it('treats whitespace-only values as empty', async () => {
+      render(<AddIntegration />);
+      selectPdnd();
+      fillClient();
+      fireEvent.change(input('privateKey'), { target: { value: '   ' } });
+      submit();
+
+      await waitFor(() => {
+        expect(input('privateKey-error')).toHaveTextContent('commons.required');
+      });
+      expect(mockSavePdndMutateAsync).not.toHaveBeenCalled();
+    });
+
+    it('requires a sub-unit for the sub-unit owner without showing a snackbar', async () => {
+      render(<AddIntegration />);
+      selectPdnd();
+      selectOwner(PdndOwnerType.SUB_UNIT);
+      fillClient();
+      submit();
+
+      await waitFor(() => {
+        expect(input('subUnitCode-error')).toHaveTextContent(
+          'integrations.add.pdndClient.errors.subUnitRequired'
+        );
+      });
+      expect(mockSavePdndMutateAsync).not.toHaveBeenCalled();
+      expect(utils.notify.emit).not.toHaveBeenCalled();
+    });
+
+    it('does not show the no-sub-units alert while the sub-units are loading', () => {
+      mockGetAllOrgSubUnits.mockReturnValue({ data: undefined });
+      render(<AddIntegration />);
+      selectPdnd();
+      selectOwner(PdndOwnerType.SUB_UNIT);
+
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      expect(input('subUnitCode')).toBeInTheDocument();
+      expect(input('clientName')).toBeInTheDocument();
+    });
+
+    it('notifies about save failures without navigating away', async () => {
+      const error = new Error('Save failed');
+      mockSavePdndMutateAsync.mockRejectedValueOnce(error);
+      const consoleSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined);
+      render(<AddIntegration />);
+      selectPdnd();
+      fillClient();
+      submit();
+
+      await waitFor(() => {
+        expect(utils.notify.emit).toHaveBeenCalledWith(
+          'integrations.add.errors.saveIntegration.message'
+        );
+      });
+      expect(consoleSpy).toHaveBeenCalledWith(error);
+      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(utils.notify.emit).not.toHaveBeenCalledWith(
+        'commons.done',
+        'success'
+      );
+    });
   });
 });

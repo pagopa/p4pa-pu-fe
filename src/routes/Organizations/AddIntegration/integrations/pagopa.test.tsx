@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useForm } from 'react-hook-form';
 import { OrganizationApiKeyType } from '@generated/core/client';
-import type { AddIntegrationFormData } from '..';
 import PagoPAIntegration from './pagopa';
+import type { AddIntegrationFormData } from '../AddIntegrationSchema';
 
 describe('PagoPAIntegration', () => {
   it.each([
