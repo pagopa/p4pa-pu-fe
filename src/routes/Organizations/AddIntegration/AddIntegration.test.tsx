@@ -35,7 +35,7 @@ const {
   mockGetOrganizationApiKey,
   mockEncryptAndSaveApiKey,
   mockMutateAsync,
-  mockGetAllOrgSubUnitsPdndClients,
+  mockGetAllOrgSubUnits,
   mockSavePdndClient,
   mockSavePdndMutateAsync,
   mockNavigate
@@ -51,7 +51,7 @@ const {
     >(),
   mockEncryptAndSaveApiKey: vi.fn(),
   mockMutateAsync: vi.fn<(data: OrganizationApiKeys) => Promise<void>>(),
-  mockGetAllOrgSubUnitsPdndClients:
+  mockGetAllOrgSubUnits:
     vi.fn<
       (
         organizationId: number,
@@ -65,7 +65,7 @@ const {
 
 vi.mock('@core/api/integrations', () => ({
   getOrganizationApiKeys: mockGetOrganizationApiKeys,
-  getAllOrgSubUnitsPdndClients: mockGetAllOrgSubUnitsPdndClients,
+  getAllOrgSubUnits: mockGetAllOrgSubUnits,
   savePdndClient: mockSavePdndClient
 }));
 
@@ -341,7 +341,7 @@ describe('AddIntegration', () => {
     mockGetOrganizationApiKeys.mockReturnValue({ data: [] });
     mockEncryptAndSaveApiKey.mockReturnValue({ mutateAsync: mockMutateAsync });
     mockMutateAsync.mockResolvedValue(undefined);
-    mockGetAllOrgSubUnitsPdndClients.mockReturnValue({
+    mockGetAllOrgSubUnits.mockReturnValue({
       data: { content: SUB_UNITS }
     });
     mockSavePdndClient.mockReturnValue({
@@ -567,28 +567,16 @@ describe('AddIntegration', () => {
 
     it('queries the sub-units only when the sub-unit owner is selected', () => {
       render(<AddIntegration />);
-      expect(mockGetAllOrgSubUnitsPdndClients).toHaveBeenLastCalledWith(
-        33,
-        false
-      );
+      expect(mockGetAllOrgSubUnits).toHaveBeenLastCalledWith(33, false);
 
       selectPdnd();
-      expect(mockGetAllOrgSubUnitsPdndClients).toHaveBeenLastCalledWith(
-        33,
-        false
-      );
+      expect(mockGetAllOrgSubUnits).toHaveBeenLastCalledWith(33, false);
 
       selectOwner(PdndOwnerType.SUB_UNIT);
-      expect(mockGetAllOrgSubUnitsPdndClients).toHaveBeenLastCalledWith(
-        33,
-        true
-      );
+      expect(mockGetAllOrgSubUnits).toHaveBeenLastCalledWith(33, true);
 
       selectOwner(PdndOwnerType.ORGANIZATION);
-      expect(mockGetAllOrgSubUnitsPdndClients).toHaveBeenLastCalledWith(
-        33,
-        false
-      );
+      expect(mockGetAllOrgSubUnits).toHaveBeenLastCalledWith(33, false);
     });
 
     it('never queries the sub-units for the other integration types', () => {
@@ -596,10 +584,7 @@ describe('AddIntegration', () => {
       fireEvent.click(screen.getByTestId('option-pagoPa-product'));
       fireEvent.click(screen.getByTestId('option-e-service'));
 
-      expect(mockGetAllOrgSubUnitsPdndClients).not.toHaveBeenCalledWith(
-        33,
-        true
-      );
+      expect(mockGetAllOrgSubUnits).not.toHaveBeenCalledWith(33, true);
     });
 
     it('lists the sub-units for the sub-unit owner', () => {
@@ -714,7 +699,7 @@ describe('AddIntegration', () => {
     });
 
     it('does not show the no-sub-units alert while the sub-units are loading', () => {
-      mockGetAllOrgSubUnitsPdndClients.mockReturnValue({ data: undefined });
+      mockGetAllOrgSubUnits.mockReturnValue({ data: undefined });
       render(<AddIntegration />);
       selectPdnd();
       selectOwner(PdndOwnerType.SUB_UNIT);
