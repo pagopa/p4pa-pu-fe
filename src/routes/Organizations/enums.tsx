@@ -13,3 +13,8 @@ export enum PdndOwnerType {
   ORGANIZATION = 'organization',
   SUB_UNIT = 'subUnit'
 }
+
+export enum EServiceOwnerType {
+  ORGANIZATION = 'organization',
+  SUB_UNIT = 'subUnit'
+}

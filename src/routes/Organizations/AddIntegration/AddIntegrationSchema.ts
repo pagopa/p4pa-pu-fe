@@ -4,7 +4,7 @@ import i18n from '@core/translations/i18n';
 import utils from '@core/utils';
 import { OrganizationApiKeyType } from '@generated/core/client';
 
-import { IntegrationType, PdndOwnerType } from '../enums';
+import { IntegrationType, PdndOwnerType, EServiceOwnerType } from '../enums';
 
 export const PAGOPA_KEY_TYPES = [
   OrganizationApiKeyType.IO,
@@ -17,6 +17,12 @@ const PDND_REQUIRED_FIELDS = [
   'kid',
   'publicKey',
   'privateKey'
+] as const;
+
+const ESERVICE_REQUIRED_FIELDS = [
+  'eServiceName',
+  'purposeId',
+  'clientId'
 ] as const;
 
 export const addIntegrationSchema = z.object({
@@ -51,6 +57,15 @@ export const addIntegrationSchema = z.object({
       publicKey: z.string().optional(),
       privateKey: z.string().optional()
     })
+    .optional(),
+  E_SERVICE: z
+    .object({
+      ownerType: z.nativeEnum(EServiceOwnerType),
+      subUnitCode: z.string().optional(),
+      eServiceName: z.string().optional(),
+      purposeId: z.string().optional(),
+      clientId: z.string().optional()
+    })
     .optional()
 });
 
@@ -59,6 +74,7 @@ export type PagoPAFormData = NonNullable<
   AddIntegrationFormData['PAGOPA_PRODUCT']
 >;
 export type PdndFormData = NonNullable<AddIntegrationFormData['PDND_CLIENT']>;
+export type EServiceFormData = NonNullable<AddIntegrationFormData['E_SERVICE']>;
 
 export const DEFAULT_PDND_VALUES: PdndFormData = {
   ownerType: PdndOwnerType.ORGANIZATION,
@@ -121,6 +137,25 @@ const validatePdnd = (values: AddIntegrationFormData, ctx: z.RefinementCtx) => {
   }
 };
 
+const validateEService = (values: AddIntegrationFormData, ctx: z.RefinementCtx) => {
+  const eService = values.E_SERVICE;
+
+  ESERVICE_REQUIRED_FIELDS.forEach((field) => {
+    if (!eService?.[field]?.trim()) {
+      addIssue(ctx, ['E_SERVICE', field], 'commons.required');
+    }
+  });
+
+  // The sub-unit is mandatory only when the eService belongs to a sub-unit
+  if (eService?.ownerType === EServiceOwnerType.SUB_UNIT && !eService.subUnitCode) {
+    addIssue(
+      ctx,
+      ['E_SERVICE', 'subUnitCode'],
+      'integrations.add.eService.errors.subUnitRequired'
+    );
+  }
+};
+
 /**
  * `noKeyAvailableToAdd`: in "add" mode, every PagoPA key type is already
  * configured for the organization, so a new PagoPA integration can't be added.
@@ -133,4 +168,15 @@ export const createAddIntegrationSchema = (noKeyAvailableToAdd: boolean) =>
     if (values.flagIntegrationType === IntegrationType.PDND_CLIENT) {
       validatePdnd(values, ctx);
     }
+    if (values.flagIntegrationType === IntegrationType.E_SERVICE) {
+      validateEService(values, ctx);
+    }
   });
+
+export const DEFAULT_ESERVICE_VALUES: EServiceFormData = {
+  ownerType: EServiceOwnerType.ORGANIZATION,
+  subUnitCode: '',
+  eServiceName: '',
+  purposeId: '',
+  clientId: '',
+};

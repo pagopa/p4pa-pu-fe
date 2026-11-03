@@ -2508,7 +2508,31 @@
       },
       "eService": {
         "label": "E-service PDND",
-        "description": "SEND"
+        "description": "SEND",
+        "generalInfo": "Informazioni generali",
+        "owner": {
+          "title": "Di chi è l'e-service?",
+          "description": "Indica l'ente o la sottounità per cui stai creando questo e-service.",
+          "organization": "Dell'ente",
+          "subUnit": "Di una sottounità dell'ente"
+        },
+        "configure": {
+          "title": "Configura l'e-service PDND",
+          "description": "Inserisci le informazioni fornite in fase di creazione dell'e-service."
+        },
+        "fields": {
+          "eServiceName": "Nome e-service",
+          "purposeId": "Purpose ID",
+          "clientId": "Client ID",
+          "subUnit": "Sottounità"
+        },
+        "errors": {
+          "noSubUnits": {
+            "title": "Non esistono sottounità per l'ente {{organizationName}}",
+            "message": "Crea prima una sottounità e riprova."
+          },
+          "subUnitRequired": "Campo obbligatorio"
+        } 
       },
       "errors": {
         "selectAtLeastOneOption": {

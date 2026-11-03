@@ -3,9 +3,11 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import type {
   OrganizationApiKeyType,
-  PdndClientDTO
+  PdndClientDTO,
+  PdndServiceType
 } from '@generated/core/client';
 import {
+  orgAndSubUnitDTOSchema,
   organizationApiKeySchema,
   pagedOrgSubUnitSchema,
   pagedPdndServiceViewSchema,
@@ -157,6 +159,32 @@ export const getAllOrgSubUnits = (organizationId: number, enabled = true) =>
         }
       );
       parseAndLog(pagedOrgSubUnitSchema, data);
+      return data;
+    }
+  });
+
+export const getOrgSubUnitWithNoServiceType = (organizationId: number, serviceType: PdndServiceType, enabled = true) =>
+  useQuery({
+    queryKey: ['getOrgSubUnitWithNoServiceType', organizationId, serviceType],
+    enabled,
+    queryFn: async () => {
+      const { data } = await utils.apiClient.bff.getOrgSubUnitWithNoServiceType(
+        organizationId,
+        serviceType
+      );
+      parseAndLog(z.array(orgAndSubUnitDTOSchema), data, false);
+      return data;
+    }
+  });
+
+export const getPdndClientsByOrgSubUnitCode = (organizationId: number) =>
+  useQuery({
+    queryKey: ['getPdndClientsByOrgSubUnitCode', organizationId,],
+    queryFn: async () => {
+      const { data } = await utils.apiClient.bff.getPdndClientsByOrgSubUnitCode(
+        organizationId,
+      );
+      parseAndLog(z.array(pdndClientNoSecretDTOSchema), data);
       return data;
     }
   });

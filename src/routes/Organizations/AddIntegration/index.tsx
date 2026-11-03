@@ -9,6 +9,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router';
 import {
   getAllOrgSubUnits,
   getOrganizationApiKeys,
+  getOrgSubUnitWithNoServiceType,
   savePdndClient
 } from '@core/api/integrations';
 import {
@@ -21,20 +22,24 @@ import utils from '@core/utils';
 import type { KeyTypeEnum } from '@generated/core/client';
 import { OrganizationApiKeyType } from '@generated/core/client';
 
-import { IntegrationMode, IntegrationType, PdndOwnerType } from '../enums';
+import { EServiceOwnerType, IntegrationMode, IntegrationType, PdndOwnerType } from '../enums';
 import PagoPAIntegration from './integrations/pagopa';
 import type {
   AddIntegrationFormData,
+  EServiceFormData,
   PagoPAFormData,
   PdndFormData
 } from './AddIntegrationSchema';
 import {
   isPagoPAKeyType,
   createAddIntegrationSchema,
-  DEFAULT_PDND_VALUES
+  DEFAULT_PDND_VALUES,
+  DEFAULT_ESERVICE_VALUES
 } from './AddIntegrationSchema';
 import { PdndClientIntegration } from './integrations/client';
 import { IntegrationTypeSelector } from './components/IntegretionTypeSelector';
+import { EServiceIntegration } from './integrations/eService';
+import { PdndServiceType } from '@generated/core/data-contracts';
 
 type AddIntegrationProps = {
   mode?: IntegrationMode;
@@ -110,19 +115,31 @@ export const AddIntegration = ({
         apiKey: organizationApiKey?.apiKey,
         serviceEnabled: initialServiceEnabled
       },
+      E_SERVICE: DEFAULT_ESERVICE_VALUES,
       PDND_CLIENT: DEFAULT_PDND_VALUES
     }
   });
 
   const flagIntegrationType = watch('flagIntegrationType');
   const pdndOwnerType = watch('PDND_CLIENT.ownerType');
+  const eServiceOwnerType = watch('E_SERVICE.ownerType');
 
-  // Sub-units are needed only when the PDND client belongs to a sub-unit
+  // Sub-units are needed only when the PDND cliento belongs to a sub-unit
   const { data: subUnits } = getAllOrgSubUnits(
     organizationId,
     flagIntegrationType === IntegrationType.PDND_CLIENT &&
       pdndOwnerType === PdndOwnerType.SUB_UNIT
   );
+
+  const { data: subUnitsWithNoServiceType } = getOrgSubUnitWithNoServiceType(
+    organizationId,
+    PdndServiceType.SEND, // Replace with the actual service type you want to check
+    flagIntegrationType === IntegrationType.E_SERVICE &&
+      eServiceOwnerType === EServiceOwnerType.SUB_UNIT
+  );
+
+  console.log('subUnits:', subUnits);
+  console.log('subUnitsWithNoServiceType:', subUnitsWithNoServiceType); 
 
   // In edit mode the API key is loaded asynchronously: sync it into the form
   // unless the user has already typed something.
@@ -180,6 +197,16 @@ export const AddIntegration = ({
     });
   };
 
+  const submitEService = async (values?: EServiceFormData) => {
+    console.log(values);
+    const { eServiceName, purposeId, clientId, ownerType } = values ?? {};
+
+    if (!eServiceName || !purposeId || !clientId || !ownerType) {
+      throw new Error('Missing data for eService integration');
+    }
+
+  };  
+
   const onBack = () => navigate(-1);
 
   const onSubmit = async (formData: AddIntegrationFormData) => {
@@ -190,6 +217,9 @@ export const AddIntegration = ({
           break;
         case IntegrationType.PDND_CLIENT:
           await submitPdnd(formData.PDND_CLIENT);
+          break;
+        case IntegrationType.E_SERVICE:
+          await submitEService(formData.E_SERVICE);
           break;
         default:
           return;
@@ -205,6 +235,7 @@ export const AddIntegration = ({
   const onInvalidSubmit: SubmitErrorHandler<AddIntegrationFormData> = (
     formErrors
   ) => {
+    console.log(formErrors);
     if (formErrors.flagIntegrationType) return;
     const apiKeyError = formErrors.PAGOPA_PRODUCT?.apiKey;
     if (apiKeyError?.message) {
@@ -217,6 +248,8 @@ export const AddIntegration = ({
     (isEditMode || availableApiKeys.length > 0);
 
   const showPdndForm = flagIntegrationType === IntegrationType.PDND_CLIENT;
+
+  const showEServicePdndForm = flagIntegrationType === IntegrationType.E_SERVICE;
 
   return (
     <>
@@ -249,6 +282,14 @@ export const AddIntegration = ({
           control={control}
           organizationName={String(organizationId)}
           subUnits={subUnits?.content}
+        />
+      )}
+
+      {showEServicePdndForm && (
+        <EServiceIntegration
+          organizationId={organizationId}
+          control={control}
+          subUnits={subUnitsWithNoServiceType}
         />
       )}
 
