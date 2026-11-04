@@ -100,7 +100,7 @@ describe('useOrganizationEditForm', () => {
         flagNotifyOutcomePush: true,
         flagPaymentNotification: false,
         flagNotifyIo: true,
-        pdndEnabled: true,
+        pdndEnabled: true
       });
     });
   });

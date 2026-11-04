@@ -140,8 +140,8 @@ export const useOrganizationEditForm = ({
         }
       },
       // Step 2 Accounting validations
-      iban: createIBANValidationRules(t, isActive),
-      ibanPostal: createIBANValidationRules(t, false),
+      iban: createIBANValidationRules(isActive),
+      ibanPostal: createIBANValidationRules(false),
       // Step 2 Payments validations
       segregationCode: {
         ...(isActive && {
