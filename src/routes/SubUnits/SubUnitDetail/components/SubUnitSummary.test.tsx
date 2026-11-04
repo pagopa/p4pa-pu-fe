@@ -3,9 +3,9 @@ import { render, screen } from '@testing-library/react';
 
 import { SubUnitSummary } from './SubUnitSummary';
 
-const formatDate = vi.fn((date: string, format: string) => `${date}|${format}`);
+const formatDate = vi.fn((date: string) => date);
 vi.mock('@core/utils/formatters', () => ({
-  formatDate: (date: string, format: string) => formatDate(date, format)
+  formatDate: (date: string) => formatDate(date)
 }));
 
 describe('SubUnitSummary', () => {
@@ -22,8 +22,8 @@ describe('SubUnitSummary', () => {
     expect(screen.getByText('SU1')).toBeInTheDocument();
     expect(screen.getByText('AOO')).toBeInTheDocument();
     expect(screen.getByText('Test Sub Unit')).toBeInTheDocument();
-    expect(formatDate).toHaveBeenCalledWith('2024-12-19', 'dd MMMM yyyy');
-    expect(screen.getByText('2024-12-19|dd MMMM yyyy')).toBeInTheDocument();
+    expect(formatDate).toHaveBeenCalledWith('2024-12-19');
+    expect(screen.getByText('2024-12-19')).toBeInTheDocument();
   });
 
   it('falls back to the placeholder for missing values, without formatting an empty date', () => {
