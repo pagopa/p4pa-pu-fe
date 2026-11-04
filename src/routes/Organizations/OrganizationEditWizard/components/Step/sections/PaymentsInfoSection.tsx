@@ -19,12 +19,12 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
+import { useTranslation } from 'react-i18next';
 
 type PaymentsInfoSectionProps = {
   control: Control<UnifiedFormValues>;
   errors: FieldErrors<UnifiedFormValues>;
   data: UnifiedFormData;
-  t: (key: string) => string;
   watchAdditionalLanguage: boolean;
 };
 
@@ -32,9 +32,10 @@ export const PaymentsInfoSection = ({
   control,
   errors,
   data,
-  t,
   watchAdditionalLanguage
 }: PaymentsInfoSectionProps) => {
+  const { t } = useTranslation();
+
   return (
     <Box
       border={1}

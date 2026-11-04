@@ -13,12 +13,12 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
+import { useTranslation } from 'react-i18next';
 
 type EntityProfileSectionProps = {
   control: Control<UnifiedFormValues>;
   errors: FieldErrors<UnifiedFormValues>;
   data: UnifiedFormData;
-  t: (key: string) => string;
 };
 
 /**
@@ -29,15 +29,14 @@ type EntityProfileSectionProps = {
  * @param props.control - React Hook Form control instance
  * @param props.errors - React Hook Form field errors
  * @param props.data - Unified form data containing field values and readonly status
- * @param props.t - Translation function
  * @returns JSX element containing entity profile fields
  */
 export const EntityProfileSection = ({
   control,
   errors,
-  data,
-  t
+  data
 }: EntityProfileSectionProps) => {
+  const { t } = useTranslation();
   return (
     <>
       <Grid item xs={12} sx={{ mt: 4 }}>

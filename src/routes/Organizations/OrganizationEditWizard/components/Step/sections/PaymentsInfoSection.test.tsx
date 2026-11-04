@@ -42,12 +42,10 @@ vi.mock('../../../../../../components/FormComponent', () => ({
 const TestWrapper = ({
   data,
   defaultValues,
-  t,
   watchAdditionalLanguage = false
 }: {
   data: UnifiedFormData;
   defaultValues: Partial<UnifiedFormValues>;
-  t: (key: string) => string;
   watchAdditionalLanguage?: boolean;
 }) => {
   const {
@@ -63,15 +61,12 @@ const TestWrapper = ({
       control={control}
       errors={errors}
       data={data}
-      t={t}
       watchAdditionalLanguage={watchAdditionalLanguage}
     />
   );
 };
 
 describe('PaymentsInfoSection', () => {
-  const mockT = vi.fn((key: string) => key);
-
   const mockData: UnifiedFormData = {
     // Step 1 fields
     orgName: { value: '', readonly: false },
@@ -178,68 +173,17 @@ describe('PaymentsInfoSection', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     i18nTestSetup(translations);
-    mockT.mockImplementation((key: string) => {
-      const keys: Record<string, string> = {
-        'organizationEditWizard.step2.paymentsInfo.title':
-          'Informazioni Pagamenti',
-        'organizationEditWizard.step2.segregationCode.label':
-          'Codice Segregazione',
-        'organizationEditWizard.step2.segregationCode.placeholder':
-          'Inserisci codice segregazione',
-        'organizationEditWizard.step2.segregationCode.required':
-          'Codice segregazione obbligatorio',
-        'organizationEditWizard.step2.segregationCode.invalidFormat':
-          'Codice segregazione mal formato',
-        'organizationEditWizard.step2.additionalLanguage.label':
-          'Lingua aggiuntiva per gli avvisi',
-        'organizationEditWizard.step2.selectedLanguage.label':
-          'Seleziona lingua',
-        'organizationEditWizard.step2.selectedLanguage.required':
-          'Lingua obbligatoria',
-        'organizationEditWizard.step2.selectedLanguage.options.en': 'Inglese',
-        'organizationEditWizard.step2.selectedLanguage.options.fr': 'Francese',
-        'organizationEditWizard.step2.selectedLanguage.options.de': 'Tedesco',
-        'organizationEditWizard.step2.flagNotifyOutcomePush.label':
-          'Notifiche pagamenti gestiti da piattaforme esterne',
-        'organizationEditWizard.step2.flagNotifyOutcomePush.description':
-          'Descrizione notifiche esterne',
-        'organizationEditWizard.step2.flagNotifyOutcomePush.abilita': 'Abilita',
-        'organizationEditWizard.step2.flagNotifyOutcomePush.disabilita':
-          'Disabilita',
-        'organizationEditWizard.step2.flagPaymentNotification.label':
-          'Notifiche pagamenti gestiti da Piattaforma Unitaria',
-        'organizationEditWizard.step2.flagPaymentNotification.description':
-          'Descrizione notifiche piattaforma',
-        'organizationEditWizard.step2.flagPaymentNotification.abilita':
-          'Abilita',
-        'organizationEditWizard.step2.flagPaymentNotification.disabilita':
-          'Disabilita'
-      };
-      return keys[key] || key;
-    });
   });
 
   describe('Rendering', () => {
     it('should render section title', () => {
-      render(
-        <TestWrapper
-          data={mockData}
-          defaultValues={defaultFormValues}
-          t={mockT}
-        />
-      );
+      render(<TestWrapper data={mockData} defaultValues={defaultFormValues} />);
 
       expect(screen.getByText('Informazioni Pagamenti')).toBeInTheDocument();
     });
 
     it('should render all required fields', () => {
-      render(
-        <TestWrapper
-          data={mockData}
-          defaultValues={defaultFormValues}
-          t={mockT}
-        />
-      );
+      render(<TestWrapper data={mockData} defaultValues={defaultFormValues} />);
 
       expect(screen.getByTestId('segregation-code-field')).toBeInTheDocument();
       expect(
@@ -254,13 +198,7 @@ describe('PaymentsInfoSection', () => {
     });
 
     it('should render segregationCode as NOT required for DRAFT status', () => {
-      render(
-        <TestWrapper
-          data={mockData}
-          defaultValues={defaultFormValues}
-          t={mockT}
-        />
-      );
+      render(<TestWrapper data={mockData} defaultValues={defaultFormValues} />);
 
       const segregationCodeInput = screen
         .getByTestId('segregation-code-field')
@@ -276,11 +214,7 @@ describe('PaymentsInfoSection', () => {
       };
 
       render(
-        <TestWrapper
-          data={activeData}
-          defaultValues={defaultFormValues}
-          t={mockT}
-        />
+        <TestWrapper data={activeData} defaultValues={defaultFormValues} />
       );
 
       const segregationCodeInput = screen
@@ -291,13 +225,7 @@ describe('PaymentsInfoSection', () => {
     });
 
     it('should render radio groups for notifications', () => {
-      render(
-        <TestWrapper
-          data={mockData}
-          defaultValues={defaultFormValues}
-          t={mockT}
-        />
-      );
+      render(<TestWrapper data={mockData} defaultValues={defaultFormValues} />);
 
       expect(
         screen.getByText('Notifiche pagamenti gestiti da piattaforme esterne')
@@ -320,7 +248,6 @@ describe('PaymentsInfoSection', () => {
         <TestWrapper
           data={mockData}
           defaultValues={defaultFormValues}
-          t={mockT}
           watchAdditionalLanguage={false}
         />
       );
@@ -335,7 +262,6 @@ describe('PaymentsInfoSection', () => {
         <TestWrapper
           data={mockFilledData}
           defaultValues={filledFormValues}
-          t={mockT}
           watchAdditionalLanguage={true}
         />
       );
@@ -350,7 +276,6 @@ describe('PaymentsInfoSection', () => {
         <TestWrapper
           data={mockFilledData}
           defaultValues={filledFormValues}
-          t={mockT}
           watchAdditionalLanguage={true}
         />
       );
@@ -362,13 +287,7 @@ describe('PaymentsInfoSection', () => {
 
   describe('Form Population', () => {
     it('should display empty fields when data is empty', () => {
-      render(
-        <TestWrapper
-          data={mockData}
-          defaultValues={defaultFormValues}
-          t={mockT}
-        />
-      );
+      render(<TestWrapper data={mockData} defaultValues={defaultFormValues} />);
 
       const segregationCodeInput = screen
         .getByTestId('segregation-code-field')
@@ -386,7 +305,6 @@ describe('PaymentsInfoSection', () => {
         <TestWrapper
           data={mockFilledData}
           defaultValues={filledFormValues}
-          t={mockT}
           watchAdditionalLanguage={true}
         />
       );
@@ -415,11 +333,7 @@ describe('PaymentsInfoSection', () => {
       };
 
       render(
-        <TestWrapper
-          data={readonlyData}
-          defaultValues={defaultFormValues}
-          t={mockT}
-        />
+        <TestWrapper data={readonlyData} defaultValues={defaultFormValues} />
       );
 
       const segregationCodeInput = screen
@@ -435,11 +349,7 @@ describe('PaymentsInfoSection', () => {
       };
 
       render(
-        <TestWrapper
-          data={readonlyData}
-          defaultValues={defaultFormValues}
-          t={mockT}
-        />
+        <TestWrapper data={readonlyData} defaultValues={defaultFormValues} />
       );
 
       const additionalLanguageSwitch = screen
@@ -458,7 +368,6 @@ describe('PaymentsInfoSection', () => {
         <TestWrapper
           data={readonlyData}
           defaultValues={filledFormValues}
-          t={mockT}
           watchAdditionalLanguage={true}
         />
       );
@@ -479,11 +388,7 @@ describe('PaymentsInfoSection', () => {
       };
 
       render(
-        <TestWrapper
-          data={readonlyData}
-          defaultValues={defaultFormValues}
-          t={mockT}
-        />
+        <TestWrapper data={readonlyData} defaultValues={defaultFormValues} />
       );
 
       const radioTrue = screen.getByTestId('flagNotifyOutcomePush-true');
@@ -503,11 +408,7 @@ describe('PaymentsInfoSection', () => {
       };
 
       render(
-        <TestWrapper
-          data={readonlyData}
-          defaultValues={defaultFormValues}
-          t={mockT}
-        />
+        <TestWrapper data={readonlyData} defaultValues={defaultFormValues} />
       );
 
       const radioTrue = screen.getByTestId('flagPaymentNotification-true');
@@ -520,13 +421,7 @@ describe('PaymentsInfoSection', () => {
 
   describe('Switch Toggle', () => {
     it('should toggle additional language switch', () => {
-      render(
-        <TestWrapper
-          data={mockData}
-          defaultValues={defaultFormValues}
-          t={mockT}
-        />
-      );
+      render(<TestWrapper data={mockData} defaultValues={defaultFormValues} />);
 
       const additionalLanguageSwitch = screen
         .getByTestId('additional-language-switch')
@@ -541,11 +436,7 @@ describe('PaymentsInfoSection', () => {
 
     it('should have correct initial checked state based on data', () => {
       render(
-        <TestWrapper
-          data={mockFilledData}
-          defaultValues={filledFormValues}
-          t={mockT}
-        />
+        <TestWrapper data={mockFilledData} defaultValues={filledFormValues} />
       );
 
       const additionalLanguageSwitch = screen
@@ -555,68 +446,12 @@ describe('PaymentsInfoSection', () => {
     });
   });
 
-  describe('Translation Function', () => {
-    it('should call translation function with correct keys', () => {
-      render(
-        <TestWrapper
-          data={mockData}
-          defaultValues={defaultFormValues}
-          t={mockT}
-        />
-      );
-
-      expect(mockT).toHaveBeenCalledWith(
-        'organizationEditWizard.step2.paymentsInfo.title'
-      );
-      expect(mockT).toHaveBeenCalledWith(
-        'organizationEditWizard.step2.segregationCode.label'
-      );
-      expect(mockT).toHaveBeenCalledWith(
-        'organizationEditWizard.step2.segregationCode.placeholder'
-      );
-      expect(mockT).toHaveBeenCalledWith(
-        'organizationEditWizard.step2.additionalLanguage.label'
-      );
-      expect(mockT).toHaveBeenCalledWith(
-        'organizationEditWizard.step2.flagNotifyOutcomePush.label'
-      );
-      expect(mockT).toHaveBeenCalledWith(
-        'organizationEditWizard.step2.flagPaymentNotification.label'
-      );
-    });
-
-    it('should call translation function for language select when visible', () => {
-      render(
-        <TestWrapper
-          data={mockFilledData}
-          defaultValues={filledFormValues}
-          t={mockT}
-          watchAdditionalLanguage={true}
-        />
-      );
-
-      expect(mockT).toHaveBeenCalledWith(
-        'organizationEditWizard.step2.selectedLanguage.label'
-      );
-      expect(mockT).toHaveBeenCalledWith(
-        'organizationEditWizard.step2.selectedLanguage.options.en'
-      );
-      expect(mockT).toHaveBeenCalledWith(
-        'organizationEditWizard.step2.selectedLanguage.options.fr'
-      );
-      expect(mockT).toHaveBeenCalledWith(
-        'organizationEditWizard.step2.selectedLanguage.options.de'
-      );
-    });
-  });
-
   describe('Language Options', () => {
     it('should render language select when additional language is enabled', () => {
       render(
         <TestWrapper
           data={mockFilledData}
           defaultValues={filledFormValues}
-          t={mockT}
           watchAdditionalLanguage={true}
         />
       );
@@ -634,13 +469,7 @@ describe('PaymentsInfoSection', () => {
 
   describe('Radio Groups', () => {
     it('should render radio options for notify outcome push', () => {
-      render(
-        <TestWrapper
-          data={mockData}
-          defaultValues={defaultFormValues}
-          t={mockT}
-        />
-      );
+      render(<TestWrapper data={mockData} defaultValues={defaultFormValues} />);
 
       const radioGroupContainer = screen.getByTestId(
         'flagNotifyOutcomePush-radio-group'
@@ -655,13 +484,7 @@ describe('PaymentsInfoSection', () => {
     });
 
     it('should render radio options for payment notification', () => {
-      render(
-        <TestWrapper
-          data={mockData}
-          defaultValues={defaultFormValues}
-          t={mockT}
-        />
-      );
+      render(<TestWrapper data={mockData} defaultValues={defaultFormValues} />);
 
       const radioGroupContainer = screen.getByTestId(
         'flagPaymentNotification-radio-group'
