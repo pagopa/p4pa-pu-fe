@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent } from '@testing-library/react';
-import { render, screen } from '../../__tests__/renderers';
 import { generatePath, useNavigate, useParams } from 'react-router';
 
 import { getPagedOrgSubUnits } from '@core/api/orgSubUnit';
 import { useSearch } from '@core/hooks/useSearch';
 import { appState } from '@core/store/AppStateStore';
-import { PageRoutes } from '..';
 import { SubUnitsList } from '.';
+import { render, screen } from '@core/__tests__/renderers';
+import { PageRoutes } from '@core/routes';
 
 vi.mock('@core/api/orgSubUnit', () => ({
   getPagedOrgSubUnits: vi.fn()
@@ -17,7 +17,7 @@ vi.mock('@core/hooks/useSearch', () => ({
   useSearch: vi.fn()
 }));
 
-vi.mock('@core/hooks/useSubunitsListFilters', () => ({
+vi.mock('./hooks/useSubunitsListFilters', () => ({
   useSubUnitsFilters: () => ({ filters: [] })
 }));
 

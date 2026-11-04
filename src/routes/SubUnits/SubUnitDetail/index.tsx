@@ -9,25 +9,31 @@ import TitleComponent from '@core/components/TitleComponent/TitleComponent';
 
 import { useSearch } from '@core/hooks/useSearch';
 import utils from '@core/utils';
-import { PageRoutes } from '..';
 import { SubUnitOperatorsDataGrid } from './components/SubUnitOperatorsDataGrid';
+import type { SubUnitsOperatorsFilters } from '@core/api/orgSubUnit';
 import {
   getOrgSubUnitById,
   getOrgSubUnitOperators,
   updateOrgSubUnitStatus
 } from '@core/api/orgSubUnit';
 import GenericDialog from '@core/components/GenericDialog/GenericDialog';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { SubUnitSummary } from './components/SubUnitSummary';
 import { setCustomBreadcrumbsItems } from '@core/store/AppStateStore';
 import Add from '@mui/icons-material/Add';
 import Stack from '@mui/material/Stack';
+import FilterContainer from '@core/components/FilterContainer/FilterContainer';
+import { SubUnitOperatorsFilters } from './SubUnitOperatorsFilters';
+import { PageRoutes } from '@core/routes';
 
 export const SubUnitDetail = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
   const [statusDialogState, setStatusDialogState] = useState(false);
+
+  const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
+  const [filterValues, setFilterValues] =
+    useState<SubUnitsOperatorsFilters>(initialFilters);
 
   const { organizationId: urlOrganizationId, subUnitCode: urlSubUnitCode } =
     useParams();
@@ -45,15 +51,26 @@ export const SubUnitDetail = () => {
   const subUnitQuery = getOrgSubUnitById(organizationId, subUnitCode);
   const query = getOrgSubUnitOperators(organizationId, subUnitCode);
 
+  const handleFilterChange = useCallback((id: string, value: unknown) => {
+    setFilterValues((prev) => ({
+      ...prev,
+      [id]: value as string
+    }));
+  }, []);
+
   const statusKey =
     subUnitQuery.data?.status === OrgSubUnitStatus.ACTIVE
       ? 'disable'
       : 'enable';
 
   const filteredSearch = useSearch({
-    filters: initialFilters,
+    filters: filterValues,
     query
   });
+
+  const applyFilters = useCallback(() => {
+    filteredSearch.applyFilters(filterValues);
+  }, [filteredSearch, filterValues]);
 
   const changeStatusAction: ActionMenuItem = {
     buttonText: t(`subunits.detail.${statusKey}.action`),
@@ -97,8 +114,7 @@ export const SubUnitDetail = () => {
     onActionClick: handleSubunitAssignOperator
   };
 
-  // TODO: replace with current filters
-  const onDeleteOperator = () => filteredSearch.applyFilters(initialFilters);
+  const onDeleteOperator = () => filteredSearch.applyFilters(filterValues);
 
   useEffect(() => {
     setCustomBreadcrumbsItems([
@@ -159,6 +175,13 @@ export const SubUnitDetail = () => {
             variant="h4"
             title={t('subunits.detail.operators')}
             callToAction={[linkOperatorAction]}
+          />
+
+          <FilterContainer
+            items={SubUnitOperatorsFilters}
+            values={filterValues}
+            onChange={handleFilterChange}
+            onSubmit={applyFilters}
           />
           <SubUnitOperatorsDataGrid
             data={query?.data as PagedOrgSubUnitOperators}

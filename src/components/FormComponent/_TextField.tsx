@@ -26,7 +26,7 @@ export const _TextField = ({
     InputProps={{
       endAdornment: noAdornment ? undefined : (
         <InputAdornment position="end">
-          {adornment ?? <SearchRoundedIcon />}
+          {adornment ?? <SearchRoundedIcon fontSize="small" color="action" />}
         </InputAdornment>
       )
     }}

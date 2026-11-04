@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, waitFor } from '@testing-library/react';
-import { render, screen } from '../../__tests__/renderers';
+import { render, screen } from '@core/__tests__/renderers';
 import { generatePath, useNavigate, useParams } from 'react-router';
 
 import utils from '@core/utils';
@@ -11,7 +11,7 @@ import {
 } from '@core/api/orgSubUnit';
 import { useSearch } from '@core/hooks/useSearch';
 import { appState } from '@core/store/AppStateStore';
-import { PageRoutes } from '..';
+import { PageRoutes } from '@core/routes';
 import { SubUnitDetail } from '.';
 
 vi.mock('@core/api/orgSubUnit', () => ({
