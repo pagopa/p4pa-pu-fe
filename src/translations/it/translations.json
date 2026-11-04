@@ -722,6 +722,8 @@
     "404": "404: risorsa non disponibile",
     "done": "Fatto!",
     "name": "Nome e cognome",
+    "firstName": "Nome",
+    "lastName": "Cognome",
     "registry": "Anagrafica",
     "creationDate": "Data di creazione",
     "toDetail": "Vai al dettaglio",
@@ -2670,12 +2672,12 @@
       "disable": {
         "title": "Vuoi disattivare {{subUnitCode}}?",
         "message": "Potrai riattivarla in un secondo momento.",
-        "action": "Disattiva sub-unit"
+        "action": "Disattiva sottounità"
       },
       "enable": {
         "title": "Vuoi abilitare {{subUnitCode}}?",
         "message": "Potrai disattivarla in un secondo momento.",
-        "action": "Abilita sub-unit"
+        "action": "Abilita sottounità"
       },
       "deleteOperator": {
         "title": "Vuoi rimuovere l'operatore {{operatorName}} da {{subUnitCode}}?",

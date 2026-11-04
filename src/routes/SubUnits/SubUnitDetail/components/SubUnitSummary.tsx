@@ -24,11 +24,16 @@ const SummaryRow = ({
   value?: string;
   valueSize?: number;
 }) => (
-  <Stack gap={1}>
-    <Typography color="text.secondary" fontSize={14}>
+  <Stack>
+    <Typography color="text.secondary" fontSize={14} lineHeight="20px">
       {title}
     </Typography>
-    <Typography color="text.primary" fontWeight={500} fontSize={valueSize}>
+    <Typography
+      color="text.primary"
+      fontWeight={600}
+      fontSize={valueSize}
+      lineHeight="22px"
+    >
       {value || DEFAULT_EMPTY_VALUE}
     </Typography>
   </Stack>
@@ -66,9 +71,7 @@ export const SubUnitSummary = ({
         <SummaryRow
           title={t('commons.creationDate')}
           value={
-            creationDate
-              ? utils.formatters.formatDate(creationDate, 'dd MMMM yyyy')
-              : undefined
+            creationDate ? utils.formatters.formatDate(creationDate) : undefined
           }
         />
       </Stack>

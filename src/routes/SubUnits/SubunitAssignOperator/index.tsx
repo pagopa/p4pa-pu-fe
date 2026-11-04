@@ -16,8 +16,8 @@ import type { OrgSubUnitOperator } from '@generated/core/data-contracts';
 import type { GridColDef } from '@mui/x-data-grid';
 import type { FilterFieldValue } from '@core/models/Filters';
 import WizardStepButtons from '@core/components/Wizard/WizardStepButtons';
-import { PageRoutes } from '..';
 import Search from '@mui/icons-material/Search';
+import { PageRoutes } from '@core/routes';
 
 export const SubunitAssignOperator = () => {
   const { t } = useTranslation();
