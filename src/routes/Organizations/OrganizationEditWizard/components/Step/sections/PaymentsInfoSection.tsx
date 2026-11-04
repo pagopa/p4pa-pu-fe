@@ -90,39 +90,6 @@ export const PaymentsInfoSection = ({
           />
         </Grid>
 
-        {/* API Key stampa avvisi Field - Required */}
-        <Grid item xs={12}>
-          <Controller
-            name="generateNoticeApiKey"
-            control={control}
-            rules={{
-              required: {
-                value: true,
-                message: t(
-                  'organizationEditWizard.step2.generateNoticeApiKey.required'
-                )
-              }
-            }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                label={t(
-                  'organizationEditWizard.step2.generateNoticeApiKey.label'
-                )}
-                placeholder={t(
-                  'organizationEditWizard.step2.generateNoticeApiKey.placeholder'
-                )}
-                disabled={data.generateNoticeApiKey.readonly}
-                error={!!errors.generateNoticeApiKey}
-                helperText={errors.generateNoticeApiKey?.message}
-                data-testid="generate-notice-api-key-field"
-                required
-              />
-            )}
-          />
-        </Grid>
-
         {/* The alerts have an additional language Toggle */}
         <Grid item xs={12} sx={{ mt: 2 }}>
           <Controller

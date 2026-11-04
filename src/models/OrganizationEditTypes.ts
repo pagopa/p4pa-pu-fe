@@ -123,16 +123,13 @@ export type UnifiedFormData = {
   flagTreasury: FieldData<boolean>;
   // Step 2 fields (Payments Information)
   segregationCode: FieldData<string>;
-  generateNoticeApiKey: FieldData<string>;
   additionalLanguage: FieldData<boolean>;
   selectedLanguage: FieldData<string>;
   flagNotifyOutcomePush: FieldData<boolean | null>;
   flagPaymentNotification: FieldData<boolean | null>;
   // Step 2 fields (PagoPA Products Integration)
   flagNotifyIo: FieldData<boolean>;
-  ioApiKey: FieldData<string>;
   pdndEnabled: FieldData<boolean>;
-  sendApiKey: FieldData<string>;
   // Common field
   organizationStatus?: string; // Organization status for conditional validation
 };

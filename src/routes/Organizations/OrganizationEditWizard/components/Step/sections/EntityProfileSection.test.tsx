@@ -96,16 +96,13 @@ describe('EntityProfileSection', () => {
     flagTreasury: { value: false, readonly: false },
     // Step 2 Payments fields
     segregationCode: { value: '', readonly: false },
-    generateNoticeApiKey: { value: '', readonly: false },
     additionalLanguage: { value: false, readonly: false },
     selectedLanguage: { value: '', readonly: false },
     flagNotifyOutcomePush: { value: false, readonly: false },
     flagPaymentNotification: { value: false, readonly: false },
     // Step 2 PagoPA Integration fields
     flagNotifyIo: { value: false, readonly: false },
-    ioApiKey: { value: '', readonly: false },
     pdndEnabled: { value: false, readonly: false },
-    sendApiKey: { value: '', readonly: false },
     organizationStatus: 'DRAFT'
   };
 
@@ -119,15 +116,12 @@ describe('EntityProfileSection', () => {
     cbill: '',
     flagTreasury: false,
     segregationCode: '',
-    generateNoticeApiKey: '',
     additionalLanguage: false,
     selectedLanguage: '',
     flagNotifyOutcomePush: false,
     flagPaymentNotification: false,
     flagNotifyIo: false,
-    ioApiKey: '',
-    pdndEnabled: false,
-    sendApiKey: ''
+    pdndEnabled: false
   };
 
   const translations = {

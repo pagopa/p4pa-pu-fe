@@ -86,23 +86,19 @@ describe('PaymentsInfoSection', () => {
     flagTreasury: { value: false, readonly: false },
     // Step 2 Payments fields
     segregationCode: { value: '', readonly: false },
-    generateNoticeApiKey: { value: '', readonly: false },
     additionalLanguage: { value: false, readonly: false },
     selectedLanguage: { value: '', readonly: false },
     flagNotifyOutcomePush: { value: false, readonly: false },
     flagPaymentNotification: { value: false, readonly: false },
     // Step 2 PagoPA Integration fields
     flagNotifyIo: { value: false, readonly: false },
-    ioApiKey: { value: '', readonly: false },
     pdndEnabled: { value: false, readonly: false },
-    sendApiKey: { value: '', readonly: false },
     organizationStatus: 'DRAFT'
   };
 
   const mockFilledData: UnifiedFormData = {
     ...mockData,
     segregationCode: { value: '01', readonly: false },
-    generateNoticeApiKey: { value: 'api-key-123', readonly: false },
     additionalLanguage: { value: true, readonly: false },
     selectedLanguage: { value: 'en', readonly: false },
     flagNotifyOutcomePush: { value: true, readonly: false },
@@ -119,11 +115,6 @@ describe('PaymentsInfoSection', () => {
           label: 'Codice Segregazione',
           placeholder: 'Inserisci codice segregazione',
           required: 'Codice segregazione obbligatorio'
-        },
-        generateNoticeApiKey: {
-          label: 'API Key Stampa Avvisi',
-          placeholder: 'Inserisci API Key',
-          required: 'API Key obbligatoria'
         },
         additionalLanguage: {
           label: 'Lingua aggiuntiva per gli avvisi'
@@ -166,22 +157,18 @@ describe('PaymentsInfoSection', () => {
     flagTreasury: false,
     // Step 2 Payments fields
     segregationCode: '',
-    generateNoticeApiKey: '',
     additionalLanguage: false,
     selectedLanguage: '',
     flagNotifyOutcomePush: null,
     flagPaymentNotification: null,
     // Step 2 PagoPA Integration fields
     flagNotifyIo: false,
-    ioApiKey: '',
-    pdndEnabled: false,
-    sendApiKey: ''
+    pdndEnabled: false
   };
 
   const filledFormValues: Partial<UnifiedFormValues> = {
     ...defaultFormValues,
     segregationCode: '01',
-    generateNoticeApiKey: 'api-key-123',
     additionalLanguage: true,
     selectedLanguage: 'en',
     flagNotifyOutcomePush: true,
@@ -203,12 +190,6 @@ describe('PaymentsInfoSection', () => {
           'Codice segregazione obbligatorio',
         'organizationEditWizard.step2.segregationCode.invalidFormat':
           'Codice segregazione mal formato',
-        'organizationEditWizard.step2.generateNoticeApiKey.label':
-          'API Key Stampa Avvisi',
-        'organizationEditWizard.step2.generateNoticeApiKey.placeholder':
-          'Inserisci API Key',
-        'organizationEditWizard.step2.generateNoticeApiKey.required':
-          'API Key obbligatoria',
         'organizationEditWizard.step2.additionalLanguage.label':
           'Lingua aggiuntiva per gli avvisi',
         'organizationEditWizard.step2.selectedLanguage.label':
@@ -262,9 +243,6 @@ describe('PaymentsInfoSection', () => {
 
       expect(screen.getByTestId('segregation-code-field')).toBeInTheDocument();
       expect(
-        screen.getByTestId('generate-notice-api-key-field')
-      ).toBeInTheDocument();
-      expect(
         screen.getByTestId('additional-language-switch')
       ).toBeInTheDocument();
       expect(
@@ -287,12 +265,8 @@ describe('PaymentsInfoSection', () => {
       const segregationCodeInput = screen
         .getByTestId('segregation-code-field')
         .querySelector('input');
-      const generateNoticeApiKeyInput = screen
-        .getByTestId('generate-notice-api-key-field')
-        .querySelector('input');
 
       expect(segregationCodeInput).not.toHaveAttribute('required');
-      expect(generateNoticeApiKeyInput).toHaveAttribute('required'); // This is always required
     });
 
     it('should render segregationCode as required for ACTIVE status', () => {
@@ -312,12 +286,8 @@ describe('PaymentsInfoSection', () => {
       const segregationCodeInput = screen
         .getByTestId('segregation-code-field')
         .querySelector('input');
-      const generateNoticeApiKeyInput = screen
-        .getByTestId('generate-notice-api-key-field')
-        .querySelector('input');
 
       expect(segregationCodeInput).toHaveAttribute('required');
-      expect(generateNoticeApiKeyInput).toHaveAttribute('required');
     });
 
     it('should render radio groups for notifications', () => {
@@ -403,15 +373,11 @@ describe('PaymentsInfoSection', () => {
       const segregationCodeInput = screen
         .getByTestId('segregation-code-field')
         .querySelector('input');
-      const generateNoticeApiKeyInput = screen
-        .getByTestId('generate-notice-api-key-field')
-        .querySelector('input');
       const additionalLanguageSwitch = screen
         .getByTestId('additional-language-switch')
         .querySelector('input');
 
       expect(segregationCodeInput).toHaveValue('');
-      expect(generateNoticeApiKeyInput).toHaveValue('');
       expect(additionalLanguageSwitch).not.toBeChecked();
     });
 
@@ -428,9 +394,6 @@ describe('PaymentsInfoSection', () => {
       const segregationCodeInput = screen
         .getByTestId('segregation-code-field')
         .querySelector('input');
-      const generateNoticeApiKeyInput = screen
-        .getByTestId('generate-notice-api-key-field')
-        .querySelector('input');
       const additionalLanguageSwitch = screen
         .getByTestId('additional-language-switch')
         .querySelector('input');
@@ -439,7 +402,6 @@ describe('PaymentsInfoSection', () => {
         .querySelector('input');
 
       expect(segregationCodeInput).toHaveValue('01');
-      expect(generateNoticeApiKeyInput).toHaveValue('api-key-123');
       expect(additionalLanguageSwitch).toBeChecked();
       expect(selectedLanguageSelect).toHaveValue('en');
     });
@@ -464,29 +426,6 @@ describe('PaymentsInfoSection', () => {
         .getByTestId('segregation-code-field')
         .querySelector('input');
       expect(segregationCodeInput).toBeDisabled();
-    });
-
-    it('should disable generate notice API key field when readonly is true', () => {
-      const readonlyData = {
-        ...mockData,
-        generateNoticeApiKey: {
-          ...mockData.generateNoticeApiKey,
-          readonly: true
-        }
-      };
-
-      render(
-        <TestWrapper
-          data={readonlyData}
-          defaultValues={defaultFormValues}
-          t={mockT}
-        />
-      );
-
-      const generateNoticeApiKeyInput = screen
-        .getByTestId('generate-notice-api-key-field')
-        .querySelector('input');
-      expect(generateNoticeApiKeyInput).toBeDisabled();
     });
 
     it('should disable additional language switch when readonly is true', () => {
@@ -634,12 +573,6 @@ describe('PaymentsInfoSection', () => {
       );
       expect(mockT).toHaveBeenCalledWith(
         'organizationEditWizard.step2.segregationCode.placeholder'
-      );
-      expect(mockT).toHaveBeenCalledWith(
-        'organizationEditWizard.step2.generateNoticeApiKey.label'
-      );
-      expect(mockT).toHaveBeenCalledWith(
-        'organizationEditWizard.step2.generateNoticeApiKey.placeholder'
       );
       expect(mockT).toHaveBeenCalledWith(
         'organizationEditWizard.step2.additionalLanguage.label'

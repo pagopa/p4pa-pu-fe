@@ -67,10 +67,6 @@ vi.mock('../../../utils/organizationFormTransformers', () => ({
       cbill: { value: data.cbillInterBankCode || '', readonly: false },
       flagTreasury: { value: data.flagTreasury ?? false, readonly: false },
       segregationCode: { value: data.segregationCode || '', readonly: false },
-      generateNoticeApiKey: {
-        value: data.generateNoticeApiKey || '',
-        readonly: false
-      },
       additionalLanguage: {
         value: !!data.additionalLanguage,
         readonly: false
@@ -88,9 +84,7 @@ vi.mock('../../../utils/organizationFormTransformers', () => ({
         readonly: false
       },
       flagNotifyIo: { value: data.flagNotifyIo ?? false, readonly: false },
-      ioApiKey: { value: data.ioApiKey || '', readonly: false },
       pdndEnabled: { value: data.pdndEnabled ?? false, readonly: false },
-      sendApiKey: { value: data.sendApiKey || '', readonly: false },
       organizationStatus: data.status
     } as UnifiedFormData;
   })
@@ -143,9 +137,6 @@ describe('OrganizationEditWizard', () => {
     additionalLanguage: 'EN',
     startDate: '2024-12-19',
     brokerId: 1,
-    ioApiKey: '111',
-    sendApiKey: '222',
-    generateNoticeApiKey: '333',
     flagNotifyIo: true,
     flagNotifyOutcomePush: false,
     flagPaymentNotification: false,

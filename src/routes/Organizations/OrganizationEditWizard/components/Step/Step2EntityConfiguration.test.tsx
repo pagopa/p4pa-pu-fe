@@ -92,16 +92,13 @@ describe('Step2EntityConfiguration', () => {
     flagTreasury: { value: false, readonly: false },
     // Step 2 Payments fields
     segregationCode: { value: '', readonly: false },
-    generateNoticeApiKey: { value: '', readonly: false },
     additionalLanguage: { value: false, readonly: false },
     selectedLanguage: { value: '', readonly: false },
     flagNotifyOutcomePush: { value: false, readonly: false },
     flagPaymentNotification: { value: false, readonly: false },
     // Step 2 PagoPA Integration fields
     flagNotifyIo: { value: false, readonly: false },
-    ioApiKey: { value: '', readonly: false },
     pdndEnabled: { value: false, readonly: false },
-    sendApiKey: { value: '', readonly: false },
     organizationStatus: 'DRAFT'
   };
 
@@ -112,7 +109,6 @@ describe('Step2EntityConfiguration', () => {
     cbill: { value: 'CBILL001', readonly: false },
     flagTreasury: { value: true, readonly: false },
     segregationCode: { value: '01', readonly: false },
-    generateNoticeApiKey: { value: 'api-key-123', readonly: false },
     additionalLanguage: { value: true, readonly: false },
     selectedLanguage: { value: 'EN', readonly: false },
     flagNotifyOutcomePush: { value: true, readonly: false },
@@ -353,9 +349,6 @@ describe('Step2EntityConfiguration', () => {
             cbill: expect.objectContaining({ value: 'CBILL001' }),
             flagTreasury: expect.objectContaining({ value: true }),
             segregationCode: expect.objectContaining({ value: '01' }),
-            generateNoticeApiKey: expect.objectContaining({
-              value: 'api-key-123'
-            }),
             additionalLanguage: expect.objectContaining({ value: true }),
             selectedLanguage: expect.objectContaining({ value: 'EN' }),
             flagNotifyIo: expect.objectContaining({ value: true }),
