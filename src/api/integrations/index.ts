@@ -4,6 +4,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import type {
   OrganizationApiKeyType,
   PdndClientDTO,
+  PdndServiceRequestDTO,
   PdndServiceType
 } from '@generated/core/client';
 import {
@@ -186,5 +187,17 @@ export const getPdndClientsByOrgSubUnitCode = (organizationId: number) =>
       );
       parseAndLog(z.array(pdndClientNoSecretDTOSchema), data);
       return data;
+    }
+  });
+
+export const createPdndService = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['createPdndService', organizationId],
+    mutationFn: async (data: PdndServiceRequestDTO) => {
+      const { data: service } = await utils.apiClient.bff.createPdndService(
+        organizationId,
+        data
+      );
+      return service;
     }
   });

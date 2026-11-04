@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 
 import {
+  createPdndService,
   getAllOrgSubUnits,
   getOrganizationApiKeys,
   getOrgSubUnitWithNoServiceType,
@@ -90,6 +91,7 @@ export const AddIntegration = ({
 
   const savePagoPAMutation = encryptAndSaveApiKey(organizationId);
   const saveClientMutation = savePdndClient(organizationId);
+  const createPdndServiceMutation = createPdndService(organizationId);
 
   const noKeyAvailableToAdd = isAddMode && availableApiKeys.length === 0;
   const schema = useMemo(
@@ -198,13 +200,23 @@ export const AddIntegration = ({
   };
 
   const submitEService = async (values?: EServiceFormData) => {
-    console.log(values);
-    const { eServiceName, purposeId, clientId, ownerType } = values ?? {};
-
-    if (!eServiceName || !purposeId || !clientId || !ownerType) {
-      throw new Error('Missing data for eService integration');
+    try {
+      const { eServiceName, purposeId, clientId, ownerType } = values ?? {};
+  
+      if (!eServiceName || !purposeId || !clientId || !ownerType) {
+        throw new Error('Missing data for eService integration');
+      }
+  
+      await createPdndServiceMutation.mutateAsync({
+        serviceName: eServiceName,
+        serviceType: PdndServiceType.SEND,
+        purposeId,
+        clientId,
+      });
+    } catch (error) {
+      console.error(error);
+      utils.notify.emit(t('integrations.add.errors.saveIntegration.message'));
     }
-
   };  
 
   const onBack = () => navigate(-1);
