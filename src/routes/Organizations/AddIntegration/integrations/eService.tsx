@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 import { FormComponent } from '@core/components/FormComponent';
 import WizardStepWrapper from '@core/components/Wizard/WizardStepWrapper';
-import type { OrgAndSubUnitDTO } from '@generated/core/data-contracts';
+import { type OrgAndSubUnitDTO } from '@generated/core/data-contracts';
 
 import { EServiceOwnerType } from '../../enums';
 import type { AddIntegrationFormData } from '../AddIntegrationSchema';
@@ -55,10 +55,11 @@ export const EServiceIntegration = ({
   const { t } = useTranslation();
   const ownerType = useWatch({ control, name: 'E_SERVICE.ownerType' });
   const isSubUnitOwner = ownerType === EServiceOwnerType.SUB_UNIT;
-  const hasNoSubUnits = isSubUnitOwner && subUnits?.length === 0;
+  //const hasNoSubUnits = isSubUnitOwner && subUnits?.length === 0;
   const { data: pdndClients } = getPdndClientsByOrgSubUnitCode(organizationId);
 
-  console.log(pdndClients);
+  const clientsLength = pdndClients?.length ?? 0;
+
   return (
     <>
       <WizardStepWrapper
@@ -84,37 +85,38 @@ export const EServiceIntegration = ({
             }
           ]}
         />
-
         {isSubUnitOwner && (
-          <Box mt={2}>
-            {hasNoSubUnits ? (
+          <FormComponent.ControlledSelect
+            name="E_SERVICE.subUnitCode"
+            control={control}
+            label={t('integrations.add.eService.fields.subUnit')}
+            options={(subUnits ?? []).map(
+              ({ subUnitCode, subUnitName = '' }) => ({
+                value: subUnitCode,
+                label: subUnitName
+              })
+            )}
+            required
+          />
+        )}
+        {
+          !clientsLength ? (
+            <Box mt={2}>
               <MIAlert
                 severity="error"
                 title={t(
-                  'integrations.add.eService.errors.noSubUnits.title',
+                  `integrations.add.eService.errors.noClients.${ownerType}.title`,
                 )}
               >
-                {t('integrations.add.eService.errors.noSubUnits.message')}
+                {t(`integrations.add.eService.errors.noClients.${ownerType}.message`)}
               </MIAlert>
-            ) : (
-              <FormComponent.ControlledSelect
-                name="E_SERVICE.subUnitCode"
-                control={control}
-                label={t('integrations.add.eService.fields.subUnit')}
-                options={(subUnits ?? []).map(
-                  ({ subUnitCode, subUnitName = '' }) => ({
-                    value: subUnitCode,
-                    label: subUnitName
-                  })
-                )}
-                required
-              />
-            )}
           </Box>
-        )}
+          ):
+          null
+        }
       </WizardStepWrapper>
 
-      {!hasNoSubUnits && (
+      {clientsLength ? (
         <WizardStepWrapper
           title={t('integrations.add.eService.configure.title')}
           subtitle={t('integrations.add.eService.configure.description')}
@@ -146,7 +148,7 @@ export const EServiceIntegration = ({
             </FieldGroup>
           </Stack>
         </WizardStepWrapper>
-      )}
+      ) : null}
     </>
   );
 };

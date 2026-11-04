@@ -137,7 +137,14 @@ const validatePdnd = (values: AddIntegrationFormData, ctx: z.RefinementCtx) => {
   }
 };
 
-const validateEService = (values: AddIntegrationFormData, ctx: z.RefinementCtx) => {
+const validateEService = (values: AddIntegrationFormData, ctx: z.RefinementCtx, noServiceAvailableToAdd: boolean) => {
+  if (noServiceAvailableToAdd) {
+    addIssue(
+      ctx,
+      ['flagIntegrationType'],
+      'integrations.add.eService.errors.noServiceAvailable'
+    );
+  }
   const eService = values.E_SERVICE;
 
   ESERVICE_REQUIRED_FIELDS.forEach((field) => {
@@ -160,7 +167,7 @@ const validateEService = (values: AddIntegrationFormData, ctx: z.RefinementCtx) 
  * `noKeyAvailableToAdd`: in "add" mode, every PagoPA key type is already
  * configured for the organization, so a new PagoPA integration can't be added.
  */
-export const createAddIntegrationSchema = (noKeyAvailableToAdd: boolean) =>
+export const createAddIntegrationSchema = (noKeyAvailableToAdd: boolean, noServiceAvailableToAdd: boolean) =>
   addIntegrationSchema.superRefine((values, ctx) => {
     if (values.flagIntegrationType === IntegrationType.PAGOPA_PRODUCT) {
       validatePagoPA(values, ctx, noKeyAvailableToAdd);
@@ -169,7 +176,7 @@ export const createAddIntegrationSchema = (noKeyAvailableToAdd: boolean) =>
       validatePdnd(values, ctx);
     }
     if (values.flagIntegrationType === IntegrationType.E_SERVICE) {
-      validateEService(values, ctx);
+      validateEService(values, ctx, noServiceAvailableToAdd);
     }
   });
 

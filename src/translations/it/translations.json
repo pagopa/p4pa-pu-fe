@@ -2531,7 +2531,21 @@
             "title": "Non esistono sottounità per l'ente {{organizationName}}",
             "message": "Crea prima una sottounità e riprova."
           },
-          "subUnitRequired": "Campo obbligatorio"
+          "noServiceAvailable": {
+            "title": "Hai già configurato l’e-service PDND di SEND",
+            "message": "Seleziona un altro tipo di integrazione per continuare."
+          },
+          "subUnitRequired": "Campo obbligatorio",
+          "noClients": {
+            "organization": {
+              "title": "Non esiste un client per l’ente selezionato",
+              "message": "Configura prima un client PDND e riprova."
+            },
+            "subUnit": {
+              "title": "Non esiste un client per la sottounità selezionata",
+              "message": "Configura prima un client PDND e riprova."
+            }
+          }
         } 
       },
       "errors": {

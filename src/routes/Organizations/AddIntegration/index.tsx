@@ -11,6 +11,7 @@ import {
   getAllOrgSubUnits,
   getOrganizationApiKeys,
   getOrgSubUnitWithNoServiceType,
+  getPdndServices,
   savePdndClient
 } from '@core/api/integrations';
 import {
@@ -89,14 +90,23 @@ export const AddIntegration = ({
         .filter((keyType) => keyType !== OrganizationApiKeyType.SEND)
     : [];
 
+  const { data: PdndServices = [] } =
+      getPdndServices(organizationId);
+
+  const canAddSendService = PdndServices.length > 0 ? PdndServices?.some(service => service.serviceType !== PdndServiceType.SEND) : true;
+
+  console.log('canAddSendService', canAddSendService);
+
   const savePagoPAMutation = encryptAndSaveApiKey(organizationId);
   const saveClientMutation = savePdndClient(organizationId);
   const createPdndServiceMutation = createPdndService(organizationId);
 
   const noKeyAvailableToAdd = isAddMode && availableApiKeys.length === 0;
+  const noServiceAvailableToAdd = isAddMode && !canAddSendService;
+  
   const schema = useMemo(
-    () => createAddIntegrationSchema(noKeyAvailableToAdd),
-    [noKeyAvailableToAdd]
+    () => createAddIntegrationSchema(noKeyAvailableToAdd, noServiceAvailableToAdd),
+    [noKeyAvailableToAdd, noServiceAvailableToAdd]
   );
 
   const {
@@ -261,8 +271,8 @@ export const AddIntegration = ({
 
   const showPdndForm = flagIntegrationType === IntegrationType.PDND_CLIENT;
 
-  const showEServicePdndForm = flagIntegrationType === IntegrationType.E_SERVICE;
-
+  const showEServicePdndForm = flagIntegrationType === IntegrationType.E_SERVICE && canAddSendService;
+  
   return (
     <>
       <TitleComponent
