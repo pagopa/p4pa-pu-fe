@@ -41,12 +41,6 @@ type ValidationRules = {
       message: string;
     };
   };
-  generateNoticeApiKey: {
-    required: {
-      value: boolean;
-      message: string;
-    };
-  };
   selectedLanguage: {
     required?: {
       value: boolean;
@@ -58,12 +52,6 @@ type ValidationRules = {
   };
   flagPaymentNotification: {
     validate: (value: boolean | null) => true | string;
-  };
-  ioApiKey: {
-    required?: {
-      value: boolean;
-      message: string;
-    };
   };
 };
 
@@ -163,14 +151,6 @@ export const useOrganizationEditForm = ({
           }
         })
       },
-      generateNoticeApiKey: {
-        required: {
-          value: true,
-          message: t(
-            'organizationEditWizard.step2.generateNoticeApiKey.required'
-          )
-        }
-      },
       selectedLanguage: {
         ...(watchAdditionalLanguage && {
           required: {
@@ -186,17 +166,6 @@ export const useOrganizationEditForm = ({
       flagPaymentNotification: {
         validate: (value: boolean | null) =>
           value !== null || t('organizationEditWizard.step2.radioRequired')
-      },
-      // Step 2 PagoPA Integration validations
-      ioApiKey: {
-        ...(watchFlagNotifyIo && {
-          required: {
-            value: true,
-            message: t(
-              'organizationEditWizard.step2.pagoPaIntegration.io.apiKeyRequired'
-            )
-          }
-        })
       }
     };
   }, [

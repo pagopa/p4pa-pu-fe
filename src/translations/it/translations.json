@@ -2367,11 +2367,6 @@
         "required": "Il campo Codice Segregazione è obbligatorio",
         "invalidFormat": "Il campo Codice Segregazione può contenere solo e soltanto due caratteri numerici"
       },
-      "generateNoticeApiKey": {
-        "label": "API Key stampa avvisi",
-        "placeholder": "",
-        "required": "Il campo API Key stampa avvisi è obbligatorio"
-      },
       "additionalLanguage": {
         "label": "Gli avvisi hanno una lingua addizionale"
       },
@@ -2402,19 +2397,11 @@
         "title": "Integrazione con i prodotti PagoPA",
         "io": {
           "label": "Messaggi sull'app IO",
-          "description": "Abilita l'ente a inviare messaggi sui pagamenti",
-          "apiKeyLabel": "API key",
-          "apiKeyPlaceholder": "Inserisci la API key per inviare notifiche IO",
-          "apiKeyRequired": "Il campo API key è obbligatorio",
-          "apiKeyHelperText": "Inserisci la API key per inviare messaggi sull'app IO"
+          "description": "Abilita l'ente a inviare messaggi sui pagamenti"
         },
         "send": {
           "label": "Autenticazione con PDND",
-          "description": "Abilita l'autenticazione su SEND tramite PDND",
-          "apiKeyLabel": "API key",
-          "apiKeyPlaceholder": "Inserisci la API key per inviare notifiche SEND",
-          "apiKeyRequired": "Il campo API key è obbligatorio",
-          "apiKeyHelperText": "Inserisci la API key per inviare notifiche SEND"
+          "description": "Abilita l'autenticazione su SEND tramite PDND"
         }
       }
     }

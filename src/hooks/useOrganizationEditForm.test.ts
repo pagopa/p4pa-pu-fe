@@ -42,15 +42,12 @@ const createBaseInitialData = (
   cbill: { value: '', readonly: false },
   flagTreasury: { value: false, readonly: false },
   segregationCode: { value: '', readonly: false },
-  generateNoticeApiKey: { value: 'api-key', readonly: false },
   additionalLanguage: { value: false, readonly: false },
   selectedLanguage: { value: '', readonly: false },
   flagNotifyOutcomePush: { value: null, readonly: false },
   flagPaymentNotification: { value: null, readonly: false },
   flagNotifyIo: { value: false, readonly: false },
-  ioApiKey: { value: '', readonly: false },
   pdndEnabled: { value: false, readonly: false },
-  sendApiKey: { value: '', readonly: false },
   organizationStatus: overrides.organizationStatus,
   ...overrides
 });
@@ -72,15 +69,12 @@ describe('useOrganizationEditForm', () => {
         cbill: { value: 'CBILL123', readonly: false },
         flagTreasury: { value: true, readonly: false },
         segregationCode: { value: 'SEG123', readonly: false },
-        generateNoticeApiKey: { value: 'api-key', readonly: false },
         additionalLanguage: { value: true, readonly: false },
         selectedLanguage: { value: 'en', readonly: false },
         flagNotifyOutcomePush: { value: true, readonly: false },
         flagPaymentNotification: { value: false, readonly: false },
         flagNotifyIo: { value: true, readonly: false },
-        ioApiKey: { value: 'io-api-key', readonly: false },
-        pdndEnabled: { value: true, readonly: false },
-        sendApiKey: { value: 'send-api-key', readonly: false }
+        pdndEnabled: { value: true, readonly: false }
       });
 
       const { result } = renderHook(() =>
@@ -101,15 +95,12 @@ describe('useOrganizationEditForm', () => {
         cbill: 'CBILL123',
         flagTreasury: true,
         segregationCode: 'SEG123',
-        generateNoticeApiKey: 'api-key',
         additionalLanguage: true,
         selectedLanguage: 'en',
         flagNotifyOutcomePush: true,
         flagPaymentNotification: false,
         flagNotifyIo: true,
-        ioApiKey: 'io-api-key',
         pdndEnabled: true,
-        sendApiKey: 'send-api-key'
       });
     });
   });
@@ -143,12 +134,6 @@ describe('useOrganizationEditForm', () => {
         message: 'organizationEditWizard.step2.selectedLanguage.required'
       });
 
-      expect(validationRules.ioApiKey.required).toEqual({
-        value: true,
-        message:
-          'organizationEditWizard.step2.pagoPaIntegration.io.apiKeyRequired'
-      });
-
       expect(validationRules.flagNotifyOutcomePush.validate(null)).toBe(
         'organizationEditWizard.step2.radioRequired'
       );
@@ -174,7 +159,6 @@ describe('useOrganizationEditForm', () => {
 
       expect(validationRules.segregationCode.required).toBeUndefined();
       expect(validationRules.selectedLanguage.required).toBeUndefined();
-      expect(validationRules.ioApiKey.required).toBeUndefined();
     });
   });
 

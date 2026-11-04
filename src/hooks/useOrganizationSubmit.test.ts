@@ -67,15 +67,12 @@ const createFormData = (
   cbill: { value: '', readonly: false },
   flagTreasury: { value: false, readonly: false },
   segregationCode: { value: 'SEG123', readonly: false },
-  generateNoticeApiKey: { value: 'api-key', readonly: false },
   additionalLanguage: { value: false, readonly: false },
   selectedLanguage: { value: '', readonly: false },
   flagNotifyOutcomePush: { value: false, readonly: false },
   flagPaymentNotification: { value: false, readonly: false },
   flagNotifyIo: { value: false, readonly: false },
-  ioApiKey: { value: '', readonly: false },
   pdndEnabled: { value: false, readonly: false },
-  sendApiKey: { value: '', readonly: false },
   organizationStatus: 'DRAFT',
   ...overrides
 });
@@ -101,7 +98,6 @@ const originalData: OrganizationDetail = {
   brokerId: 1,
   ioApiKey: '',
   sendApiKey: '',
-  generateNoticeApiKey: 'api-key',
   flagNotifyIo: false,
   flagNotifyOutcomePush: false,
   flagPaymentNotification: false,
