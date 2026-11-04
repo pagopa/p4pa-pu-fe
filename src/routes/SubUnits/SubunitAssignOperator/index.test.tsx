@@ -1,4 +1,3 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { SubunitAssignOperator } from './index';
 
@@ -89,7 +88,7 @@ vi.mock('@core/components/Wizard/WizardStepButtons', () => ({
     </div>
   )
 }));
-vi.mock('..', () => ({
+vi.mock('@core/routes', () => ({
   PageRoutes: { SUB_UNIT_DETAIL: '/subunit', OPERATORS_DETAIL: '/operators' }
 }));
 
