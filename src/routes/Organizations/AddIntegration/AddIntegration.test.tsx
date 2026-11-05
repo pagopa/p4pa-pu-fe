@@ -36,8 +36,12 @@ const {
   mockEncryptAndSaveApiKey,
   mockMutateAsync,
   mockGetAllOrgSubUnits,
+  mockGetOrgSubUnitWithNoServiceType,
+  mockGetPdndClientsByOrgSubUnitCode,
   mockSavePdndClient,
   mockSavePdndMutateAsync,
+  mockCreatePdndService,
+  mockCreatePdndServiceMutateAsync,
   mockNavigate
 } = vi.hoisted(() => ({
   mockGetOrganizationApiKey:
@@ -58,15 +62,22 @@ const {
         enabled?: boolean
       ) => { data: { content: Array<PdndClientView> } | undefined }
     >(),
+  mockGetOrgSubUnitWithNoServiceType: vi.fn(),
+  mockGetPdndClientsByOrgSubUnitCode: vi.fn(),
   mockSavePdndClient: vi.fn(),
   mockSavePdndMutateAsync: vi.fn<(data: PdndClientDTO) => Promise<void>>(),
+  mockCreatePdndService: vi.fn(),
+  mockCreatePdndServiceMutateAsync: vi.fn(),
   mockNavigate: vi.fn()
 }));
 
 vi.mock('@core/api/integrations', () => ({
   getOrganizationApiKeys: mockGetOrganizationApiKeys,
   getAllOrgSubUnits: mockGetAllOrgSubUnits,
-  savePdndClient: mockSavePdndClient
+  getOrgSubUnitWithNoServiceType: mockGetOrgSubUnitWithNoServiceType,
+  getPdndClientsByOrgSubUnitCode: mockGetPdndClientsByOrgSubUnitCode,
+  savePdndClient: mockSavePdndClient,
+  createPdndService: mockCreatePdndService
 }));
 
 vi.mock('@core/api/organizations', () => ({
@@ -86,6 +97,21 @@ vi.mock('@core/components/TitleComponent/TitleComponent', () => ({
 
 vi.mock('@core/components/Wizard/WizardStepWrapper', () => ({
   default: ({ children }: { children: React.ReactNode }) => <>{children}</>
+}));
+
+vi.mock('@pagopa/mui-italia/components/MIAlert', () => ({
+  MIAlert: ({
+    title,
+    children
+  }: {
+    title: React.ReactNode;
+    children: React.ReactNode;
+  }) => (
+    <div role="alert">
+      <div>{title}</div>
+      {children}
+    </div>
+  )
 }));
 
 vi.mock('@core/components/Wizard/WizardStepButtons', () => ({
@@ -344,10 +370,20 @@ describe('AddIntegration', () => {
     mockGetAllOrgSubUnits.mockReturnValue({
       data: { content: SUB_UNITS }
     });
+    mockGetOrgSubUnitWithNoServiceType.mockReturnValue({
+      data: SUB_UNITS
+    });
+    mockGetPdndClientsByOrgSubUnitCode.mockReturnValue({
+      data: []
+    });
     mockSavePdndClient.mockReturnValue({
       mutateAsync: mockSavePdndMutateAsync
     });
     mockSavePdndMutateAsync.mockResolvedValue(undefined);
+    mockCreatePdndService.mockReturnValue({
+      mutateAsync: mockCreatePdndServiceMutateAsync
+    });
+    mockCreatePdndServiceMutateAsync.mockResolvedValue(undefined);
     vi.spyOn(utils.notify, 'emit').mockImplementation(() => undefined);
   });
 
@@ -438,8 +474,13 @@ describe('AddIntegration', () => {
 
     fireEvent.click(screen.getByTestId('option-e-service'));
     await waitFor(() => {
-      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      expect(screen.getByRole('alert')).not.toHaveTextContent(
+        'integrations.add.pagoPaProduct.errors.noIntegrationAvailable.title'
+      );
     });
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'integrations.add.eService.errors.noClients.organization.title'
+    );
     expect(screen.getByTestId('option-e-service')).toBeChecked();
     expect(screen.getByTestId('option-pagoPa-product')).not.toBeChecked();
   });
