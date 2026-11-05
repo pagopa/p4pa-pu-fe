@@ -120,7 +120,15 @@ vi.mock('@core/components/FormComponent', () => {
         return (
           <label htmlFor={name}>
             {label}
-            <input id={name} data-testid={name} {...field} />
+            <input
+              id={name}
+              data-testid={name}
+              name={field.name}
+              value={String(field.value ?? '')}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              ref={field.ref}
+            />
           </label>
         );
       }
