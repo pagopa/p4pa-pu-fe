@@ -184,7 +184,6 @@ const TitleComponent = ({
             variant={variant}
             sx={{
               textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
               display: 'block',
               maxWidth: '100%',
               ...sx
