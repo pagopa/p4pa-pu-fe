@@ -178,12 +178,14 @@ export const getOrgSubUnitWithNoServiceType = (organizationId: number, serviceTy
     }
   });
 
-export const getPdndClientsByOrgSubUnitCode = (organizationId: number) =>
+export const getPdndClientsByOrgSubUnitCode = (organizationId: number, subUnitCode?: string) =>
   useQuery({
-    queryKey: ['getPdndClientsByOrgSubUnitCode', organizationId,],
+    queryKey: ['getPdndClientsByOrgSubUnitCode', organizationId, subUnitCode],
     queryFn: async () => {
+      const query = subUnitCode ? { orgSubUnitCode: subUnitCode } : undefined;
       const { data } = await utils.apiClient.bff.getPdndClientsByOrgSubUnitCode(
         organizationId,
+        query
       );
       parseAndLog(z.array(pdndClientNoSecretDTOSchema), data);
       return data;
@@ -193,10 +195,12 @@ export const getPdndClientsByOrgSubUnitCode = (organizationId: number) =>
 export const createPdndService = (organizationId: number) =>
   useMutation({
     mutationKey: ['createPdndService', organizationId],
-    mutationFn: async (data: PdndServiceRequestDTO) => {
+    mutationFn: async (data: PdndServiceRequestDTO, subUnitCode?: string) => {
+      const query = subUnitCode ? { subUnitCode } : undefined;
       const { data: service } = await utils.apiClient.bff.createPdndService(
         organizationId,
-        data
+        data,
+        query
       );
       return service;
     }

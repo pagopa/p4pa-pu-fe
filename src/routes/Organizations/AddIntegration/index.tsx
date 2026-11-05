@@ -11,7 +11,6 @@ import {
   getAllOrgSubUnits,
   getOrganizationApiKeys,
   getOrgSubUnitWithNoServiceType,
-  getPdndServices,
   savePdndClient
 } from '@core/api/integrations';
 import {
@@ -90,23 +89,21 @@ export const AddIntegration = ({
         .filter((keyType) => keyType !== OrganizationApiKeyType.SEND)
     : [];
 
-  const { data: PdndServices = [] } =
-      getPdndServices(organizationId);
-
-  const canAddSendService = PdndServices.length > 0 ? PdndServices?.some(service => service.serviceType !== PdndServiceType.SEND) : true;
-
-  console.log('canAddSendService', canAddSendService);
-
   const savePagoPAMutation = encryptAndSaveApiKey(organizationId);
   const saveClientMutation = savePdndClient(organizationId);
   const createPdndServiceMutation = createPdndService(organizationId);
 
   const noKeyAvailableToAdd = isAddMode && availableApiKeys.length === 0;
-  const noServiceAvailableToAdd = isAddMode && !canAddSendService;
-  
+
+  const { data: orgSubUnitsWithNoServiceType } = getOrgSubUnitWithNoServiceType(
+    organizationId,
+    PdndServiceType.SEND,
+  );
+
+  const canAddSendService = orgSubUnitsWithNoServiceType?.length && orgSubUnitsWithNoServiceType?.length > 0;
   const schema = useMemo(
-    () => createAddIntegrationSchema(noKeyAvailableToAdd, noServiceAvailableToAdd),
-    [noKeyAvailableToAdd, noServiceAvailableToAdd]
+    () => createAddIntegrationSchema(noKeyAvailableToAdd, !canAddSendService),
+    [noKeyAvailableToAdd, !canAddSendService]
   );
 
   const {
@@ -133,8 +130,8 @@ export const AddIntegration = ({
   });
 
   const flagIntegrationType = watch('flagIntegrationType');
+  
   const pdndOwnerType = watch('PDND_CLIENT.ownerType');
-  const eServiceOwnerType = watch('E_SERVICE.ownerType');
 
   // Sub-units are needed only when the PDND cliento belongs to a sub-unit
   const { data: subUnits } = getAllOrgSubUnits(
@@ -142,16 +139,6 @@ export const AddIntegration = ({
     flagIntegrationType === IntegrationType.PDND_CLIENT &&
       pdndOwnerType === PdndOwnerType.SUB_UNIT
   );
-
-  const { data: subUnitsWithNoServiceType } = getOrgSubUnitWithNoServiceType(
-    organizationId,
-    PdndServiceType.SEND, // Replace with the actual service type you want to check
-    flagIntegrationType === IntegrationType.E_SERVICE &&
-      eServiceOwnerType === EServiceOwnerType.SUB_UNIT
-  );
-
-  console.log('subUnits:', subUnits);
-  console.log('subUnitsWithNoServiceType:', subUnitsWithNoServiceType); 
 
   // In edit mode the API key is loaded asynchronously: sync it into the form
   // unless the user has already typed something.
@@ -222,6 +209,9 @@ export const AddIntegration = ({
         serviceType: PdndServiceType.SEND,
         purposeId,
         clientId,
+        ...(ownerType === EServiceOwnerType.SUB_UNIT && {
+          subUnitCode: values?.subUnitCode
+        })
       });
     } catch (error) {
       console.error(error);
@@ -311,7 +301,7 @@ export const AddIntegration = ({
         <EServiceIntegration
           organizationId={organizationId}
           control={control}
-          subUnits={subUnitsWithNoServiceType}
+          orgSubUnitsWithNoServiceType={orgSubUnitsWithNoServiceType}
         />
       )}
 

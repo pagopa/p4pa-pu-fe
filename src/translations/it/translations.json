@@ -2545,6 +2545,16 @@
               "title": "Non esiste un client per la sottounità selezionata",
               "message": "Configura prima un client PDND e riprova."
             }
+          },
+          "serviceAlreadyExists": {
+            "organization": {
+              "title": "Hai già configurato questo e-service PDND per l’ente",
+              "message": "Seleziona un’altra opzione per continuare."
+            },
+            "subUnit": {
+              "title": "Non esiste un client per la sottounità selezionata",
+              "message": "Configura prima un client PDND e riprova."
+            }
           }
         } 
       },

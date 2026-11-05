@@ -18,7 +18,7 @@ import { getPdndClientsByOrgSubUnitCode } from '@core/api/integrations';
 
 type eServiceIntegrationProps = {
   control: Control<AddIntegrationFormData>;
-  subUnits?: Array<OrgAndSubUnitDTO>;
+  orgSubUnitsWithNoServiceType?: Array<OrgAndSubUnitDTO>;
   organizationId: number;
 };
 
@@ -49,16 +49,23 @@ const FieldGroup = ({
 
 export const EServiceIntegration = ({
   control,
-  subUnits,
+  orgSubUnitsWithNoServiceType = [],
   organizationId
 }: eServiceIntegrationProps) => {
   const { t } = useTranslation();
   const ownerType = useWatch({ control, name: 'E_SERVICE.ownerType' });
+  const subUnitCode = useWatch({ control, name: 'E_SERVICE.subUnitCode' }) || null;
   const isSubUnitOwner = ownerType === EServiceOwnerType.SUB_UNIT;
-  //const hasNoSubUnits = isSubUnitOwner && subUnits?.length === 0;
-  const { data: pdndClients } = getPdndClientsByOrgSubUnitCode(organizationId);
+
+  const { data: pdndClients } = getPdndClientsByOrgSubUnitCode(organizationId, subUnitCode || undefined);
 
   const clientsLength = pdndClients?.length ?? 0;
+
+  const canAddSendService = (isSubUnitOwner &&  !subUnitCode) ? true : Boolean(orgSubUnitsWithNoServiceType?.find(
+    (subUnit) => subUnit.subUnitCode === subUnitCode
+  ));
+
+  const errorType = clientsLength === 0 ? 'noClients' : !canAddSendService ? 'serviceAlreadyExists' : null;
 
   return (
     <>
@@ -90,7 +97,9 @@ export const EServiceIntegration = ({
             name="E_SERVICE.subUnitCode"
             control={control}
             label={t('integrations.add.eService.fields.subUnit')}
-            options={(subUnits ?? []).map(
+            options={(orgSubUnitsWithNoServiceType ?? [])
+              .filter(({ subUnitCode }) => subUnitCode)
+                .map(
               ({ subUnitCode, subUnitName = '' }) => ({
                 value: subUnitCode,
                 label: subUnitName
@@ -100,15 +109,15 @@ export const EServiceIntegration = ({
           />
         )}
         {
-          !clientsLength ? (
+          errorType ? (
             <Box mt={2}>
               <MIAlert
                 severity="error"
                 title={t(
-                  `integrations.add.eService.errors.noClients.${ownerType}.title`,
+                  `integrations.add.eService.errors.${errorType}.${ownerType}.title`,
                 )}
               >
-                {t(`integrations.add.eService.errors.noClients.${ownerType}.message`)}
+                {t(`integrations.add.eService.errors.${errorType}.${ownerType}.message`)}
               </MIAlert>
           </Box>
           ):
@@ -116,7 +125,7 @@ export const EServiceIntegration = ({
         }
       </WizardStepWrapper>
 
-      {clientsLength ? (
+      {canAddSendService && clientsLength ? (
         <WizardStepWrapper
           title={t('integrations.add.eService.configure.title')}
           subtitle={t('integrations.add.eService.configure.description')}
