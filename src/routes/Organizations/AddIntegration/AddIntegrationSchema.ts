@@ -137,7 +137,11 @@ const validatePdnd = (values: AddIntegrationFormData, ctx: z.RefinementCtx) => {
   }
 };
 
-const validateEService = (values: AddIntegrationFormData, ctx: z.RefinementCtx, noServiceAvailableToAdd: boolean) => {
+const validateEService = (
+  values: AddIntegrationFormData,
+  ctx: z.RefinementCtx,
+  noServiceAvailableToAdd: boolean
+) => {
   if (noServiceAvailableToAdd) {
     addIssue(
       ctx,
@@ -154,7 +158,10 @@ const validateEService = (values: AddIntegrationFormData, ctx: z.RefinementCtx, 
   });
 
   // The sub-unit is mandatory only when the eService belongs to a sub-unit
-  if (eService?.ownerType === EServiceOwnerType.SUB_UNIT && !eService.subUnitCode) {
+  if (
+    eService?.ownerType === EServiceOwnerType.SUB_UNIT &&
+    !eService.subUnitCode
+  ) {
     addIssue(
       ctx,
       ['E_SERVICE', 'subUnitCode'],
@@ -167,7 +174,10 @@ const validateEService = (values: AddIntegrationFormData, ctx: z.RefinementCtx, 
  * `noKeyAvailableToAdd`: in "add" mode, every PagoPA key type is already
  * configured for the organization, so a new PagoPA integration can't be added.
  */
-export const createAddIntegrationSchema = (noKeyAvailableToAdd: boolean, noServiceAvailableToAdd: boolean) =>
+export const createAddIntegrationSchema = (
+  noKeyAvailableToAdd: boolean,
+  noServiceAvailableToAdd: boolean
+) =>
   addIntegrationSchema.superRefine((values, ctx) => {
     if (values.flagIntegrationType === IntegrationType.PAGOPA_PRODUCT) {
       validatePagoPA(values, ctx, noKeyAvailableToAdd);
@@ -185,5 +195,5 @@ export const DEFAULT_ESERVICE_VALUES: EServiceFormData = {
   subUnitCode: '',
   eServiceName: '',
   purposeId: '',
-  clientId: '',
+  clientId: ''
 };

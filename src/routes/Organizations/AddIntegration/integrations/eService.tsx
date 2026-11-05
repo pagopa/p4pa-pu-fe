@@ -54,18 +54,32 @@ export const EServiceIntegration = ({
 }: eServiceIntegrationProps) => {
   const { t } = useTranslation();
   const ownerType = useWatch({ control, name: 'E_SERVICE.ownerType' });
-  const subUnitCode = useWatch({ control, name: 'E_SERVICE.subUnitCode' }) || null;
+  const subUnitCode =
+    useWatch({ control, name: 'E_SERVICE.subUnitCode' }) || null;
   const isSubUnitOwner = ownerType === EServiceOwnerType.SUB_UNIT;
 
-  const { data: pdndClients } = getPdndClientsByOrgSubUnitCode(organizationId, subUnitCode || undefined);
+  const { data: pdndClients } = getPdndClientsByOrgSubUnitCode(
+    organizationId,
+    subUnitCode || undefined
+  );
 
   const clientsLength = pdndClients?.length ?? 0;
 
-  const canAddSendService = (isSubUnitOwner &&  !subUnitCode) ? true : Boolean(orgSubUnitsWithNoServiceType?.find(
-    (subUnit) => subUnit.subUnitCode === subUnitCode
-  ));
+  const canAddSendService =
+    isSubUnitOwner && !subUnitCode
+      ? true
+      : Boolean(
+          orgSubUnitsWithNoServiceType?.find(
+            (subUnit) => subUnit.subUnitCode === subUnitCode
+          )
+        );
 
-  const errorType = clientsLength === 0 ? 'noClients' : !canAddSendService ? 'serviceAlreadyExists' : null;
+  let errorType: 'noClients' | 'serviceAlreadyExists' | null = null;
+  if (clientsLength === 0) {
+    errorType = 'noClients';
+  } else if (!canAddSendService) {
+    errorType = 'serviceAlreadyExists';
+  }
 
   return (
     <>
@@ -99,30 +113,27 @@ export const EServiceIntegration = ({
             label={t('integrations.add.eService.fields.subUnit')}
             options={(orgSubUnitsWithNoServiceType ?? [])
               .filter(({ subUnitCode }) => subUnitCode)
-                .map(
-              ({ subUnitCode, subUnitName = '' }) => ({
+              .map(({ subUnitCode, subUnitName = '' }) => ({
                 value: subUnitCode,
                 label: subUnitName
-              })
-            )}
+              }))}
             required
           />
         )}
-        {
-          errorType ? (
-            <Box mt={2}>
-              <MIAlert
-                severity="error"
-                title={t(
-                  `integrations.add.eService.errors.${errorType}.${ownerType}.title`,
-                )}
-              >
-                {t(`integrations.add.eService.errors.${errorType}.${ownerType}.message`)}
-              </MIAlert>
+        {errorType ? (
+          <Box mt={2}>
+            <MIAlert
+              severity="error"
+              title={t(
+                `integrations.add.eService.errors.${errorType}.${ownerType}.title`
+              )}
+            >
+              {t(
+                `integrations.add.eService.errors.${errorType}.${ownerType}.message`
+              )}
+            </MIAlert>
           </Box>
-          ):
-          null
-        }
+        ) : null}
       </WizardStepWrapper>
 
       {canAddSendService && clientsLength ? (

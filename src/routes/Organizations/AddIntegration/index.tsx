@@ -23,7 +23,12 @@ import utils from '@core/utils';
 import type { KeyTypeEnum } from '@generated/core/client';
 import { OrganizationApiKeyType } from '@generated/core/client';
 
-import { EServiceOwnerType, IntegrationMode, IntegrationType, PdndOwnerType } from '../enums';
+import {
+  EServiceOwnerType,
+  IntegrationMode,
+  IntegrationType,
+  PdndOwnerType
+} from '../enums';
 import PagoPAIntegration from './integrations/pagopa';
 import type {
   AddIntegrationFormData,
@@ -97,10 +102,12 @@ export const AddIntegration = ({
 
   const { data: orgSubUnitsWithNoServiceType } = getOrgSubUnitWithNoServiceType(
     organizationId,
-    PdndServiceType.SEND,
+    PdndServiceType.SEND
   );
 
-  const canAddSendService = orgSubUnitsWithNoServiceType?.length && orgSubUnitsWithNoServiceType?.length > 0;
+  const canAddSendService =
+    orgSubUnitsWithNoServiceType?.length &&
+    orgSubUnitsWithNoServiceType?.length > 0;
   const schema = useMemo(
     () => createAddIntegrationSchema(noKeyAvailableToAdd, !canAddSendService),
     [noKeyAvailableToAdd, !canAddSendService]
@@ -130,7 +137,7 @@ export const AddIntegration = ({
   });
 
   const flagIntegrationType = watch('flagIntegrationType');
-  
+
   const pdndOwnerType = watch('PDND_CLIENT.ownerType');
 
   // Sub-units are needed only when the PDND cliento belongs to a sub-unit
@@ -199,11 +206,11 @@ export const AddIntegration = ({
   const submitEService = async (values?: EServiceFormData) => {
     try {
       const { eServiceName, purposeId, clientId, ownerType } = values ?? {};
-  
+
       if (!eServiceName || !purposeId || !clientId || !ownerType) {
         throw new Error('Missing data for eService integration');
       }
-  
+
       await createPdndServiceMutation.mutateAsync({
         serviceName: eServiceName,
         serviceType: PdndServiceType.SEND,
@@ -217,7 +224,7 @@ export const AddIntegration = ({
       console.error(error);
       utils.notify.emit(t('integrations.add.errors.saveIntegration.message'));
     }
-  };  
+  };
 
   const onBack = () => navigate(-1);
 
@@ -261,8 +268,9 @@ export const AddIntegration = ({
 
   const showPdndForm = flagIntegrationType === IntegrationType.PDND_CLIENT;
 
-  const showEServicePdndForm = flagIntegrationType === IntegrationType.E_SERVICE && canAddSendService;
-  
+  const showEServicePdndForm =
+    flagIntegrationType === IntegrationType.E_SERVICE && canAddSendService;
+
   return (
     <>
       <TitleComponent

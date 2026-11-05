@@ -164,7 +164,11 @@ export const getAllOrgSubUnits = (organizationId: number, enabled = true) =>
     }
   });
 
-export const getOrgSubUnitWithNoServiceType = (organizationId: number, serviceType: PdndServiceType, enabled = true) =>
+export const getOrgSubUnitWithNoServiceType = (
+  organizationId: number,
+  serviceType: PdndServiceType,
+  enabled = true
+) =>
   useQuery({
     queryKey: ['getOrgSubUnitWithNoServiceType', organizationId, serviceType],
     enabled,
@@ -178,7 +182,10 @@ export const getOrgSubUnitWithNoServiceType = (organizationId: number, serviceTy
     }
   });
 
-export const getPdndClientsByOrgSubUnitCode = (organizationId: number, subUnitCode?: string) =>
+export const getPdndClientsByOrgSubUnitCode = (
+  organizationId: number,
+  subUnitCode?: string
+) =>
   useQuery({
     queryKey: ['getPdndClientsByOrgSubUnitCode', organizationId, subUnitCode],
     queryFn: async () => {
