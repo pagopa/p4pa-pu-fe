@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { useTranslation } from 'react-i18next';
 import Step2EntityConfiguration from './Step2EntityConfiguration';
 import type { UnifiedFormData } from '../../../../../models/OrganizationEditTypes';
 import { i18nTestSetup } from '../../../../../__tests__/i18nTestSetup';
@@ -37,40 +38,39 @@ vi.mock('../../../../../components/Wizard/WizardStepButtons', () => ({
 }));
 
 vi.mock('./sections/AccountingInfoSection', () => ({
-  AccountingInfoSection: ({
-    t
-  }: {
-    control: unknown;
-    errors: unknown;
-    data: UnifiedFormData;
-    t: (key: string) => string;
-  }) => (
-    <div data-testid="accounting-info-section">
-      <span>{t('organizationEditWizard.step2.accountingInfo.title')}</span>
-      <input data-testid="iban-input" />
-      <input data-testid="iban-contabile-input" />
-      <input data-testid="cbill-input" />
-    </div>
-  )
+  AccountingInfoSection: () => {
+    const { t } = useTranslation();
+
+    return (
+      <div data-testid="accounting-info-section">
+        <span>{t('organizationEditWizard.step2.accountingInfo.title')}</span>
+        <input data-testid="iban-input" />
+        <input data-testid="iban-contabile-input" />
+        <input data-testid="cbill-input" />
+      </div>
+    );
+  }
 }));
 
 vi.mock('./sections/PaymentsInfoSection', () => ({
   PaymentsInfoSection: ({
-    t,
     watchAdditionalLanguage
   }: {
     control: unknown;
     errors: unknown;
     data: UnifiedFormData;
-    t: (key: string) => string;
     watchAdditionalLanguage: boolean;
-  }) => (
-    <div data-testid="payments-info-section">
-      <span>{t('organizationEditWizard.step2.paymentsInfo.title')}</span>
-      <input data-testid="segregation-code-input" />
-      {watchAdditionalLanguage && <select data-testid="language-select" />}
-    </div>
-  )
+  }) => {
+    const { t } = useTranslation();
+
+    return (
+      <div data-testid="payments-info-section">
+        <span>{t('organizationEditWizard.step2.paymentsInfo.title')}</span>
+        <input data-testid="segregation-code-input" />
+        {watchAdditionalLanguage && <select data-testid="language-select" />}
+      </div>
+    );
+  }
 }));
 
 describe('Step2EntityConfiguration', () => {
@@ -146,7 +146,7 @@ describe('Step2EntityConfiguration', () => {
   });
 
   describe('Rendering', () => {
-    it('should render all three section components', () => {
+    it('should render all section components', () => {
       render(
         <Step2EntityConfiguration
           data={mockInitialData}
