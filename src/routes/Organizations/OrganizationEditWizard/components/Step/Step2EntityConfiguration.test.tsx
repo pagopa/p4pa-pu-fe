@@ -412,6 +412,27 @@ describe('Step2EntityConfiguration', () => {
         screen.getByText('organizationEditWizard.enableOrg')
       ).toBeInTheDocument();
     });
+
+    it('should display correct button labels for ACTIVE status', () => {
+      const activeData = {
+        ...mockInitialData,
+        organizationStatus: 'ACTIVE' as const
+      };
+
+      render(
+        <Step2EntityConfiguration
+          data={activeData}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      );
+
+      expect(screen.getByText('commons.back')).toBeInTheDocument();
+      expect(
+        screen.getByText('organizationEditWizard.saveChanges')
+      ).toBeInTheDocument();
+    });
   });
 
   describe('Section Props', () => {

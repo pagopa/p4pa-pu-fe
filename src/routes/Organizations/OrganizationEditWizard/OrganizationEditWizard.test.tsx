@@ -1,8 +1,3 @@
-/**
- * Tests for OrganizationEditWizard component
- * Tests the unified form container that loads organization data and renders OrganizationEditForm
- */
-
 import type { Mock } from 'vitest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { randomUUID } from 'node:crypto';
@@ -34,14 +29,10 @@ vi.mock('react-router', async () => {
   };
 });
 
-vi.mock('../../../store/GlobalStore', async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import('../../../store/GlobalStore')>();
-  return {
-    ...actual,
-    useStore: vi.fn()
-  };
-});
+vi.mock('../../../store/GlobalStore', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useStore: vi.fn()
+}));
 
 vi.mock('../../../utils', () => ({
   default: {
@@ -55,39 +46,39 @@ vi.mock('../../../utils', () => ({
 }));
 
 vi.mock('../../../utils/organizationFormTransformers', () => ({
-  transformApiDataToFormData: vi.fn((data) => {
-    return {
-      orgName: { value: data.orgName || '', readonly: true },
-      orgFiscalCode: { value: data.orgFiscalCode || '', readonly: true },
-      orgEmail: { value: data.orgEmail || '', readonly: false },
-      orgLogo: { value: data.orgLogo || null, readonly: false },
-      logoRemoved: false,
-      iban: { value: data.iban || '', readonly: false },
-      ibanPostal: { value: data.postalIban || '', readonly: false },
-      cbill: { value: data.cbillInterBankCode || '', readonly: false },
-      flagTreasury: { value: data.flagTreasury ?? false, readonly: false },
-      segregationCode: { value: data.segregationCode || '', readonly: false },
-      additionalLanguage: {
-        value: !!data.additionalLanguage,
-        readonly: false
-      },
-      selectedLanguage: {
-        value: data.additionalLanguage?.toLowerCase() || '',
-        readonly: false
-      },
-      flagNotifyOutcomePush: {
-        value: data.flagNotifyOutcomePush ?? null,
-        readonly: false
-      },
-      flagPaymentNotification: {
-        value: data.flagPaymentNotification ?? null,
-        readonly: false
-      },
-      flagNotifyIo: { value: data.flagNotifyIo ?? false, readonly: false },
-      pdndEnabled: { value: data.pdndEnabled ?? false, readonly: false },
-      organizationStatus: data.status
-    } as UnifiedFormData;
-  })
+  transformApiDataToFormData: vi.fn(
+    (data) =>
+      ({
+        orgName: { value: data.orgName || '', readonly: true },
+        orgEmail: { value: data.orgEmail || '', readonly: false },
+        orgLogo: { value: data.orgLogo || null, readonly: false },
+        logoRemoved: false,
+        iban: { value: data.iban || '', readonly: false },
+        ibanPostal: { value: data.postalIban || '', readonly: false },
+        cbill: { value: data.cbillInterBankCode || '', readonly: false },
+        flagTreasury: { value: data.flagTreasury ?? false, readonly: false },
+        segregationCode: { value: data.segregationCode || '', readonly: false },
+        additionalLanguage: {
+          value: !!data.additionalLanguage,
+          readonly: false
+        },
+        selectedLanguage: {
+          value: data.additionalLanguage?.toLowerCase() || '',
+          readonly: false
+        },
+        flagNotifyOutcomePush: {
+          value: data.flagNotifyOutcomePush ?? null,
+          readonly: false
+        },
+        flagPaymentNotification: {
+          value: data.flagPaymentNotification ?? null,
+          readonly: false
+        },
+        flagNotifyIo: { value: data.flagNotifyIo ?? false, readonly: false },
+        pdndEnabled: { value: data.pdndEnabled ?? false, readonly: false },
+        organizationStatus: data.status
+      }) as UnifiedFormData
+  )
 }));
 
 vi.mock('./components/OrganizationEditForm', () => ({
@@ -97,7 +88,6 @@ vi.mock('./components/OrganizationEditForm', () => ({
   }: {
     formData: UnifiedFormData;
     organizationId: number;
-    originalData: unknown;
   }) => (
     <div data-testid="organization-edit-form">
       <div data-testid="form-organization-id">{organizationId}</div>
@@ -111,12 +101,12 @@ vi.mock('./components/OrganizationEditForm', () => ({
 
 describe('OrganizationEditWizard', () => {
   const mockNavigate = vi.fn();
-  const mockGeneratePath = vi.fn();
   const mockGetOrganizationDetail = getOrganizationDetail as Mock;
   const mockUpdateOrganization = updateOrganization as Mock;
   const mockUseParams = useParams as Mock;
   const mockUseNavigate = useNavigate as Mock;
   const mockUseStore = useStore as Mock;
+  const mockGeneratePath = generatePath as Mock;
 
   const organizationDetailMock = {
     organizationId: 33,
@@ -192,7 +182,6 @@ describe('OrganizationEditWizard', () => {
         return path;
       }
     );
-    (generatePath as Mock).mockImplementation(mockGeneratePath);
 
     mockGetOrganizationDetail.mockReturnValue({
       data: organizationDetailMock,
@@ -208,8 +197,8 @@ describe('OrganizationEditWizard', () => {
     vi.mocked(utils.notify.emit).mockClear();
   });
 
-  describe('Rendering and UI', () => {
-    it('should render OrganizationEditForm when data is loaded', async () => {
+  describe('Rendering', () => {
+    it('renders OrganizationEditForm when data is loaded', async () => {
       render(<OrganizationEditWizard />);
 
       await waitFor(() => {
@@ -219,30 +208,16 @@ describe('OrganizationEditWizard', () => {
       });
     });
 
-    it('should pass correct organizationId to OrganizationEditForm', async () => {
+    it('passes organizationId, transformed formData and status to OrganizationEditForm', async () => {
       render(<OrganizationEditWizard />);
 
       await waitFor(() => {
         expect(screen.getByTestId('form-organization-id')).toHaveTextContent(
           '33'
         );
-      });
-    });
-
-    it('should pass transformed formData to OrganizationEditForm', async () => {
-      render(<OrganizationEditWizard />);
-
-      await waitFor(() => {
         expect(screen.getByTestId('form-organization-name')).toHaveTextContent(
           'Ente P4PA intermediato 1'
         );
-      });
-    });
-
-    it('should pass organization status to OrganizationEditForm', async () => {
-      render(<OrganizationEditWizard />);
-
-      await waitFor(() => {
         expect(
           screen.getByTestId('form-organization-status')
         ).toHaveTextContent('ACTIVE');
@@ -250,14 +225,14 @@ describe('OrganizationEditWizard', () => {
     });
   });
 
-  describe('Data Loading', () => {
-    it('should load organization detail on mount', () => {
+  describe('Data loading', () => {
+    it('calls getOrganizationDetail with the resolved organization id', () => {
       render(<OrganizationEditWizard />);
 
       expect(mockGetOrganizationDetail).toHaveBeenCalledWith(33);
     });
 
-    it('should handle loading state - not render form while loading', () => {
+    it('does not render the form while loading', () => {
       mockGetOrganizationDetail.mockReturnValue({
         data: undefined,
         isLoading: true,
@@ -272,7 +247,7 @@ describe('OrganizationEditWizard', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('should handle error state', async () => {
+    it('notifies and navigates to the detail page on error', async () => {
       mockGetOrganizationDetail.mockReturnValue({
         data: undefined,
         isLoading: false,
@@ -294,7 +269,7 @@ describe('OrganizationEditWizard', () => {
       });
     });
 
-    it('should transform API data to form data when organization detail loads', async () => {
+    it('transforms API data to form data on success', async () => {
       const { transformApiDataToFormData } = await import(
         '../../../utils/organizationFormTransformers'
       );
@@ -309,14 +284,14 @@ describe('OrganizationEditWizard', () => {
     });
   });
 
-  describe('Store Integration', () => {
-    it('should use organizationId from URL params', () => {
+  describe('Organization id resolution', () => {
+    it('uses the organization id from the URL params', () => {
       render(<OrganizationEditWizard />);
 
       expect(mockGetOrganizationDetail).toHaveBeenCalledWith(33);
     });
 
-    it('should handle missing organizationId in URL params', () => {
+    it('falls back to the store organization id when URL param is missing', () => {
       mockUseParams.mockReturnValueOnce({ organizationId: undefined });
       mockUseStore.mockReturnValueOnce({
         state: {
@@ -329,7 +304,7 @@ describe('OrganizationEditWizard', () => {
       expect(mockGetOrganizationDetail).toHaveBeenCalledWith(42);
     });
 
-    it('should prioritize URL params over store organizationId', () => {
+    it('prioritizes URL params over the store organization id', () => {
       mockUseParams.mockReturnValueOnce({ organizationId: '99' });
       mockUseStore.mockReturnValueOnce({
         state: {
@@ -341,16 +316,29 @@ describe('OrganizationEditWizard', () => {
 
       expect(mockGetOrganizationDetail).toHaveBeenCalledWith(99);
     });
+
+    it('uses the store organization id when URL param is not a number', () => {
+      mockUseParams.mockReturnValueOnce({ organizationId: 'invalid' });
+      mockUseStore.mockReturnValueOnce({
+        state: {
+          organizationId: 42
+        }
+      });
+
+      render(<OrganizationEditWizard />);
+
+      expect(mockGetOrganizationDetail).toHaveBeenCalledWith(42);
+    });
   });
 
-  describe('Component Lifecycle', () => {
-    it('should handle component unmount gracefully', () => {
+  describe('Lifecycle', () => {
+    it('unmounts without throwing', () => {
       const { unmount } = render(<OrganizationEditWizard />);
 
       expect(() => unmount()).not.toThrow();
     });
 
-    it('should not re-render form if data is already ready', async () => {
+    it('does not duplicate the form on rerender once data is ready', async () => {
       const { rerender } = render(<OrganizationEditWizard />);
 
       await waitFor(() => {
@@ -368,112 +356,6 @@ describe('OrganizationEditWizard', () => {
       expect(screen.getAllByTestId('organization-edit-form')).toHaveLength(
         initialRenderCount
       );
-    });
-  });
-
-  describe('Data Transformation', () => {
-    it('should handle null values in organization detail', async () => {
-      const dataWithNulls = {
-        ...organizationDetailMock,
-        orgLogo: null,
-        additionalLanguage: null
-      };
-
-      mockGetOrganizationDetail.mockReturnValue({
-        data: dataWithNulls,
-        isLoading: false,
-        isSuccess: true,
-        isError: false
-      });
-
-      render(<OrganizationEditWizard />);
-
-      await waitFor(() => {
-        expect(
-          screen.getByTestId('organization-edit-form')
-        ).toBeInTheDocument();
-      });
-    });
-
-    it('should handle DRAFT organization status', async () => {
-      const draftData = {
-        ...organizationDetailMock,
-        status: OrganizationStatus.DRAFT
-      };
-
-      mockGetOrganizationDetail.mockReturnValue({
-        data: draftData,
-        isLoading: false,
-        isSuccess: true,
-        isError: false
-      });
-
-      render(<OrganizationEditWizard />);
-
-      await waitFor(() => {
-        expect(
-          screen.getByTestId('form-organization-status')
-        ).toHaveTextContent('DRAFT');
-      });
-    });
-  });
-
-  describe('URL Parameters', () => {
-    it('should parse organizationId from URL params correctly', () => {
-      mockUseParams.mockReturnValue({ organizationId: '123' });
-
-      render(<OrganizationEditWizard />);
-
-      expect(mockGetOrganizationDetail).toHaveBeenCalledWith(123);
-    });
-
-    it('should handle invalid organizationId format in URL', () => {
-      mockUseParams.mockReturnValueOnce({ organizationId: 'invalid' });
-      mockUseStore.mockReturnValueOnce({
-        state: {
-          organizationId: 42
-        }
-      });
-
-      render(<OrganizationEditWizard />);
-
-      expect(mockGetOrganizationDetail).toHaveBeenCalledWith(42);
-    });
-  });
-
-  describe('Error Handling', () => {
-    it('should navigate to organization detail page on error', async () => {
-      mockGetOrganizationDetail.mockReturnValue({
-        data: undefined,
-        isLoading: false,
-        isSuccess: false,
-        isError: true
-      });
-
-      render(<OrganizationEditWizard />);
-
-      await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalled();
-        expect(mockGeneratePath).toHaveBeenCalled();
-      });
-    });
-
-    it('should show error notification on loading error', async () => {
-      mockGetOrganizationDetail.mockReturnValue({
-        data: undefined,
-        isLoading: false,
-        isSuccess: false,
-        isError: true
-      });
-
-      render(<OrganizationEditWizard />);
-
-      await waitFor(() => {
-        expect(utils.notify.emit).toHaveBeenCalledWith(
-          'Errore nel caricamento dei dati',
-          'error'
-        );
-      });
     });
   });
 });
