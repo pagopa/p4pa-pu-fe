@@ -79,10 +79,6 @@ export const transformApiDataToFormData = (
       value: orgData.segregationCode || '',
       readonly: false
     },
-    generateNoticeApiKey: {
-      value: orgData.generateNoticeApiKey || '',
-      readonly: false
-    },
     additionalLanguage: {
       value: isValidLanguage,
       readonly: false
@@ -104,16 +100,8 @@ export const transformApiDataToFormData = (
       value: orgData.flagNotifyIo ?? false,
       readonly: false
     },
-    ioApiKey: {
-      value: orgData.ioApiKey || '',
-      readonly: false
-    },
     pdndEnabled: {
       value: orgData.pdndEnabled ?? false,
-      readonly: false
-    },
-    sendApiKey: {
-      value: orgData.sendApiKey || '',
       readonly: false
     },
     // Common field
@@ -151,7 +139,6 @@ export const unifiedFormDataToFormValues = (
     flagTreasury: formData.flagTreasury.value,
     // Step 2 fields (Payments Information)
     segregationCode: formData.segregationCode.value || '',
-    generateNoticeApiKey: formData.generateNoticeApiKey.value || '',
     additionalLanguage: formData.additionalLanguage.value,
     selectedLanguage: formData.selectedLanguage.value || '',
     // Preserve null values for required radio groups
@@ -159,9 +146,7 @@ export const unifiedFormDataToFormValues = (
     flagPaymentNotification: formData.flagPaymentNotification.value,
     // Step 2 fields (PagoPA Products Integration)
     flagNotifyIo: formData.flagNotifyIo.value,
-    ioApiKey: formData.ioApiKey.value || '',
-    pdndEnabled: formData.pdndEnabled.value,
-    sendApiKey: formData.sendApiKey.value || ''
+    pdndEnabled: formData.pdndEnabled.value
   };
 };
 
@@ -226,15 +211,12 @@ export const transformFormDataToApiPayload = (
     cbillInterBankCode: formData.cbill.value,
     // Step 2 payment fields
     segregationCode: formData.segregationCode.value,
-    generateNoticeApiKey: formData.generateNoticeApiKey.value,
     additionalLanguage,
     flagNotifyOutcomePush: formData.flagNotifyOutcomePush.value ?? false,
     flagPaymentNotification: formData.flagPaymentNotification.value ?? false,
     // Step 2 PagoPA integration fields
     flagNotifyIo: formData.flagNotifyIo.value,
-    ioApiKey: formData.ioApiKey.value,
-    pdndEnabled: formData.pdndEnabled.value,
-    sendApiKey: formData.sendApiKey.value
+    pdndEnabled: formData.pdndEnabled.value
   };
 
   return payload;
@@ -276,15 +258,12 @@ export const mapStep2ValuesToFieldData = (
   | 'cbill'
   | 'flagTreasury'
   | 'segregationCode'
-  | 'generateNoticeApiKey'
   | 'additionalLanguage'
   | 'selectedLanguage'
   | 'flagNotifyOutcomePush'
   | 'flagPaymentNotification'
   | 'flagNotifyIo'
-  | 'ioApiKey'
   | 'pdndEnabled'
-  | 'sendApiKey'
 > => ({
   // Step 2 fields (Accounting Information)
   iban: createFieldData(values.iban, originalData.iban),
@@ -295,10 +274,6 @@ export const mapStep2ValuesToFieldData = (
   segregationCode: createFieldData(
     values.segregationCode,
     originalData.segregationCode
-  ),
-  generateNoticeApiKey: createFieldData(
-    values.generateNoticeApiKey,
-    originalData.generateNoticeApiKey
   ),
   additionalLanguage: createFieldData(
     values.additionalLanguage,
@@ -318,9 +293,7 @@ export const mapStep2ValuesToFieldData = (
   ),
   // Step 2 fields (PagoPA Products Integration)
   flagNotifyIo: createFieldData(values.flagNotifyIo, originalData.flagNotifyIo),
-  ioApiKey: createFieldData(values.ioApiKey, originalData.ioApiKey),
-  pdndEnabled: createFieldData(values.pdndEnabled, originalData.pdndEnabled),
-  sendApiKey: createFieldData(values.sendApiKey, originalData.sendApiKey)
+  pdndEnabled: createFieldData(values.pdndEnabled, originalData.pdndEnabled)
 });
 
 /**

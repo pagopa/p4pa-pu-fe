@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { useTranslation } from 'react-i18next';
 import Step2EntityConfiguration from './Step2EntityConfiguration';
 import type { UnifiedFormData } from '../../../../../models/OrganizationEditTypes';
 import { i18nTestSetup } from '../../../../../__tests__/i18nTestSetup';
@@ -37,40 +38,39 @@ vi.mock('../../../../../components/Wizard/WizardStepButtons', () => ({
 }));
 
 vi.mock('./sections/AccountingInfoSection', () => ({
-  AccountingInfoSection: ({
-    t
-  }: {
-    control: unknown;
-    errors: unknown;
-    data: UnifiedFormData;
-    t: (key: string) => string;
-  }) => (
-    <div data-testid="accounting-info-section">
-      <span>{t('organizationEditWizard.step2.accountingInfo.title')}</span>
-      <input data-testid="iban-input" />
-      <input data-testid="iban-contabile-input" />
-      <input data-testid="cbill-input" />
-    </div>
-  )
+  AccountingInfoSection: () => {
+    const { t } = useTranslation();
+
+    return (
+      <div data-testid="accounting-info-section">
+        <span>{t('organizationEditWizard.step2.accountingInfo.title')}</span>
+        <input data-testid="iban-input" />
+        <input data-testid="iban-contabile-input" />
+        <input data-testid="cbill-input" />
+      </div>
+    );
+  }
 }));
 
 vi.mock('./sections/PaymentsInfoSection', () => ({
   PaymentsInfoSection: ({
-    t,
     watchAdditionalLanguage
   }: {
     control: unknown;
     errors: unknown;
     data: UnifiedFormData;
-    t: (key: string) => string;
     watchAdditionalLanguage: boolean;
-  }) => (
-    <div data-testid="payments-info-section">
-      <span>{t('organizationEditWizard.step2.paymentsInfo.title')}</span>
-      <input data-testid="segregation-code-input" />
-      {watchAdditionalLanguage && <select data-testid="language-select" />}
-    </div>
-  )
+  }) => {
+    const { t } = useTranslation();
+
+    return (
+      <div data-testid="payments-info-section">
+        <span>{t('organizationEditWizard.step2.paymentsInfo.title')}</span>
+        <input data-testid="segregation-code-input" />
+        {watchAdditionalLanguage && <select data-testid="language-select" />}
+      </div>
+    );
+  }
 }));
 
 describe('Step2EntityConfiguration', () => {
@@ -92,16 +92,13 @@ describe('Step2EntityConfiguration', () => {
     flagTreasury: { value: false, readonly: false },
     // Step 2 Payments fields
     segregationCode: { value: '', readonly: false },
-    generateNoticeApiKey: { value: '', readonly: false },
     additionalLanguage: { value: false, readonly: false },
     selectedLanguage: { value: '', readonly: false },
     flagNotifyOutcomePush: { value: false, readonly: false },
     flagPaymentNotification: { value: false, readonly: false },
     // Step 2 PagoPA Integration fields
     flagNotifyIo: { value: false, readonly: false },
-    ioApiKey: { value: '', readonly: false },
     pdndEnabled: { value: false, readonly: false },
-    sendApiKey: { value: '', readonly: false },
     organizationStatus: 'DRAFT'
   };
 
@@ -112,7 +109,6 @@ describe('Step2EntityConfiguration', () => {
     cbill: { value: 'CBILL001', readonly: false },
     flagTreasury: { value: true, readonly: false },
     segregationCode: { value: '01', readonly: false },
-    generateNoticeApiKey: { value: 'api-key-123', readonly: false },
     additionalLanguage: { value: true, readonly: false },
     selectedLanguage: { value: 'EN', readonly: false },
     flagNotifyOutcomePush: { value: true, readonly: false },
@@ -150,7 +146,7 @@ describe('Step2EntityConfiguration', () => {
   });
 
   describe('Rendering', () => {
-    it('should render all three section components', () => {
+    it('should render all section components', () => {
       render(
         <Step2EntityConfiguration
           data={mockInitialData}
@@ -353,9 +349,6 @@ describe('Step2EntityConfiguration', () => {
             cbill: expect.objectContaining({ value: 'CBILL001' }),
             flagTreasury: expect.objectContaining({ value: true }),
             segregationCode: expect.objectContaining({ value: '01' }),
-            generateNoticeApiKey: expect.objectContaining({
-              value: 'api-key-123'
-            }),
             additionalLanguage: expect.objectContaining({ value: true }),
             selectedLanguage: expect.objectContaining({ value: 'EN' }),
             flagNotifyIo: expect.objectContaining({ value: true }),
@@ -417,6 +410,27 @@ describe('Step2EntityConfiguration', () => {
       expect(screen.getByText('commons.back')).toBeInTheDocument();
       expect(
         screen.getByText('organizationEditWizard.enableOrg')
+      ).toBeInTheDocument();
+    });
+
+    it('should display correct button labels for ACTIVE status', () => {
+      const activeData = {
+        ...mockInitialData,
+        organizationStatus: 'ACTIVE' as const
+      };
+
+      render(
+        <Step2EntityConfiguration
+          data={activeData}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      );
+
+      expect(screen.getByText('commons.back')).toBeInTheDocument();
+      expect(
+        screen.getByText('organizationEditWizard.saveChanges')
       ).toBeInTheDocument();
     });
   });

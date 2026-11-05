@@ -1,5 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import type { GridRowParams } from '@mui/x-data-grid';
+import {
+  GridActionsCellItem,
+  type GridColDef,
+  type GridRenderCellParams
+} from '@mui/x-data-grid';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import type {
   PagedOrganizationWithDebtPositionTypeOrgAndOperatorsCount,
@@ -10,7 +15,6 @@ import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../..';
 
 import Chip from '@mui/material/Chip';
-import IconButton from '@mui/material/IconButton';
 import ChevronRight from '@mui/icons-material/ChevronRight';
 
 export type OrganizationsDataGridProps = {
@@ -94,25 +98,21 @@ const OrganizationsDatagrid = ({
       }
     },
     {
+      type: 'actions',
       field: 'detail',
-      headerName: '',
       flex: 0.2,
-      sortable: false,
-      align: 'right',
-      headerAlign: 'right',
-      renderCell: (
-        params: GridRenderCellParams<OrganizationWithDebtPositionTypeOrgAndOperatorsCount>
-      ) => (
-        <IconButton
-          aria-label={t('organizations.detail', {
+      getActions: (
+        params: GridRowParams<OrganizationWithDebtPositionTypeOrgAndOperatorsCount>
+      ) => [
+        <GridActionsCellItem
+          key={params.id}
+          icon={<ChevronRight />}
+          label={t('organizations.detail', {
             orgName: params.row.orgName
           })}
-          size="small"
           onClick={() => handleRowClick(params.row)}
-        >
-          <ChevronRight fontSize="small" />
-        </IconButton>
-      )
+        />
+      ]
     }
   ];
 
