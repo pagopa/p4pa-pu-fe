@@ -7,11 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 
 import {
-  createPdndService,
-  getAllOrgSubUnits,
-  getOrganizationApiKeys,
-  getOrgSubUnitWithNoServiceType,
-  savePdndClient
+  useCreatePdndService,
+  useGetAllOrgSubUnits,
+  useGetOrganizationApiKeys,
+  useGetOrgSubUnitWithNoServiceType,
+  useSavePdndClient
 } from '@core/api/integrations';
 import {
   encryptAndSaveApiKey,
@@ -76,7 +76,7 @@ export const AddIntegration = ({
     : undefined;
   const initialServiceEnabled = searchParams.get('serviceEnabled') === 'true';
 
-  const { data: existingApiKeys } = getOrganizationApiKeys(
+  const { data: existingApiKeys } = useGetOrganizationApiKeys(
     organizationId,
     isAddMode
   );
@@ -95,15 +95,13 @@ export const AddIntegration = ({
     : [];
 
   const savePagoPAMutation = encryptAndSaveApiKey(organizationId);
-  const saveClientMutation = savePdndClient(organizationId);
-  const createPdndServiceMutation = createPdndService(organizationId);
+  const saveClientMutation = useSavePdndClient(organizationId);
+  const createPdndServiceMutation = useCreatePdndService(organizationId);
 
   const noKeyAvailableToAdd = isAddMode && availableApiKeys.length === 0;
 
-  const { data: orgSubUnitsWithNoServiceType } = getOrgSubUnitWithNoServiceType(
-    organizationId,
-    PdndServiceType.SEND
-  );
+  const { data: orgSubUnitsWithNoServiceType } =
+    useGetOrgSubUnitWithNoServiceType(organizationId, PdndServiceType.SEND);
 
   const canAddSendService =
     orgSubUnitsWithNoServiceType?.length &&
@@ -141,7 +139,7 @@ export const AddIntegration = ({
   const pdndOwnerType = watch('PDND_CLIENT.ownerType');
 
   // Sub-units are needed only when the PDND cliento belongs to a sub-unit
-  const { data: subUnits } = getAllOrgSubUnits(
+  const { data: subUnits } = useGetAllOrgSubUnits(
     organizationId,
     flagIntegrationType === IntegrationType.PDND_CLIENT &&
       pdndOwnerType === PdndOwnerType.SUB_UNIT

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { PdndServiceView } from '@generated/core/data-contracts';
 
 import { BaseDialog } from '@core/components/BaseDialog';
-import { deletePdndService } from '@core/api/integrations';
+import { useDeletePdndService } from '@core/api/integrations';
 import notify from '@core/utils/notify';
 import { CopiableField } from '@core/components/CopiableField';
 import { Field } from '../Containers';
@@ -30,7 +30,7 @@ export const PdndSendServiceDialog = ({
 }: ServiceDialogProps) => {
   const { t } = useTranslation();
 
-  const deleteService = deletePdndService(
+  const deleteService = useDeletePdndService(
     organizationId,
     service?.purposeId || ''
   );

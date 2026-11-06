@@ -19,19 +19,19 @@ import {
   pdndServiceViewSchema
 } from '@generated/core/zod-schema';
 import {
-  createPdndService,
-  deleteOrganizationApiKey,
-  deletePdndClient,
-  deletePdndService,
-  getAllOrgSubUnits,
-  getOrgSubUnitWithNoServiceType,
-  getOrgSubUnitsPdndServices,
-  getOrganizationApiKey,
-  getOrganizationApiKeys,
-  getPdndClients,
-  getPdndClientsByOrgSubUnitCode,
-  getPdndServices,
-  savePdndClient
+  useCreatePdndService,
+  useDeleteOrganizationApiKey,
+  useDeletePdndClient,
+  useDeletePdndService,
+  useGetAllOrgSubUnits,
+  useGetOrgSubUnitWithNoServiceType,
+  useGetOrgSubUnitsPdndServices,
+  useGetOrganizationApiKey,
+  useGetOrganizationApiKeys,
+  useGetPdndClients,
+  useGetPdndClientsByOrgSubUnitCode,
+  useGetPdndServices,
+  useSavePdndClient
 } from '.';
 import { renderHook, waitFor } from '@core/__tests__/renderers';
 
@@ -42,7 +42,7 @@ describe('getOrganizationApiKeys', () => {
   it('does not fetch when disabled', () => {
     const apiMock = vi.spyOn(utils.apiClient.bff, 'getOrganizationApiKeys');
     const { result } = renderHook(() =>
-      getOrganizationApiKeys(organizationId, false)
+      useGetOrganizationApiKeys(organizationId, false)
     );
 
     expect(result.current.fetchStatus).toBe('idle');
@@ -55,7 +55,9 @@ describe('getOrganizationApiKeys', () => {
       .spyOn(utils.apiClient.bff, 'getOrganizationApiKeys')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
-    const { result } = renderHook(() => getOrganizationApiKeys(organizationId));
+    const { result } = renderHook(() =>
+      useGetOrganizationApiKeys(organizationId)
+    );
 
     await waitFor(() => {
       expect(apiMock).toHaveBeenCalledWith(organizationId);
@@ -73,7 +75,7 @@ describe('getOrganizationApiKey', () => {
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
     const { result } = renderHook(() =>
-      getOrganizationApiKey(organizationId, keyType, query)
+      useGetOrganizationApiKey(organizationId, keyType, query)
     );
 
     await waitFor(() => {
@@ -91,7 +93,7 @@ describe('deleteOrganizationApiKey', () => {
       .mockResolvedValue({} as AxiosResponse);
 
     const { result } = renderHook(() =>
-      deleteOrganizationApiKey(organizationId, keyType, query)
+      useDeleteOrganizationApiKey(organizationId, keyType, query)
     );
 
     await result.current.mutateAsync();
@@ -107,7 +109,7 @@ describe('getPdndServices', () => {
       .spyOn(utils.apiClient.bff, 'getPdndServices')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
-    const { result } = renderHook(() => getPdndServices(organizationId));
+    const { result } = renderHook(() => useGetPdndServices(organizationId));
 
     await waitFor(() => {
       expect(apiMock).toHaveBeenCalledWith(organizationId);
@@ -129,7 +131,7 @@ describe('getOrgSubUnitsPdndServices', () => {
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
     const { result } = renderHook(() =>
-      getOrgSubUnitsPdndServices(organizationId)
+      useGetOrgSubUnitsPdndServices(organizationId)
     );
 
     const services = await result.current.mutateAsync(request);
@@ -150,7 +152,7 @@ describe('deletePdndService', () => {
       .mockResolvedValue({} as AxiosResponse);
 
     const { result } = renderHook(() =>
-      deletePdndService(organizationId, 'service-1')
+      useDeletePdndService(organizationId, 'service-1')
     );
 
     await result.current.mutateAsync();
@@ -166,7 +168,7 @@ describe('getPdndClients', () => {
       .spyOn(utils.apiClient.bff, 'getPdndClientsByOrgSubUnitCode')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
-    const { result } = renderHook(() => getPdndClients(organizationId));
+    const { result } = renderHook(() => useGetPdndClients(organizationId));
 
     await waitFor(() => {
       expect(apiMock).toHaveBeenCalledWith(organizationId);
@@ -190,7 +192,7 @@ describe('savePdndClient', () => {
       .spyOn(utils.apiClient.bff, 'savePdndClient')
       .mockResolvedValue({ data: response } as AxiosResponse);
 
-    const { result } = renderHook(() => savePdndClient(organizationId));
+    const { result } = renderHook(() => useSavePdndClient(organizationId));
     const savedClient = await result.current.mutateAsync(request);
 
     expect(apiMock).toHaveBeenCalledWith(organizationId, request);
@@ -202,7 +204,7 @@ describe('getAllOrgSubUnits', () => {
   it('does not fetch when disabled', () => {
     const apiMock = vi.spyOn(utils.apiClient.bff, 'getPagedOrgSubUnits');
     const { result } = renderHook(() =>
-      getAllOrgSubUnits(organizationId, false)
+      useGetAllOrgSubUnits(organizationId, false)
     );
 
     expect(result.current.fetchStatus).toBe('idle');
@@ -215,7 +217,7 @@ describe('getAllOrgSubUnits', () => {
       .spyOn(utils.apiClient.bff, 'getPagedOrgSubUnits')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
-    const { result } = renderHook(() => getAllOrgSubUnits(organizationId));
+    const { result } = renderHook(() => useGetAllOrgSubUnits(organizationId));
 
     await waitFor(() => {
       expect(apiMock).toHaveBeenCalledWith(organizationId, { size: 100 });
@@ -231,7 +233,7 @@ describe('getOrgSubUnitWithNoServiceType', () => {
       'getOrgSubUnitWithNoServiceType'
     );
     const { result } = renderHook(() =>
-      getOrgSubUnitWithNoServiceType(
+      useGetOrgSubUnitWithNoServiceType(
         organizationId,
         PdndServiceType.SEND,
         false
@@ -249,7 +251,7 @@ describe('getOrgSubUnitWithNoServiceType', () => {
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
     const { result } = renderHook(() =>
-      getOrgSubUnitWithNoServiceType(organizationId, PdndServiceType.SEND)
+      useGetOrgSubUnitWithNoServiceType(organizationId, PdndServiceType.SEND)
     );
 
     await waitFor(() => {
@@ -278,7 +280,7 @@ describe('getPdndClientsByOrgSubUnitCode', () => {
         .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
       const { result } = renderHook(() =>
-        getPdndClientsByOrgSubUnitCode(organizationId, subUnitCode)
+        useGetPdndClientsByOrgSubUnitCode(organizationId, subUnitCode)
       );
 
       await waitFor(() => {
@@ -303,7 +305,7 @@ describe('createPdndService', () => {
       .spyOn(utils.apiClient.bff, 'createPdndService')
       .mockResolvedValue({ data: response } as AxiosResponse);
 
-    const { result } = renderHook(() => createPdndService(organizationId));
+    const { result } = renderHook(() => useCreatePdndService(organizationId));
     const createdService = await result.current.mutateAsync({
       data: request
     });
@@ -318,7 +320,7 @@ describe('createPdndService', () => {
       .spyOn(utils.apiClient.bff, 'createPdndService')
       .mockResolvedValue({ data: response } as AxiosResponse);
 
-    const { result } = renderHook(() => createPdndService(organizationId));
+    const { result } = renderHook(() => useCreatePdndService(organizationId));
     const createdService = await result.current.mutateAsync({
       data: request,
       subUnitCode: 'SU1'
@@ -338,7 +340,7 @@ describe('deletePdndClient', () => {
       .mockResolvedValue({} as AxiosResponse);
 
     const { result } = renderHook(() =>
-      deletePdndClient(organizationId, 'client-c')
+      useDeletePdndClient(organizationId, 'client-c')
     );
 
     await result.current.mutateAsync();

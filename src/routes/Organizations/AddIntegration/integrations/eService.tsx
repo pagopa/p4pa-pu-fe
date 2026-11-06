@@ -14,7 +14,7 @@ import { type OrgAndSubUnitDTO } from '@generated/core/data-contracts';
 import { EServiceOwnerType } from '../../enums';
 import type { AddIntegrationFormData } from '../AddIntegrationSchema';
 import { MIAlert } from '@pagopa/mui-italia/components/MIAlert';
-import { getPdndClientsByOrgSubUnitCode } from '@core/api/integrations';
+import { useGetPdndClientsByOrgSubUnitCode } from '@core/api/integrations';
 
 type eServiceIntegrationProps = {
   control: Control<AddIntegrationFormData>;
@@ -58,7 +58,7 @@ export const EServiceIntegration = ({
     useWatch({ control, name: 'E_SERVICE.subUnitCode' }) || null;
   const isSubUnitOwner = ownerType === EServiceOwnerType.SUB_UNIT;
 
-  const { data: pdndClients } = getPdndClientsByOrgSubUnitCode(
+  const { data: pdndClients } = useGetPdndClientsByOrgSubUnitCode(
     organizationId,
     subUnitCode || undefined
   );

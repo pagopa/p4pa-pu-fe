@@ -72,12 +72,12 @@ const {
 }));
 
 vi.mock('@core/api/integrations', () => ({
-  getOrganizationApiKeys: mockGetOrganizationApiKeys,
-  getAllOrgSubUnits: mockGetAllOrgSubUnits,
-  getOrgSubUnitWithNoServiceType: mockGetOrgSubUnitWithNoServiceType,
-  getPdndClientsByOrgSubUnitCode: mockGetPdndClientsByOrgSubUnitCode,
-  savePdndClient: mockSavePdndClient,
-  createPdndService: mockCreatePdndService
+  useGetOrganizationApiKeys: mockGetOrganizationApiKeys,
+  useGetAllOrgSubUnits: mockGetAllOrgSubUnits,
+  useGetOrgSubUnitWithNoServiceType: mockGetOrgSubUnitWithNoServiceType,
+  useGetPdndClientsByOrgSubUnitCode: mockGetPdndClientsByOrgSubUnitCode,
+  useSavePdndClient: mockSavePdndClient,
+  useCreatePdndService: mockCreatePdndService
 }));
 
 vi.mock('@core/api/organizations', () => ({

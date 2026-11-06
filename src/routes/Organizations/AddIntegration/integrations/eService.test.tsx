@@ -20,7 +20,7 @@ const { mockGetPdndClientsByOrgSubUnitCode } = vi.hoisted(() => ({
 }));
 
 vi.mock('@core/api/integrations', () => ({
-  getPdndClientsByOrgSubUnitCode: mockGetPdndClientsByOrgSubUnitCode
+  useGetPdndClientsByOrgSubUnitCode: mockGetPdndClientsByOrgSubUnitCode
 }));
 
 vi.mock('@core/components/Wizard/WizardStepWrapper', () => ({

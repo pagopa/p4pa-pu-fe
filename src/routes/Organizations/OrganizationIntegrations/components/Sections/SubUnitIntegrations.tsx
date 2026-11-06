@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import type { PdndServiceView } from '@generated/core/data-contracts';
 
-import { getOrgSubUnitsPdndServices } from '@core/api/integrations';
+import { useGetOrgSubUnitsPdndServices } from '@core/api/integrations';
 import CustomDataGrid from '@core/components/DataGrid/CustomDataGrid';
 import type { FilterItem } from '@core/components/FilterContainer/FilterContainer';
 import FilterContainer, {
@@ -30,7 +30,7 @@ export const SubUnitIntegrations = () => {
   const { organizationId: urlOrganizationId } = useParams();
   const organizationId = Number(urlOrganizationId);
 
-  const query = getOrgSubUnitsPdndServices(organizationId);
+  const query = useGetOrgSubUnitsPdndServices(organizationId);
 
   const pdndServices = useSearch({
     query,

@@ -20,7 +20,7 @@ import utils from '@core/utils';
 import { parseAndLog } from '@core/utils/loaders';
 import type { FilteredRequest } from '@core/models/Filters';
 
-export const getOrganizationApiKeys = (
+export const useGetOrganizationApiKeys = (
   organizationId: number,
   enabled = true
 ) =>
@@ -35,7 +35,7 @@ export const getOrganizationApiKeys = (
     }
   });
 
-export const getOrganizationApiKey = (
+export const useGetOrganizationApiKey = (
   organizationId: number,
   keyType: OrganizationApiKeyType,
   query?: { subUnitCode?: string }
@@ -53,7 +53,7 @@ export const getOrganizationApiKey = (
     }
   });
 
-export const deleteOrganizationApiKey = (
+export const useDeleteOrganizationApiKey = (
   organizationId: number,
   keyType: OrganizationApiKeyType,
   query?: { subUnitCode?: string }
@@ -69,7 +69,7 @@ export const deleteOrganizationApiKey = (
     }
   });
 
-export const getPdndServices = (organizationId: number) =>
+export const useGetPdndServices = (organizationId: number) =>
   useQuery({
     queryKey: ['pdndServices', organizationId],
     queryFn: async () => {
@@ -88,7 +88,7 @@ type SubUnitPdndServiceFilters = {
 type getOrgSubUnitsPdndServicesRequest =
   FilteredRequest<SubUnitPdndServiceFilters>;
 
-export const getOrgSubUnitsPdndServices = (organizationId: number) =>
+export const useGetOrgSubUnitsPdndServices = (organizationId: number) =>
   useMutation({
     mutationKey: ['getOrgSubUnitPdndServices', organizationId],
     mutationFn: async (request: getOrgSubUnitsPdndServicesRequest) => {
@@ -105,7 +105,10 @@ export const getOrgSubUnitsPdndServices = (organizationId: number) =>
     }
   });
 
-export const deletePdndService = (organizationId: number, serviceId: string) =>
+export const useDeletePdndService = (
+  organizationId: number,
+  serviceId: string
+) =>
   useMutation({
     mutationKey: ['deletePdndService', organizationId, serviceId],
     mutationFn: async () => {
@@ -113,7 +116,7 @@ export const deletePdndService = (organizationId: number, serviceId: string) =>
     }
   });
 
-export const getPdndClients = (organizationId: number) =>
+export const useGetPdndClients = (organizationId: number) =>
   useQuery({
     queryKey: ['pdndClients', organizationId],
     queryFn: async () => {
@@ -126,7 +129,7 @@ export const getPdndClients = (organizationId: number) =>
     }
   });
 
-export const deletePdndClient = (organizationId: number, clientId: string) =>
+export const useDeletePdndClient = (organizationId: number, clientId: string) =>
   useMutation({
     mutationKey: ['deletePdndClient', organizationId, clientId],
     mutationFn: async () => {
@@ -134,7 +137,7 @@ export const deletePdndClient = (organizationId: number, clientId: string) =>
     }
   });
 
-export const savePdndClient = (organizationId: number) =>
+export const useSavePdndClient = (organizationId: number) =>
   useMutation({
     mutationKey: ['savePdndClient', organizationId],
     mutationFn: async (data: PdndClientDTO) => {
@@ -146,7 +149,7 @@ export const savePdndClient = (organizationId: number) =>
     }
   });
 
-export const getAllOrgSubUnits = (organizationId: number, enabled = true) =>
+export const useGetAllOrgSubUnits = (organizationId: number, enabled = true) =>
   useQuery({
     queryKey: ['getAllOrgSubUnits', organizationId],
     enabled,
@@ -164,7 +167,7 @@ export const getAllOrgSubUnits = (organizationId: number, enabled = true) =>
     }
   });
 
-export const getOrgSubUnitWithNoServiceType = (
+export const useGetOrgSubUnitWithNoServiceType = (
   organizationId: number,
   serviceType: PdndServiceType,
   enabled = true
@@ -182,7 +185,7 @@ export const getOrgSubUnitWithNoServiceType = (
     }
   });
 
-export const getPdndClientsByOrgSubUnitCode = (
+export const useGetPdndClientsByOrgSubUnitCode = (
   organizationId: number,
   subUnitCode?: string
 ) =>
@@ -199,7 +202,7 @@ export const getPdndClientsByOrgSubUnitCode = (
     }
   });
 
-export const createPdndService = (organizationId: number) =>
+export const useCreatePdndService = (organizationId: number) =>
   useMutation({
     mutationKey: ['createPdndService', organizationId],
     mutationFn: async ({

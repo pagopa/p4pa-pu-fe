@@ -15,9 +15,9 @@ import { ServicesSection } from './components/Sections/ServiceSection';
 import { SubUnitIntegrations } from './components/Sections/SubUnitIntegrations';
 
 import {
-  getOrganizationApiKeys,
-  getPdndClients,
-  getPdndServices
+  useGetOrganizationApiKeys,
+  useGetPdndClients,
+  useGetPdndServices
 } from '@core/api/integrations';
 import { useHashParamsListener } from '@core/hooks/useHashParamsListener';
 import utils from '@core/utils';
@@ -40,12 +40,13 @@ export const OrganizationIntegrations = () => {
   const { data: organization } = getOrganizationDetail(organizationId);
 
   const { data: apiKeys = [], ...organizationApiKeys } =
-    getOrganizationApiKeys(organizationId);
+    useGetOrganizationApiKeys(organizationId);
 
   const { data: services = [], ...pdndServices } =
-    getPdndServices(organizationId);
+    useGetPdndServices(organizationId);
 
-  const { data: clients = [], ...pdndClients } = getPdndClients(organizationId);
+  const { data: clients = [], ...pdndClients } =
+    useGetPdndClients(organizationId);
 
   const isEmpty = apiKeys.length + services.length + clients.length === 0;
 
