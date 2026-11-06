@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 import type { PdndClientNoSecretDTO } from '@generated/core/data-contracts';
 
-import { deletePdndClient } from '@core/api/integrations';
+import { useDeletePdndClient } from '@core/api/integrations';
 import { BaseDialog } from '@core/components/BaseDialog';
 import { CopiableField } from '@core/components/CopiableField';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
@@ -42,7 +42,7 @@ export const PdndClientDialog = ({
     copyWithFeedback(value, t('commons.copied'));
   };
 
-  const deleteService = deletePdndClient(organizationId, client.clientId);
+  const deleteService = useDeletePdndClient(organizationId, client.clientId);
 
   const handleDelete = async () => {
     try {

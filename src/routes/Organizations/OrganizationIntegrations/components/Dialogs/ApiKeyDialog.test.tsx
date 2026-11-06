@@ -5,13 +5,13 @@ import type { OrganizationApiKey } from '@generated/core/data-contracts';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
 import { fireEvent, render, screen } from '@core/__tests__/renderers';
 import {
-  getOrganizationApiKey,
-  deleteOrganizationApiKey
+  useGetOrganizationApiKey,
+  useDeleteOrganizationApiKey
 } from '@core/api/integrations';
 
 vi.mock('@core/api/integrations', () => ({
-  deleteOrganizationApiKey: vi.fn(),
-  getOrganizationApiKey: vi.fn()
+  useDeleteOrganizationApiKey: vi.fn(),
+  useGetOrganizationApiKey: vi.fn()
 }));
 
 const apiKey = { keyType: 'IO' } as OrganizationApiKey;
@@ -39,20 +39,20 @@ describe('ApiKeyDialog', () => {
       configurable: true
     });
 
-    vi.mocked(getOrganizationApiKey).mockReturnValue({
+    vi.mocked(useGetOrganizationApiKey).mockReturnValue({
       data: { apiKey: 'secret-key' }
-    } as unknown as ReturnType<typeof getOrganizationApiKey>);
-    vi.mocked(deleteOrganizationApiKey).mockReturnValue({
+    } as unknown as ReturnType<typeof useGetOrganizationApiKey>);
+    vi.mocked(useDeleteOrganizationApiKey).mockReturnValue({
       mutateAsync: mockMutateAsync,
       isPending: false
-    } as unknown as ReturnType<typeof deleteOrganizationApiKey>);
+    } as unknown as ReturnType<typeof useDeleteOrganizationApiKey>);
   });
 
   it('loads and deletes the key for the given organization and key type', () => {
     renderDialog();
 
-    expect(getOrganizationApiKey).toHaveBeenCalledWith(33, 'IO');
-    expect(deleteOrganizationApiKey).toHaveBeenCalledWith(33, 'IO');
+    expect(useGetOrganizationApiKey).toHaveBeenCalledWith(33, 'IO');
+    expect(useDeleteOrganizationApiKey).toHaveBeenCalledWith(33, 'IO');
   });
 
   it('masks the key by default and reveals it when toggled', () => {
@@ -82,10 +82,10 @@ describe('ApiKeyDialog', () => {
   });
 
   it('disables the delete button while the delete is pending', () => {
-    vi.mocked(deleteOrganizationApiKey).mockReturnValue({
+    vi.mocked(useDeleteOrganizationApiKey).mockReturnValue({
       mutateAsync: mockMutateAsync,
       isPending: true
-    } as unknown as ReturnType<typeof deleteOrganizationApiKey>);
+    } as unknown as ReturnType<typeof useDeleteOrganizationApiKey>);
 
     renderDialog();
 
