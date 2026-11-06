@@ -212,13 +212,16 @@ export const AddIntegration = ({
       }
 
       await createPdndServiceMutation.mutateAsync({
-        serviceName: eServiceName,
-        serviceType: PdndServiceType.SEND,
-        purposeId,
-        clientId,
-        ...(ownerType === EServiceOwnerType.SUB_UNIT && {
-          subUnitCode: values?.subUnitCode
-        })
+        data: {
+          serviceName: eServiceName,
+          serviceType: PdndServiceType.SEND,
+          purposeId,
+          clientId
+        },
+        subUnitCode:
+          values?.ownerType === EServiceOwnerType.SUB_UNIT
+            ? values.subUnitCode
+            : undefined
       });
     } catch (error) {
       console.error(error);

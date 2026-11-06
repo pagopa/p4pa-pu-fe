@@ -202,7 +202,13 @@ export const getPdndClientsByOrgSubUnitCode = (
 export const createPdndService = (organizationId: number) =>
   useMutation({
     mutationKey: ['createPdndService', organizationId],
-    mutationFn: async (data: PdndServiceRequestDTO, subUnitCode?: string) => {
+    mutationFn: async ({
+      data,
+      subUnitCode
+    }: {
+      data: PdndServiceRequestDTO;
+      subUnitCode?: string;
+    }) => {
       const query = subUnitCode ? { subUnitCode } : undefined;
       const { data: service } = await utils.apiClient.bff.createPdndService(
         organizationId,
