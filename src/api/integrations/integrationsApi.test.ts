@@ -297,16 +297,36 @@ describe('createPdndService', () => {
     clientId: 'client-1'
   };
 
-  it('creates a service and returns the API response', async () => {
+  it('creates an organization service and returns the API response', async () => {
     const response = createMock(pdndServiceViewSchema);
     const apiMock = vi
       .spyOn(utils.apiClient.bff, 'createPdndService')
       .mockResolvedValue({ data: response } as AxiosResponse);
 
     const { result } = renderHook(() => createPdndService(organizationId));
-    const createdService = await result.current.mutateAsync(request);
+    const createdService = await result.current.mutateAsync({
+      data: request
+    });
 
     expect(apiMock).toHaveBeenCalledWith(organizationId, request, undefined);
+    expect(createdService).toEqual(response);
+  });
+
+  it('creates a sub-unit service with the sub-unit query and returns the API response', async () => {
+    const response = createMock(pdndServiceViewSchema);
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createPdndService')
+      .mockResolvedValue({ data: response } as AxiosResponse);
+
+    const { result } = renderHook(() => createPdndService(organizationId));
+    const createdService = await result.current.mutateAsync({
+      data: request,
+      subUnitCode: 'SU1'
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, request, {
+      subUnitCode: 'SU1'
+    });
     expect(createdService).toEqual(response);
   });
 });
