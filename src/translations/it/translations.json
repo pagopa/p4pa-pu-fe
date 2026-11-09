@@ -2497,7 +2497,55 @@
       },
       "eService": {
         "label": "E-service PDND",
-        "description": "SEND"
+        "description": "SEND",
+        "generalInfo": "Informazioni generali",
+        "owner": {
+          "title": "Di chi è l'e-service?",
+          "description": "Indica l'ente o la sottounità per cui stai creando questo e-service.",
+          "organization": "Dell'ente",
+          "subUnit": "Di una sottounità dell'ente"
+        },
+        "configure": {
+          "title": "Configura l'e-service PDND",
+          "description": "Inserisci le informazioni fornite in fase di creazione dell'e-service."
+        },
+        "fields": {
+          "eServiceName": "Nome e-service",
+          "purposeId": "Purpose ID",
+          "clientId": "Client ID",
+          "subUnit": "Sottounità"
+        },
+        "errors": {
+          "noSubUnits": {
+            "title": "Non esistono sottounità per l'ente {{organizationName}}",
+            "message": "Crea prima una sottounità e riprova."
+          },
+          "noServiceAvailable": {
+            "title": "Hai già configurato l’e-service PDND di SEND",
+            "message": "Seleziona un altro tipo di integrazione per continuare."
+          },
+          "subUnitRequired": "Campo obbligatorio",
+          "noClients": {
+            "organization": {
+              "title": "Non esiste un client per l’ente selezionato",
+              "message": "Configura prima un client PDND e riprova."
+            },
+            "subUnit": {
+              "title": "Non esiste un client per la sottounità selezionata",
+              "message": "Configura prima un client PDND e riprova."
+            }
+          },
+          "serviceAlreadyExists": {
+            "organization": {
+              "title": "Hai già configurato questo e-service PDND per l’ente",
+              "message": "Seleziona un’altra opzione per continuare."
+            },
+            "subUnit": {
+              "title": "Non esiste un client per la sottounità selezionata",
+              "message": "Configura prima un client PDND e riprova."
+            }
+          }
+        } 
       },
       "errors": {
         "selectAtLeastOneOption": {

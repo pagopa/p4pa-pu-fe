@@ -3,13 +3,13 @@ import { useParams } from 'react-router';
 import userEvent from '@testing-library/user-event';
 
 import { render, screen } from '@core/__tests__/renderers';
-import { getOrgSubUnitsPdndServices } from '@core/api/integrations';
+import { useGetOrgSubUnitsPdndServices } from '@core/api/integrations';
 import { useSearch } from '@core/hooks/useSearch';
 
 import { SubUnitIntegrations } from './SubUnitIntegrations';
 
 vi.mock('@core/api/integrations', () => ({
-  getOrgSubUnitsPdndServices: vi.fn()
+  useGetOrgSubUnitsPdndServices: vi.fn()
 }));
 
 vi.mock('@core/hooks/useSearch', () => ({
@@ -147,9 +147,9 @@ const service = {
 };
 
 const mockServices = (content: Array<unknown>) =>
-  vi.mocked(getOrgSubUnitsPdndServices).mockReturnValue({
+  vi.mocked(useGetOrgSubUnitsPdndServices).mockReturnValue({
     data: { content }
-  } as unknown as ReturnType<typeof getOrgSubUnitsPdndServices>);
+  } as unknown as ReturnType<typeof useGetOrgSubUnitsPdndServices>);
 
 describe('SubUnitIntegrations', () => {
   beforeEach(() => {
@@ -169,7 +169,7 @@ describe('SubUnitIntegrations', () => {
   it('requests the services for the numeric organizationId', () => {
     render(<SubUnitIntegrations />);
 
-    expect(getOrgSubUnitsPdndServices).toHaveBeenCalledWith(33);
+    expect(useGetOrgSubUnitsPdndServices).toHaveBeenCalledWith(33);
   });
 
   it('renders the grid headers and service rows', () => {

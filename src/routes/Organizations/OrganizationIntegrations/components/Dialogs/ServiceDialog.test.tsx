@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { deletePdndService } from '@core/api/integrations';
+import { useDeletePdndService } from '@core/api/integrations';
 import type { PdndServiceView } from '@generated/core/data-contracts';
 import notify from '@core/utils/notify';
 
 import { PdndSendServiceDialog } from './ServiceDialog';
 
 vi.mock('@core/api/integrations', () => ({
-  deletePdndService: vi.fn()
+  useDeletePdndService: vi.fn()
 }));
 
 vi.mock('@core/components/BaseDialog', () => ({
@@ -61,10 +61,10 @@ describe('PdndSendServiceDialog', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    vi.mocked(deletePdndService).mockReturnValue({
+    vi.mocked(useDeletePdndService).mockReturnValue({
       mutateAsync: mockMutateAsync,
       isPending: false
-    } as unknown as ReturnType<typeof deletePdndService>);
+    } as unknown as ReturnType<typeof useDeletePdndService>);
   });
 
   it('renders the service details', () => {
@@ -79,7 +79,7 @@ describe('PdndSendServiceDialog', () => {
   it('initializes the delete mutation with the organization and purpose IDs', () => {
     renderDialog();
 
-    expect(deletePdndService).toHaveBeenCalledWith(33, 'purp_1');
+    expect(useDeletePdndService).toHaveBeenCalledWith(33, 'purp_1');
   });
 
   it('notifies, calls onDelete and closes after a successful delete', async () => {
@@ -120,10 +120,10 @@ describe('PdndSendServiceDialog', () => {
   });
 
   it('disables the delete button while deletion is pending', () => {
-    vi.mocked(deletePdndService).mockReturnValue({
+    vi.mocked(useDeletePdndService).mockReturnValue({
       mutateAsync: mockMutateAsync,
       isPending: true
-    } as unknown as ReturnType<typeof deletePdndService>);
+    } as unknown as ReturnType<typeof useDeletePdndService>);
 
     renderDialog();
 
@@ -138,7 +138,7 @@ describe('PdndSendServiceDialog', () => {
       purposeId: undefined
     });
 
-    expect(deletePdndService).toHaveBeenCalledWith(33, '');
+    expect(useDeletePdndService).toHaveBeenCalledWith(33, '');
 
     expect(
       screen.queryByText('integrations.serviceDialog.purposeId')

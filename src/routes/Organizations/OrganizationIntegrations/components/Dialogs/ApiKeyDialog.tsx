@@ -8,8 +8,8 @@ import type { OrganizationApiKey } from '@generated/core/data-contracts';
 import { OrganizationApiKeyType } from '@generated/core/data-contracts';
 
 import {
-  deleteOrganizationApiKey,
-  getOrganizationApiKey
+  useDeleteOrganizationApiKey,
+  useGetOrganizationApiKey
 } from '@core/api/integrations';
 import { BaseDialog } from '@core/components/BaseDialog';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
@@ -44,7 +44,7 @@ export const ApiKeyDialog = ({
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
 
-  const { data: organizationApiKey, isSuccess } = getOrganizationApiKey(
+  const { data: organizationApiKey, isSuccess } = useGetOrganizationApiKey(
     organizationId,
     apiKey.keyType
   );
@@ -56,7 +56,10 @@ export const ApiKeyDialog = ({
     }
   }, [open]);
 
-  const deleteApiKey = deleteOrganizationApiKey(organizationId, apiKey.keyType);
+  const deleteApiKey = useDeleteOrganizationApiKey(
+    organizationId,
+    apiKey.keyType
+  );
   const parsedApiKey = String(organizationApiKey?.apiKey);
 
   const copy = (value: string) => {

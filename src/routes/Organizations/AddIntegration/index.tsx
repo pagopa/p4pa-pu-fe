@@ -7,9 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 
 import {
-  getAllOrgSubUnits,
-  getOrganizationApiKeys,
-  savePdndClient
+  useCreatePdndService,
+  useGetAllOrgSubUnits,
+  useGetOrganizationApiKeys,
+  useGetOrgSubUnitWithNoServiceType,
+  useSavePdndClient
 } from '@core/api/integrations';
 import {
   encryptAndSaveApiKey,
@@ -21,20 +23,29 @@ import utils from '@core/utils';
 import type { KeyTypeEnum } from '@generated/core/client';
 import { OrganizationApiKeyType } from '@generated/core/client';
 
-import { IntegrationMode, IntegrationType, PdndOwnerType } from '../enums';
+import {
+  EServiceOwnerType,
+  IntegrationMode,
+  IntegrationType,
+  PdndOwnerType
+} from '../enums';
 import PagoPAIntegration from './integrations/pagopa';
 import type {
   AddIntegrationFormData,
+  EServiceFormData,
   PagoPAFormData,
   PdndFormData
 } from './AddIntegrationSchema';
 import {
   isPagoPAKeyType,
   createAddIntegrationSchema,
-  DEFAULT_PDND_VALUES
+  DEFAULT_PDND_VALUES,
+  DEFAULT_ESERVICE_VALUES
 } from './AddIntegrationSchema';
 import { PdndClientIntegration } from './integrations/client';
 import { IntegrationTypeSelector } from './components/IntegretionTypeSelector';
+import { EServiceIntegration } from './integrations/eService';
+import { PdndServiceType } from '@generated/core/data-contracts';
 
 type AddIntegrationProps = {
   mode?: IntegrationMode;
@@ -65,7 +76,7 @@ export const AddIntegration = ({
     : undefined;
   const initialServiceEnabled = searchParams.get('serviceEnabled') === 'true';
 
-  const { data: existingApiKeys } = getOrganizationApiKeys(
+  const { data: existingApiKeys } = useGetOrganizationApiKeys(
     organizationId,
     isAddMode
   );
@@ -84,12 +95,20 @@ export const AddIntegration = ({
     : [];
 
   const savePagoPAMutation = encryptAndSaveApiKey(organizationId);
-  const saveClientMutation = savePdndClient(organizationId);
+  const saveClientMutation = useSavePdndClient(organizationId);
+  const createPdndServiceMutation = useCreatePdndService(organizationId);
 
   const noKeyAvailableToAdd = isAddMode && availableApiKeys.length === 0;
+
+  const { data: orgSubUnitsWithNoServiceType } =
+    useGetOrgSubUnitWithNoServiceType(organizationId, PdndServiceType.SEND);
+
+  const canAddSendService =
+    orgSubUnitsWithNoServiceType?.length &&
+    orgSubUnitsWithNoServiceType?.length > 0;
   const schema = useMemo(
-    () => createAddIntegrationSchema(noKeyAvailableToAdd),
-    [noKeyAvailableToAdd]
+    () => createAddIntegrationSchema(noKeyAvailableToAdd, !canAddSendService),
+    [noKeyAvailableToAdd, !canAddSendService]
   );
 
   const {
@@ -110,15 +129,17 @@ export const AddIntegration = ({
         apiKey: organizationApiKey?.apiKey,
         serviceEnabled: initialServiceEnabled
       },
+      E_SERVICE: DEFAULT_ESERVICE_VALUES,
       PDND_CLIENT: DEFAULT_PDND_VALUES
     }
   });
 
   const flagIntegrationType = watch('flagIntegrationType');
+
   const pdndOwnerType = watch('PDND_CLIENT.ownerType');
 
-  // Sub-units are needed only when the PDND client belongs to a sub-unit
-  const { data: subUnits } = getAllOrgSubUnits(
+  // Sub-units are needed only when the PDND cliento belongs to a sub-unit
+  const { data: subUnits } = useGetAllOrgSubUnits(
     organizationId,
     flagIntegrationType === IntegrationType.PDND_CLIENT &&
       pdndOwnerType === PdndOwnerType.SUB_UNIT
@@ -180,6 +201,32 @@ export const AddIntegration = ({
     });
   };
 
+  const submitEService = async (values?: EServiceFormData) => {
+    try {
+      const { eServiceName, purposeId, clientId, ownerType } = values ?? {};
+
+      if (!eServiceName || !purposeId || !clientId || !ownerType) {
+        throw new Error('Missing data for eService integration');
+      }
+
+      await createPdndServiceMutation.mutateAsync({
+        data: {
+          serviceName: eServiceName,
+          serviceType: PdndServiceType.SEND,
+          purposeId,
+          clientId
+        },
+        subUnitCode:
+          values?.ownerType === EServiceOwnerType.SUB_UNIT
+            ? values.subUnitCode
+            : undefined
+      });
+    } catch (error) {
+      console.error(error);
+      utils.notify.emit(t('integrations.add.errors.saveIntegration.message'));
+    }
+  };
+
   const onBack = () => navigate(-1);
 
   const onSubmit = async (formData: AddIntegrationFormData) => {
@@ -190,6 +237,9 @@ export const AddIntegration = ({
           break;
         case IntegrationType.PDND_CLIENT:
           await submitPdnd(formData.PDND_CLIENT);
+          break;
+        case IntegrationType.E_SERVICE:
+          await submitEService(formData.E_SERVICE);
           break;
         default:
           return;
@@ -205,6 +255,7 @@ export const AddIntegration = ({
   const onInvalidSubmit: SubmitErrorHandler<AddIntegrationFormData> = (
     formErrors
   ) => {
+    console.log(formErrors);
     if (formErrors.flagIntegrationType) return;
     const apiKeyError = formErrors.PAGOPA_PRODUCT?.apiKey;
     if (apiKeyError?.message) {
@@ -217,6 +268,9 @@ export const AddIntegration = ({
     (isEditMode || availableApiKeys.length > 0);
 
   const showPdndForm = flagIntegrationType === IntegrationType.PDND_CLIENT;
+
+  const showEServicePdndForm =
+    flagIntegrationType === IntegrationType.E_SERVICE && canAddSendService;
 
   return (
     <>
@@ -249,6 +303,14 @@ export const AddIntegration = ({
           control={control}
           organizationName={String(organizationId)}
           subUnits={subUnits?.content}
+        />
+      )}
+
+      {showEServicePdndForm && (
+        <EServiceIntegration
+          organizationId={organizationId}
+          control={control}
+          orgSubUnitsWithNoServiceType={orgSubUnitsWithNoServiceType}
         />
       )}
 

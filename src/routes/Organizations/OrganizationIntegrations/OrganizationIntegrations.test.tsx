@@ -4,9 +4,9 @@ import { generatePath, useNavigate, useParams } from 'react-router';
 import { render, screen } from '../../../__tests__/renderers';
 import { getOrganizationDetail } from '../../../api/organizations';
 import {
-  getOrganizationApiKeys,
-  getPdndClients,
-  getPdndServices
+  useGetOrganizationApiKeys,
+  useGetPdndClients,
+  useGetPdndServices
 } from '@core/api/integrations';
 import { useHashParamsListener } from '@core/hooks/useHashParamsListener';
 import utils from '@core/utils';
@@ -22,10 +22,10 @@ vi.mock('../../../api/organizations', () => ({
   getOrganizationDetail: vi.fn()
 }));
 vi.mock('@core/api/integrations', () => ({
-  getOrganizationApiKeys: vi.fn(),
-  getPdndServices: vi.fn(),
-  getPdndClients: vi.fn(),
-  getOrgSubUnitsPdndServices: vi.fn()
+  useGetOrganizationApiKeys: vi.fn(),
+  useGetPdndServices: vi.fn(),
+  useGetPdndClients: vi.fn(),
+  useGetOrgSubUnitsPdndServices: vi.fn()
 }));
 vi.mock('@core/hooks/useHashParamsListener', () => ({
   useHashParamsListener: vi.fn()
@@ -88,11 +88,11 @@ describe('OrganizationIntegrations', () => {
     mockTab();
 
     mockQuery(getOrganizationDetail, { orgName: 'Ente' });
-    mockQuery(getOrganizationApiKeys, [
+    mockQuery(useGetOrganizationApiKeys, [
       { keyType: OrganizationApiKeyType.IO, flagActive: true },
       { keyType: OrganizationApiKeyType.GENERATE_NOTICE }
     ]);
-    mockQuery(getPdndServices, [
+    mockQuery(useGetPdndServices, [
       {
         serviceName: 'SEND service',
         serviceType: PdndServiceType.SEND,
@@ -101,7 +101,7 @@ describe('OrganizationIntegrations', () => {
         clientName: 'A'
       }
     ]);
-    mockQuery(getPdndClients, [
+    mockQuery(useGetPdndClients, [
       { clientId: 'client-c', clientName: 'Client C', organizationId: 1 }
     ]);
   });
@@ -150,9 +150,9 @@ describe('OrganizationIntegrations', () => {
   });
 
   it('shows the empty state when there are no integrations', () => {
-    mockQuery(getOrganizationApiKeys, []);
-    mockQuery(getPdndServices, []);
-    mockQuery(getPdndClients, []);
+    mockQuery(useGetOrganizationApiKeys, []);
+    mockQuery(useGetPdndServices, []);
+    mockQuery(useGetPdndClients, []);
 
     render(<OrganizationIntegrations />);
 
@@ -173,9 +173,9 @@ describe('OrganizationIntegrations', () => {
   });
 
   it('navigates to the add integration page from the empty state', async () => {
-    mockQuery(getOrganizationApiKeys, []);
-    mockQuery(getPdndServices, []);
-    mockQuery(getPdndClients, []);
+    mockQuery(useGetOrganizationApiKeys, []);
+    mockQuery(useGetPdndServices, []);
+    mockQuery(useGetPdndClients, []);
 
     render(<OrganizationIntegrations />);
     await userEvent.click(screen.getByTestId('empty-state-action'));
