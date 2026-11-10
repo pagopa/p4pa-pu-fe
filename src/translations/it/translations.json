@@ -2594,6 +2594,7 @@
       "pagoPaProducts": "Prodotti PagoPA",
       "pdndServices": "E-service PDND",
       "pdndClients": "Client PDND",
+      "clientName": "Nome del client",
       "name": "Nome",
       "ioNotifications": "Notifiche invio messaggio",
       "active": "Attivo",
