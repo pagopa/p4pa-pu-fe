@@ -4,9 +4,15 @@ import type { GridColDef } from '@mui/x-data-grid';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import type { PdndClientView, PdndServiceView } from '@generated/core/data-contracts';
+import type {
+  PdndClientView,
+  PdndServiceView
+} from '@generated/core/data-contracts';
 
-import { useGetOrgSubUnitsPdndClients, useGetOrgSubUnitsPdndServices } from '@core/api/integrations';
+import {
+  useGetOrgSubUnitsPdndClients,
+  useGetOrgSubUnitsPdndServices
+} from '@core/api/integrations';
 import CustomDataGrid from '@core/components/DataGrid/CustomDataGrid';
 import type { FilterItem } from '@core/components/FilterContainer/FilterContainer';
 import FilterContainer, {
@@ -184,8 +190,8 @@ export const SubUnitIntegrations = () => {
           setValues((prev) => ({ ...prev, [id]: value as string }))
         }
         onSubmit={() => {
-          pdndServices.applyFilters(values)
-          pdndClients.applyFilters(values)
+          pdndServices.applyFilters(values);
+          pdndClients.applyFilters(values);
         }}
       />
       <Stack gap={3} component="section">
