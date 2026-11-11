@@ -176,5 +176,18 @@ export const organizationsRoutes = [
         }
       }
     ]
+  },
+  {
+    id: 'MYORGANIZATION',
+    path: `organization`,
+    element: (
+      <AdminRouteGuard>
+        <OrganizationDetail />
+      </AdminRouteGuard>
+    ),
+    handle: {
+      backButton: false,
+      hideBreadcrumbs: true
+    }
   }
 ];

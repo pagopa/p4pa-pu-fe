@@ -21,7 +21,6 @@ import type { ISidebarMenuItem } from '../../models/SidebarMenuItem';
 import useCollapseMenu from '../../hooks/useCollapseMenu';
 import { useStore } from '../../store/GlobalStore';
 import utils from '../../utils';
-import { generatePath } from 'react-router';
 
 import { useGenerateSupersetUrl } from '@core/api/statistics';
 import { extensions } from '@extra/index';
@@ -142,9 +141,7 @@ export const Sidebar: React.FC = () => {
       {
         label: t('commons.routes.ORGANIZATIONS_DETAIL'),
         icon: DomainIcon,
-        route: generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
-          organizationId: organizationId
-        }),
+        route: PageRoutes.MYORGANIZATION,
         end: true
       },
       {
