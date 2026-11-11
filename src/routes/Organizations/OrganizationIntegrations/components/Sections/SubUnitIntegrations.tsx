@@ -49,14 +49,14 @@ export const SubUnitIntegrations = () => {
     query: pdndServicesQuery,
     filters: values,
     id: ID_PDND_SERVICES,
-    filtersExcluded: ['subUnitCode']
+    filtersExcluded: ['subUnitName']
   });
 
   const pdndClients = useSearch({
     query: pdndClientsQuery,
     filters: values,
     id: ID_PDND_CLIENTS,
-    filtersExcluded: ['subUnitCode']
+    filtersExcluded: ['subUnitName']
   });
 
   const filterItems: Array<FilterItem> = [
@@ -64,7 +64,7 @@ export const SubUnitIntegrations = () => {
       type: COMPONENT_TYPE.textField,
       label: t('organizations.integrations.searchSubUnit'),
       gridWidth: 10,
-      id: 'subUnitCode'
+      id: 'subUnitName'
     },
     {
       type: COMPONENT_TYPE.button,
