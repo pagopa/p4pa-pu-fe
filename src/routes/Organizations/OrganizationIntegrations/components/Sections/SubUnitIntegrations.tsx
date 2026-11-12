@@ -161,7 +161,6 @@ export const SubUnitIntegrations = () => {
         <Button
           variant="text"
           endIcon={<ArrowForwardIcon />}
-          onClick={() => {}}
           aria-label={t('organizations.integrations.showItem', {
             name: row.subUnitName ?? row.subUnitCode
           })}

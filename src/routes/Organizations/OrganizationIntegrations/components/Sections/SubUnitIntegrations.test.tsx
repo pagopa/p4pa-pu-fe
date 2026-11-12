@@ -2,14 +2,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useParams } from 'react-router';
 import userEvent from '@testing-library/user-event';
 
-import { render, screen } from '@core/__tests__/renderers';
-import { useGetOrgSubUnitsPdndServices } from '@core/api/integrations';
+import { render, screen, within } from '@core/__tests__/renderers';
+import {
+  useGetOrgSubUnitsPdndClients,
+  useGetOrgSubUnitsPdndServices
+} from '@core/api/integrations';
 import { useSearch } from '@core/hooks/useSearch';
 
 import { SubUnitIntegrations } from './SubUnitIntegrations';
 
 vi.mock('@core/api/integrations', () => ({
-  useGetOrgSubUnitsPdndServices: vi.fn()
+  useGetOrgSubUnitsPdndServices: vi.fn(),
+  useGetOrgSubUnitsPdndClients: vi.fn()
 }));
 
 vi.mock('@core/hooks/useSearch', () => ({
@@ -151,6 +155,18 @@ const mockServices = (content: Array<unknown>) =>
     data: { content }
   } as unknown as ReturnType<typeof useGetOrgSubUnitsPdndServices>);
 
+const mockClients = (content: Array<unknown>) =>
+  vi.mocked(useGetOrgSubUnitsPdndClients).mockReturnValue({
+    data: { content }
+  } as unknown as ReturnType<typeof useGetOrgSubUnitsPdndClients>);
+
+const getServicesSection = () =>
+  within(
+    screen
+      .getByRole('heading', { name: 'organizations.integrations.pdndServices' })
+      .closest('section') as HTMLElement
+  );
+
 describe('SubUnitIntegrations', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -164,6 +180,7 @@ describe('SubUnitIntegrations', () => {
     } as unknown as ReturnType<typeof useSearch>);
 
     mockServices([service]);
+    mockClients([]);
   });
 
   it('requests the services for the numeric organizationId', () => {
@@ -175,6 +192,8 @@ describe('SubUnitIntegrations', () => {
   it('renders the grid headers and service rows', () => {
     render(<SubUnitIntegrations />);
 
+    const section = getServicesSection();
+
     [
       'organizations.integrations.subUnit',
       'organizations.integrations.subUnitName',
@@ -182,12 +201,12 @@ describe('SubUnitIntegrations', () => {
       'organizations.integrations.clientId'
     ].forEach((header) => {
       expect(
-        screen.getByRole('columnheader', { name: header })
+        section.getByRole('columnheader', { name: header })
       ).toBeInTheDocument();
     });
 
     ['SU1', 'Sub Unit', 'SEND', 'client-a'].forEach((value) => {
-      expect(screen.getByText(value)).toBeInTheDocument();
+      expect(section.getByText(value)).toBeInTheDocument();
     });
   });
 
@@ -196,7 +215,7 @@ describe('SubUnitIntegrations', () => {
 
     render(<SubUnitIntegrations />);
 
-    expect(screen.getAllByRole('row')).toHaveLength(1);
+    expect(getServicesSection().getAllByRole('row')).toHaveLength(1);
   });
 
   it('applies the edited filters on submit', async () => {
