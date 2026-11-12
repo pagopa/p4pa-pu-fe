@@ -137,12 +137,15 @@ const validatePdnd = (values: AddIntegrationFormData, ctx: z.RefinementCtx) => {
   }
 };
 
+const ESERVICE_EDIT_REQUIRED_FIELDS = ['eServiceName', 'clientId'] as const;
+
 const validateEService = (
   values: AddIntegrationFormData,
   ctx: z.RefinementCtx,
-  noServiceAvailableToAdd: boolean
+  noServiceAvailableToAdd: boolean,
+  isEditMode: boolean
 ) => {
-  if (noServiceAvailableToAdd) {
+  if (noServiceAvailableToAdd && !isEditMode) {
     addIssue(
       ctx,
       ['flagIntegrationType'],
@@ -151,7 +154,11 @@ const validateEService = (
   }
   const eService = values.E_SERVICE;
 
-  ESERVICE_REQUIRED_FIELDS.forEach((field) => {
+  const requiredFields = isEditMode
+    ? ESERVICE_EDIT_REQUIRED_FIELDS
+    : ESERVICE_REQUIRED_FIELDS;
+
+  requiredFields.forEach((field) => {
     if (!eService?.[field]?.trim()) {
       addIssue(ctx, ['E_SERVICE', field], 'commons.required');
     }
@@ -159,6 +166,7 @@ const validateEService = (
 
   // The sub-unit is mandatory only when the eService belongs to a sub-unit
   if (
+    !isEditMode &&
     eService?.ownerType === EServiceOwnerType.SUB_UNIT &&
     !eService.subUnitCode
   ) {
@@ -173,10 +181,12 @@ const validateEService = (
 /**
  * `noKeyAvailableToAdd`: in "add" mode, every PagoPA key type is already
  * configured for the organization, so a new PagoPA integration can't be added.
+ * `isEditMode`: only the fields that can actually be changed are validated.
  */
 export const createAddIntegrationSchema = (
   noKeyAvailableToAdd: boolean,
-  noServiceAvailableToAdd: boolean
+  noServiceAvailableToAdd: boolean,
+  isEditMode = false
 ) =>
   addIntegrationSchema.superRefine((values, ctx) => {
     if (values.flagIntegrationType === IntegrationType.PAGOPA_PRODUCT) {
@@ -186,7 +196,7 @@ export const createAddIntegrationSchema = (
       validatePdnd(values, ctx);
     }
     if (values.flagIntegrationType === IntegrationType.E_SERVICE) {
-      validateEService(values, ctx, noServiceAvailableToAdd);
+      validateEService(values, ctx, noServiceAvailableToAdd, isEditMode);
     }
   });
 

@@ -16,10 +16,19 @@ import type { AddIntegrationFormData } from '../AddIntegrationSchema';
 import { MIAlert } from '@pagopa/mui-italia/components/MIAlert';
 import { useGetPdndClientsByOrgSubUnitCode } from '@core/api/integrations';
 
+type SubUnitOption = {
+  subUnitCode: string;
+  subUnitName?: string;
+};
+
 type eServiceIntegrationProps = {
   control: Control<AddIntegrationFormData>;
   orgSubUnitsWithNoServiceType?: Array<OrgAndSubUnitDTO>;
+  subUnits?: Array<SubUnitOption>;
   organizationId: number;
+  editMode?: boolean;
+  serviceSubUnitCode?: string;
+  serviceSubUnitName?: string;
 };
 
 const GENERAL_INFO_TEXT_FIELDS = ['eServiceName', 'purposeId'] as const;
@@ -50,12 +59,19 @@ const FieldGroup = ({
 export const EServiceIntegration = ({
   control,
   orgSubUnitsWithNoServiceType = [],
-  organizationId
+  subUnits = [],
+  organizationId,
+  editMode = false,
+  serviceSubUnitCode,
+  serviceSubUnitName
 }: eServiceIntegrationProps) => {
   const { t } = useTranslation();
   const ownerType = useWatch({ control, name: 'E_SERVICE.ownerType' });
-  const subUnitCode =
+  const formSubUnitCode =
     useWatch({ control, name: 'E_SERVICE.subUnitCode' }) || null;
+  // Fall back to the prop (loaded e-service or URL) when the form field is not
+  // populated yet, so the selected sub-unit is correct on first render too.
+  const subUnitCode = formSubUnitCode ?? serviceSubUnitCode ?? null;
   const isSubUnitOwner = ownerType === EServiceOwnerType.SUB_UNIT;
 
   const { data: pdndClients } = useGetPdndClientsByOrgSubUnitCode(
@@ -81,6 +97,110 @@ export const EServiceIntegration = ({
     errorType = 'serviceAlreadyExists';
   }
 
+  const ownerOptions = [
+    {
+      value: EServiceOwnerType.ORGANIZATION,
+      label: t('integrations.add.eService.owner.organization')
+    },
+    {
+      value: EServiceOwnerType.SUB_UNIT,
+      label: t('integrations.add.eService.owner.subUnit')
+    }
+  ];
+
+  // In edit mode the service can belong to any sub-unit, so the full list is
+  // shown. In add mode only the sub-units without a service can be selected.
+  const subUnitOptions = (
+    editMode && subUnits.length > 0 ? subUnits : orgSubUnitsWithNoServiceType
+  )
+    .filter(({ subUnitCode }) => subUnitCode)
+    .map(({ subUnitCode, subUnitName = '' }) => ({
+      value: subUnitCode,
+      label: subUnitName
+    }));
+
+  // The current sub-unit may not be part of the list (e.g. it already has a
+  // service), so it is added back to show the selected value.
+  if (
+    serviceSubUnitCode &&
+    !subUnitOptions.some(({ value }) => value === serviceSubUnitCode)
+  ) {
+    subUnitOptions.unshift({
+      value: serviceSubUnitCode,
+      label: serviceSubUnitName ?? serviceSubUnitCode
+    });
+  }
+
+  // In edit mode only the service name and the client ID can be changed,
+  // while the owner, the sub-unit and the purpose ID are read-only.
+  if (editMode) {
+    return (
+      <>
+        <WizardStepWrapper
+          title={t('integrations.add.eService.owner.title')}
+          subtitle={t('integrations.add.eService.owner.description')}
+          sx={{ marginTop: 2 }}
+        >
+          <FormComponent.ControlledRadioGroup
+            name="E_SERVICE.ownerType"
+            aria-label={t('integrations.add.eService.owner.title')}
+            control={control}
+            row
+            sx={{ gap: 3 }}
+            showErrorMessage={false}
+            disabled
+            options={ownerOptions}
+          />
+          {isSubUnitOwner && (
+            <FormComponent.ControlledSelect
+              name="E_SERVICE.subUnitCode"
+              control={control}
+              label={t('integrations.add.eService.fields.subUnit')}
+              options={subUnitOptions}
+              disabled
+              required
+            />
+          )}
+        </WizardStepWrapper>
+
+        <WizardStepWrapper
+          title={t('integrations.add.eService.configure.title')}
+          subtitle={t('integrations.add.eService.configure.description')}
+          sx={{ marginTop: 2 }}
+        >
+          <Stack spacing={2}>
+            <FieldGroup title={t('integrations.add.eService.generalInfo')}>
+              <FormComponent.ControlledTextField
+                name="E_SERVICE.eServiceName"
+                control={control}
+                label={t('integrations.add.eService.fields.eServiceName')}
+                required
+              />
+              <FormComponent.ControlledTextField
+                name="E_SERVICE.purposeId"
+                control={control}
+                label={t('integrations.add.eService.fields.purposeId')}
+                disabled
+              />
+              <FormComponent.ControlledSelect
+                name="E_SERVICE.clientId"
+                control={control}
+                label={t('integrations.add.eService.fields.clientId')}
+                options={(pdndClients ?? []).map(
+                  ({ clientId, clientName = '' }) => ({
+                    value: clientId,
+                    label: clientName
+                  })
+                )}
+                required
+              />
+            </FieldGroup>
+          </Stack>
+        </WizardStepWrapper>
+      </>
+    );
+  }
+
   return (
     <>
       <WizardStepWrapper
@@ -95,28 +215,14 @@ export const EServiceIntegration = ({
           row
           sx={{ gap: 3 }}
           showErrorMessage={false}
-          options={[
-            {
-              value: EServiceOwnerType.ORGANIZATION,
-              label: t('integrations.add.eService.owner.organization')
-            },
-            {
-              value: EServiceOwnerType.SUB_UNIT,
-              label: t('integrations.add.eService.owner.subUnit')
-            }
-          ]}
+          options={ownerOptions}
         />
         {isSubUnitOwner && (
           <FormComponent.ControlledSelect
             name="E_SERVICE.subUnitCode"
             control={control}
             label={t('integrations.add.eService.fields.subUnit')}
-            options={(orgSubUnitsWithNoServiceType ?? [])
-              .filter(({ subUnitCode }) => subUnitCode)
-              .map(({ subUnitCode, subUnitName = '' }) => ({
-                value: subUnitCode,
-                label: subUnitName
-              }))}
+            options={subUnitOptions}
             required
           />
         )}

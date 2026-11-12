@@ -16,7 +16,11 @@ import type {
   OrganizationApiKey,
   OrganizationApiKeys
 } from '@generated/core/client';
-import { KeyTypeEnum, OrganizationApiKeyType } from '@generated/core/client';
+import {
+  KeyTypeEnum,
+  OrganizationApiKeyType,
+  PdndServiceType
+} from '@generated/core/client';
 import type {
   PdndClientDTO,
   PdndClientView
@@ -38,10 +42,13 @@ const {
   mockGetAllOrgSubUnits,
   mockGetOrgSubUnitWithNoServiceType,
   mockGetPdndClientsByOrgSubUnitCode,
+  mockGetPdndService,
   mockSavePdndClient,
   mockSavePdndMutateAsync,
   mockCreatePdndService,
   mockCreatePdndServiceMutateAsync,
+  mockUpdatePdndService,
+  mockUpdatePdndServiceMutateAsync,
   mockNavigate
 } = vi.hoisted(() => ({
   mockGetOrganizationApiKey:
@@ -64,10 +71,13 @@ const {
     >(),
   mockGetOrgSubUnitWithNoServiceType: vi.fn(),
   mockGetPdndClientsByOrgSubUnitCode: vi.fn(),
+  mockGetPdndService: vi.fn(),
   mockSavePdndClient: vi.fn(),
   mockSavePdndMutateAsync: vi.fn<(data: PdndClientDTO) => Promise<void>>(),
   mockCreatePdndService: vi.fn(),
   mockCreatePdndServiceMutateAsync: vi.fn(),
+  mockUpdatePdndService: vi.fn(),
+  mockUpdatePdndServiceMutateAsync: vi.fn(),
   mockNavigate: vi.fn()
 }));
 
@@ -76,8 +86,10 @@ vi.mock('@core/api/integrations', () => ({
   useGetAllOrgSubUnits: mockGetAllOrgSubUnits,
   useGetOrgSubUnitWithNoServiceType: mockGetOrgSubUnitWithNoServiceType,
   useGetPdndClientsByOrgSubUnitCode: mockGetPdndClientsByOrgSubUnitCode,
+  useGetPdndService: mockGetPdndService,
   useSavePdndClient: mockSavePdndClient,
-  useCreatePdndService: mockCreatePdndService
+  useCreatePdndService: mockCreatePdndService,
+  useUpdatePdndService: mockUpdatePdndService
 }));
 
 vi.mock('@core/api/organizations', () => ({
@@ -115,12 +127,20 @@ vi.mock('@pagopa/mui-italia/components/MIAlert', () => ({
 }));
 
 vi.mock('@core/components/Wizard/WizardStepButtons', () => ({
-  default: ({ onNext, onBack }: { onNext: () => void; onBack: () => void }) => (
+  default: ({
+    onNext,
+    onBack,
+    disableNext
+  }: {
+    onNext: () => void;
+    onBack: () => void;
+    disableNext?: boolean;
+  }) => (
     <div>
       <button data-testid="back-button" onClick={onBack}>
         back
       </button>
-      <button data-testid="next-button" onClick={onNext}>
+      <button data-testid="next-button" onClick={onNext} disabled={disableNext}>
         next
       </button>
     </div>
@@ -132,11 +152,13 @@ vi.mock('@core/components/FormComponent', () => ({
     ControlledRadioGroup: ({
       name,
       control,
-      options
+      options,
+      disabled
     }: {
       name: string;
       control: Control<Record<string, unknown>>;
       options: Array<{ value: string; label: React.ReactNode }>;
+      disabled?: boolean;
     }) => {
       const { field } = useController({ name, control });
       return (
@@ -149,6 +171,7 @@ vi.mock('@core/components/FormComponent', () => ({
                 data-testid={`option-${option.value}`}
                 value={option.value}
                 checked={field.value === option.value}
+                disabled={disabled}
                 onChange={() => field.onChange(option.value)}
               />
               {option.label}
@@ -161,12 +184,14 @@ vi.mock('@core/components/FormComponent', () => ({
       name,
       control,
       label,
-      options
+      options,
+      disabled
     }: {
       name: string;
       control: Control<Record<string, unknown>>;
       label: string;
       options: Array<{ value: string; label: string }>;
+      disabled?: boolean;
     }) => {
       const { field, fieldState } = useController({ name, control });
       return (
@@ -176,6 +201,7 @@ vi.mock('@core/components/FormComponent', () => ({
             id={name}
             data-testid={name}
             value={String(field.value ?? '')}
+            disabled={disabled}
             onChange={(event) => field.onChange(event.target.value)}
           >
             <option value="" />
@@ -197,12 +223,14 @@ vi.mock('@core/components/FormComponent', () => ({
       name,
       control,
       label,
-      multiline
+      multiline,
+      disabled
     }: {
       name: string;
       control: Control<Record<string, unknown>>;
       label: string;
       multiline?: boolean;
+      disabled?: boolean;
     }) => {
       const { field, fieldState } = useController({ name, control });
       const value = String(field.value ?? '');
@@ -214,6 +242,7 @@ vi.mock('@core/components/FormComponent', () => ({
               id={name}
               data-testid={name}
               value={value}
+              disabled={disabled}
               onChange={field.onChange}
             />
           ) : (
@@ -221,6 +250,7 @@ vi.mock('@core/components/FormComponent', () => ({
               id={name}
               data-testid={name}
               value={value}
+              disabled={disabled}
               onChange={field.onChange}
             />
           )}
@@ -376,6 +406,7 @@ describe('AddIntegration', () => {
     mockGetPdndClientsByOrgSubUnitCode.mockReturnValue({
       data: []
     });
+    mockGetPdndService.mockReturnValue({ data: undefined });
     mockSavePdndClient.mockReturnValue({
       mutateAsync: mockSavePdndMutateAsync
     });
@@ -384,6 +415,10 @@ describe('AddIntegration', () => {
       mutateAsync: mockCreatePdndServiceMutateAsync
     });
     mockCreatePdndServiceMutateAsync.mockResolvedValue(undefined);
+    mockUpdatePdndService.mockReturnValue({
+      mutateAsync: mockUpdatePdndServiceMutateAsync
+    });
+    mockUpdatePdndServiceMutateAsync.mockResolvedValue(undefined);
     vi.spyOn(utils.notify, 'emit').mockImplementation(() => undefined);
   });
 
@@ -772,6 +807,242 @@ describe('AddIntegration', () => {
         'commons.done',
         'success'
       );
+    });
+  });
+
+  describe('e-service edit', () => {
+    const EXISTING_SERVICE = {
+      purposeId: 'purpose-1',
+      serviceName: 'Service one',
+      serviceType: PdndServiceType.SEND,
+      clientId: 'client-1',
+      clientName: 'Client one'
+    };
+
+    const CLIENTS = [
+      { clientId: 'client-1', clientName: 'Client one' },
+      { clientId: 'client-2', clientName: 'Client two' }
+    ];
+
+    const renderEdit = () => {
+      vi.mocked(useParams).mockReturnValue({
+        organizationId: '33',
+        IntegrationType: IntegrationType.E_SERVICE
+      });
+      mockGetPdndService.mockReturnValue({ data: EXISTING_SERVICE });
+      mockGetPdndClientsByOrgSubUnitCode.mockReturnValue({ data: CLIENTS });
+
+      return render(
+        <AddIntegration mode={IntegrationMode.EDIT} />,
+        '/?purposeId=purpose-1'
+      );
+    };
+
+    // The service and its client are loaded asynchronously: the form is
+    // populated as soon as the data arrives.
+    it('prefills the service and makes only the name and client ID editable', async () => {
+      renderEdit();
+
+      await waitFor(() => {
+        expect(screen.getByTestId('E_SERVICE.eServiceName')).toHaveValue(
+          'Service one'
+        );
+      });
+      expect(screen.getByTestId('E_SERVICE.purposeId')).toHaveValue(
+        'purpose-1'
+      );
+      expect(screen.getByTestId('E_SERVICE.purposeId')).toBeDisabled();
+      expect(screen.getByTestId('E_SERVICE.clientId')).toHaveValue('client-1');
+      expect(screen.getByTestId('option-organization')).toBeDisabled();
+      expect(screen.getByTestId('option-subUnit')).toBeDisabled();
+      expect(mockGetPdndService).toHaveBeenCalledWith(
+        33,
+        'purpose-1',
+        undefined
+      );
+      expect(mockGetOrgSubUnitWithNoServiceType).toHaveBeenCalled();
+    });
+
+    it('disables the confirm button while the service is loading', () => {
+      vi.mocked(useParams).mockReturnValue({
+        organizationId: '33',
+        IntegrationType: IntegrationType.E_SERVICE
+      });
+      mockGetPdndService.mockReturnValue({
+        data: undefined,
+        isPending: true
+      });
+
+      render(
+        <AddIntegration mode={IntegrationMode.EDIT} />,
+        '/?purposeId=purpose-1'
+      );
+
+      expect(screen.getByTestId('next-button')).toBeDisabled();
+    });
+
+    it('passes the sub-unit code when editing a sub-unit service', async () => {
+      vi.mocked(useParams).mockReturnValue({
+        organizationId: '33',
+        IntegrationType: IntegrationType.E_SERVICE
+      });
+      mockGetPdndService.mockReturnValue({
+        data: { ...EXISTING_SERVICE, subUnitCode: 'SU1' },
+        isPending: false
+      });
+      mockGetPdndClientsByOrgSubUnitCode.mockReturnValue({ data: CLIENTS });
+
+      render(
+        <AddIntegration mode={IntegrationMode.EDIT} />,
+        '/?purposeId=purpose-1&subUnitCode=SU1'
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('E_SERVICE.eServiceName')).toHaveValue(
+          'Service one'
+        );
+      });
+      expect(mockGetPdndService).toHaveBeenCalledWith(33, 'purpose-1', 'SU1');
+      expect(mockUpdatePdndService).toHaveBeenCalledWith(
+        33,
+        'purpose-1',
+        'SU1'
+      );
+      expect(screen.getByTestId('option-subUnit')).toBeChecked();
+      expect(screen.getByTestId('option-subUnit')).toBeDisabled();
+    });
+
+    it('asks for confirmation before updating the service', async () => {
+      renderEdit();
+      await waitFor(() => {
+        expect(screen.getByTestId('E_SERVICE.eServiceName')).toHaveValue(
+          'Service one'
+        );
+      });
+
+      fireEvent.change(screen.getByTestId('E_SERVICE.eServiceName'), {
+        target: { value: 'Updated service' }
+      });
+      fireEvent.change(screen.getByTestId('E_SERVICE.clientId'), {
+        target: { value: 'client-2' }
+      });
+      fireEvent.click(screen.getByTestId('next-button'));
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('confirm-eservice-update-dialog')
+        ).toBeInTheDocument();
+      });
+      expect(mockUpdatePdndServiceMutateAsync).not.toHaveBeenCalled();
+      expect(mockNavigate).not.toHaveBeenCalled();
+
+      fireEvent.click(
+        screen.getByTestId('confirm-eservice-update-dialog-confirm-button')
+      );
+
+      await waitFor(() => {
+        expect(
+          mockUpdatePdndServiceMutateAsync
+        ).toHaveBeenCalledExactlyOnceWith({
+          serviceName: 'Updated service',
+          clientId: 'client-2'
+        });
+      });
+      expect(mockNavigate).toHaveBeenCalledWith(-1);
+      expect(utils.notify.emit).toHaveBeenCalledWith('commons.done', 'success');
+    });
+
+    it('does not update the service when the confirmation is cancelled', async () => {
+      renderEdit();
+      await waitFor(() => {
+        expect(screen.getByTestId('E_SERVICE.eServiceName')).toHaveValue(
+          'Service one'
+        );
+      });
+
+      fireEvent.click(screen.getByTestId('next-button'));
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('confirm-eservice-update-dialog')
+        ).toBeInTheDocument();
+      });
+
+      fireEvent.click(
+        screen.getByTestId('confirm-eservice-update-dialog-cancel-button')
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId('confirm-eservice-update-dialog')
+        ).not.toBeInTheDocument();
+      });
+      expect(mockUpdatePdndServiceMutateAsync).not.toHaveBeenCalled();
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it('notifies when the update fails without navigating away', async () => {
+      mockUpdatePdndServiceMutateAsync.mockRejectedValueOnce(
+        new Error('Update failed')
+      );
+      const consoleSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined);
+
+      renderEdit();
+      await waitFor(() => {
+        expect(screen.getByTestId('E_SERVICE.eServiceName')).toHaveValue(
+          'Service one'
+        );
+      });
+
+      fireEvent.click(screen.getByTestId('next-button'));
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('confirm-eservice-update-dialog')
+        ).toBeInTheDocument();
+      });
+      fireEvent.click(
+        screen.getByTestId('confirm-eservice-update-dialog-confirm-button')
+      );
+
+      await waitFor(() => {
+        expect(utils.notify.emit).toHaveBeenCalledWith(
+          'integrations.add.errors.saveIntegration.message'
+        );
+      });
+      expect(consoleSpy).toHaveBeenCalled();
+      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(utils.notify.emit).not.toHaveBeenCalledWith(
+        'commons.done',
+        'success'
+      );
+      expect(
+        screen.queryByTestId('confirm-eservice-update-dialog')
+      ).not.toBeInTheDocument();
+    });
+
+    it('does not ask for confirmation when the required fields are empty', async () => {
+      renderEdit();
+      await waitFor(() => {
+        expect(screen.getByTestId('E_SERVICE.eServiceName')).toHaveValue(
+          'Service one'
+        );
+      });
+
+      fireEvent.change(screen.getByTestId('E_SERVICE.eServiceName'), {
+        target: { value: '' }
+      });
+      fireEvent.click(screen.getByTestId('next-button'));
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('E_SERVICE.eServiceName-error')
+        ).toHaveTextContent('commons.required');
+      });
+      expect(
+        screen.queryByTestId('confirm-eservice-update-dialog')
+      ).not.toBeInTheDocument();
+      expect(mockUpdatePdndServiceMutateAsync).not.toHaveBeenCalled();
     });
   });
 });

@@ -6,6 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export type GenericDialogProps = {
   open: boolean;
@@ -15,6 +16,7 @@ export type GenericDialogProps = {
   cancelLabel?: string;
   children?: ReactNode;
   fullWidth?: boolean;
+  confirmLoading?: boolean;
   onConfirm?: () => void;
   onClose?: () => void;
   'data-testid'?: string;
@@ -30,6 +32,7 @@ const GenericDialog = ({
   cancelLabel,
   children,
   fullWidth = false,
+  confirmLoading = false,
   ariaDescribedby,
   ariaLabelledby,
   onConfirm,
@@ -57,6 +60,7 @@ const GenericDialog = ({
           <Button
             onClick={onClose}
             variant="outlined"
+            disabled={confirmLoading}
             data-testid={testId ? `${testId}-cancel-button` : undefined}
           >
             {cancelLabel}
@@ -67,6 +71,12 @@ const GenericDialog = ({
             onClick={onConfirm}
             color="primary"
             variant="contained"
+            disabled={confirmLoading}
+            startIcon={
+              confirmLoading ? (
+                <CircularProgress size={16} color="inherit" />
+              ) : undefined
+            }
             data-testid={testId ? `${testId}-confirm-button` : undefined}
           >
             {confirmLabel}
