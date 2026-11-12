@@ -106,4 +106,13 @@ describe('Sidebar component', () => {
 
     expect(screen.queryByText('commons.routes.STATISTICS')).toBeDefined();
   });
+
+  it('should not render My organization section when the role is operator', () => {
+    setOperatorRole(OperatorRole.ROLE_OPER);
+    vi.spyOn(utils.roles, 'useIsSuperAdmin').mockImplementation(() => false);
+
+    renderSidebar();
+
+    expect(screen.queryByText('commons.routes.MYORGANIZATION')).toBeNull();
+  });
 });
