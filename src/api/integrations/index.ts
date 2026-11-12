@@ -11,6 +11,7 @@ import {
   orgAndSubUnitDTOSchema,
   organizationApiKeySchema,
   pagedOrgSubUnitSchema,
+  pagedPdndClientViewSchema,
   pagedPdndServiceViewSchema,
   pdndClientNoSecretDTOSchema,
   pdndServiceViewSchema
@@ -125,6 +126,23 @@ export const useGetPdndClients = (organizationId: number) =>
           organizationId
         );
       parseAndLog(z.array(pdndClientNoSecretDTOSchema), data);
+      return data;
+    }
+  });
+
+export const useGetOrgSubUnitsPdndClients = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['useGetOrgSubUnitsPdndClients', organizationId],
+    mutationFn: async (request: getOrgSubUnitsPdndServicesRequest) => {
+      const { data } = await utils.apiClient.bff.getOrgSubUnitsPdndClients(
+        organizationId,
+        {
+          ...request.filters,
+          ...request.pagination,
+          sort: request.sort
+        }
+      );
+      parseAndLog(pagedPdndClientViewSchema, data);
       return data;
     }
   });
