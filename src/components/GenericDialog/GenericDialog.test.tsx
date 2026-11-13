@@ -72,6 +72,17 @@ describe('GenericDialog', () => {
     expect(defaultProps.onClose).toHaveBeenCalled();
   });
 
+  it('disables confirm and cancel and shows a spinner while loading', () => {
+    const testId = 'loading-dialog';
+    render(
+      <GenericDialog {...defaultProps} data-testid={testId} confirmLoading />
+    );
+
+    expect(screen.getByTestId(`${testId}-confirm-button`)).toBeDisabled();
+    expect(screen.getByTestId(`${testId}-cancel-button`)).toBeDisabled();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+  });
+
   it('renders only confirm button when no cancelLabel is provided', () => {
     const testId = 'confirm-only-dialog';
     const propsWithoutCancel = { ...defaultProps, cancelLabel: undefined };

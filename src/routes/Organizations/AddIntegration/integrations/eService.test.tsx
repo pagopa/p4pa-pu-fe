@@ -48,11 +48,13 @@ vi.mock('@core/components/FormComponent', () => {
       ControlledRadioGroup: ({
         name,
         control,
-        options
+        options,
+        disabled
       }: {
         name: string;
         control: Control<AddIntegrationFormData>;
         options: Array<{ value: string; label: React.ReactNode }>;
+        disabled?: boolean;
       }) => {
         const { field } = useFormField(name, control);
 
@@ -66,6 +68,7 @@ vi.mock('@core/components/FormComponent', () => {
                   data-testid={`option-${option.value}`}
                   value={option.value}
                   checked={field.value === option.value}
+                  disabled={disabled}
                   onChange={() => field.onChange(option.value)}
                 />
                 {option.label}
@@ -78,12 +81,14 @@ vi.mock('@core/components/FormComponent', () => {
         name,
         control,
         label,
-        options
+        options,
+        disabled
       }: {
         name: string;
         control: Control<AddIntegrationFormData>;
         label: string;
         options: Array<{ value: string; label: string }>;
+        disabled?: boolean;
       }) => {
         const { field } = useFormField(name, control);
 
@@ -94,6 +99,7 @@ vi.mock('@core/components/FormComponent', () => {
               id={name}
               data-testid={name}
               value={String(field.value ?? '')}
+              disabled={disabled}
               onChange={(event) => field.onChange(event.target.value)}
             >
               <option value="" />
@@ -109,11 +115,13 @@ vi.mock('@core/components/FormComponent', () => {
       ControlledTextField: ({
         name,
         control,
-        label
+        label,
+        disabled
       }: {
         name: string;
         control: Control<AddIntegrationFormData>;
         label: string;
+        disabled?: boolean;
       }) => {
         const { field } = useFormField(name, control);
 
@@ -125,6 +133,7 @@ vi.mock('@core/components/FormComponent', () => {
               data-testid={name}
               name={field.name}
               value={String(field.value ?? '')}
+              disabled={disabled}
               onChange={field.onChange}
               onBlur={field.onBlur}
               ref={field.ref}
@@ -163,17 +172,36 @@ const CLIENTS = [
 const renderIntegration = ({
   clients = CLIENTS,
   subUnits = SUB_UNITS,
-  ownerType = EServiceOwnerType.ORGANIZATION
+  allSubUnits,
+  ownerType = EServiceOwnerType.ORGANIZATION,
+  editMode = false,
+  serviceSubUnitCode,
+  serviceSubUnitName
 }: {
   clients?: Array<PdndClientView>;
   subUnits?: Array<OrgAndSubUnitDTO>;
+  allSubUnits?: Array<OrgAndSubUnitDTO>;
   ownerType?: EServiceOwnerType;
+  editMode?: boolean;
+  serviceSubUnitCode?: string;
+  serviceSubUnitName?: string;
 } = {}) => {
   mockGetPdndClientsByOrgSubUnitCode.mockReturnValue({ data: clients });
 
+  const initialOwnerType =
+    editMode && serviceSubUnitCode
+      ? EServiceOwnerType.SUB_UNIT
+      : EServiceOwnerType.ORGANIZATION;
+
   const Parent = () => {
     const { control } = useForm<AddIntegrationFormData>({
-      defaultValues: { E_SERVICE: DEFAULT_ESERVICE_VALUES }
+      defaultValues: {
+        E_SERVICE: {
+          ...DEFAULT_ESERVICE_VALUES,
+          ownerType: initialOwnerType,
+          subUnitCode: serviceSubUnitCode ?? ''
+        }
+      }
     });
 
     return (
@@ -181,6 +209,10 @@ const renderIntegration = ({
         control={control}
         organizationId={33}
         orgSubUnitsWithNoServiceType={subUnits}
+        subUnits={allSubUnits}
+        editMode={editMode}
+        serviceSubUnitCode={serviceSubUnitCode}
+        serviceSubUnitName={serviceSubUnitName}
       />
     );
   };
@@ -247,5 +279,56 @@ describe('EServiceIntegration', () => {
       33,
       'SU1'
     );
+  });
+
+  it('in edit mode shows only the editable name and client ID', () => {
+    renderIntegration({ editMode: true });
+
+    expect(screen.getByTestId('option-organization')).toBeDisabled();
+    expect(screen.getByTestId('option-subUnit')).toBeDisabled();
+    expect(
+      screen.queryByTestId('E_SERVICE.subUnitCode')
+    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+
+    expect(screen.getByTestId('E_SERVICE.eServiceName')).toBeEnabled();
+    expect(screen.getByTestId('E_SERVICE.purposeId')).toBeDisabled();
+    expect(screen.getByTestId('E_SERVICE.clientId')).toBeInTheDocument();
+  });
+
+  it('in edit mode shows the current sub-unit as a disabled field', () => {
+    renderIntegration({
+      editMode: true,
+      ownerType: EServiceOwnerType.SUB_UNIT,
+      serviceSubUnitCode: 'SU9',
+      serviceSubUnitName: 'Current sub unit'
+    });
+
+    const subUnitSelect = screen.getByTestId('E_SERVICE.subUnitCode');
+    expect(subUnitSelect).toBeDisabled();
+    expect(
+      within(subUnitSelect).getByRole('option', { name: 'Current sub unit' })
+    ).toBeInTheDocument();
+    expect(screen.getByTestId('option-subUnit')).toBeChecked();
+    expect(screen.getByTestId('option-subUnit')).toBeDisabled();
+  });
+
+  it('in edit mode shows the full sub-unit list with the current one selected', () => {
+    renderIntegration({
+      editMode: true,
+      ownerType: EServiceOwnerType.SUB_UNIT,
+      serviceSubUnitCode: 'SU2',
+      serviceSubUnitName: 'Sub unit two',
+      allSubUnits: [
+        { subUnitCode: 'SU1', subUnitName: 'Sub unit one' },
+        { subUnitCode: 'SU2', subUnitName: 'Sub unit two' }
+      ] as Array<OrgAndSubUnitDTO>
+    });
+
+    const subUnitSelect = screen.getByTestId('E_SERVICE.subUnitCode');
+    expect(
+      within(subUnitSelect).getByRole('option', { name: 'Sub unit one' })
+    ).toBeInTheDocument();
+    expect(subUnitSelect).toHaveValue('SU2');
   });
 });

@@ -45,6 +45,12 @@ const service = {
 const mockMutateAsync = vi.fn();
 const onClose = vi.fn();
 const onDelete = vi.fn();
+const mockNavigate = vi.fn();
+
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: () => mockNavigate
+}));
 
 const renderDialog = (value = service) =>
   render(
@@ -79,7 +85,29 @@ describe('PdndSendServiceDialog', () => {
   it('initializes the delete mutation with the organization and purpose IDs', () => {
     renderDialog();
 
-    expect(useDeletePdndService).toHaveBeenCalledWith(33, 'purp_1');
+    expect(useDeletePdndService).toHaveBeenCalledWith(33, 'purp_1', undefined);
+  });
+
+  it('passes the sub-unit code to the delete mutation', () => {
+    renderDialog({ ...service, subUnitCode: 'SU1' });
+
+    expect(useDeletePdndService).toHaveBeenCalledWith(33, 'purp_1', 'SU1');
+  });
+
+  it('navigates to the e-service edit page with the service identifiers', () => {
+    renderDialog({ ...service, subUnitCode: 'SU1' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'commons.edit' }));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.stringContaining('purposeId=purp_1&subUnitCode=SU1')
+    );
+  });
+
+  it('disables the edit action when the purpose ID is missing', () => {
+    renderDialog({ ...service, purposeId: undefined });
+
+    expect(screen.getByRole('button', { name: 'commons.edit' })).toBeDisabled();
   });
 
   it('notifies, calls onDelete and closes after a successful delete', async () => {
@@ -138,7 +166,7 @@ describe('PdndSendServiceDialog', () => {
       purposeId: undefined
     });
 
-    expect(useDeletePdndService).toHaveBeenCalledWith(33, '');
+    expect(useDeletePdndService).toHaveBeenCalledWith(33, '', undefined);
 
     expect(
       screen.queryByText('integrations.serviceDialog.purposeId')

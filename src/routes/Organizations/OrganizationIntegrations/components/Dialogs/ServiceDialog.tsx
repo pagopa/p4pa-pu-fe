@@ -1,10 +1,14 @@
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { useTranslation } from 'react-i18next';
+import { generatePath, useNavigate } from 'react-router';
 
 import type { PdndServiceView } from '@generated/core/data-contracts';
 
 import { BaseDialog } from '@core/components/BaseDialog';
 import { useDeletePdndService } from '@core/api/integrations';
+import { PageRoutes } from '@core/routes';
+import { IntegrationType } from '@core/routes/Organizations/enums';
 import notify from '@core/utils/notify';
 import { CopiableField } from '@core/components/CopiableField';
 import { Field } from '../Containers';
@@ -29,10 +33,12 @@ export const PdndSendServiceDialog = ({
   onDelete
 }: ServiceDialogProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const deleteService = useDeletePdndService(
     organizationId,
-    service?.purposeId || ''
+    service?.purposeId || '',
+    service?.subUnitCode
   );
 
   const handleDelete = async () => {
@@ -47,6 +53,24 @@ export const PdndSendServiceDialog = ({
     }
   };
 
+  const handleEdit = () => {
+    if (!service.purposeId) return;
+
+    const searchParams = new URLSearchParams({
+      purposeId: service.purposeId
+    });
+    if (service.subUnitCode) {
+      searchParams.set('subUnitCode', service.subUnitCode);
+    }
+
+    navigate(
+      `${generatePath(PageRoutes.EDIT_INTEGRATION, {
+        organizationId: String(organizationId),
+        IntegrationType: IntegrationType.E_SERVICE
+      })}?${searchParams.toString()}`
+    );
+  };
+
   return (
     <BaseDialog
       open={open}
@@ -54,14 +78,25 @@ export const PdndSendServiceDialog = ({
       title={service.serviceType}
       description={t('integrations.dialogDescription')}
       actions={
-        <Button
-          color="error"
-          startIcon={<DeleteOutlineIcon />}
-          disabled={deleteService.isPending}
-          onClick={handleDelete}
-        >
-          {t('commons.delete')}
-        </Button>
+        <>
+          <Button
+            color="error"
+            startIcon={<DeleteOutlineIcon />}
+            disabled={deleteService.isPending}
+            onClick={handleDelete}
+          >
+            {t('commons.delete')}
+          </Button>
+          <Button
+            color="primary"
+            variant="outlined"
+            startIcon={<EditOutlinedIcon />}
+            disabled={!service.purposeId || deleteService.isPending}
+            onClick={handleEdit}
+          >
+            {t('commons.edit')}
+          </Button>
+        </>
       }
     >
       <Stack gap={2}>
