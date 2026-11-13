@@ -11,9 +11,19 @@ export const PAGOPA_KEY_TYPES = [
   OrganizationApiKeyType.GENERATE_NOTICE
 ] as const;
 
+export type PagoPAKeyType = (typeof PAGOPA_KEY_TYPES)[number];
+
 const PDND_REQUIRED_FIELDS = [
   'clientName',
   'clientId',
+  'kid',
+  'publicKey',
+  'privateKey'
+] as const;
+
+// The client id identifies the resource and cannot be changed in edit mode.
+const PDND_EDIT_REQUIRED_FIELDS = [
+  'clientName',
   'kid',
   'publicKey',
   'privateKey'
@@ -76,6 +86,11 @@ export type PagoPAFormData = NonNullable<
 export type PdndFormData = NonNullable<AddIntegrationFormData['PDND_CLIENT']>;
 export type EServiceFormData = NonNullable<AddIntegrationFormData['E_SERVICE']>;
 
+// An edit of an existing resource, waiting for the user's confirmation.
+export type PendingUpdate =
+  | { type: 'eservice'; values: EServiceFormData }
+  | { type: 'pdndClient'; values: PdndFormData };
+
 export const DEFAULT_PDND_VALUES: PdndFormData = {
   ownerType: PdndOwnerType.ORGANIZATION,
   subUnitCode: '',
@@ -86,9 +101,7 @@ export const DEFAULT_PDND_VALUES: PdndFormData = {
   privateKey: ''
 };
 
-export const isPagoPAKeyType = (
-  value: string | null
-): value is (typeof PAGOPA_KEY_TYPES)[number] =>
+export const isPagoPAKeyType = (value: string | null): value is PagoPAKeyType =>
   PAGOPA_KEY_TYPES.some((keyType) => keyType === value);
 
 const addIssue = (
@@ -96,6 +109,20 @@ const addIssue = (
   path: Array<string | number>,
   message: string
 ) => ctx.addIssue({ code: z.ZodIssueCode.custom, path, message });
+
+const validateRequiredFields = <T extends Record<string, unknown>>(
+  ctx: z.RefinementCtx,
+  section: Array<string | number>,
+  values: T | undefined,
+  fields: ReadonlyArray<keyof T & string>
+) => {
+  fields.forEach((field) => {
+    const value = values?.[field];
+    if (typeof value !== 'string' || !value.trim()) {
+      addIssue(ctx, [...section, field], 'commons.required');
+    }
+  });
+};
 
 const validatePagoPA = (
   values: AddIntegrationFormData,
@@ -118,17 +145,25 @@ const validatePagoPA = (
   }
 };
 
-const validatePdnd = (values: AddIntegrationFormData, ctx: z.RefinementCtx) => {
+const validatePdnd = (
+  values: AddIntegrationFormData,
+  ctx: z.RefinementCtx,
+  isEditMode: boolean
+) => {
   const client = values.PDND_CLIENT;
 
-  PDND_REQUIRED_FIELDS.forEach((field) => {
-    if (!client?.[field]?.trim()) {
-      addIssue(ctx, ['PDND_CLIENT', field], 'commons.required');
-    }
-  });
+  const requiredFields = isEditMode
+    ? PDND_EDIT_REQUIRED_FIELDS
+    : PDND_REQUIRED_FIELDS;
+
+  validateRequiredFields(ctx, ['PDND_CLIENT'], client, requiredFields);
 
   // The sub-unit is mandatory only when the client belongs to a sub-unit
-  if (client?.ownerType === PdndOwnerType.SUB_UNIT && !client.subUnitCode) {
+  if (
+    !isEditMode &&
+    client?.ownerType === PdndOwnerType.SUB_UNIT &&
+    !client.subUnitCode
+  ) {
     addIssue(
       ctx,
       ['PDND_CLIENT', 'subUnitCode'],
@@ -158,11 +193,7 @@ const validateEService = (
     ? ESERVICE_EDIT_REQUIRED_FIELDS
     : ESERVICE_REQUIRED_FIELDS;
 
-  requiredFields.forEach((field) => {
-    if (!eService?.[field]?.trim()) {
-      addIssue(ctx, ['E_SERVICE', field], 'commons.required');
-    }
-  });
+  validateRequiredFields(ctx, ['E_SERVICE'], eService, requiredFields);
 
   // The sub-unit is mandatory only when the eService belongs to a sub-unit
   if (
@@ -193,7 +224,7 @@ export const createAddIntegrationSchema = (
       validatePagoPA(values, ctx, noKeyAvailableToAdd);
     }
     if (values.flagIntegrationType === IntegrationType.PDND_CLIENT) {
-      validatePdnd(values, ctx);
+      validatePdnd(values, ctx, isEditMode);
     }
     if (values.flagIntegrationType === IntegrationType.E_SERVICE) {
       validateEService(values, ctx, noServiceAvailableToAdd, isEditMode);

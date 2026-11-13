@@ -93,6 +93,21 @@ export const useGetPdndServices = (organizationId: number) =>
     }
   });
 
+export const useGetPdndClient = (organizationId: number, clientId?: string) =>
+  useQuery({
+    queryKey: ['pdndClient', organizationId, clientId],
+    queryFn: clientId
+      ? async () => {
+          const { data } = await utils.apiClient.bff.getPdndClient(
+            organizationId,
+            clientId
+          );
+          parseAndLog(pdndClientNoSecretDTOSchema, data);
+          return data;
+        }
+      : skipToken
+  });
+
 export const useGetPdndService = (
   organizationId: number,
   purposeId?: string,
@@ -205,15 +220,15 @@ export const useGetPdndClients = (organizationId: number) =>
 
 export const useGetOrgSubUnitsPdndClients = (organizationId: number) =>
   useMutation({
-    mutationKey: ['useGetOrgSubUnitsPdndClients', organizationId],
-    mutationFn: async (request: GetOrgSubUnitsPdndServicesRequest) => {
+    mutationKey: ['getOrgSubUnitsPdndClients', organizationId],
+    mutationFn: async ({
+      filters,
+      pagination,
+      sort
+    }: GetOrgSubUnitsPdndServicesRequest) => {
       const { data } = await utils.apiClient.bff.getOrgSubUnitsPdndClients(
         organizationId,
-        {
-          ...request.filters,
-          ...request.pagination,
-          sort: request.sort
-        }
+        { ...filters, ...pagination, sort }
       );
       parseAndLog(pagedPdndClientViewSchema, data);
       return data;
@@ -235,6 +250,20 @@ export const useSavePdndClient = (organizationId: number) =>
       const { data: client } = await utils.apiClient.bff.savePdndClient(
         organizationId,
         data
+      );
+      return client;
+    }
+  });
+
+export const useUpdatePdndClient = (organizationId: number, clientId: string) =>
+  useMutation({
+    mutationKey: ['updatePdndClient', organizationId, clientId],
+    mutationFn: async (data: Omit<PdndClientDTO, 'clientId'>) => {
+      // The BFF exposes PDND client writes through the save (upsert) endpoint,
+      // so the immutable client id is added back to the payload here.
+      const { data: client } = await utils.apiClient.bff.savePdndClient(
+        organizationId,
+        { ...data, clientId }
       );
       return client;
     }
