@@ -16,6 +16,13 @@ vi.mock('@core/utils/clipboard', () => ({
   copyWithFeedback: vi.fn()
 }));
 
+const mockNavigate = vi.fn();
+
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: () => mockNavigate
+}));
+
 vi.mock('@core/components/BaseDialog', () => ({
   BaseDialog: ({
     open,
@@ -92,6 +99,26 @@ describe('PdndClientDialog', () => {
     renderDialog();
 
     expect(useDeletePdndClient).toHaveBeenCalledWith(33, 'client-a');
+  });
+
+  it('navigates to the client edit page preserving the sub-unit', () => {
+    render(
+      <PdndClientDialog
+        open
+        client={{ ...client, subUnitCode: 'SU1' }}
+        organizationId={33}
+        onClose={onClose}
+        onDelete={onDelete}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'commons.edit' }));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.stringContaining(
+        '/integrations/edit/pdnd-client?clientId=client-a&subUnitCode=SU1'
+      )
+    );
   });
 
   it('masks the public key by default and reveals it when toggled', () => {

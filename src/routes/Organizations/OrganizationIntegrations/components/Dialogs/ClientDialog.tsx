@@ -1,9 +1,11 @@
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ContentCopyIcon from '@mui/icons-material/ContentCopyOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined';
 import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { generatePath, useNavigate } from 'react-router';
 
 import type { PdndClientNoSecretDTO } from '@generated/core/data-contracts';
 
@@ -11,6 +13,8 @@ import { useDeletePdndClient } from '@core/api/integrations';
 import { BaseDialog } from '@core/components/BaseDialog';
 import { CopiableField } from '@core/components/CopiableField';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
+import { PageRoutes } from '@core/routes';
+import { IntegrationType } from '@core/routes/Organizations/enums';
 import { copyWithFeedback } from '@core/utils/clipboard';
 import notify from '@core/utils/notify';
 
@@ -36,6 +40,7 @@ export const PdndClientDialog = ({
   onDelete
 }: PdndClientDialogProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
 
   const copy = (value: string) => {
@@ -56,6 +61,22 @@ export const PdndClientDialog = ({
     }
   };
 
+  const handleEdit = () => {
+    const searchParams = new URLSearchParams({
+      clientId: client.clientId
+    });
+    if (client.subUnitCode) {
+      searchParams.set('subUnitCode', client.subUnitCode);
+    }
+
+    navigate(
+      `${generatePath(PageRoutes.EDIT_INTEGRATION, {
+        organizationId: String(organizationId),
+        IntegrationType: IntegrationType.PDND_CLIENT
+      })}?${searchParams.toString()}`
+    );
+  };
+
   return (
     <BaseDialog
       open={open}
@@ -63,14 +84,25 @@ export const PdndClientDialog = ({
       title={client.clientName}
       description={t('integrations.dialogDescription')}
       actions={
-        <Button
-          color="error"
-          startIcon={<DeleteOutlineIcon />}
-          disabled={deleteService.isPending}
-          onClick={handleDelete}
-        >
-          {t('commons.delete')}
-        </Button>
+        <>
+          <Button
+            color="error"
+            startIcon={<DeleteOutlineIcon />}
+            disabled={deleteService.isPending}
+            onClick={handleDelete}
+          >
+            {t('commons.delete')}
+          </Button>
+          <Button
+            color="primary"
+            variant="outlined"
+            startIcon={<EditOutlinedIcon />}
+            disabled={deleteService.isPending}
+            onClick={handleEdit}
+          >
+            {t('commons.edit')}
+          </Button>
+        </>
       }
     >
       <Stack gap={2}>

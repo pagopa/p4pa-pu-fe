@@ -11,8 +11,10 @@ import {
   useGetAllOrgSubUnits,
   useGetOrganizationApiKeys,
   useGetOrgSubUnitWithNoServiceType,
+  useGetPdndClient,
   useGetPdndService,
   useSavePdndClient,
+  useUpdatePdndClient,
   useUpdatePdndService
 } from '@core/api/integrations';
 import {
@@ -79,10 +81,14 @@ export const AddIntegration = ({
     : undefined;
   const initialServiceEnabled = searchParams.get('serviceEnabled') === 'true';
   const purposeIdByURL = searchParams.get('purposeId') ?? undefined;
+  const clientIdByURL = searchParams.get('clientId') ?? undefined;
   const subUnitCodeByURL = searchParams.get('subUnitCode') ?? undefined;
 
   const isEServiceEdit =
     isEditMode && integrationTypeByURL === IntegrationType.E_SERVICE;
+
+  const isPdndClientEdit =
+    isEditMode && integrationTypeByURL === IntegrationType.PDND_CLIENT;
 
   const { data: existingEService, isPending: isEServicePending } =
     useGetPdndService(
@@ -91,7 +97,13 @@ export const AddIntegration = ({
       subUnitCodeByURL
     );
 
+  const { data: existingClient, isPending: isClientPending } = useGetPdndClient(
+    organizationId,
+    isPdndClientEdit ? clientIdByURL : undefined
+  );
+
   const serviceSubUnitCode = existingEService?.subUnitCode ?? subUnitCodeByURL;
+  const clientSubUnitCode = existingClient?.subUnitCode ?? subUnitCodeByURL;
 
   const { data: existingApiKeys } = useGetOrganizationApiKeys(
     organizationId,
@@ -113,6 +125,10 @@ export const AddIntegration = ({
 
   const savePagoPAMutation = encryptAndSaveApiKey(organizationId);
   const saveClientMutation = useSavePdndClient(organizationId);
+  const updateClientMutation = useUpdatePdndClient(
+    organizationId,
+    clientIdByURL ?? ''
+  );
   const createPdndServiceMutation = useCreatePdndService(organizationId);
   const updatePdndServiceMutation = useUpdatePdndService(
     organizationId,
@@ -122,6 +138,8 @@ export const AddIntegration = ({
 
   const [eserviceToUpdate, setEServiceToUpdate] =
     useState<EServiceFormData | null>(null);
+  const [pdndClientToUpdate, setPdndClientToUpdate] =
+    useState<PdndFormData | null>(null);
 
   const noKeyAvailableToAdd = isAddMode && availableApiKeys.length === 0;
 
@@ -166,7 +184,25 @@ export const AddIntegration = ({
           clientId: existingEService.clientId ?? ''
         })
       },
-      PDND_CLIENT: DEFAULT_PDND_VALUES
+      PDND_CLIENT: {
+        ...DEFAULT_PDND_VALUES,
+        // In edit mode the owner and the sub-unit are read-only and come from
+        // the loaded client (or from the URL).
+        ...(isPdndClientEdit && {
+          ownerType: clientSubUnitCode
+            ? PdndOwnerType.SUB_UNIT
+            : PdndOwnerType.ORGANIZATION,
+          subUnitCode: clientSubUnitCode ?? '',
+          clientId: clientIdByURL ?? '',
+          // The changeable fields start from the loaded client. The private
+          // key is never returned by the API, so it must be entered again.
+          ...(existingClient && {
+            clientName: existingClient.clientName,
+            kid: existingClient.kid,
+            publicKey: existingClient.publicKey
+          })
+        })
+      }
     }),
     [
       integrationTypeByURL,
@@ -175,7 +211,11 @@ export const AddIntegration = ({
       organizationApiKey?.apiKey,
       purposeIdByURL,
       serviceSubUnitCode,
-      existingEService
+      existingEService,
+      isPdndClientEdit,
+      clientIdByURL,
+      clientSubUnitCode,
+      existingClient
     ]
   );
 
@@ -197,10 +237,11 @@ export const AddIntegration = ({
   const pdndOwnerType = watch('PDND_CLIENT.ownerType');
 
   // Sub-units are needed when the PDND client belongs to a sub-unit and, in
-  // edit mode, to show the full sub-unit list of an e-service.
+  // edit mode, to show the full sub-unit list of an e-service or client.
   const { data: subUnits } = useGetAllOrgSubUnits(
     organizationId,
     isEServiceEdit ||
+      isPdndClientEdit ||
       (flagIntegrationType === IntegrationType.PDND_CLIENT &&
         pdndOwnerType === PdndOwnerType.SUB_UNIT)
   );
@@ -233,6 +274,27 @@ export const AddIntegration = ({
       throw new Error('Missing data for PDND client');
     }
 
+    const subUnitCode =
+      values?.ownerType === PdndOwnerType.SUB_UNIT
+        ? values.subUnitCode
+        : undefined;
+
+    if (isPdndClientEdit) {
+      if (!clientIdByURL) {
+        throw new Error('Missing client ID for PDND client update');
+      }
+      await updateClientMutation.mutateAsync({
+        organizationId,
+        clientName,
+        kid,
+        publicKey,
+        privateKey,
+        // Keep the client associated with its sub-unit, if any.
+        ...(subUnitCode && { subUnitCode })
+      });
+      return;
+    }
+
     await saveClientMutation.mutateAsync({
       organizationId,
       clientName,
@@ -241,9 +303,7 @@ export const AddIntegration = ({
       publicKey,
       privateKey,
       // subUnitCode is sent only when the client belongs to a sub-unit
-      ...(values?.ownerType === PdndOwnerType.SUB_UNIT && {
-        subUnitCode: values.subUnitCode
-      })
+      ...(subUnitCode && { subUnitCode })
     });
   };
 
@@ -292,6 +352,10 @@ export const AddIntegration = ({
           await submitPagoPA(formData.PAGOPA_PRODUCT);
           break;
         case IntegrationType.PDND_CLIENT:
+          if (isPdndClientEdit) {
+            setPdndClientToUpdate(formData.PDND_CLIENT ?? null);
+            return;
+          }
           await submitPdnd(formData.PDND_CLIENT);
           break;
         case IntegrationType.E_SERVICE:
@@ -322,6 +386,19 @@ export const AddIntegration = ({
       console.error(error);
     } finally {
       setEServiceToUpdate(null);
+    }
+  };
+
+  const onConfirmPdndClientUpdate = async () => {
+    try {
+      await submitPdnd(pdndClientToUpdate ?? undefined);
+      utils.notify.emit(t('commons.done'), 'success');
+      navigate(-1);
+    } catch (error) {
+      utils.notify.emit(t('integrations.add.errors.saveIntegration.message'));
+      console.error(error);
+    } finally {
+      setPdndClientToUpdate(null);
     }
   };
 
@@ -377,6 +454,7 @@ export const AddIntegration = ({
           control={control}
           organizationName={String(organizationId)}
           subUnits={subUnits?.content}
+          editMode={isPdndClientEdit}
         />
       )}
 
@@ -397,7 +475,10 @@ export const AddIntegration = ({
         onNext={handleSubmit(onSubmit, onInvalidSubmit)}
         nextLabel={t('commons.confirm')}
         backLabel={t('commons.cancel')}
-        disableNext={isEServiceEdit && isEServicePending}
+        disableNext={
+          (isEServiceEdit && isEServicePending) ||
+          (isPdndClientEdit && isClientPending)
+        }
       />
 
       {eserviceToUpdate && (
@@ -413,6 +494,24 @@ export const AddIntegration = ({
           onClose={() => {
             if (!updatePdndServiceMutation.isPending) {
               setEServiceToUpdate(null);
+            }
+          }}
+        />
+      )}
+
+      {pdndClientToUpdate && (
+        <GenericDialog
+          open
+          data-testid="confirm-pdnd-client-update-dialog"
+          title={t('integrations.edit.confirmDialog.title')}
+          message={t('integrations.edit.confirmDialog.message')}
+          confirmLabel={t('commons.confirm')}
+          cancelLabel={t('commons.cancel')}
+          confirmLoading={updateClientMutation.isPending}
+          onConfirm={onConfirmPdndClientUpdate}
+          onClose={() => {
+            if (!updateClientMutation.isPending) {
+              setPdndClientToUpdate(null);
             }
           }}
         />

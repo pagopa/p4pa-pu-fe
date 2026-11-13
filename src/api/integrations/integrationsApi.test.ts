@@ -29,11 +29,13 @@ import {
   useGetOrgSubUnitsPdndServices,
   useGetOrganizationApiKey,
   useGetOrganizationApiKeys,
+  useGetPdndClient,
   useGetPdndClients,
   useGetPdndClientsByOrgSubUnitCode,
   useGetPdndService,
   useGetPdndServices,
   useSavePdndClient,
+  useUpdatePdndClient,
   useUpdatePdndService
 } from '.';
 import { renderHook, waitFor } from '@core/__tests__/renderers';
@@ -294,6 +296,59 @@ describe('savePdndClient', () => {
 
     expect(apiMock).toHaveBeenCalledWith(organizationId, request);
     expect(savedClient).toEqual(response);
+  });
+});
+
+describe('getPdndClient', () => {
+  it('does not fetch when the client id is missing', () => {
+    const apiMock = vi.spyOn(utils.apiClient.bff, 'getPdndClient');
+    const { result } = renderHook(() => useGetPdndClient(organizationId));
+
+    expect(result.current.fetchStatus).toBe('idle');
+    expect(apiMock).not.toHaveBeenCalled();
+  });
+
+  it('returns the client detail', async () => {
+    const dataMock = createMock(pdndClientNoSecretDTOSchema);
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getPdndClient')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      useGetPdndClient(organizationId, 'client-1')
+    );
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(organizationId, 'client-1');
+      expect(result.current.data).toEqual(dataMock);
+    });
+  });
+});
+
+describe('useUpdatePdndClient', () => {
+  it('saves the client keeping the immutable client id', async () => {
+    const request = {
+      organizationId,
+      clientName: 'Updated client',
+      kid: 'key-1',
+      publicKey: 'public-key',
+      privateKey: 'private-key'
+    };
+    const response = createMock(pdndClientNoSecretDTOSchema);
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'savePdndClient')
+      .mockResolvedValue({ data: response } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      useUpdatePdndClient(organizationId, 'client-1')
+    );
+    const updatedClient = await result.current.mutateAsync(request);
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, {
+      ...request,
+      clientId: 'client-1'
+    });
+    expect(updatedClient).toEqual(response);
   });
 });
 

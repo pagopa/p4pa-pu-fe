@@ -20,6 +20,7 @@ type PdndClientIntegrationProps = {
   organizationName: string;
   // undefined while the sub-units are not loaded
   subUnits?: Array<OrgSubUnit>;
+  editMode?: boolean;
 };
 
 const GENERAL_INFO_FIELDS = ['clientName', 'clientId', 'kid'] as const;
@@ -51,12 +52,24 @@ const FieldGroup = ({
 export const PdndClientIntegration = ({
   control,
   organizationName,
-  subUnits
+  subUnits,
+  editMode = false
 }: PdndClientIntegrationProps) => {
   const { t } = useTranslation();
   const ownerType = useWatch({ control, name: 'PDND_CLIENT.ownerType' });
   const isSubUnitOwner = ownerType === PdndOwnerType.SUB_UNIT;
   const hasNoSubUnits = isSubUnitOwner && subUnits?.length === 0;
+
+  const ownerOptions = [
+    {
+      value: PdndOwnerType.ORGANIZATION,
+      label: t('integrations.add.pdndClient.owner.organization')
+    },
+    {
+      value: PdndOwnerType.SUB_UNIT,
+      label: t('integrations.add.pdndClient.owner.subUnit')
+    }
+  ];
 
   return (
     <>
@@ -72,16 +85,8 @@ export const PdndClientIntegration = ({
           row
           sx={{ gap: 3 }}
           showErrorMessage={false}
-          options={[
-            {
-              value: PdndOwnerType.ORGANIZATION,
-              label: t('integrations.add.pdndClient.owner.organization')
-            },
-            {
-              value: PdndOwnerType.SUB_UNIT,
-              label: t('integrations.add.pdndClient.owner.subUnit')
-            }
-          ]}
+          disabled={editMode}
+          options={ownerOptions}
         />
 
         {isSubUnitOwner && (
@@ -107,6 +112,7 @@ export const PdndClientIntegration = ({
                     label: subUnitName
                   })
                 )}
+                disabled={editMode}
                 required
               />
             )}
@@ -128,6 +134,9 @@ export const PdndClientIntegration = ({
                   name={`PDND_CLIENT.${name}`}
                   control={control}
                   label={t(`integrations.add.pdndClient.fields.${name}`)}
+                  // The client id identifies the resource and is read-only
+                  // while editing an existing client.
+                  disabled={editMode && name === 'clientId'}
                   required
                 />
               ))}

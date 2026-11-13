@@ -19,6 +19,14 @@ const PDND_REQUIRED_FIELDS = [
   'privateKey'
 ] as const;
 
+// The client id identifies the resource and cannot be changed in edit mode.
+const PDND_EDIT_REQUIRED_FIELDS = [
+  'clientName',
+  'kid',
+  'publicKey',
+  'privateKey'
+] as const;
+
 const ESERVICE_REQUIRED_FIELDS = [
   'eServiceName',
   'purposeId',
@@ -118,17 +126,29 @@ const validatePagoPA = (
   }
 };
 
-const validatePdnd = (values: AddIntegrationFormData, ctx: z.RefinementCtx) => {
+const validatePdnd = (
+  values: AddIntegrationFormData,
+  ctx: z.RefinementCtx,
+  isEditMode: boolean
+) => {
   const client = values.PDND_CLIENT;
 
-  PDND_REQUIRED_FIELDS.forEach((field) => {
+  const requiredFields = isEditMode
+    ? PDND_EDIT_REQUIRED_FIELDS
+    : PDND_REQUIRED_FIELDS;
+
+  requiredFields.forEach((field) => {
     if (!client?.[field]?.trim()) {
       addIssue(ctx, ['PDND_CLIENT', field], 'commons.required');
     }
   });
 
   // The sub-unit is mandatory only when the client belongs to a sub-unit
-  if (client?.ownerType === PdndOwnerType.SUB_UNIT && !client.subUnitCode) {
+  if (
+    !isEditMode &&
+    client?.ownerType === PdndOwnerType.SUB_UNIT &&
+    !client.subUnitCode
+  ) {
     addIssue(
       ctx,
       ['PDND_CLIENT', 'subUnitCode'],
@@ -193,7 +213,7 @@ export const createAddIntegrationSchema = (
       validatePagoPA(values, ctx, noKeyAvailableToAdd);
     }
     if (values.flagIntegrationType === IntegrationType.PDND_CLIENT) {
-      validatePdnd(values, ctx);
+      validatePdnd(values, ctx, isEditMode);
     }
     if (values.flagIntegrationType === IntegrationType.E_SERVICE) {
       validateEService(values, ctx, noServiceAvailableToAdd, isEditMode);

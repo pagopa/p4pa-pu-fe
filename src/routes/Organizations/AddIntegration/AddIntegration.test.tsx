@@ -23,6 +23,7 @@ import {
 } from '@generated/core/client';
 import type {
   PdndClientDTO,
+  PdndClientNoSecretDTO,
   PdndClientView
 } from '@generated/core/data-contracts';
 import { IntegrationMode, IntegrationType, PdndOwnerType } from '../enums';
@@ -42,11 +43,14 @@ const {
   mockGetAllOrgSubUnits,
   mockGetOrgSubUnitWithNoServiceType,
   mockGetPdndClientsByOrgSubUnitCode,
+  mockGetPdndClient,
   mockGetPdndService,
   mockSavePdndClient,
   mockSavePdndMutateAsync,
   mockCreatePdndService,
   mockCreatePdndServiceMutateAsync,
+  mockUpdatePdndClient,
+  mockUpdatePdndClientMutateAsync,
   mockUpdatePdndService,
   mockUpdatePdndServiceMutateAsync,
   mockNavigate
@@ -71,11 +75,14 @@ const {
     >(),
   mockGetOrgSubUnitWithNoServiceType: vi.fn(),
   mockGetPdndClientsByOrgSubUnitCode: vi.fn(),
+  mockGetPdndClient: vi.fn(),
   mockGetPdndService: vi.fn(),
   mockSavePdndClient: vi.fn(),
   mockSavePdndMutateAsync: vi.fn<(data: PdndClientDTO) => Promise<void>>(),
   mockCreatePdndService: vi.fn(),
   mockCreatePdndServiceMutateAsync: vi.fn(),
+  mockUpdatePdndClient: vi.fn(),
+  mockUpdatePdndClientMutateAsync: vi.fn(),
   mockUpdatePdndService: vi.fn(),
   mockUpdatePdndServiceMutateAsync: vi.fn(),
   mockNavigate: vi.fn()
@@ -86,9 +93,11 @@ vi.mock('@core/api/integrations', () => ({
   useGetAllOrgSubUnits: mockGetAllOrgSubUnits,
   useGetOrgSubUnitWithNoServiceType: mockGetOrgSubUnitWithNoServiceType,
   useGetPdndClientsByOrgSubUnitCode: mockGetPdndClientsByOrgSubUnitCode,
+  useGetPdndClient: mockGetPdndClient,
   useGetPdndService: mockGetPdndService,
   useSavePdndClient: mockSavePdndClient,
   useCreatePdndService: mockCreatePdndService,
+  useUpdatePdndClient: mockUpdatePdndClient,
   useUpdatePdndService: mockUpdatePdndService
 }));
 
@@ -407,6 +416,7 @@ describe('AddIntegration', () => {
       data: []
     });
     mockGetPdndService.mockReturnValue({ data: undefined });
+    mockGetPdndClient.mockReturnValue({ data: undefined });
     mockSavePdndClient.mockReturnValue({
       mutateAsync: mockSavePdndMutateAsync
     });
@@ -415,6 +425,10 @@ describe('AddIntegration', () => {
       mutateAsync: mockCreatePdndServiceMutateAsync
     });
     mockCreatePdndServiceMutateAsync.mockResolvedValue(undefined);
+    mockUpdatePdndClient.mockReturnValue({
+      mutateAsync: mockUpdatePdndClientMutateAsync
+    });
+    mockUpdatePdndClientMutateAsync.mockResolvedValue(undefined);
     mockUpdatePdndService.mockReturnValue({
       mutateAsync: mockUpdatePdndServiceMutateAsync
     });
@@ -1043,6 +1057,240 @@ describe('AddIntegration', () => {
         screen.queryByTestId('confirm-eservice-update-dialog')
       ).not.toBeInTheDocument();
       expect(mockUpdatePdndServiceMutateAsync).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('PDND client edit', () => {
+    const EXISTING_CLIENT = {
+      clientId: 'client-1',
+      organizationId: 33,
+      clientName: 'Client one',
+      kid: 'kid-1',
+      publicKey: 'public-key'
+    } as PdndClientNoSecretDTO;
+
+    const renderEdit = () => {
+      vi.mocked(useParams).mockReturnValue({
+        organizationId: '33',
+        IntegrationType: IntegrationType.PDND_CLIENT
+      });
+      mockGetPdndClient.mockReturnValue({
+        data: EXISTING_CLIENT,
+        isPending: false
+      });
+
+      return render(
+        <AddIntegration mode={IntegrationMode.EDIT} />,
+        '/?clientId=client-1'
+      );
+    };
+
+    it('prefills the client and makes only the client ID read-only', async () => {
+      renderEdit();
+
+      await waitFor(() => {
+        expect(screen.getByTestId('PDND_CLIENT.clientName')).toHaveValue(
+          'Client one'
+        );
+      });
+      expect(screen.getByTestId('PDND_CLIENT.clientId')).toHaveValue(
+        'client-1'
+      );
+      expect(screen.getByTestId('PDND_CLIENT.clientId')).toBeDisabled();
+      expect(screen.getByTestId('PDND_CLIENT.kid')).toHaveValue('kid-1');
+      expect(screen.getByTestId('PDND_CLIENT.kid')).not.toBeDisabled();
+      expect(screen.getByTestId('PDND_CLIENT.publicKey')).toHaveValue(
+        'public-key'
+      );
+      expect(screen.getByTestId('PDND_CLIENT.publicKey')).not.toBeDisabled();
+      expect(screen.getByTestId('PDND_CLIENT.privateKey')).toHaveValue('');
+      expect(screen.getByTestId('option-organization')).toBeChecked();
+      expect(screen.getByTestId('option-organization')).toBeDisabled();
+      expect(mockGetPdndClient).toHaveBeenCalledWith(33, 'client-1');
+    });
+
+    it('disables the confirm button while the client is loading', () => {
+      vi.mocked(useParams).mockReturnValue({
+        organizationId: '33',
+        IntegrationType: IntegrationType.PDND_CLIENT
+      });
+      mockGetPdndClient.mockReturnValue({
+        data: undefined,
+        isPending: true
+      });
+
+      render(
+        <AddIntegration mode={IntegrationMode.EDIT} />,
+        '/?clientId=client-1'
+      );
+
+      expect(screen.getByTestId('next-button')).toBeDisabled();
+    });
+
+    it('keeps the sub-unit of a sub-unit client and disables its owner selection', async () => {
+      vi.mocked(useParams).mockReturnValue({
+        organizationId: '33',
+        IntegrationType: IntegrationType.PDND_CLIENT
+      });
+      mockGetPdndClient.mockReturnValue({
+        data: { ...EXISTING_CLIENT, subUnitCode: 'SU1' },
+        isPending: false
+      });
+
+      render(
+        <AddIntegration mode={IntegrationMode.EDIT} />,
+        '/?clientId=client-1&subUnitCode=SU1'
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('PDND_CLIENT.clientName')).toHaveValue(
+          'Client one'
+        );
+      });
+      expect(screen.getByTestId('option-subUnit')).toBeChecked();
+      expect(screen.getByTestId('option-subUnit')).toBeDisabled();
+      expect(screen.getByTestId('PDND_CLIENT.subUnitCode')).toBeDisabled();
+      expect(mockUpdatePdndClient).toHaveBeenCalledWith(33, 'client-1');
+    });
+
+    it('asks for confirmation before updating the client', async () => {
+      renderEdit();
+      await waitFor(() => {
+        expect(screen.getByTestId('PDND_CLIENT.clientName')).toHaveValue(
+          'Client one'
+        );
+      });
+
+      fireEvent.change(screen.getByTestId('PDND_CLIENT.clientName'), {
+        target: { value: 'Updated client' }
+      });
+      fireEvent.change(screen.getByTestId('PDND_CLIENT.privateKey'), {
+        target: { value: 'new-private-key' }
+      });
+      fireEvent.click(screen.getByTestId('next-button'));
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('confirm-pdnd-client-update-dialog')
+        ).toBeInTheDocument();
+      });
+      expect(mockUpdatePdndClientMutateAsync).not.toHaveBeenCalled();
+      expect(mockNavigate).not.toHaveBeenCalled();
+
+      fireEvent.click(
+        screen.getByTestId('confirm-pdnd-client-update-dialog-confirm-button')
+      );
+
+      await waitFor(() => {
+        expect(mockUpdatePdndClientMutateAsync).toHaveBeenCalledExactlyOnceWith(
+          {
+            organizationId: 33,
+            clientName: 'Updated client',
+            kid: 'kid-1',
+            publicKey: 'public-key',
+            privateKey: 'new-private-key'
+          }
+        );
+      });
+      expect(mockNavigate).toHaveBeenCalledWith(-1);
+      expect(utils.notify.emit).toHaveBeenCalledWith('commons.done', 'success');
+    });
+
+    it('does not update the client when the confirmation is cancelled', async () => {
+      renderEdit();
+      await waitFor(() => {
+        expect(screen.getByTestId('PDND_CLIENT.clientName')).toHaveValue(
+          'Client one'
+        );
+      });
+
+      fireEvent.change(screen.getByTestId('PDND_CLIENT.privateKey'), {
+        target: { value: 'new-private-key' }
+      });
+      fireEvent.click(screen.getByTestId('next-button'));
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('confirm-pdnd-client-update-dialog')
+        ).toBeInTheDocument();
+      });
+
+      fireEvent.click(
+        screen.getByTestId('confirm-pdnd-client-update-dialog-cancel-button')
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId('confirm-pdnd-client-update-dialog')
+        ).not.toBeInTheDocument();
+      });
+      expect(mockUpdatePdndClientMutateAsync).not.toHaveBeenCalled();
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it('notifies when the update fails without navigating away', async () => {
+      mockUpdatePdndClientMutateAsync.mockRejectedValueOnce(
+        new Error('Update failed')
+      );
+      const consoleSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined);
+
+      renderEdit();
+      await waitFor(() => {
+        expect(screen.getByTestId('PDND_CLIENT.clientName')).toHaveValue(
+          'Client one'
+        );
+      });
+
+      fireEvent.change(screen.getByTestId('PDND_CLIENT.privateKey'), {
+        target: { value: 'new-private-key' }
+      });
+      fireEvent.click(screen.getByTestId('next-button'));
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('confirm-pdnd-client-update-dialog')
+        ).toBeInTheDocument();
+      });
+      fireEvent.click(
+        screen.getByTestId('confirm-pdnd-client-update-dialog-confirm-button')
+      );
+
+      await waitFor(() => {
+        expect(utils.notify.emit).toHaveBeenCalledWith(
+          'integrations.add.errors.saveIntegration.message'
+        );
+      });
+      expect(consoleSpy).toHaveBeenCalled();
+      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(utils.notify.emit).not.toHaveBeenCalledWith(
+        'commons.done',
+        'success'
+      );
+      expect(
+        screen.queryByTestId('confirm-pdnd-client-update-dialog')
+      ).not.toBeInTheDocument();
+    });
+
+    it('does not ask for confirmation when a required field is empty', async () => {
+      renderEdit();
+      await waitFor(() => {
+        expect(screen.getByTestId('PDND_CLIENT.clientName')).toHaveValue(
+          'Client one'
+        );
+      });
+
+      // The private key is never loaded, so it must be entered to save.
+      fireEvent.click(screen.getByTestId('next-button'));
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('PDND_CLIENT.privateKey-error')
+        ).toHaveTextContent('commons.required');
+      });
+      expect(
+        screen.queryByTestId('confirm-pdnd-client-update-dialog')
+      ).not.toBeInTheDocument();
+      expect(mockUpdatePdndClientMutateAsync).not.toHaveBeenCalled();
     });
   });
 });
