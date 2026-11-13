@@ -220,15 +220,15 @@ export const useGetPdndClients = (organizationId: number) =>
 
 export const useGetOrgSubUnitsPdndClients = (organizationId: number) =>
   useMutation({
-    mutationKey: ['useGetOrgSubUnitsPdndClients', organizationId],
-    mutationFn: async (request: GetOrgSubUnitsPdndServicesRequest) => {
+    mutationKey: ['getOrgSubUnitsPdndClients', organizationId],
+    mutationFn: async ({
+      filters,
+      pagination,
+      sort
+    }: GetOrgSubUnitsPdndServicesRequest) => {
       const { data } = await utils.apiClient.bff.getOrgSubUnitsPdndClients(
         organizationId,
-        {
-          ...request.filters,
-          ...request.pagination,
-          sort: request.sort
-        }
+        { ...filters, ...pagination, sort }
       );
       parseAndLog(pagedPdndClientViewSchema, data);
       return data;

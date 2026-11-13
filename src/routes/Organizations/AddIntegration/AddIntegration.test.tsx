@@ -1030,6 +1030,23 @@ describe('AddIntegration', () => {
         'commons.done',
         'success'
       );
+      // The dialog stays open so the user can retry the update.
+      expect(
+        screen.getByTestId('confirm-eservice-update-dialog')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByTestId('confirm-eservice-update-dialog-confirm-button')
+      ).toBeEnabled();
+
+      // Retrying from the still-open dialog saves the update.
+      fireEvent.click(
+        screen.getByTestId('confirm-eservice-update-dialog-confirm-button')
+      );
+
+      await waitFor(() => {
+        expect(mockUpdatePdndServiceMutateAsync).toHaveBeenCalledTimes(2);
+      });
+      expect(mockNavigate).toHaveBeenCalledWith(-1);
       expect(
         screen.queryByTestId('confirm-eservice-update-dialog')
       ).not.toBeInTheDocument();
@@ -1266,9 +1283,13 @@ describe('AddIntegration', () => {
         'commons.done',
         'success'
       );
+      // The dialog stays open so the user can retry the update.
       expect(
-        screen.queryByTestId('confirm-pdnd-client-update-dialog')
-      ).not.toBeInTheDocument();
+        screen.getByTestId('confirm-pdnd-client-update-dialog')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByTestId('confirm-pdnd-client-update-dialog-confirm-button')
+      ).toBeEnabled();
     });
 
     it('does not ask for confirmation when a required field is empty', async () => {

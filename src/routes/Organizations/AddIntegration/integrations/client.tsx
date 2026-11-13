@@ -1,8 +1,5 @@
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { useId } from 'react';
-import type { ReactNode } from 'react';
 import type { Control } from 'react-hook-form';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -10,10 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { FormComponent } from '@core/components/FormComponent';
 import WizardStepWrapper from '@core/components/Wizard/WizardStepWrapper';
 import type { OrgSubUnit } from '@generated/core/data-contracts';
+import { MIAlert } from '@pagopa/mui-italia/components/MIAlert';
 
 import { PdndOwnerType } from '../../enums';
 import type { AddIntegrationFormData } from '../AddIntegrationSchema';
-import { MIAlert } from '@pagopa/mui-italia/components/MIAlert';
+import { FieldGroup } from '../components/FieldGroup';
 
 type PdndClientIntegrationProps = {
   control: Control<AddIntegrationFormData>;
@@ -25,29 +23,6 @@ type PdndClientIntegrationProps = {
 
 const GENERAL_INFO_FIELDS = ['clientName', 'clientId', 'kid'] as const;
 const CRYPTO_FIELDS = ['publicKey', 'privateKey'] as const;
-
-const FieldGroup = ({
-  title,
-  children
-}: {
-  title: string;
-  children: ReactNode;
-}) => {
-  const titleId = useId();
-
-  return (
-    <Box
-      role="group"
-      aria-labelledby={titleId}
-      sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 2 }}
-    >
-      <Typography id={titleId} variant="subtitle2" mb={2}>
-        {title}
-      </Typography>
-      <Stack spacing={2}>{children}</Stack>
-    </Box>
-  );
-};
 
 export const PdndClientIntegration = ({
   control,
