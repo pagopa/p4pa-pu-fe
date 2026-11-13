@@ -8,7 +8,6 @@ import Stack from '@mui/material/Stack';
 
 type ServiceDialogProps = {
   service: PdndServiceView;
-  organizationId: number;
   open: boolean;
   onClose: () => void;
 };

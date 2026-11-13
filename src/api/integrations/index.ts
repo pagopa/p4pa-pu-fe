@@ -38,15 +38,15 @@ export const useGetOrganizationApiKeys = (
 
 export const useGetOrganizationApiKey = (
   organizationId: number,
-  keyType: OrganizationApiKeyType,
+  organizationApiKeyType: OrganizationApiKeyType,
   query?: { subUnitCode?: string }
 ) =>
   useQuery({
-    queryKey: ['organizationApiKey', organizationId, keyType],
+    queryKey: ['organizationApiKey', organizationId, organizationApiKeyType],
     queryFn: async () => {
       const { data } = await utils.apiClient.bff.getOrganizationApiKey(
         organizationId,
-        keyType,
+        organizationApiKeyType,
         query
       );
       parseAndLog(organizationApiKeySchema, data);
@@ -56,15 +56,13 @@ export const useGetOrganizationApiKey = (
 
 export const useDeleteOrganizationApiKey = (
   organizationId: number,
-  keyType: OrganizationApiKeyType,
-  query?: { subUnitCode?: string }
 ) =>
   useMutation({
-    mutationKey: ['deleteOrganizationApiKey', organizationId, keyType],
-    mutationFn: async () => {
+    mutationKey: ['deleteOrganizationApiKey', organizationId],
+    mutationFn: async ({ organizationApiKeyType, query }: { organizationApiKeyType: OrganizationApiKeyType; query?: { subUnitCode?: string } }) => {
       await utils.apiClient.bff.deleteOrganizationApiKey(
         organizationId,
-        keyType,
+        organizationApiKeyType,
         query
       );
     }
@@ -111,7 +109,7 @@ export const useDeletePdndService = (
 ) =>
   useMutation({
     mutationKey: ['deletePdndService', organizationId],
-    mutationFn: async (purposeId: string) => {
+    mutationFn: async ({purposeId}: {purposeId: string}) => {
       await utils.apiClient.bff.deletePdndService(organizationId, purposeId);
     }
   });

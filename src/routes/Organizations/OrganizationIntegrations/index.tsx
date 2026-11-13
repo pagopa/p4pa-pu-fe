@@ -39,16 +39,16 @@ export const OrganizationIntegrations = () => {
 
   const { data: organization } = getOrganizationDetail(organizationId);
 
-  const { data: apiKeys = [], ...organizationApiKeys } =
+  const { data: organizationApiKeys = [], refetch: organizationApiKeysRefetch } =
     useGetOrganizationApiKeys(organizationId);
 
-  const { data: services = [], ...pdndServices } =
+  const { data: services = [], refetch: pdndServicesRefetch } =
     useGetPdndServices(organizationId);
 
-  const { data: clients = [], ...pdndClients } =
+  const { data: clients = [], refetch: pdndClientsRefetch } =
     useGetPdndClients(organizationId);
 
-  const isEmpty = apiKeys.length + services.length + clients.length === 0;
+  const isEmpty = organizationApiKeys.length + services.length + clients.length === 0;
 
   const orgName = organization?.orgName;
 
@@ -125,19 +125,19 @@ export const OrganizationIntegrations = () => {
           {tab === 0 && !isEmpty && (
             <Stack gap={5}>
               <ApiKeysSection
-                apiKeys={apiKeys}
+                organizationApiKeys={organizationApiKeys}
                 organizationId={organizationId}
-                onDelete={organizationApiKeys.refetch}
+                onDelete={organizationApiKeysRefetch}
               />
               <ServicesSection
                 services={services}
                 organizationId={organizationId}
-                onDelete={pdndServices.refetch}
+                onDelete={pdndServicesRefetch}
               />
               <ClientsSection
                 clients={clients}
                 organizationId={organizationId}
-                onDelete={pdndClients.refetch}
+                onDelete={pdndClientsRefetch}
               />
             </Stack>
           )}

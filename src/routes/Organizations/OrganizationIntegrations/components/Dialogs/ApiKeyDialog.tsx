@@ -1,136 +1,58 @@
 import ContentCopyIcon from '@mui/icons-material/ContentCopyOutlined';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined';
 import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { OrganizationApiKey } from '@generated/core/data-contracts';
-import { OrganizationApiKeyType } from '@generated/core/data-contracts';
 
-import {
-  useDeleteOrganizationApiKey,
-  useGetOrganizationApiKey
-} from '@core/api/integrations';
 import { BaseDialog } from '@core/components/BaseDialog';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
-import notify from '@core/utils/notify';
+
 import { KeyTypeEnum } from '@generated/core/client';
-import { generatePath, useNavigate } from 'react-router';
-import { PageRoutes } from '@core/routes';
-import { IntegrationType } from '@core/routes/Organizations/enums';
 import { copyWithFeedback } from '@core/utils/clipboard';
 
-import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { OrganizationApiKey } from '@generated/core/data-contracts';
+import { useGetOrganizationApiKey } from '@core/api/integrations';
 
 type ApiKeyDialogProps = {
-  apiKey: OrganizationApiKey;
+  organizationApiKey: OrganizationApiKey;
   organizationId: number;
   open: boolean;
   onClose: () => void;
-  onDelete: () => void;
 };
 
 export const ApiKeyDialog = ({
-  apiKey,
+  organizationApiKey,
   organizationId,
   open,
   onClose,
-  onDelete
 }: ApiKeyDialogProps) => {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
-
-  const { data: organizationApiKey, isSuccess } = useGetOrganizationApiKey(
-    organizationId,
-    apiKey.keyType
-  );
-
-  useEffect(() => {
-    if (!organizationApiKey?.apiKey && isSuccess) {
-      setIsVisible(false);
-      notify.emit(t('errors.generic'));
-    }
-  }, [open]);
-
-  const deleteApiKey = useDeleteOrganizationApiKey(
-    organizationId,
-    apiKey.keyType
-  );
-  const parsedApiKey = String(organizationApiKey?.apiKey);
-
+  
   const copy = (value: string) => {
     copyWithFeedback(value, t('commons.copied'));
   };
 
-  const handleDelete = async () => {
-    try {
-      await deleteApiKey.mutateAsync();
-      notify.emit(t('commons.done'), 'success');
-      onDelete();
-    } catch {
-      notify.emit(t('errors.generic'));
-    } finally {
-      onClose();
-    }
-  };
+  const { data: { apiKey = '' } = {} } = useGetOrganizationApiKey(
+    organizationId,
+    organizationApiKey.keyType
+  );
 
-  const navigate = useNavigate();
-
-  const handleEdit = () => {
-    const searchParams = new URLSearchParams({
-      keyType: apiKey.keyType
-    });
-
-    if (
-      apiKey.keyType === OrganizationApiKeyType.IO &&
-      organizationApiKey?.serviceEnabled !== undefined
-    ) {
-      searchParams.set(
-        'serviceEnabled',
-        String(organizationApiKey.serviceEnabled)
-      );
-    }
-    navigate(
-      `${generatePath(PageRoutes.EDIT_INTEGRATION, {
-        organizationId: String(organizationId),
-        IntegrationType: IntegrationType.PAGOPA_PRODUCT
-      })}?${searchParams.toString()}`
-    );
-  };
+  const parsedApiKey = String(apiKey);
 
   return (
     <BaseDialog
       open={open}
       onClose={onClose}
-      title={t(`integrations.keyTypes.${apiKey.keyType}`)}
+      title={t(`integrations.keyTypes.${organizationApiKey.keyType}`)}
       description={t('integrations.dialogDescription')}
-      actions={
-        <>
-          <Button
-            color="error"
-            startIcon={<DeleteOutlineIcon />}
-            disabled={deleteApiKey.isPending}
-            onClick={handleDelete}
-          >
-            {t('commons.delete')}
-          </Button>
-          <Button
-            color="primary"
-            variant="outlined"
-            disabled={deleteApiKey.isPending}
-            onClick={handleEdit}
-          >
-            {t('commons.edit')}
-          </Button>
-        </>
-      }
     >
       <Stack gap={1}>
-        {organizationApiKey?.keyType == KeyTypeEnum.IO && (
+        {String(organizationApiKey.keyType) === KeyTypeEnum.IO && (
           <Stack gap={0.8} py={1.5}>
             <Typography
               variant="subtitle2"
@@ -145,7 +67,7 @@ export const ApiKeyDialog = ({
               fontWeight={600}
               letterSpacing={0}
             >
-              {organizationApiKey?.serviceEnabled
+              {String(organizationApiKey.keyType) == KeyTypeEnum.IO
                 ? t('commons.status.ACTIVE')
                 : t('commons.status.INACTIVE')}
             </Typography>

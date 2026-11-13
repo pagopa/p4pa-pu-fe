@@ -2613,6 +2613,7 @@
       "show": "Mostra",
       "showItem": "Mostra dettaglio",
       "deleteItem": "Elimina",
+      "modifyItem": "Modifica",
       "keyTypes": {
         "IO": "IO",
         "SEND": "SEND",
@@ -2623,6 +2624,9 @@
         "message": "Sei sicuro di voler eliminare questa integrazione?",
         "subUnitPdndService": "L’integrazione e-service PDND di {{denominazione}} sarà rimossa. Potrai ricrearla in futuro, se necessario.",
         "subUnitPdndClient": "L’integrazione client PDND di {{denominazione}} sarà rimossa. Potrai ricrearla in futuro, se necessario.",
+        "apiKey": "L’integrazione Prodotto PagoPA sarà rimossa. Potrai ricrearla in futuro, se necessario.",
+        "pdndService": "L’integrazione e-service PDND sarà rimossa. Potrai ricrearla in futuro, se necessario.",
+        "pdndClient": "L’integrazione client PDND sarà rimossa. Potrai ricrearla in futuro, se necessario.",
         "confirm": "Conferma",
         "cancel": "Annulla"
       } 
