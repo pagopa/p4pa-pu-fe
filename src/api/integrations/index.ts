@@ -235,10 +235,10 @@ export const useGetOrgSubUnitsPdndClients = (organizationId: number) =>
     }
   });
 
-export const useDeletePdndClient = (organizationId: number, clientId: string) =>
+export const useDeletePdndClient = (organizationId: number) =>
   useMutation({
-    mutationKey: ['deletePdndClient', organizationId, clientId],
-    mutationFn: async () => {
+    mutationKey: ['deletePdndClient', organizationId],
+    mutationFn: async (clientId: string) => {
       await utils.apiClient.bff.deletePdndClient(organizationId, clientId);
     }
   });

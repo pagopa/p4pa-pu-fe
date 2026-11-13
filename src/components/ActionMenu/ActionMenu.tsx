@@ -12,7 +12,7 @@ import { styled } from '@mui/material/styles';
 type variant = 'default' | 'error' | 'main';
 
 export type MenuItemProps = {
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   label: string;
   action: () => void;
   variant?: variant;
