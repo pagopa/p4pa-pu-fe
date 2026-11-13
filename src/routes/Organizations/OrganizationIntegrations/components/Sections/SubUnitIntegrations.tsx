@@ -21,6 +21,7 @@ import FilterContainer, {
 } from '@core/components/FilterContainer/FilterContainer';
 import { useSearch } from '@core/hooks/useSearch';
 import { PdndSendServiceDialog } from '../Dialogs/ServiceDialog';
+import { PdndClientDialog } from '../Dialogs/ClientDialog'; 
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import utils from '@core/utils';
@@ -28,7 +29,6 @@ import ActionMenu from '@core/components/ActionMenu/ActionMenu';
 import notify from '@core/utils/notify';
 
 type Filters = { subUnitCode?: string };
-
 
 export const SubUnitIntegrations = () => {
   const { t } = useTranslation();
@@ -51,7 +51,9 @@ export const SubUnitIntegrations = () => {
   ];
 
   // OTHER STUFF
-  const [selected, setSelected] = useState<PdndServiceView>();
+  const [selectedService, setSelectedService] = useState<PdndServiceView>();
+  const [selectedClient, setSelectedClient] = useState<PdndClientView>();
+
   const { organizationId: urlOrganizationId } = useParams();
   const organizationId = Number(urlOrganizationId);
 
@@ -122,7 +124,7 @@ export const SubUnitIntegrations = () => {
     {
       field: 'action',
       headerName: '',
-      width: 140,
+      width: 70,
       display: 'flex',
       align: 'center',
       renderCell: ({ row }) => (
@@ -134,7 +136,7 @@ export const SubUnitIntegrations = () => {
           menuItems={[
             {
               label: t('organizations.integrations.showItem'),
-              action: () => setSelected(row)
+              action: () => setSelectedService(row)
             },
             {
               icon: <TrashCanIcon />,
@@ -183,8 +185,6 @@ export const SubUnitIntegrations = () => {
     filtersExcluded: ['subUnitName']
   });
 
-
-
   const PdndClientColumns: Array<GridColDef<PdndClientView>> = [
     {
       field: 'subUnitCode',
@@ -216,7 +216,7 @@ export const SubUnitIntegrations = () => {
     {
       field: 'action',
       headerName: '',
-      width: 140,
+      width: 70,
       display: 'flex',
       align: 'center',
       renderCell: ({ row }) => (
@@ -227,9 +227,8 @@ export const SubUnitIntegrations = () => {
           })}
           menuItems={[
             {
-              icon: <ArrowForwardIcon />,
               label: t('organizations.integrations.showItem'),
-              action: () => setSelected(row)
+              action: () => setSelectedClient(row)
             },
             {
               icon: <TrashCanIcon />,
@@ -244,12 +243,19 @@ export const SubUnitIntegrations = () => {
 
   return (
     <Stack gap={5}>
-      {selected && (
+      {selectedService && (
         <PdndSendServiceDialog
           open
-          service={selected}
-          organizationId={organizationId}
-          onClose={() => setSelected(undefined)}
+          service={selectedService}
+          onClose={() => setSelectedService(undefined)}
+        />
+      )}
+      {selectedClient && (
+        <PdndClientDialog
+          open
+          // Adding a publicKey field to satisfy PdndClientDialog requirements
+          client={{...selectedClient, publicKey: 'test'}}
+          onClose={() => setSelectedClient(undefined)}
         />
       )}
       <FilterContainer

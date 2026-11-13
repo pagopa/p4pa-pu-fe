@@ -40,20 +40,15 @@ export const useGetOrganizationApiKeys = (
 
 export const useGetOrganizationApiKey = (
   organizationId: number,
-  keyType: OrganizationApiKeyType,
+  organizationApiKeyType: OrganizationApiKeyType,
   query?: { subUnitCode?: string }
 ) =>
   useQuery({
-    queryKey: [
-      'organizationApiKey',
-      organizationId,
-      keyType,
-      query?.subUnitCode
-    ],
+    queryKey: ['organizationApiKey', organizationId, organizationApiKeyType],
     queryFn: async () => {
       const { data } = await utils.apiClient.bff.getOrganizationApiKey(
         organizationId,
-        keyType,
+        organizationApiKeyType,
         query
       );
       parseAndLog(organizationApiKeySchema, data);
@@ -63,20 +58,13 @@ export const useGetOrganizationApiKey = (
 
 export const useDeleteOrganizationApiKey = (
   organizationId: number,
-  keyType: OrganizationApiKeyType,
-  query?: { subUnitCode?: string }
 ) =>
   useMutation({
-    mutationKey: [
-      'deleteOrganizationApiKey',
-      organizationId,
-      keyType,
-      query?.subUnitCode
-    ],
-    mutationFn: async () => {
+    mutationKey: ['deleteOrganizationApiKey', organizationId],
+    mutationFn: async ({ organizationApiKeyType, query }: { organizationApiKeyType: OrganizationApiKeyType; query?: { subUnitCode?: string } }) => {
       await utils.apiClient.bff.deleteOrganizationApiKey(
         organizationId,
-        keyType,
+        organizationApiKeyType,
         query
       );
     }
@@ -183,12 +171,10 @@ export const useGetOrgSubUnitsPdndServices = (organizationId: number) =>
 
 export const useDeletePdndService = (
   organizationId: number,
-  purposeId: string,
-  subUnitCode?: string
 ) =>
   useMutation({
-    mutationKey: ['deletePdndService', organizationId, purposeId, subUnitCode],
-    mutationFn: async () => {
+    mutationKey: ['deletePdndService', organizationId],
+    mutationFn: async ({purposeId, subUnitCode}: {purposeId: string; subUnitCode?: string}) => {
       await utils.apiClient.bff.deletePdndService(
         organizationId,
         purposeId,
