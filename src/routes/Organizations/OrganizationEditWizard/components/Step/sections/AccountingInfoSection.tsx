@@ -13,25 +13,22 @@ import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { useTranslation } from 'react-i18next';
 
 type AccountingInfoSectionProps = {
   control: Control<UnifiedFormValues>;
   errors: FieldErrors<UnifiedFormValues>;
   data: UnifiedFormData;
-  t: (key: string) => string;
-  createIBANValidationRules: (
-    t: (key: string) => string,
-    isRequired?: boolean
-  ) => Record<string, unknown>;
+  createIBANValidationRules: (isRequired?: boolean) => Record<string, unknown>;
 };
 
 export const AccountingInfoSection = ({
   control,
   errors,
   data,
-  t,
   createIBANValidationRules
 }: AccountingInfoSectionProps) => {
+  const { t } = useTranslation();
   return (
     <Box
       border={1}
@@ -54,7 +51,6 @@ export const AccountingInfoSection = ({
             name="iban"
             control={control}
             rules={createIBANValidationRules(
-              t,
               data.organizationStatus === 'ACTIVE'
             )}
             render={({ field }) => (
@@ -76,7 +72,7 @@ export const AccountingInfoSection = ({
           <Controller
             name="ibanPostal"
             control={control}
-            rules={createIBANValidationRules(t, false)}
+            rules={createIBANValidationRules(false)}
             render={({ field }) => (
               <TextField
                 {...field}

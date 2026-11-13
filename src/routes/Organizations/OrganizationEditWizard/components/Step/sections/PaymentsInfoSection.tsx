@@ -19,12 +19,12 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
+import { useTranslation } from 'react-i18next';
 
 type PaymentsInfoSectionProps = {
   control: Control<UnifiedFormValues>;
   errors: FieldErrors<UnifiedFormValues>;
   data: UnifiedFormData;
-  t: (key: string) => string;
   watchAdditionalLanguage: boolean;
 };
 
@@ -32,9 +32,10 @@ export const PaymentsInfoSection = ({
   control,
   errors,
   data,
-  t,
   watchAdditionalLanguage
 }: PaymentsInfoSectionProps) => {
+  const { t } = useTranslation();
+
   return (
     <Box
       border={1}
@@ -85,39 +86,6 @@ export const PaymentsInfoSection = ({
                 data-testid="segregation-code-field"
                 required={data.organizationStatus === 'ACTIVE'}
                 inputProps={{ maxLength: 2 }}
-              />
-            )}
-          />
-        </Grid>
-
-        {/* API Key stampa avvisi Field - Required */}
-        <Grid item xs={12}>
-          <Controller
-            name="generateNoticeApiKey"
-            control={control}
-            rules={{
-              required: {
-                value: true,
-                message: t(
-                  'organizationEditWizard.step2.generateNoticeApiKey.required'
-                )
-              }
-            }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                label={t(
-                  'organizationEditWizard.step2.generateNoticeApiKey.label'
-                )}
-                placeholder={t(
-                  'organizationEditWizard.step2.generateNoticeApiKey.placeholder'
-                )}
-                disabled={data.generateNoticeApiKey.readonly}
-                error={!!errors.generateNoticeApiKey}
-                helperText={errors.generateNoticeApiKey?.message}
-                data-testid="generate-notice-api-key-field"
-                required
               />
             )}
           />

@@ -30,16 +30,13 @@ export type OrganizationEditStep2Data = {
   flagTreasury: FieldData<boolean>;
   // Payments Information
   segregationCode: FieldData<string>;
-  generateNoticeApiKey: FieldData<string>;
   additionalLanguage: FieldData<boolean>;
   selectedLanguage: FieldData<string>;
   flagNotifyOutcomePush: FieldData<boolean | null>;
   flagPaymentNotification: FieldData<boolean | null>;
   // PagoPA Products Integration
   flagNotifyIo: FieldData<boolean>;
-  ioApiKey: FieldData<string>;
   pdndEnabled: FieldData<boolean>;
-  sendApiKey: FieldData<string>;
   organizationStatus?: string; // Organization status for conditional validation
 };
 
@@ -64,16 +61,13 @@ export type Step2FormValues = {
   flagTreasury: boolean;
   // Payments Information
   segregationCode: string;
-  generateNoticeApiKey: string;
   additionalLanguage: boolean;
   selectedLanguage: string;
   flagNotifyOutcomePush: boolean | null;
   flagPaymentNotification: boolean | null;
   // PagoPA Products Integration
   flagNotifyIo: boolean;
-  ioApiKey: string;
   pdndEnabled: boolean;
-  sendApiKey: string;
 };
 
 // Type for the final payload of the organization update API
@@ -96,9 +90,6 @@ export type OrganizationUpdatePayload = {
   additionalLanguage: string;
   startDate: string;
   brokerId: number;
-  ioApiKey: string;
-  sendApiKey: string;
-  generateNoticeApiKey: string;
   flagNotifyIo: boolean;
   flagNotifyOutcomePush: boolean;
   flagPaymentNotification: boolean;
@@ -123,16 +114,13 @@ export type UnifiedFormData = {
   flagTreasury: FieldData<boolean>;
   // Step 2 fields (Payments Information)
   segregationCode: FieldData<string>;
-  generateNoticeApiKey: FieldData<string>;
   additionalLanguage: FieldData<boolean>;
   selectedLanguage: FieldData<string>;
   flagNotifyOutcomePush: FieldData<boolean | null>;
   flagPaymentNotification: FieldData<boolean | null>;
   // Step 2 fields (PagoPA Products Integration)
   flagNotifyIo: FieldData<boolean>;
-  ioApiKey: FieldData<string>;
   pdndEnabled: FieldData<boolean>;
-  sendApiKey: FieldData<string>;
   // Common field
   organizationStatus?: string; // Organization status for conditional validation
 };
@@ -154,14 +142,11 @@ export type UnifiedFormValues = {
   flagTreasury: boolean;
   // Step 2 fields (Payments Information)
   segregationCode: string;
-  generateNoticeApiKey: string;
   additionalLanguage: boolean;
   selectedLanguage: string;
   flagNotifyOutcomePush: boolean | null;
   flagPaymentNotification: boolean | null;
   // Step 2 fields (PagoPA Products Integration)
   flagNotifyIo: boolean;
-  ioApiKey: string;
   pdndEnabled: boolean;
-  sendApiKey: string;
 };

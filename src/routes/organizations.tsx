@@ -6,12 +6,12 @@ import { OrganizationDetail } from './Organizations/OrganizationDetail';
 import { OrganizationIntegrations } from './Organizations/OrganizationIntegrations';
 import OrganizationEditWizard from './Organizations/OrganizationEditWizard/OrganizationEditWizard';
 import Organizations from './Organizations/Organizations';
-import { SubUnitsList } from './SubUnitsList';
-import { SubUnitDetail } from './SubUnitDetail';
-import { SubUnitCreate } from './SubUnitCreate';
 import { AddIntegration } from './Organizations/AddIntegration';
-import { SubunitAssignOperator } from './SubunitAssignOperator';
 import { IntegrationMode } from './Organizations/enums';
+import { SubunitAssignOperator } from './SubUnits/SubunitAssignOperator';
+import { SubUnitCreate } from './SubUnits/SubUnitCreate';
+import { SubUnitDetail } from './SubUnits/SubUnitDetail';
+import { SubUnitsList } from './SubUnits/SubUnitsList';
 
 export const organizationsRoutes = [
   {
@@ -176,5 +176,18 @@ export const organizationsRoutes = [
         }
       }
     ]
+  },
+  {
+    id: 'MYORGANIZATION',
+    path: `organization`,
+    element: (
+      <AdminRouteGuard>
+        <OrganizationDetail />
+      </AdminRouteGuard>
+    ),
+    handle: {
+      backButton: false,
+      hideBreadcrumbs: true
+    }
   }
 ];

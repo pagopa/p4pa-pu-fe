@@ -184,7 +184,6 @@ export const OrganizationEditForm = ({
             control={control}
             errors={errors}
             data={formData}
-            t={t}
           />
           <Grid item xs={12} sx={{ mt: 4 }}>
             <Box
@@ -204,14 +203,12 @@ export const OrganizationEditForm = ({
                 control={control}
                 errors={errors}
                 data={formData}
-                t={t}
                 createIBANValidationRules={createIBANValidationRules}
               />
               <PaymentsInfoSection
                 control={control}
                 errors={errors}
                 data={formData}
-                t={t}
                 watchAdditionalLanguage={watchAdditionalLanguage}
               />
             </Box>

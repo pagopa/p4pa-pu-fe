@@ -16,10 +16,10 @@ import SectionBox from '@core/components/Wizard/SectionBox';
 import WizardStepButtons from '@core/components/Wizard/WizardStepButtons';
 import WizardStepWrapper from '@core/components/Wizard/WizardStepWrapper';
 import utils from '@core/utils';
-import { PageRoutes } from '..';
 import { MIAlert } from '@pagopa/mui-italia';
 import { useEffect } from 'react';
 import Box from '@mui/material/Box';
+import { PageRoutes } from '@core/routes';
 
 const subUnitSchema = z.object({
   subUnitCode: z.string({

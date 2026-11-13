@@ -722,6 +722,8 @@
     "404": "404: risorsa non disponibile",
     "done": "Fatto!",
     "name": "Nome e cognome",
+    "firstName": "Nome",
+    "lastName": "Cognome",
     "registry": "Anagrafica",
     "creationDate": "Data di creazione",
     "toDetail": "Vai al dettaglio",
@@ -2367,11 +2369,6 @@
         "required": "Il campo Codice Segregazione è obbligatorio",
         "invalidFormat": "Il campo Codice Segregazione può contenere solo e soltanto due caratteri numerici"
       },
-      "generateNoticeApiKey": {
-        "label": "API Key stampa avvisi",
-        "placeholder": "",
-        "required": "Il campo API Key stampa avvisi è obbligatorio"
-      },
       "additionalLanguage": {
         "label": "Gli avvisi hanno una lingua addizionale"
       },
@@ -2402,19 +2399,11 @@
         "title": "Integrazione con i prodotti PagoPA",
         "io": {
           "label": "Messaggi sull'app IO",
-          "description": "Abilita l'ente a inviare messaggi sui pagamenti",
-          "apiKeyLabel": "API key",
-          "apiKeyPlaceholder": "Inserisci la API key per inviare notifiche IO",
-          "apiKeyRequired": "Il campo API key è obbligatorio",
-          "apiKeyHelperText": "Inserisci la API key per inviare messaggi sull'app IO"
+          "description": "Abilita l'ente a inviare messaggi sui pagamenti"
         },
         "send": {
           "label": "Autenticazione con PDND",
-          "description": "Abilita l'autenticazione su SEND tramite PDND",
-          "apiKeyLabel": "API key",
-          "apiKeyPlaceholder": "Inserisci la API key per inviare notifiche SEND",
-          "apiKeyRequired": "Il campo API key è obbligatorio",
-          "apiKeyHelperText": "Inserisci la API key per inviare notifiche SEND"
+          "description": "Abilita l'autenticazione su SEND tramite PDND"
         }
       }
     }
@@ -2508,7 +2497,55 @@
       },
       "eService": {
         "label": "E-service PDND",
-        "description": "SEND"
+        "description": "SEND",
+        "generalInfo": "Informazioni generali",
+        "owner": {
+          "title": "Di chi è l'e-service?",
+          "description": "Indica l'ente o la sottounità per cui stai creando questo e-service.",
+          "organization": "Dell'ente",
+          "subUnit": "Di una sottounità dell'ente"
+        },
+        "configure": {
+          "title": "Configura l'e-service PDND",
+          "description": "Inserisci le informazioni fornite in fase di creazione dell'e-service."
+        },
+        "fields": {
+          "eServiceName": "Nome e-service",
+          "purposeId": "Purpose ID",
+          "clientId": "Client ID",
+          "subUnit": "Sottounità"
+        },
+        "errors": {
+          "noSubUnits": {
+            "title": "Non esistono sottounità per l'ente {{organizationName}}",
+            "message": "Crea prima una sottounità e riprova."
+          },
+          "noServiceAvailable": {
+            "title": "Hai già configurato l’e-service PDND di SEND",
+            "message": "Seleziona un altro tipo di integrazione per continuare."
+          },
+          "subUnitRequired": "Campo obbligatorio",
+          "noClients": {
+            "organization": {
+              "title": "Non esiste un client per l’ente selezionato",
+              "message": "Configura prima un client PDND e riprova."
+            },
+            "subUnit": {
+              "title": "Non esiste un client per la sottounità selezionata",
+              "message": "Configura prima un client PDND e riprova."
+            }
+          },
+          "serviceAlreadyExists": {
+            "organization": {
+              "title": "Hai già configurato questo e-service PDND per l’ente",
+              "message": "Seleziona un’altra opzione per continuare."
+            },
+            "subUnit": {
+              "title": "Non esiste un client per la sottounità selezionata",
+              "message": "Configura prima un client PDND e riprova."
+            }
+          }
+        }
       },
       "errors": {
         "selectAtLeastOneOption": {
@@ -2523,7 +2560,11 @@
     },
     "edit": {
       "title": "Modifica integrazione",
-      "subtitle": "Modifica i campi disponibili e salva le modifiche."
+      "subtitle": "Modifica i campi disponibili e salva le modifiche.",
+      "confirmDialog": {
+        "title": "Vuoi salvare le modifiche?",
+        "message": "Conferma per applicare le modifiche all’integrazione."
+      }
     }
   },
   "organizations": {
@@ -2557,6 +2598,7 @@
       "pagoPaProducts": "Prodotti PagoPA",
       "pdndServices": "E-service PDND",
       "pdndClients": "Client PDND",
+      "clientName": "Nome del client",
       "name": "Nome",
       "ioNotifications": "Notifiche invio messaggio",
       "active": "Attivo",
@@ -2670,12 +2712,12 @@
       "disable": {
         "title": "Vuoi disattivare {{subUnitCode}}?",
         "message": "Potrai riattivarla in un secondo momento.",
-        "action": "Disattiva sub-unit"
+        "action": "Disattiva sottounità"
       },
       "enable": {
         "title": "Vuoi abilitare {{subUnitCode}}?",
         "message": "Potrai disattivarla in un secondo momento.",
-        "action": "Abilita sub-unit"
+        "action": "Abilita sottounità"
       },
       "deleteOperator": {
         "title": "Vuoi rimuovere l'operatore {{operatorName}} da {{subUnitCode}}?",

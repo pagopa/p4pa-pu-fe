@@ -4,9 +4,15 @@ import type { GridColDef } from '@mui/x-data-grid';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import type { PdndServiceView } from '@generated/core/data-contracts';
+import type {
+  PdndClientView,
+  PdndServiceView
+} from '@generated/core/data-contracts';
 
-import { getOrgSubUnitsPdndServices } from '@core/api/integrations';
+import {
+  useGetOrgSubUnitsPdndClients,
+  useGetOrgSubUnitsPdndServices
+} from '@core/api/integrations';
 import CustomDataGrid from '@core/components/DataGrid/CustomDataGrid';
 import type { FilterItem } from '@core/components/FilterContainer/FilterContainer';
 import FilterContainer, {
@@ -19,22 +25,38 @@ import { PdndSendServiceDialog } from '../Dialogs/ServiceDialog';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import utils from '@core/utils';
 
 type Filters = { subUnitCode?: string };
 
 export const SubUnitIntegrations = () => {
   const { t } = useTranslation();
-  const [values, setValues] = useState<Filters>({});
+  const initialFilters = utils.URI.decode(window.location.hash);
+  const [values, setValues] = useState<Filters>(initialFilters);
   const [selected, setSelected] = useState<PdndServiceView>();
 
   const { organizationId: urlOrganizationId } = useParams();
   const organizationId = Number(urlOrganizationId);
 
-  const query = getOrgSubUnitsPdndServices(organizationId);
+  const pdndServicesQuery = useGetOrgSubUnitsPdndServices(organizationId);
+
+  const pdndClientsQuery = useGetOrgSubUnitsPdndClients(organizationId);
+
+  const ID_PDND_SERVICES = 'se';
+  const ID_PDND_CLIENTS = 'cl';
 
   const pdndServices = useSearch({
-    query,
-    filters: values
+    query: pdndServicesQuery,
+    filters: values,
+    id: ID_PDND_SERVICES,
+    filtersExcluded: ['subUnitName']
+  });
+
+  const pdndClients = useSearch({
+    query: pdndClientsQuery,
+    filters: values,
+    id: ID_PDND_CLIENTS,
+    filtersExcluded: ['subUnitName']
   });
 
   const filterItems: Array<FilterItem> = [
@@ -42,7 +64,7 @@ export const SubUnitIntegrations = () => {
       type: COMPONENT_TYPE.textField,
       label: t('organizations.integrations.searchSubUnit'),
       gridWidth: 10,
-      id: 'subUnitCode'
+      id: 'subUnitName'
     },
     {
       type: COMPONENT_TYPE.button,
@@ -52,7 +74,7 @@ export const SubUnitIntegrations = () => {
     }
   ];
 
-  const columns: Array<GridColDef<PdndServiceView>> = [
+  const PdndServiceColumns: Array<GridColDef<PdndServiceView>> = [
     {
       field: 'subUnitCode',
       headerName: t('organizations.integrations.subUnit'),
@@ -101,6 +123,54 @@ export const SubUnitIntegrations = () => {
     }
   ];
 
+  const PdndClientColumns: Array<GridColDef<PdndClientView>> = [
+    {
+      field: 'subUnitCode',
+      headerName: t('organizations.integrations.subUnit'),
+      flex: 1,
+      sortable: false,
+      renderCell: ({ value }) => (
+        <Typography variant="body2" fontFamily="monospace" component="span">
+          {value}
+        </Typography>
+      )
+    },
+    {
+      field: 'subUnitName',
+      headerName: t('organizations.integrations.subUnitName'),
+      flex: 1,
+      sortable: false
+    },
+    {
+      field: 'clientName',
+      headerName: t('organizations.integrations.clientName'),
+      flex: 1
+    },
+    {
+      field: 'clientId',
+      headerName: t('organizations.integrations.clientId'),
+      flex: 1.5
+    },
+    {
+      field: 'action',
+      headerName: '',
+      width: 140,
+      display: 'flex',
+      align: 'center',
+      renderCell: ({ row }) => (
+        <Button
+          variant="text"
+          endIcon={<ArrowForwardIcon />}
+          aria-label={t('organizations.integrations.showItem', {
+            name: row.subUnitName ?? row.subUnitCode
+          })}
+        >
+          {t('organizations.integrations.show')}
+        </Button>
+      )
+    }
+  ];
+
   return (
     <Stack gap={5}>
       {selected && (
@@ -118,17 +188,35 @@ export const SubUnitIntegrations = () => {
         onChange={(id, value) =>
           setValues((prev) => ({ ...prev, [id]: value as string }))
         }
-        onSubmit={() => pdndServices.applyFilters(values)}
+        onSubmit={() => {
+          pdndServices.applyFilters(values);
+          pdndClients.applyFilters(values);
+        }}
       />
       <Stack gap={3} component="section">
         <Typography variant="h5" component="h2">
           {t('organizations.integrations.pdndServices')}
         </Typography>
         <CustomDataGrid
-          rows={query?.data?.content ?? []}
+          id={ID_PDND_SERVICES}
+          rows={pdndServicesQuery?.data?.content ?? []}
           getRowId={(row: PdndServiceView) => row.purposeId ?? row.clientId}
-          columns={columns}
-          totalPages={0}
+          columns={PdndServiceColumns}
+          totalPages={pdndServicesQuery?.data?.totalPages ?? 0}
+          disableColumnMenu
+        />
+      </Stack>
+
+      <Stack gap={3} component="section">
+        <Typography variant="h5" component="h2">
+          {t('organizations.integrations.pdndClients')}
+        </Typography>
+        <CustomDataGrid
+          id={ID_PDND_CLIENTS}
+          rows={pdndClientsQuery?.data?.content ?? []}
+          getRowId={(row: PdndClientView) => row.clientId ?? row.clientId}
+          columns={PdndClientColumns}
+          totalPages={pdndClientsQuery?.data?.totalPages ?? 0}
           disableColumnMenu
         />
       </Stack>

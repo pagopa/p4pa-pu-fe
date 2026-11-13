@@ -28,8 +28,12 @@ export function useSearch<
 >({
   filters,
   query,
-  id = ''
-}: UseSearchProps<T, TData, TError> & { id?: string }) {
+  id = '',
+  filtersExcluded = []
+}: UseSearchProps<T, TData, TError> & {
+  id?: string;
+  filtersExcluded?: Array<string>;
+}) {
   const {
     page: hashPage = 1,
     size = 10,
@@ -48,12 +52,13 @@ export function useSearch<
     sortDirection && sortField ? [`${sortField},${sortDirection}`] : [];
 
   useEffect(() => {
+    const filteredFilters = Object.fromEntries(
+      Object.entries(filters)
+        .filter(([key]) => key.startsWith(id) || filtersExcluded.includes(key))
+        .map(([key, value]) => [key.replace(id, ''), value])
+    ) as T;
     query.mutateAsync({
-      filters: Object.fromEntries(
-        Object.entries(filters)
-          .filter(([key]) => key.startsWith(id))
-          .map(([key, value]) => [key.replace(id, ''), value])
-      ) as T,
+      filters: filteredFilters,
       pagination: { size, page },
       sort
     });
@@ -74,7 +79,9 @@ export function useSearch<
     query.mutateAsync({
       filters: Object.fromEntries(
         Object.entries(trimmedFilters)
-          .filter(([key]) => key.startsWith(id))
+          .filter(
+            ([key]) => key.startsWith(id) || filtersExcluded.includes(key)
+          )
           .map(([key, value]) => [key.replace(id, ''), value])
       ) as T,
       pagination: { size: 10, page: 0 },

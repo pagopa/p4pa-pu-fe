@@ -43,9 +43,6 @@ describe('organizationFormTransformers', () => {
     additionalLanguage: undefined,
     startDate: '2024-01-01',
     brokerId: 10,
-    ioApiKey: 'io-key',
-    sendApiKey: 'send-key',
-    generateNoticeApiKey: 'notice-key',
     flagNotifyIo: true,
     flagNotifyOutcomePush: true,
     flagPaymentNotification: false,
@@ -79,9 +76,6 @@ describe('organizationFormTransformers', () => {
 
       // Step 2 - payments
       expect(values.segregationCode).toBe(formData.segregationCode.value);
-      expect(values.generateNoticeApiKey).toBe(
-        formData.generateNoticeApiKey.value
-      );
       expect(values.additionalLanguage).toBe(formData.additionalLanguage.value);
       expect(values.selectedLanguage).toBe(formData.selectedLanguage.value);
       expect(values.flagNotifyOutcomePush).toBe(
@@ -93,9 +87,7 @@ describe('organizationFormTransformers', () => {
 
       // Step 2 - PagoPA integration
       expect(values.flagNotifyIo).toBe(formData.flagNotifyIo.value);
-      expect(values.ioApiKey).toBe(formData.ioApiKey.value);
       expect(values.pdndEnabled).toBe(formData.pdndEnabled.value);
-      expect(values.sendApiKey).toBe(formData.sendApiKey.value);
     });
 
     it('should default orgLogo to null when logoFile is not provided', () => {
@@ -125,9 +117,6 @@ describe('organizationFormTransformers', () => {
       expect(formData.segregationCode.value).toBe(
         baseOrganization.segregationCode
       );
-      expect(formData.generateNoticeApiKey.value).toBe(
-        baseOrganization.generateNoticeApiKey
-      );
       expect(formData.flagNotifyOutcomePush.value).toBe(
         baseOrganization.flagNotifyOutcomePush
       );
@@ -135,9 +124,7 @@ describe('organizationFormTransformers', () => {
         baseOrganization.flagPaymentNotification
       );
       expect(formData.flagNotifyIo.value).toBe(baseOrganization.flagNotifyIo);
-      expect(formData.ioApiKey.value).toBe(baseOrganization.ioApiKey);
       expect(formData.pdndEnabled.value).toBe(baseOrganization.pdndEnabled);
-      expect(formData.sendApiKey.value).toBe(baseOrganization.sendApiKey);
       expect(formData.organizationStatus).toBe(baseOrganization.status);
     });
 
@@ -180,15 +167,12 @@ describe('organizationFormTransformers', () => {
         cbill: 'CBILL02',
         flagTreasury: true,
         segregationCode: '01',
-        generateNoticeApiKey: 'new-notice-key',
         additionalLanguage: true,
         selectedLanguage: LANGUAGE_OPTIONS.EN,
         flagNotifyOutcomePush: false,
         flagPaymentNotification: true,
         flagNotifyIo: false,
-        ioApiKey: 'new-io-key',
-        pdndEnabled: true,
-        sendApiKey: 'new-send-key'
+        pdndEnabled: true
       };
 
       const updatedData = transformFormValuesToFieldData(values, originalData);
@@ -202,9 +186,6 @@ describe('organizationFormTransformers', () => {
       expect(updatedData.flagTreasury.value).toBe(values.flagTreasury);
 
       expect(updatedData.segregationCode.value).toBe(values.segregationCode);
-      expect(updatedData.generateNoticeApiKey.value).toBe(
-        values.generateNoticeApiKey
-      );
       expect(updatedData.additionalLanguage.value).toBe(
         values.additionalLanguage
       );
@@ -216,9 +197,7 @@ describe('organizationFormTransformers', () => {
         values.flagPaymentNotification
       );
       expect(updatedData.flagNotifyIo.value).toBe(values.flagNotifyIo);
-      expect(updatedData.ioApiKey.value).toBe(values.ioApiKey);
       expect(updatedData.pdndEnabled.value).toBe(values.pdndEnabled);
-      expect(updatedData.sendApiKey.value).toBe(values.sendApiKey);
 
       expect(updatedData.orgName.readonly).toBe(originalData.orgName.readonly);
       expect(updatedData.orgFiscalCode.readonly).toBe(
@@ -249,15 +228,12 @@ describe('organizationFormTransformers', () => {
         cbill: 'CBILL02',
         flagTreasury: true,
         segregationCode: '01',
-        generateNoticeApiKey: 'new-notice-key',
         additionalLanguage: true,
         selectedLanguage: LANGUAGE_OPTIONS.EN,
         flagNotifyOutcomePush: false,
         flagPaymentNotification: true,
         flagNotifyIo: false,
-        ioApiKey: 'new-io-key',
-        pdndEnabled: true,
-        sendApiKey: 'new-send-key'
+        pdndEnabled: true
       };
 
       const step2Data = mapStep2ValuesToFieldData(values, originalData);
@@ -269,9 +245,6 @@ describe('organizationFormTransformers', () => {
       expect(step2Data.flagTreasury.value).toBe(values.flagTreasury);
 
       expect(step2Data.segregationCode.value).toBe(values.segregationCode);
-      expect(step2Data.generateNoticeApiKey.value).toBe(
-        values.generateNoticeApiKey
-      );
       expect(step2Data.additionalLanguage.value).toBe(
         values.additionalLanguage
       );
@@ -283,9 +256,7 @@ describe('organizationFormTransformers', () => {
         values.flagPaymentNotification
       );
       expect(step2Data.flagNotifyIo.value).toBe(values.flagNotifyIo);
-      expect(step2Data.ioApiKey.value).toBe(values.ioApiKey);
       expect(step2Data.pdndEnabled.value).toBe(values.pdndEnabled);
-      expect(step2Data.sendApiKey.value).toBe(values.sendApiKey);
 
       // Readonly preserved
       expect(step2Data.iban.readonly).toBe(originalData.iban.readonly);
@@ -298,9 +269,6 @@ describe('organizationFormTransformers', () => {
       );
       expect(step2Data.segregationCode.readonly).toBe(
         originalData.segregationCode.readonly
-      );
-      expect(step2Data.generateNoticeApiKey.readonly).toBe(
-        originalData.generateNoticeApiKey.readonly
       );
       expect(step2Data.additionalLanguage.readonly).toBe(
         originalData.additionalLanguage.readonly
@@ -317,12 +285,8 @@ describe('organizationFormTransformers', () => {
       expect(step2Data.flagNotifyIo.readonly).toBe(
         originalData.flagNotifyIo.readonly
       );
-      expect(step2Data.ioApiKey.readonly).toBe(originalData.ioApiKey.readonly);
       expect(step2Data.pdndEnabled.readonly).toBe(
         originalData.pdndEnabled.readonly
-      );
-      expect(step2Data.sendApiKey.readonly).toBe(
-        originalData.sendApiKey.readonly
       );
     });
   });
@@ -358,9 +322,6 @@ describe('organizationFormTransformers', () => {
       expect(payload.postalIban).toBe(formData.ibanPostal.value);
       expect(payload.cbillInterBankCode).toBe(formData.cbill.value);
       expect(payload.segregationCode).toBe(formData.segregationCode.value);
-      expect(payload.generateNoticeApiKey).toBe(
-        formData.generateNoticeApiKey.value
-      );
 
       expect(payload.additionalLanguage).toBe('EN');
 
@@ -372,9 +333,7 @@ describe('organizationFormTransformers', () => {
       );
 
       expect(payload.flagNotifyIo).toBe(formData.flagNotifyIo.value);
-      expect(payload.ioApiKey).toBe(formData.ioApiKey.value);
       expect(payload.pdndEnabled).toBe(formData.pdndEnabled.value);
-      expect(payload.sendApiKey).toBe(formData.sendApiKey.value);
     });
 
     it('should correctly handle logo removal and preservation', () => {

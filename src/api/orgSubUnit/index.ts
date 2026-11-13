@@ -105,9 +105,12 @@ export const updateOrgSubUnitStatus = (
     }
   });
 
-// TODO: add filters when available
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type SubUnitsOperatorsFilters = {};
+export type SubUnitsOperatorsFilters = {
+  mappedExternalUserId?: string;
+  firstName?: string;
+  lastName?: string;
+  fiscalCode?: string;
+};
 
 export type SubUnitOperatorsFilteredRequest =
   FilteredRequest<SubUnitsOperatorsFilters>;
@@ -119,12 +122,13 @@ export const getOrgSubUnitOperators = (
   useMutation({
     mutationKey: ['getOrgSubUnitOperators', organizationId, subUnitCode],
     mutationFn: async (query: SubUnitOperatorsFilteredRequest) => {
-      const { pagination, sort } = query;
+      const { pagination, sort, filters } = query;
       const { data: response } =
         await utils.apiClient.bff.getOrgSubUnitOperators(
           organizationId,
           subUnitCode,
           {
+            ...filters,
             ...pagination,
             sort
           }

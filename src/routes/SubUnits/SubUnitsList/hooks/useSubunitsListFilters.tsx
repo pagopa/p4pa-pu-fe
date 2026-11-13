@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import type { FilterItem } from '../components/FilterContainer/FilterContainer';
-import { COMPONENT_TYPE } from '../components/FilterContainer/FilterContainer';
 import { OrgSubUnitStatus, SubUnitType } from '@generated/core/client';
+import type { FilterItem } from '@core/components/FilterContainer/FilterContainer';
+import { COMPONENT_TYPE } from '@core/components/FilterContainer/FilterContainer';
 
 export const useSubUnitsFilters = () => {
   const { t } = useTranslation();

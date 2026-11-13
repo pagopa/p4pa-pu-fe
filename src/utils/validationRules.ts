@@ -5,6 +5,7 @@
 
 import { isValidIBAN } from './fieldValidation';
 import type { UnifiedFormData } from '../models/OrganizationEditTypes';
+import { t } from 'i18next';
 
 /**
  * Validation rules factory for IBAN fields
@@ -15,7 +16,6 @@ import type { UnifiedFormData } from '../models/OrganizationEditTypes';
  * @returns Validation rules object for react-hook-form
  */
 export const createIBANValidationRules = (
-  t: (key: string) => string,
   isRequired = false
 ): Record<string, unknown> => {
   const rules: Record<string, unknown> = {

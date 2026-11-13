@@ -2,18 +2,25 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { PdndClientDialog } from './ClientDialog';
-import { deletePdndClient } from '@core/api/integrations';
+import { useDeletePdndClient } from '@core/api/integrations';
 import type { PdndClientNoSecretDTO } from '@generated/core/data-contracts';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
 import { copyWithFeedback } from '@core/utils/clipboard';
 import notify from '@core/utils/notify';
 
 vi.mock('@core/api/integrations', () => ({
-  deletePdndClient: vi.fn()
+  useDeletePdndClient: vi.fn()
 }));
 
 vi.mock('@core/utils/clipboard', () => ({
   copyWithFeedback: vi.fn()
+}));
+
+const mockNavigate = vi.fn();
+
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: () => mockNavigate
 }));
 
 vi.mock('@core/components/BaseDialog', () => ({
@@ -74,10 +81,10 @@ const renderDialog = () =>
 describe('PdndClientDialog', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(deletePdndClient).mockReturnValue({
+    vi.mocked(useDeletePdndClient).mockReturnValue({
       mutateAsync: mockMutateAsync,
       isPending: false
-    } as unknown as ReturnType<typeof deletePdndClient>);
+    } as unknown as ReturnType<typeof useDeletePdndClient>);
   });
 
   it('renders the client name, id and kid', () => {
@@ -91,7 +98,27 @@ describe('PdndClientDialog', () => {
   it('initializes the delete mutation with the organization and client ids', () => {
     renderDialog();
 
-    expect(deletePdndClient).toHaveBeenCalledWith(33, 'client-a');
+    expect(useDeletePdndClient).toHaveBeenCalledWith(33, 'client-a');
+  });
+
+  it('navigates to the client edit page preserving the sub-unit', () => {
+    render(
+      <PdndClientDialog
+        open
+        client={{ ...client, subUnitCode: 'SU1' }}
+        organizationId={33}
+        onClose={onClose}
+        onDelete={onDelete}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'commons.edit' }));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.stringContaining(
+        '/integrations/edit/pdnd-client?clientId=client-a&subUnitCode=SU1'
+      )
+    );
   });
 
   it('masks the public key by default and reveals it when toggled', () => {
@@ -156,10 +183,10 @@ describe('PdndClientDialog', () => {
   });
 
   it('disables the delete button while the delete is pending', () => {
-    vi.mocked(deletePdndClient).mockReturnValue({
+    vi.mocked(useDeletePdndClient).mockReturnValue({
       mutateAsync: mockMutateAsync,
       isPending: true
-    } as unknown as ReturnType<typeof deletePdndClient>);
+    } as unknown as ReturnType<typeof useDeletePdndClient>);
 
     renderDialog();
 

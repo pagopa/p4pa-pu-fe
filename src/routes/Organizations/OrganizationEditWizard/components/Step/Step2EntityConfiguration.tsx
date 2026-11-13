@@ -103,7 +103,6 @@ const Step2EntityConfiguration = ({ data, setData, onNext, onBack }: Props) => {
             control={control}
             errors={errors}
             data={data}
-            t={t}
             createIBANValidationRules={createIBANValidationRules}
           />
         </Box>
@@ -120,7 +119,6 @@ const Step2EntityConfiguration = ({ data, setData, onNext, onBack }: Props) => {
             control={control}
             errors={errors}
             data={data}
-            t={t}
             watchAdditionalLanguage={watchAdditionalLanguage}
           />
         </Box>

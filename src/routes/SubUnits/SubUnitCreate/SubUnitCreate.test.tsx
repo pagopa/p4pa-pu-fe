@@ -7,8 +7,8 @@ import { type Control, useController } from 'react-hook-form';
 import { createOrgSubUnit } from '@core/api/orgSubUnit';
 import { SubUnitType } from '@generated/core/data-contracts';
 import utils from '@core/utils';
-import { PageRoutes } from '..';
 import { SubUnitCreate } from '.';
+import { PageRoutes } from '@core/routes';
 
 vi.mock('@core/api/orgSubUnit', () => ({
   createOrgSubUnit: vi.fn()

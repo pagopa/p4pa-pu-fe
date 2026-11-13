@@ -1,8 +1,5 @@
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import { useId } from 'react';
-import type { ReactNode } from 'react';
 import type { Control } from 'react-hook-form';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -10,53 +7,44 @@ import { useTranslation } from 'react-i18next';
 import { FormComponent } from '@core/components/FormComponent';
 import WizardStepWrapper from '@core/components/Wizard/WizardStepWrapper';
 import type { OrgSubUnit } from '@generated/core/data-contracts';
+import { MIAlert } from '@pagopa/mui-italia/components/MIAlert';
 
 import { PdndOwnerType } from '../../enums';
 import type { AddIntegrationFormData } from '../AddIntegrationSchema';
-import { MIAlert } from '@pagopa/mui-italia/components/MIAlert';
+import { FieldGroup } from '../components/FieldGroup';
 
 type PdndClientIntegrationProps = {
   control: Control<AddIntegrationFormData>;
   organizationName: string;
   // undefined while the sub-units are not loaded
   subUnits?: Array<OrgSubUnit>;
+  editMode?: boolean;
 };
 
 const GENERAL_INFO_FIELDS = ['clientName', 'clientId', 'kid'] as const;
 const CRYPTO_FIELDS = ['publicKey', 'privateKey'] as const;
 
-const FieldGroup = ({
-  title,
-  children
-}: {
-  title: string;
-  children: ReactNode;
-}) => {
-  const titleId = useId();
-
-  return (
-    <Box
-      role="group"
-      aria-labelledby={titleId}
-      sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 2 }}
-    >
-      <Typography id={titleId} variant="subtitle2" mb={2}>
-        {title}
-      </Typography>
-      <Stack spacing={2}>{children}</Stack>
-    </Box>
-  );
-};
-
 export const PdndClientIntegration = ({
   control,
   organizationName,
-  subUnits
+  subUnits,
+  editMode = false
 }: PdndClientIntegrationProps) => {
   const { t } = useTranslation();
   const ownerType = useWatch({ control, name: 'PDND_CLIENT.ownerType' });
   const isSubUnitOwner = ownerType === PdndOwnerType.SUB_UNIT;
   const hasNoSubUnits = isSubUnitOwner && subUnits?.length === 0;
+
+  const ownerOptions = [
+    {
+      value: PdndOwnerType.ORGANIZATION,
+      label: t('integrations.add.pdndClient.owner.organization')
+    },
+    {
+      value: PdndOwnerType.SUB_UNIT,
+      label: t('integrations.add.pdndClient.owner.subUnit')
+    }
+  ];
 
   return (
     <>
@@ -72,16 +60,8 @@ export const PdndClientIntegration = ({
           row
           sx={{ gap: 3 }}
           showErrorMessage={false}
-          options={[
-            {
-              value: PdndOwnerType.ORGANIZATION,
-              label: t('integrations.add.pdndClient.owner.organization')
-            },
-            {
-              value: PdndOwnerType.SUB_UNIT,
-              label: t('integrations.add.pdndClient.owner.subUnit')
-            }
-          ]}
+          disabled={editMode}
+          options={ownerOptions}
         />
 
         {isSubUnitOwner && (
@@ -107,6 +87,7 @@ export const PdndClientIntegration = ({
                     label: subUnitName
                   })
                 )}
+                disabled={editMode}
                 required
               />
             )}
@@ -128,6 +109,9 @@ export const PdndClientIntegration = ({
                   name={`PDND_CLIENT.${name}`}
                   control={control}
                   label={t(`integrations.add.pdndClient.fields.${name}`)}
+                  // The client id identifies the resource and is read-only
+                  // while editing an existing client.
+                  disabled={editMode && name === 'clientId'}
                   required
                 />
               ))}

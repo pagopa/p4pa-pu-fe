@@ -7,34 +7,32 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 
 import {
-  getAllOrgSubUnits,
-  getOrganizationApiKeys,
-  savePdndClient
+  useGetAllOrgSubUnits,
+  useGetOrganizationApiKeys,
+  useGetOrgSubUnitWithNoServiceType,
+  useGetPdndClient,
+  useGetPdndService
 } from '@core/api/integrations';
-import {
-  encryptAndSaveApiKey,
-  getOrganizationApiKey
-} from '@core/api/organizations';
+import { getOrganizationApiKey } from '@core/api/organizations';
 import TitleComponent from '@core/components/TitleComponent/TitleComponent';
 import WizardStepButtons from '@core/components/Wizard/WizardStepButtons';
 import utils from '@core/utils';
-import type { KeyTypeEnum } from '@generated/core/client';
-import { OrganizationApiKeyType } from '@generated/core/client';
+import { PdndServiceType } from '@generated/core/data-contracts';
 
 import { IntegrationMode, IntegrationType, PdndOwnerType } from '../enums';
 import PagoPAIntegration from './integrations/pagopa';
-import type {
-  AddIntegrationFormData,
-  PagoPAFormData,
-  PdndFormData
-} from './AddIntegrationSchema';
-import {
-  isPagoPAKeyType,
-  createAddIntegrationSchema,
-  DEFAULT_PDND_VALUES
-} from './AddIntegrationSchema';
+import type { AddIntegrationFormData } from './AddIntegrationSchema';
+import { createAddIntegrationSchema } from './AddIntegrationSchema';
 import { PdndClientIntegration } from './integrations/client';
 import { IntegrationTypeSelector } from './components/IntegretionTypeSelector';
+import { EServiceIntegration } from './integrations/eService';
+import { buildFormValues } from './buildFormValues';
+import { ConfirmUpdateDialog } from './components/ConfirmUpdateDialog';
+import { useIntegrationSave } from './useIntegrationSave';
+import {
+  getAvailableApiKeys,
+  parseIntegrationParams
+} from './integrationParams';
 
 type AddIntegrationProps = {
   mode?: IntegrationMode;
@@ -59,13 +57,36 @@ export const AddIntegration = ({
   }>();
   const organizationId = Number(organizationIdByURL);
 
-  const keyTypeByURL = searchParams.get('keyType');
-  const initialKeyType = isPagoPAKeyType(keyTypeByURL)
-    ? keyTypeByURL
-    : undefined;
-  const initialServiceEnabled = searchParams.get('serviceEnabled') === 'true';
+  const {
+    initialKeyType,
+    initialServiceEnabled,
+    purposeIdByURL,
+    clientIdByURL,
+    subUnitCodeByURL
+  } = parseIntegrationParams(searchParams);
 
-  const { data: existingApiKeys } = getOrganizationApiKeys(
+  const isEServiceEdit =
+    isEditMode && integrationTypeByURL === IntegrationType.E_SERVICE;
+
+  const isPdndClientEdit =
+    isEditMode && integrationTypeByURL === IntegrationType.PDND_CLIENT;
+
+  const { data: existingEService, isPending: isEServicePending } =
+    useGetPdndService(
+      organizationId,
+      isEServiceEdit ? purposeIdByURL : undefined,
+      subUnitCodeByURL
+    );
+
+  const { data: existingClient, isPending: isClientPending } = useGetPdndClient(
+    organizationId,
+    isPdndClientEdit ? clientIdByURL : undefined
+  );
+
+  const serviceSubUnitCode = existingEService?.subUnitCode ?? subUnitCodeByURL;
+  const clientSubUnitCode = existingClient?.subUnitCode ?? subUnitCodeByURL;
+
+  const { data: existingApiKeys } = useGetOrganizationApiKeys(
     organizationId,
     isAddMode
   );
@@ -75,21 +96,70 @@ export const AddIntegration = ({
     isEditMode
   );
 
-  const availableApiKeys = existingApiKeys
-    ? Object.values(OrganizationApiKeyType)
-        .filter(
-          (keyType) => !existingApiKeys.some((key) => key.keyType === keyType)
-        )
-        .filter((keyType) => keyType !== OrganizationApiKeyType.SEND)
-    : [];
+  const availableApiKeys = getAvailableApiKeys(existingApiKeys);
 
-  const savePagoPAMutation = encryptAndSaveApiKey(organizationId);
-  const saveClientMutation = savePdndClient(organizationId);
+  const {
+    pendingUpdate,
+    submit,
+    confirmUpdate,
+    cancelUpdate,
+    isUpdatePending
+  } = useIntegrationSave({
+    organizationId,
+    isEServiceEdit,
+    isPdndClientEdit,
+    clientIdByURL,
+    purposeIdByURL,
+    serviceSubUnitCode
+  });
 
   const noKeyAvailableToAdd = isAddMode && availableApiKeys.length === 0;
+
+  const { data: orgSubUnitsWithNoServiceType } =
+    useGetOrgSubUnitWithNoServiceType(organizationId, PdndServiceType.SEND);
+
+  const canAddSendService = (orgSubUnitsWithNoServiceType?.length ?? 0) > 0;
   const schema = useMemo(
-    () => createAddIntegrationSchema(noKeyAvailableToAdd),
-    [noKeyAvailableToAdd]
+    () =>
+      createAddIntegrationSchema(
+        noKeyAvailableToAdd,
+        !canAddSendService,
+        isEditMode
+      ),
+    [noKeyAvailableToAdd, !canAddSendService, isEditMode]
+  );
+
+  // The API key and the e-service are loaded asynchronously, so the form is
+  // seeded from this object: react-hook-form resets the form whenever it
+  // changes, while `keepDirtyValues` preserves what the user typed meanwhile.
+  const formValues = useMemo(
+    () =>
+      buildFormValues({
+        integrationType: integrationTypeByURL,
+        initialKeyType,
+        initialServiceEnabled,
+        organizationApiKey: organizationApiKey?.apiKey,
+        purposeIdByURL,
+        existingEService,
+        serviceSubUnitCode,
+        isPdndClientEdit,
+        clientIdByURL,
+        clientSubUnitCode,
+        existingClient
+      }),
+    [
+      integrationTypeByURL,
+      initialKeyType,
+      initialServiceEnabled,
+      organizationApiKey?.apiKey,
+      purposeIdByURL,
+      serviceSubUnitCode,
+      existingEService,
+      isPdndClientEdit,
+      clientIdByURL,
+      clientSubUnitCode,
+      existingClient
+    ]
   );
 
   const {
@@ -97,46 +167,27 @@ export const AddIntegration = ({
     handleSubmit,
     watch,
     trigger,
-    resetField,
-    getFieldState,
     formState: { errors }
   } = useForm<AddIntegrationFormData>({
     resolver: zodResolver(schema),
     mode: 'onSubmit',
-    defaultValues: {
-      flagIntegrationType: integrationTypeByURL,
-      PAGOPA_PRODUCT: {
-        keyType: initialKeyType,
-        apiKey: organizationApiKey?.apiKey,
-        serviceEnabled: initialServiceEnabled
-      },
-      PDND_CLIENT: DEFAULT_PDND_VALUES
-    }
+    values: formValues,
+    resetOptions: { keepDirtyValues: true }
   });
 
   const flagIntegrationType = watch('flagIntegrationType');
+
   const pdndOwnerType = watch('PDND_CLIENT.ownerType');
 
-  // Sub-units are needed only when the PDND client belongs to a sub-unit
-  const { data: subUnits } = getAllOrgSubUnits(
+  // Sub-units are needed when the PDND client belongs to a sub-unit and, in
+  // edit mode, to show the full sub-unit list of an e-service or client.
+  const { data: subUnits } = useGetAllOrgSubUnits(
     organizationId,
-    flagIntegrationType === IntegrationType.PDND_CLIENT &&
-      pdndOwnerType === PdndOwnerType.SUB_UNIT
+    isEServiceEdit ||
+      isPdndClientEdit ||
+      (flagIntegrationType === IntegrationType.PDND_CLIENT &&
+        pdndOwnerType === PdndOwnerType.SUB_UNIT)
   );
-
-  // In edit mode the API key is loaded asynchronously: sync it into the form
-  // unless the user has already typed something.
-  useEffect(() => {
-    if (
-      isEditMode &&
-      organizationApiKey?.apiKey !== undefined &&
-      !getFieldState('PAGOPA_PRODUCT.apiKey').isDirty
-    ) {
-      resetField('PAGOPA_PRODUCT.apiKey', {
-        defaultValue: organizationApiKey.apiKey
-      });
-    }
-  }, [isEditMode, organizationApiKey?.apiKey, resetField, getFieldState]);
 
   // Re-validate the selected type when the number of available keys changes.
   useEffect(() => {
@@ -145,62 +196,7 @@ export const AddIntegration = ({
     }
   }, [flagIntegrationType, availableApiKeys.length, trigger]);
 
-  const submitPagoPA = async (values?: PagoPAFormData) => {
-    if (!values?.apiKey || !values.keyType) {
-      throw new Error('Missing API key or type for PagoPA product');
-    }
-    await savePagoPAMutation.mutateAsync({
-      apiKey: values.apiKey,
-      keyType: values.keyType as unknown as KeyTypeEnum,
-      // serviceEnabled applies only to IO keys
-      ...(values.keyType === OrganizationApiKeyType.IO && {
-        serviceEnabled: values.serviceEnabled ?? false
-      })
-    });
-  };
-
-  const submitPdnd = async (values?: PdndFormData) => {
-    const { clientName, clientId, kid, publicKey, privateKey } = values ?? {};
-
-    if (!clientName || !clientId || !kid || !publicKey || !privateKey) {
-      throw new Error('Missing data for PDND client');
-    }
-
-    await saveClientMutation.mutateAsync({
-      organizationId,
-      clientName,
-      clientId,
-      kid,
-      publicKey,
-      privateKey,
-      // subUnitCode is sent only when the client belongs to a sub-unit
-      ...(values?.ownerType === PdndOwnerType.SUB_UNIT && {
-        subUnitCode: values.subUnitCode
-      })
-    });
-  };
-
   const onBack = () => navigate(-1);
-
-  const onSubmit = async (formData: AddIntegrationFormData) => {
-    try {
-      switch (formData.flagIntegrationType) {
-        case IntegrationType.PAGOPA_PRODUCT:
-          await submitPagoPA(formData.PAGOPA_PRODUCT);
-          break;
-        case IntegrationType.PDND_CLIENT:
-          await submitPdnd(formData.PDND_CLIENT);
-          break;
-        default:
-          return;
-      }
-      navigate(-1);
-      utils.notify.emit(t('commons.done'), 'success');
-    } catch (error) {
-      utils.notify.emit(t('integrations.add.errors.saveIntegration.message'));
-      console.error(error);
-    }
-  };
 
   const onInvalidSubmit: SubmitErrorHandler<AddIntegrationFormData> = (
     formErrors
@@ -217,6 +213,10 @@ export const AddIntegration = ({
     (isEditMode || availableApiKeys.length > 0);
 
   const showPdndForm = flagIntegrationType === IntegrationType.PDND_CLIENT;
+
+  const showEServicePdndForm =
+    flagIntegrationType === IntegrationType.E_SERVICE &&
+    (isEServiceEdit || canAddSendService);
 
   return (
     <>
@@ -249,15 +249,41 @@ export const AddIntegration = ({
           control={control}
           organizationName={String(organizationId)}
           subUnits={subUnits?.content}
+          editMode={isPdndClientEdit}
+        />
+      )}
+
+      {showEServicePdndForm && (
+        <EServiceIntegration
+          organizationId={organizationId}
+          control={control}
+          orgSubUnitsWithNoServiceType={orgSubUnitsWithNoServiceType}
+          subUnits={subUnits?.content}
+          editMode={isEServiceEdit}
+          serviceSubUnitCode={serviceSubUnitCode}
+          serviceSubUnitName={existingEService?.subUnitName}
         />
       )}
 
       <WizardStepButtons
         onBack={onBack}
-        onNext={handleSubmit(onSubmit, onInvalidSubmit)}
+        onNext={handleSubmit(submit, onInvalidSubmit)}
         nextLabel={t('commons.confirm')}
         backLabel={t('commons.cancel')}
+        disableNext={
+          (isEServiceEdit && isEServicePending) ||
+          (isPdndClientEdit && isClientPending)
+        }
       />
+
+      {pendingUpdate && (
+        <ConfirmUpdateDialog
+          type={pendingUpdate.type}
+          confirmLoading={isUpdatePending}
+          onConfirm={confirmUpdate}
+          onCancel={cancelUpdate}
+        />
+      )}
     </>
   );
 };

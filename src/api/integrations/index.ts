@@ -1,13 +1,19 @@
 import { z } from 'zod';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { skipToken, useMutation, useQuery } from '@tanstack/react-query';
 
 import type {
   OrganizationApiKeyType,
-  PdndClientDTO
+  PdndClientDTO,
+  PdndServiceRequestDTO,
+  PdndServiceType,
+  PdndServiceUpdateDTO,
+  RequestParams
 } from '@generated/core/client';
 import {
+  orgAndSubUnitDTOSchema,
   organizationApiKeySchema,
   pagedOrgSubUnitSchema,
+  pagedPdndClientViewSchema,
   pagedPdndServiceViewSchema,
   pdndClientNoSecretDTOSchema,
   pdndServiceViewSchema
@@ -17,7 +23,7 @@ import utils from '@core/utils';
 import { parseAndLog } from '@core/utils/loaders';
 import type { FilteredRequest } from '@core/models/Filters';
 
-export const getOrganizationApiKeys = (
+export const useGetOrganizationApiKeys = (
   organizationId: number,
   enabled = true
 ) =>
@@ -32,13 +38,18 @@ export const getOrganizationApiKeys = (
     }
   });
 
-export const getOrganizationApiKey = (
+export const useGetOrganizationApiKey = (
   organizationId: number,
   keyType: OrganizationApiKeyType,
   query?: { subUnitCode?: string }
 ) =>
   useQuery({
-    queryKey: ['organizationApiKey', organizationId, keyType],
+    queryKey: [
+      'organizationApiKey',
+      organizationId,
+      keyType,
+      query?.subUnitCode
+    ],
     queryFn: async () => {
       const { data } = await utils.apiClient.bff.getOrganizationApiKey(
         organizationId,
@@ -50,13 +61,18 @@ export const getOrganizationApiKey = (
     }
   });
 
-export const deleteOrganizationApiKey = (
+export const useDeleteOrganizationApiKey = (
   organizationId: number,
   keyType: OrganizationApiKeyType,
   query?: { subUnitCode?: string }
 ) =>
   useMutation({
-    mutationKey: ['deleteOrganizationApiKey', organizationId, keyType],
+    mutationKey: [
+      'deleteOrganizationApiKey',
+      organizationId,
+      keyType,
+      query?.subUnitCode
+    ],
     mutationFn: async () => {
       await utils.apiClient.bff.deleteOrganizationApiKey(
         organizationId,
@@ -66,7 +82,7 @@ export const deleteOrganizationApiKey = (
     }
   });
 
-export const getPdndServices = (organizationId: number) =>
+export const useGetPdndServices = (organizationId: number) =>
   useQuery({
     queryKey: ['pdndServices', organizationId],
     queryFn: async () => {
@@ -77,53 +93,149 @@ export const getPdndServices = (organizationId: number) =>
     }
   });
 
+export const useGetPdndClient = (organizationId: number, clientId?: string) =>
+  useQuery({
+    queryKey: ['pdndClient', organizationId, clientId],
+    queryFn: clientId
+      ? async () => {
+          const { data } = await utils.apiClient.bff.getPdndClient(
+            organizationId,
+            clientId
+          );
+          parseAndLog(pdndClientNoSecretDTOSchema, data);
+          return data;
+        }
+      : skipToken
+  });
+
+export const useGetPdndService = (
+  organizationId: number,
+  purposeId?: string,
+  subUnitCode?: string
+) =>
+  useQuery({
+    queryKey: ['pdndService', organizationId, purposeId, subUnitCode],
+    queryFn: purposeId
+      ? async () => {
+          const { data } = await utils.apiClient.bff.getPdndService(
+            organizationId,
+            purposeId,
+            subUnitCode ? { subUnitCode } : undefined
+          );
+          parseAndLog(pdndServiceViewSchema, data);
+          return data;
+        }
+      : skipToken
+  });
+
+type UpdatePdndServiceRequestParams = RequestParams & {
+  query?: { subUnitCode?: string };
+};
+
+export const useUpdatePdndService = (
+  organizationId: number,
+  purposeId: string,
+  subUnitCode?: string
+) =>
+  useMutation({
+    mutationKey: ['updatePdndService', organizationId, purposeId, subUnitCode],
+    mutationFn: async (data: PdndServiceUpdateDTO) => {
+      // The generated contract does not expose the optional `subUnitCode`
+      // query for this endpoint, but it must be sent for sub-unit services.
+      const params: UpdatePdndServiceRequestParams | undefined = subUnitCode
+        ? { query: { subUnitCode } }
+        : undefined;
+
+      const { data: service } = await utils.apiClient.bff.updatePdndService(
+        organizationId,
+        purposeId,
+        data,
+        params
+      );
+      return service;
+    }
+  });
+
 type SubUnitPdndServiceFilters = {
   subUnitCode?: string;
   subUnitName?: string;
 };
 
-type getOrgSubUnitsPdndServicesRequest =
+type GetOrgSubUnitsPdndServicesRequest =
   FilteredRequest<SubUnitPdndServiceFilters>;
 
-export const getOrgSubUnitsPdndServices = (organizationId: number) =>
+export const useGetOrgSubUnitsPdndServices = (organizationId: number) =>
   useMutation({
-    mutationKey: ['getOrgSubUnitPdndServices', organizationId],
-    mutationFn: async (request: getOrgSubUnitsPdndServicesRequest) => {
+    mutationKey: ['getOrgSubUnitsPdndServices', organizationId],
+    mutationFn: async ({
+      filters,
+      pagination,
+      sort
+    }: GetOrgSubUnitsPdndServicesRequest) => {
       const { data } = await utils.apiClient.bff.getOrgSubUnitsPdndServices(
         organizationId,
-        {
-          ...request.filters,
-          ...request.pagination,
-          sort: request.sort
-        }
+        { ...filters, ...pagination, sort }
       );
       parseAndLog(pagedPdndServiceViewSchema, data);
       return data;
     }
   });
 
-export const deletePdndService = (organizationId: number, serviceId: string) =>
+export const useDeletePdndService = (
+  organizationId: number,
+  purposeId: string,
+  subUnitCode?: string
+) =>
   useMutation({
-    mutationKey: ['deletePdndService', organizationId, serviceId],
+    mutationKey: ['deletePdndService', organizationId, purposeId, subUnitCode],
     mutationFn: async () => {
-      await utils.apiClient.bff.deletePdndService(organizationId, serviceId);
+      await utils.apiClient.bff.deletePdndService(
+        organizationId,
+        purposeId,
+        subUnitCode ? { subUnitCode } : undefined
+      );
     }
   });
 
-export const getPdndClients = (organizationId: number) =>
+export const useGetPdndClientsByOrgSubUnitCode = (
+  organizationId: number,
+  subUnitCode?: string
+) =>
   useQuery({
-    queryKey: ['pdndClients', organizationId],
+    queryKey: ['getPdndClientsByOrgSubUnitCode', organizationId, subUnitCode],
     queryFn: async () => {
-      const { data } =
-        await utils.apiClient.bff.getPdndClientsByOrgSubUnitCode(
-          organizationId
-        );
+      const query = subUnitCode ? { orgSubUnitCode: subUnitCode } : undefined;
+      const { data } = await utils.apiClient.bff.getPdndClientsByOrgSubUnitCode(
+        organizationId,
+        query
+      );
       parseAndLog(z.array(pdndClientNoSecretDTOSchema), data);
       return data;
     }
   });
 
-export const deletePdndClient = (organizationId: number, clientId: string) =>
+// Clients not scoped to a sub-unit belong to the organization itself.
+export const useGetPdndClients = (organizationId: number) =>
+  useGetPdndClientsByOrgSubUnitCode(organizationId);
+
+export const useGetOrgSubUnitsPdndClients = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['getOrgSubUnitsPdndClients', organizationId],
+    mutationFn: async ({
+      filters,
+      pagination,
+      sort
+    }: GetOrgSubUnitsPdndServicesRequest) => {
+      const { data } = await utils.apiClient.bff.getOrgSubUnitsPdndClients(
+        organizationId,
+        { ...filters, ...pagination, sort }
+      );
+      parseAndLog(pagedPdndClientViewSchema, data);
+      return data;
+    }
+  });
+
+export const useDeletePdndClient = (organizationId: number, clientId: string) =>
   useMutation({
     mutationKey: ['deletePdndClient', organizationId, clientId],
     mutationFn: async () => {
@@ -131,7 +243,7 @@ export const deletePdndClient = (organizationId: number, clientId: string) =>
     }
   });
 
-export const savePdndClient = (organizationId: number) =>
+export const useSavePdndClient = (organizationId: number) =>
   useMutation({
     mutationKey: ['savePdndClient', organizationId],
     mutationFn: async (data: PdndClientDTO) => {
@@ -143,7 +255,21 @@ export const savePdndClient = (organizationId: number) =>
     }
   });
 
-export const getAllOrgSubUnits = (organizationId: number, enabled = true) =>
+export const useUpdatePdndClient = (organizationId: number, clientId: string) =>
+  useMutation({
+    mutationKey: ['updatePdndClient', organizationId, clientId],
+    mutationFn: async (data: Omit<PdndClientDTO, 'clientId'>) => {
+      // The BFF exposes PDND client writes through the save (upsert) endpoint,
+      // so the immutable client id is added back to the payload here.
+      const { data: client } = await utils.apiClient.bff.savePdndClient(
+        organizationId,
+        { ...data, clientId }
+      );
+      return client;
+    }
+  });
+
+export const useGetAllOrgSubUnits = (organizationId: number, enabled = true) =>
   useQuery({
     queryKey: ['getAllOrgSubUnits', organizationId],
     enabled,
@@ -151,12 +277,48 @@ export const getAllOrgSubUnits = (organizationId: number, enabled = true) =>
       const { data } = await utils.apiClient.bff.getPagedOrgSubUnits(
         organizationId,
         {
-          // TODO: should not be hardcoded
-          // api should return all the subUnits
+          // The API has no "get all" variant, so request a large page.
           size: 100
         }
       );
       parseAndLog(pagedOrgSubUnitSchema, data);
       return data;
+    }
+  });
+
+export const useGetOrgSubUnitWithNoServiceType = (
+  organizationId: number,
+  serviceType: PdndServiceType,
+  enabled = true
+) =>
+  useQuery({
+    queryKey: ['getOrgSubUnitWithNoServiceType', organizationId, serviceType],
+    enabled,
+    queryFn: async () => {
+      const { data } = await utils.apiClient.bff.getOrgSubUnitWithNoServiceType(
+        organizationId,
+        serviceType
+      );
+      parseAndLog(z.array(orgAndSubUnitDTOSchema), data, false);
+      return data;
+    }
+  });
+
+type CreatePdndServiceParams = {
+  data: PdndServiceRequestDTO;
+  subUnitCode?: string;
+};
+
+export const useCreatePdndService = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['createPdndService', organizationId],
+    mutationFn: async ({ data, subUnitCode }: CreatePdndServiceParams) => {
+      const query = subUnitCode ? { subUnitCode } : undefined;
+      const { data: service } = await utils.apiClient.bff.createPdndService(
+        organizationId,
+        data,
+        query
+      );
+      return service;
     }
   });

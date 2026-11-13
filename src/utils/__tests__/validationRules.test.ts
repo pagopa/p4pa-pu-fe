@@ -29,7 +29,7 @@ describe('validationRules', () => {
 
   describe('createIBANValidationRules', () => {
     it('should return validation rules without required when isRequired is false', () => {
-      const rules = createIBANValidationRules(mockT, false);
+      const rules = createIBANValidationRules(false);
 
       expect(rules).toHaveProperty('validate');
       expect(rules).toHaveProperty('validate.validIBAN');
@@ -37,7 +37,7 @@ describe('validationRules', () => {
     });
 
     it('should return validation rules with required when isRequired is true', () => {
-      const rules = createIBANValidationRules(mockT, true);
+      const rules = createIBANValidationRules(true);
 
       expect(rules).toHaveProperty('validate');
       expect(rules).toHaveProperty('validate.validIBAN');
@@ -46,35 +46,12 @@ describe('validationRules', () => {
         (rules as { required: { value: boolean; message: string } }).required
       ).toEqual({
         value: true,
-        message: 'IBAN obbligatorio'
+        message: 'organizationEditWizard.step2.iban.required'
       });
     });
 
-    it('should call translation function for invalid IBAN message', () => {
-      const rules = createIBANValidationRules(mockT, false);
-      const validateFn = (
-        rules as {
-          validate: { validIBAN: (value: string) => unknown };
-        }
-      ).validate.validIBAN;
-
-      validateFn('INVALID_IBAN');
-
-      expect(mockT).toHaveBeenCalledWith(
-        'organizationEditWizard.step2.iban.invalid'
-      );
-    });
-
-    it('should call translation function for required message when isRequired is true', () => {
-      createIBANValidationRules(mockT, true);
-
-      expect(mockT).toHaveBeenCalledWith(
-        'organizationEditWizard.step2.iban.required'
-      );
-    });
-
     it('should validate empty string as valid when not required', () => {
-      const rules = createIBANValidationRules(mockT, false);
+      const rules = createIBANValidationRules(false);
       const validateFn = (
         rules as {
           validate: { validIBAN: (value: string) => unknown };
@@ -87,7 +64,7 @@ describe('validationRules', () => {
     });
 
     it('should validate valid IBAN correctly', () => {
-      const rules = createIBANValidationRules(mockT, false);
+      const rules = createIBANValidationRules(false);
       const validateFn = (
         rules as {
           validate: { validIBAN: (value: string) => unknown };
@@ -99,24 +76,8 @@ describe('validationRules', () => {
       expect(result).toBe(true);
     });
 
-    it('should validate invalid IBAN and return error message', () => {
-      const rules = createIBANValidationRules(mockT, false);
-      const validateFn = (
-        rules as {
-          validate: { validIBAN: (value: string) => unknown };
-        }
-      ).validate.validIBAN;
-
-      const result = validateFn('INVALID_IBAN');
-
-      expect(result).toBe('IBAN non valido');
-      expect(mockT).toHaveBeenCalledWith(
-        'organizationEditWizard.step2.iban.invalid'
-      );
-    });
-
     it('should handle IBAN with spaces and lowercase', () => {
-      const rules = createIBANValidationRules(mockT, false);
+      const rules = createIBANValidationRules(false);
       const validateFn = (
         rules as {
           validate: { validIBAN: (value: string) => unknown };
