@@ -107,13 +107,12 @@ export const useGetOrgSubUnitsPdndServices = (organizationId: number) =>
   });
 
 export const useDeletePdndService = (
-  organizationId: number,
-  serviceId: string
+  organizationId: number
 ) =>
   useMutation({
-    mutationKey: ['deletePdndService', organizationId, serviceId],
-    mutationFn: async () => {
-      await utils.apiClient.bff.deletePdndService(organizationId, serviceId);
+    mutationKey: ['deletePdndService', organizationId],
+    mutationFn: async (purposeId: string) => {
+      await utils.apiClient.bff.deletePdndService(organizationId, purposeId);
     }
   });
 
@@ -147,10 +146,10 @@ export const useGetOrgSubUnitsPdndClients = (organizationId: number) =>
     }
   });
 
-export const useDeletePdndClient = (organizationId: number, clientId: string) =>
+export const useDeletePdndClient = (organizationId: number) =>
   useMutation({
-    mutationKey: ['deletePdndClient', organizationId, clientId],
-    mutationFn: async () => {
+    mutationKey: ['deletePdndClient', organizationId],
+    mutationFn: async (clientId: string) => {
       await utils.apiClient.bff.deletePdndClient(organizationId, clientId);
     }
   });

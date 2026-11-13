@@ -2611,12 +2611,21 @@
       "emptyDescription": "Aggiungi una nuova integrazione a un prodotto o servizio",
       "add": "Aggiungi integrazione",
       "show": "Mostra",
-      "showItem": "Mostra {{name}}",
+      "showItem": "Mostra dettaglio",
+      "deleteItem": "Elimina",
       "keyTypes": {
         "IO": "IO",
         "SEND": "SEND",
         "GENERATE_NOTICE": "Stampa avvisi"
-      }
+      },
+      "deleteDialog": {
+        "title": "Vuoi eleminare l'integrazione?",
+        "message": "Sei sicuro di voler eliminare questa integrazione?",
+        "subUnitPdndService": "L’integrazione e-service PDND di {{denominazione}} sarà rimossa. Potrai ricrearla in futuro, se necessario.",
+        "subUnitPdndClient": "L’integrazione client PDND di {{denominazione}} sarà rimossa. Potrai ricrearla in futuro, se necessario.",
+        "confirm": "Conferma",
+        "cancel": "Annulla"
+      } 
     },
     "management": {
       "title": "Gestioni",

@@ -1,15 +1,16 @@
 import { useParams } from 'react-router';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import TrashCanIcon from '@mui/icons-material/Delete';
 import type { GridColDef } from '@mui/x-data-grid';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
 import type {
   PdndClientView,
   PdndServiceView
 } from '@generated/core/data-contracts';
-
 import {
+  useDeletePdndService,
+  useDeletePdndClient,
   useGetOrgSubUnitsPdndClients,
   useGetOrgSubUnitsPdndServices
 } from '@core/api/integrations';
@@ -19,46 +20,21 @@ import FilterContainer, {
   COMPONENT_TYPE
 } from '@core/components/FilterContainer/FilterContainer';
 import { useSearch } from '@core/hooks/useSearch';
-
 import { PdndSendServiceDialog } from '../Dialogs/ServiceDialog';
-
-import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import utils from '@core/utils';
+import ActionMenu from '@core/components/ActionMenu/ActionMenu';
+import notify from '@core/utils/notify';
 
 type Filters = { subUnitCode?: string };
 
+
 export const SubUnitIntegrations = () => {
   const { t } = useTranslation();
+  // FILTERS
   const initialFilters = utils.URI.decode(window.location.hash);
   const [values, setValues] = useState<Filters>(initialFilters);
-  const [selected, setSelected] = useState<PdndServiceView>();
-
-  const { organizationId: urlOrganizationId } = useParams();
-  const organizationId = Number(urlOrganizationId);
-
-  const pdndServicesQuery = useGetOrgSubUnitsPdndServices(organizationId);
-
-  const pdndClientsQuery = useGetOrgSubUnitsPdndClients(organizationId);
-
-  const ID_PDND_SERVICES = 'se';
-  const ID_PDND_CLIENTS = 'cl';
-
-  const pdndServices = useSearch({
-    query: pdndServicesQuery,
-    filters: values,
-    id: ID_PDND_SERVICES,
-    filtersExcluded: ['subUnitName']
-  });
-
-  const pdndClients = useSearch({
-    query: pdndClientsQuery,
-    filters: values,
-    id: ID_PDND_CLIENTS,
-    filtersExcluded: ['subUnitName']
-  });
-
   const filterItems: Array<FilterItem> = [
     {
       type: COMPONENT_TYPE.textField,
@@ -73,6 +49,47 @@ export const SubUnitIntegrations = () => {
       id: 'applyFilters'
     }
   ];
+
+  // OTHER STUFF
+  const [selected, setSelected] = useState<PdndServiceView>();
+  const { organizationId: urlOrganizationId } = useParams();
+  const organizationId = Number(urlOrganizationId);
+
+  // PDND SERVICES
+  const ID_PDND_SERVICES = 'se';
+  const pdndServicesQuery = useGetOrgSubUnitsPdndServices(organizationId);
+
+  const deletePdndServiceMutation = useDeletePdndService(organizationId);
+  const confirmDeletePdndService = (row: PdndServiceView) => {
+    utils.dialog.open({
+      title: t('organizations.integrations.deleteDialog.title'),
+      message: t('organizations.integrations.deleteDialog.subUnitPdndService', {
+        denominazione: row.subUnitName ?? row.subUnitCode
+      }),
+      onConfirm: () => {
+        handleDeletePdndService(row.purposeId);
+        utils.dialog.close();
+      }
+    });
+  };
+
+  const handleDeletePdndService = async (purposeId?: string) => {
+    try {
+      if (!purposeId) throw new Error(t('errors.missingPurposeId'));
+      await deletePdndServiceMutation.mutateAsync(purposeId);
+      pdndServices.applyFilters(values);
+      notify.emit(t('commons.done'), 'success');
+    } catch (error: unknown) {
+      notify.emit(t((error as Error)?.message ?? 'errors.generic'), 'error');
+    }
+  };
+
+  const pdndServices = useSearch({
+    query: pdndServicesQuery,
+    filters: values,
+    id: ID_PDND_SERVICES,
+    filtersExcluded: ['subUnitName']
+  });
 
   const PdndServiceColumns: Array<GridColDef<PdndServiceView>> = [
     {
@@ -109,19 +126,64 @@ export const SubUnitIntegrations = () => {
       display: 'flex',
       align: 'center',
       renderCell: ({ row }) => (
-        <Button
-          variant="text"
-          endIcon={<ArrowForwardIcon />}
-          onClick={() => setSelected(row)}
+        <ActionMenu
+          rowId={row.clientId}
           aria-label={t('organizations.integrations.showItem', {
             name: row.subUnitName ?? row.subUnitCode
           })}
-        >
-          {t('organizations.integrations.show')}
-        </Button>
+          menuItems={[
+            {
+              label: t('organizations.integrations.showItem'),
+              action: () => setSelected(row)
+            },
+            {
+              icon: <TrashCanIcon />,
+              label: t('organizations.integrations.deleteItem'),
+              action: () => confirmDeletePdndService(row)
+            },
+          ]}
+        />
       )
     }
   ];
+
+  // PDND CLIENTS
+  const ID_PDND_CLIENTS = 'cl';
+  const pdndClientsQuery = useGetOrgSubUnitsPdndClients(organizationId);
+
+  const deletePdndClientMutation = useDeletePdndClient(organizationId);
+  const confirmDeletePdndClient = (row: PdndClientView) => {
+    utils.dialog.open({
+      title: t('organizations.integrations.deleteDialog.title'),
+      message: t('organizations.integrations.deleteDialog.subUnitPdndClient', {
+        denominazione: row.subUnitName ?? row.subUnitCode
+      }),
+      onConfirm: () => {
+        handleDeletePdndClient(row.clientId);
+        utils.dialog.close();
+      }
+    });
+  };
+
+  const handleDeletePdndClient = async (clientId?: string) => {
+    try {
+      if (!clientId) throw new Error(t('errors.missingClientId'));
+      await deletePdndClientMutation.mutateAsync(clientId);
+      pdndClients.applyFilters(values);
+      notify.emit(t('commons.done'), 'success');
+    } catch (error: unknown) {
+      notify.emit(t((error as Error)?.message ?? 'errors.generic'), 'error');
+    }
+  };
+
+  const pdndClients = useSearch({
+    query: pdndClientsQuery,
+    filters: values,
+    id: ID_PDND_CLIENTS,
+    filtersExcluded: ['subUnitName']
+  });
+
+
 
   const PdndClientColumns: Array<GridColDef<PdndClientView>> = [
     {
@@ -158,15 +220,24 @@ export const SubUnitIntegrations = () => {
       display: 'flex',
       align: 'center',
       renderCell: ({ row }) => (
-        <Button
-          variant="text"
-          endIcon={<ArrowForwardIcon />}
+        <ActionMenu
+          rowId={row.clientId}
           aria-label={t('organizations.integrations.showItem', {
             name: row.subUnitName ?? row.subUnitCode
           })}
-        >
-          {t('organizations.integrations.show')}
-        </Button>
+          menuItems={[
+            {
+              icon: <ArrowForwardIcon />,
+              label: t('organizations.integrations.showItem'),
+              action: () => setSelected(row)
+            },
+            {
+              icon: <TrashCanIcon />,
+              label: t('organizations.integrations.deleteItem'),
+              action: () => confirmDeletePdndClient(row)
+            },
+          ]}
+        />
       )
     }
   ];
@@ -179,7 +250,6 @@ export const SubUnitIntegrations = () => {
           service={selected}
           organizationId={organizationId}
           onClose={() => setSelected(undefined)}
-          onDelete={() => pdndServices.applyFilters(values)}
         />
       )}
       <FilterContainer
