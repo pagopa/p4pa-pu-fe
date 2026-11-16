@@ -62,7 +62,7 @@ export const SubUnitsList = () => {
       { pathname: PageRoutes.ORGANIZATIONS, id: 'ORGANIZATIONS' },
       {
         pathname: generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
-          organizationId
+          organizationId: String(organizationId)
         }),
         label: urlOrganizationId,
         id: 'ORGANIZATIONS_DETAIL'
@@ -81,7 +81,7 @@ export const SubUnitsList = () => {
     onActionClick: () => {
       navigate(
         generatePath(PageRoutes.SUB_UNIT_CREATE, {
-          organizationId
+          organizationId: String(organizationId)
         })
       );
     }

@@ -63,7 +63,7 @@ export const SubUnitOperatorsDataGrid = ({
     action: () => {
       navigate(
         generatePath(PageRoutes.OPERATORS_DETAIL, {
-          organizationId,
+          organizationId: String(organizationId),
           mappedExternalUserId: operator.mappedExternalUserId
         })
       );

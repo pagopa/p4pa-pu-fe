@@ -101,7 +101,7 @@ export const SubUnitDetail = () => {
   const handleSubunitAssignOperator = () => {
     navigate(
       generatePath(PageRoutes.SUB_UNIT_DETAIL_ASSIGN_OPERATORS, {
-        organizationId,
+        organizationId: String(organizationId),
         subUnitCode: subUnitCode
       })
     );
@@ -121,14 +121,14 @@ export const SubUnitDetail = () => {
       { pathname: PageRoutes.ORGANIZATIONS, id: 'ORGANIZATIONS' },
       {
         pathname: generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
-          organizationId
+          organizationId: String(organizationId)
         }),
         label: urlOrganizationId,
         id: 'ORGANIZATIONS_DETAIL'
       },
       {
         pathname: generatePath(PageRoutes.ORGANIZATIONS_SUB_UNITS, {
-          organizationId
+          organizationId: String(organizationId)
         }),
         label: t('subunits.list.title', { orgName: urlOrganizationId }),
         id: 'SUBUNITS_LIST'

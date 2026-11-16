@@ -90,7 +90,7 @@ export const ManagedOrgs = () => {
     if (!row) return;
     navigate(
       generatePath(PageRoutes.DEBT_TYPES_DASHBOARD_BYORG, {
-        organizationId: row.organizationId
+        organizationId: String(row.organizationId)
       })
     );
   };

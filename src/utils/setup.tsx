@@ -127,7 +127,7 @@ const draftFallbackLoader = async ({ request }: LoaderFunctionArgs) => {
   }
 
   const draftPath = generatePath(PageRoutes.DRAFT_COURTESY_PAGE, {
-    organizationId: selectedOrganization.organizationId
+    organizationId: String(selectedOrganization.organizationId)
   });
 
   if (

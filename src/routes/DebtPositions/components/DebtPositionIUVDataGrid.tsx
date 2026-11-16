@@ -103,7 +103,7 @@ export const IUVDataGrid = ({ data }: DataGridProps) => {
           onClick={() => {
             navigate(
               generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, {
-                id: params.row.installmentId
+                id: String(params.row.installmentId)
               })
             );
           }}

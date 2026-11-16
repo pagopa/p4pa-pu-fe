@@ -248,7 +248,7 @@ export const OperatorDetail = () => {
   const onAffiliateClick = () => {
     navigate(
       generatePath(PageRoutes.OPERATORS_AFFILIATE, {
-        organizationId,
+        organizationId: String(organizationId),
         mappedExternalUserId,
         operatorName,
         orgName

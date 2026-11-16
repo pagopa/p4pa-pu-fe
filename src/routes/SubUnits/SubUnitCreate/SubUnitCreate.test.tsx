@@ -236,7 +236,9 @@ describe('SubUnitCreate', () => {
       });
     });
     expect(mockNavigate).toHaveBeenCalledWith(
-      generatePath(PageRoutes.ORGANIZATIONS_SUB_UNITS, { organizationId: 33 })
+      generatePath(PageRoutes.ORGANIZATIONS_SUB_UNITS, {
+        organizationId: String(33)
+      })
     );
     expect(notifySpy).toHaveBeenCalledWith('commons.done', 'success');
   });
@@ -286,7 +288,9 @@ describe('SubUnitCreate', () => {
     fireEvent.click(screen.getByTestId('back-button'));
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      generatePath(PageRoutes.ORGANIZATIONS_SUB_UNITS, { organizationId: 33 })
+      generatePath(PageRoutes.ORGANIZATIONS_SUB_UNITS, {
+        organizationId: String(33)
+      })
     );
     expect(mockMutateAsync).not.toHaveBeenCalled();
   });

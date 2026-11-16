@@ -31,7 +31,7 @@ const AssessmentDetailDataGrid = ({
     }
 
     const detailPath = generatePath(PageRoutes.ASSESSMENT_RECEIPT_DETAIL, {
-      receiptId,
+      receiptId: String(receiptId),
       assessmentId
     });
     const detailUrl = appendReceiptIudQuery(detailPath, iud);

@@ -142,7 +142,9 @@ describe('OrganizationsDatagrid', () => {
     );
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      generatePath(PageRoutes.ORGANIZATIONS_DETAIL, { organizationId: 1 })
+      generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
+        organizationId: String(1)
+      })
     );
   });
 });

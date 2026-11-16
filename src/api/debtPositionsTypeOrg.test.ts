@@ -276,7 +276,8 @@ describe('updateFlagActiveDebtPositionTypeOrg', () => {
     expect(onErrorMock).toHaveBeenCalledWith(
       mockError,
       mutationData,
-      undefined
+      undefined,
+      expect.objectContaining({ mutationKey: [expect.any(String)] })
     );
   });
 

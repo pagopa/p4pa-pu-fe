@@ -3,7 +3,6 @@ import { HomeDrawerListItem } from './HomeDrawerListItem';
 import { useAppNavigate } from '../../../hooks/useAppNavigation';
 import { generatePath } from 'react-router';
 import { PageRoutes } from '../..';
-import { SearchType } from '../../../models/DebtPositions';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
@@ -29,13 +28,11 @@ export const HomeDrawerIUV = ({
     const { installmentId } = searchResults;
     if (installmentId) {
       const path = generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, {
-        id: installmentId
+        id: String(installmentId)
       });
       navigate(path);
     } else {
-      const path = generatePath(PageRoutes.DEBT_POSITION_SEARCH_RESULTS, {
-        state: { searchType: SearchType.IUV }
-      });
+      const path = generatePath(PageRoutes.DEBT_POSITION_SEARCH_RESULTS);
       navigate(path, { hashObject: { iuv: searchValue } });
     }
   };
@@ -44,7 +41,7 @@ export const HomeDrawerIUV = ({
     const { debtPositionId } = searchResults;
     if (debtPositionId) {
       const path = generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
-        id: debtPositionId
+        id: String(debtPositionId)
       });
       navigate(path);
     } else {
@@ -69,7 +66,7 @@ export const HomeDrawerIUV = ({
     const { classificationId } = searchResults;
     if (classificationId) {
       const path = generatePath(PageRoutes.CLASSIFICATION_DETAIL, {
-        classificationId
+        classificationId: String(classificationId)
       });
       navigate(generatePath(path));
     } else {

@@ -17,6 +17,33 @@ process.on('unhandledRejection', (err) => {
 
 const GENERATED_DIR = './generated';
 
+/**
+ * swagger-typescript-api >= 13.13 maps OpenAPI `@format byte` fields to `Blob`.
+ * In JSON payloads those fields are base64 strings, and `ts-to-zod` cannot build
+ * a schema for `Blob` (it silently drops every dependent schema), so rewrite the
+ * type annotation back to `string` before zod generation.
+ * Runtime occurrences (`value instanceof Blob`) are left untouched.
+ */
+const BLOB_TYPE_ANNOTATION = /(:\s*)Blob\b/g;
+
+const normalizeBinaryTypes = (label, outDir) => {
+    for (const fileName of ['client.ts', 'data-contracts.ts']) {
+        const filePath = path.join(outDir, fileName);
+
+        if (!fs.existsSync(filePath)) {
+            continue;
+        }
+
+        const source = fs.readFileSync(filePath, 'utf8');
+        const normalized = source.replace(BLOB_TYPE_ANNOTATION, '$1string');
+
+        if (normalized !== source) {
+            fs.writeFileSync(filePath, normalized);
+            console.log(`[${label}] Mapped "Blob" type annotations to "string" in ${fileName}`);
+        }
+    }
+};
+
 const toPascalCase = (value) =>
     value
         .split(/[-_]+/)
@@ -55,6 +82,7 @@ const buildCommands = (filePath, outDir, baseName) => {
     return {
         client: [
             'swagger-typescript-api',
+            'generate',
             '--extract-enums',
             '-p', filePath,
             '-o', outDir,
@@ -64,6 +92,7 @@ const buildCommands = (filePath, outDir, baseName) => {
         ],
         contracts: [
             'swagger-typescript-api',
+            'generate',
             '--extract-enums',
             '--modular',
             '--no-client',
@@ -93,4 +122,6 @@ for (const specFile of specFiles) {
 
     runGeneration(`${baseName}-client`, commands.client);
     runGeneration(`${baseName}-contracts`, commands.contracts);
+
+    normalizeBinaryTypes(baseName, outDir);
 }
