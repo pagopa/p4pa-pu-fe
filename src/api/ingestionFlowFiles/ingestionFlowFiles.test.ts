@@ -150,8 +150,7 @@ describe('uploadIngestionFlowFile', () => {
         fileOrigin: 'PORTAL',
         fileName: 'test.csv'
       },
-      { ingestionFlowFile: file },
-      undefined
+      { ingestionFlowFile: file }
     );
   });
 

@@ -144,7 +144,7 @@ describe('MyOrg', () => {
 
     expect(mockNavigate).toHaveBeenCalledWith('/mock-path');
     expect(mockGeneratePath).toHaveBeenCalledWith(expect.any(String), {
-      debtPositionTypeOrgId: 1
+      debtPositionTypeOrgId: '1'
     });
   });
 

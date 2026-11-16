@@ -1,6 +1,7 @@
 /**
- * Downloads OpenAPI specs from env vars whose names contain "OPENAPI"
- * and removes `nullable: true` fields.
+ * Downloads OpenAPI specs from env vars whose names contain "OPENAPI" and
+ * normalises the fields that break code generation: `nullable: true` and
+ * `format: "byte"` (see removeNullableTrue / removeByteFormat below).
  *
  * Usage: node scripts/download-openapi.js
  *
@@ -109,6 +110,36 @@ const removeNullableTrue = (obj) => {
     return count;
 };
 
+// Remove format: "byte" from spec
+//
+// `format: "byte"` means "base64-encoded characters", i.e. a plain string in a
+// JSON payload: these fields are Java `byte[]` values serialised as base64 by
+// the backend. swagger-typescript-api >= 13.5, however, types them as `Blob`,
+// and ts-to-zod cannot build a schema for `Blob`, so it silently drops every
+// schema that depends on one of these fields. Dropping the format keeps the
+// generated contracts (and their zod schemas) as `string`.
+const removeByteFormat = (obj) => {
+    let count = 0;
+
+    const walk = (node) => {
+        if (Array.isArray(node)) {
+            node.forEach(walk);
+        } else if (typeof node === 'object' && node !== null) {
+            for (const k in node) {
+                if (k === 'format' && node[k] === 'byte') {
+                    delete node[k];
+                    count++;
+                } else {
+                    walk(node[k]);
+                }
+            }
+        }
+    };
+
+    walk(obj);
+    return count;
+};
+
 // Fetch, clean, and persist spec
 const fetchAndClean = async (name, sourceUrl) => {
     console.log(`[${name}] Fetching spec from ${sourceUrl}`);
@@ -122,9 +153,13 @@ const fetchAndClean = async (name, sourceUrl) => {
     }
 
     const jsonData = JSON.parse(rawData);
-    const removedCount = removeNullableTrue(jsonData);
+    const removedNullable = removeNullableTrue(jsonData);
+    const removedByteFormats = removeByteFormat(jsonData);
 
-    console.log(`[${name}] Cleaned spec: removed ${removedCount} "nullable: true" field${removedCount !== 1 ? 's' : ''}`);
+    console.log(
+        `[${name}] Cleaned spec: removed ${removedNullable} "nullable: true" field${removedNullable !== 1 ? 's' : ''}` +
+            `, ${removedByteFormats} "format: byte" annotation${removedByteFormats !== 1 ? 's' : ''}`,
+    );
 
     const outDir = './generated';
     if (!fs.existsSync(outDir)) {
