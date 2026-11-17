@@ -2425,7 +2425,8 @@
       "purposeId": "Purpose ID",
       "clientId": "Client ID",
       "copyPurposeId": "Copia Purpose ID",
-      "copyClientId": "Copia Client ID"
+      "copyClientId": "Copia Client ID",
+      "serviceName": "Nome e-service"
     },
     "apiKeyDialog": {
       "apiKey": "Chiave pubblica",
