@@ -9,6 +9,7 @@ import {
   getOrgSubUnitOperators,
   updateOrgSubUnitStatus
 } from '@core/api/orgSubUnit';
+import { getOrganizationDetail } from '@core/api/organizations';
 import { useSearch } from '@core/hooks/useSearch';
 import { appState } from '@core/store/AppStateStore';
 import { PageRoutes } from '@core/routes';
@@ -101,6 +102,38 @@ vi.mock('@core/components/GenericDialog/GenericDialog', () => ({
         </button>
       </div>
     ) : null
+}));
+
+vi.mock('@core/components/FilterContainer/FilterContainer', () => ({
+  COMPONENT_TYPE: {
+    textField: 'textField',
+    select: 'select',
+    button: 'button',
+    dateRange: 'dateRange',
+    amount: 'amount'
+  },
+  default: ({
+    values,
+    onChange,
+    onSubmit
+  }: {
+    values: Record<string, unknown>;
+    onChange: (id: string, value: unknown) => void;
+    onSubmit: () => void;
+  }) => (
+    <div>
+      <span data-testid="filter-values">{JSON.stringify(values)}</span>
+      <button
+        data-testid="change-filter"
+        onClick={() => onChange('firstName', 'Mario')}
+      >
+        change
+      </button>
+      <button data-testid="submit-filters" onClick={onSubmit}>
+        submit
+      </button>
+    </div>
+  )
 }));
 
 vi.mock('./components/SubUnitSummary', () => ({
@@ -307,5 +340,58 @@ describe('SubUnitDetail', () => {
     fireEvent.click(screen.getByTestId('delete-operator'));
 
     expect(mockApplyFilters).toHaveBeenCalledWith({});
+  });
+
+  it('updates the local filter values and applies them on submit', () => {
+    render(<SubUnitDetail />);
+
+    fireEvent.click(screen.getByTestId('change-filter'));
+    fireEvent.click(screen.getByTestId('submit-filters'));
+
+    expect(mockApplyFilters).toHaveBeenCalledWith({ firstName: 'Mario' });
+  });
+
+  it('navigates to the assign operators page from the link operator action', () => {
+    render(<SubUnitDetail />);
+
+    fireEvent.click(screen.getByText('subunits.detail.linkOperator'));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      generatePath(PageRoutes.SUB_UNIT_DETAIL_ASSIGN_OPERATORS, {
+        organizationId: String(33),
+        subUnitCode: 'SU1'
+      })
+    );
+  });
+
+  it('closes the status dialog when the cancel action is used', () => {
+    render(<SubUnitDetail />);
+
+    fireEvent.click(screen.getByText('subunits.detail.disable.action'));
+    expect(screen.getByTestId('status-dialog')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('cancel-status-change'));
+
+    expect(screen.queryByTestId('status-dialog')).not.toBeInTheDocument();
+  });
+
+  it('falls back to the URL organization id when the organization name is missing', () => {
+    vi.mocked(getOrganizationDetail).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: false
+    } as unknown as ReturnType<typeof getOrganizationDetail>);
+
+    render(<SubUnitDetail />);
+
+    expect(appState.value.customBreadcrumbsItems).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: 'ORGANIZATIONS_DETAIL',
+          label: '33'
+        }),
+        expect.objectContaining({ id: 'SUBUNITS_LIST' })
+      ])
+    );
   });
 });

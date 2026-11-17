@@ -72,7 +72,7 @@ export const OrganizationDetail = () => {
       { pathname: PageRoutes.ORGANIZATIONS_INDEX, id: 'ORGANIZATIONS' },
       {
         pathname: generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
-          organizationId: getOrganizationId
+          organizationId: String(getOrganizationId)
         }),
         label: orgName,
         id: 'ORGANIZATIONS_DETAIL'

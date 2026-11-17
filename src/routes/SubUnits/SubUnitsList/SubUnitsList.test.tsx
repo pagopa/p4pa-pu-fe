@@ -3,6 +3,7 @@ import { fireEvent } from '@testing-library/react';
 import { generatePath, useNavigate, useParams } from 'react-router';
 
 import { getPagedOrgSubUnits } from '@core/api/orgSubUnit';
+import { getOrganizationDetail } from '@core/api/organizations';
 import { useSearch } from '@core/hooks/useSearch';
 import { appState } from '@core/store/AppStateStore';
 import { SubUnitsList } from '.';
@@ -41,7 +42,22 @@ vi.mock('react-router', async () => {
 });
 
 vi.mock('@core/components/TitleComponent/TitleComponent', () => ({
-  default: ({ title }: { title: string }) => <h1>{title}</h1>
+  default: ({
+    title,
+    callToAction
+  }: {
+    title: string;
+    callToAction?: Array<{ buttonText: string; onActionClick: () => void }>;
+  }) => (
+    <div>
+      <h1>{title}</h1>
+      {callToAction?.map((action) => (
+        <button key={action.buttonText} onClick={action.onActionClick}>
+          {action.buttonText}
+        </button>
+      ))}
+    </div>
+  )
 }));
 
 vi.mock('@core/components/FilterContainer/FilterContainer', () => ({
@@ -163,5 +179,37 @@ describe('SubUnitsList', () => {
     fireEvent.click(screen.getByTestId('submit-filters'));
 
     expect(mockApplyFilters).toHaveBeenCalledWith({ subUnitCode: 'XYZ' });
+  });
+
+  it('navigates to the create sub unit page from the create action', () => {
+    render(<SubUnitsList />);
+
+    fireEvent.click(screen.getByText('subunits.list.create'));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      generatePath(PageRoutes.SUB_UNIT_CREATE, {
+        organizationId: String(33)
+      })
+    );
+  });
+
+  it('falls back to the URL organization id when the organization name is missing', () => {
+    vi.mocked(getOrganizationDetail).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: false
+    } as unknown as ReturnType<typeof getOrganizationDetail>);
+
+    render(<SubUnitsList />);
+
+    expect(appState.value.customBreadcrumbsItems).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: 'ORGANIZATIONS_DETAIL',
+          label: '33'
+        }),
+        expect.objectContaining({ id: 'SUBUNITS_LIST' })
+      ])
+    );
   });
 });
