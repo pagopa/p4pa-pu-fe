@@ -39,7 +39,8 @@ const service = {
   serviceType: 'SEND',
   clientName: 'Client A',
   purposeId: 'purp_1',
-  clientId: 'client-a'
+  clientId: 'client-a',
+  serviceName: 'Service A'
 } as PdndServiceView;
 
 const mockMutateAsync = vi.fn();
@@ -77,7 +78,7 @@ describe('PdndSendServiceDialog', () => {
     renderDialog();
 
     expect(screen.getByText('SEND')).toBeInTheDocument();
-    expect(screen.getByText('Client A')).toBeInTheDocument();
+    expect(screen.getByText('Service A')).toBeInTheDocument();
     expect(screen.getByText('purp_1')).toBeInTheDocument();
     expect(screen.getByText('client-a')).toBeInTheDocument();
   });
@@ -172,7 +173,7 @@ describe('PdndSendServiceDialog', () => {
       screen.queryByText('integrations.serviceDialog.purposeId')
     ).not.toBeInTheDocument();
 
-    expect(screen.getByText('Client A')).toBeInTheDocument();
+    expect(screen.getByText('Service A')).toBeInTheDocument();
     expect(screen.getByText('client-a')).toBeInTheDocument();
 
     expect(onClose).not.toHaveBeenCalled();
