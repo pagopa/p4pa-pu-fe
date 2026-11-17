@@ -4,12 +4,16 @@ import type {
   OrgSubUnit,
   PagedOrgSubUnit
 } from '../../../../generated/core/client';
-import type { GridColDef } from '@mui/x-data-grid';
+import type { GridColDef, GridRowParams } from '@mui/x-data-grid';
+import { GridActionsCellItem } from '@mui/x-data-grid';
+import { OrgSubUnitStatus } from '@generated/core/data-contracts';
 import EmptyDetailContainer from '../../../components/DebtPositionsInstallmentDetail/EmptyDetailContainer';
 import utils from '@core/utils';
-import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import RemoveCircleOutline from '@mui/icons-material/RemoveCircleOutline';
+import ChevronRight from '@mui/icons-material/ChevronRight';
+import { generatePath, useNavigate } from 'react-router';
+import { PageRoutes } from '@core/routes';
 
 type PagedOrgSubUnitDataGridProps = {
   data?: PagedOrgSubUnit;
@@ -23,6 +27,20 @@ const SubUnitDataGrid = ({
   id
 }: PagedOrgSubUnitDataGridProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const colorMap: Record<OrgSubUnitStatus, 'success' | 'error'> = {
+    [OrgSubUnitStatus.ACTIVE]: 'success',
+    [OrgSubUnitStatus.CANCELLED]: 'error'
+  };
+
+  const toDetail = (row: OrgSubUnit) =>
+    navigate(
+      generatePath(PageRoutes.SUB_UNIT_DETAIL, {
+        organizationId: row.organizationId,
+        subUnitCode: row.subUnitCode
+      })
+    );
 
   const columns: Array<GridColDef<OrgSubUnit>> = [
     {
@@ -57,7 +75,7 @@ const SubUnitDataGrid = ({
       type: 'string',
       renderCell: (params) => (
         <Chip
-          color="info"
+          color={colorMap[params.value as OrgSubUnitStatus]}
           size="small"
           label={t(`OperatorDetail.subUnitStatus.${params.value}`)}
         />
@@ -65,20 +83,23 @@ const SubUnitDataGrid = ({
     },
     {
       field: 'action',
+      type: 'actions',
       headerName: '',
-      flex: 1,
-      sortable: false,
-      align: 'right',
-      headerAlign: 'right',
-      renderCell: (params) => (
-        <Button
-          endIcon={<RemoveCircleOutline />}
+      flex: 0.4,
+      getActions: (params: GridRowParams<OrgSubUnit>) => [
+        <GridActionsCellItem
+          key="detail"
+          icon={<ChevronRight />}
+          label={t('commons.toDetail')}
+          onClick={() => toDetail(params.row)}
+        />,
+        <GridActionsCellItem
+          key="delete"
+          icon={<RemoveCircleOutline />}
+          label={t('commons.remove')}
           onClick={() => onDelete(params.row)}
-          color="error"
-        >
-          {t('commons.remove')}
-        </Button>
-      )
+        />
+      ]
     }
   ];
 

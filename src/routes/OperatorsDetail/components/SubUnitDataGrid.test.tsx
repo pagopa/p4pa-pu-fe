@@ -1,9 +1,12 @@
+import type { ReactElement } from 'react';
 import { fireEvent, render, screen } from '../../../__tests__/renderers';
 import { describe, expect, beforeEach, it, vi } from 'vitest';
+import { generatePath, useNavigate } from 'react-router';
 import type {
   OrgSubUnit,
   PagedOrgSubUnit
 } from '../../../../generated/core/client';
+import { PageRoutes } from '@core/routes';
 import SubUnitDataGrid from './SubUnitDataGrid';
 
 const formatDate = vi.fn((date: string) => `formatted:${date}`);
@@ -16,6 +19,17 @@ vi.mock('@core/utils', () => ({
   }
 }));
 
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: vi.fn()
+}));
+
+vi.mock('@core/routes', () => ({
+  PageRoutes: {
+    SUB_UNIT_DETAIL: '/organizations/:organizationId/subunits/:subUnitCode'
+  }
+}));
+
 vi.mock(
   '../../../components/DebtPositionsInstallmentDetail/EmptyDetailContainer',
   () => ({
@@ -25,53 +39,71 @@ vi.mock(
   })
 );
 
+type Action = ReactElement<{ label: string; onClick: () => void }>;
+type Column = {
+  field: string;
+  headerName?: string;
+  renderCell?: (params: { value: unknown; row: OrgSubUnit }) => React.ReactNode;
+  getActions?: (params: { id: string; row: OrgSubUnit }) => Array<Action>;
+};
+
 vi.mock('../../../components/DataGrid/CustomDataGrid', () => ({
   default: (props: {
     rows: Array<OrgSubUnit>;
-    columns: Array<{
-      field: string;
-      headerName?: string;
-      renderCell?: (params: {
-        value: unknown;
-        row: OrgSubUnit;
-      }) => React.ReactNode;
-    }>;
+    columns: Array<Column>;
     getRowId: (row: OrgSubUnit) => string;
     totalPages: number;
-  }) => (
-    <div data-testid="custom-data-grid">
-      <span data-testid="total-pages">{props.totalPages}</span>
-      {props.columns.map((column) => (
-        <span key={column.field} data-testid={`header-${column.field}`}>
-          {column.headerName}
-        </span>
-      ))}
-      {props.rows.map((row) => (
-        <div
-          key={props.getRowId(row)}
-          data-testid={`row-${props.getRowId(row)}`}
-        >
-          {props.columns.map((column) => (
-            <div
-              key={column.field}
-              data-testid={`cell-${props.getRowId(row)}-${column.field}`}
-            >
-              {column.renderCell
-                ? column.renderCell({
-                    value: row[column.field as keyof OrgSubUnit],
-                    row
-                  })
-                : (row[column.field as keyof OrgSubUnit] as string)}
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
-  )
+  }) => {
+    const Cell = ({ col, row }: { col: Column; row: OrgSubUnit }) => {
+      if (col.renderCell) {
+        return (
+          <>
+            {col.renderCell({ value: row[col.field as keyof OrgSubUnit], row })}
+          </>
+        );
+      }
+      if (col.getActions) {
+        return (
+          <>
+            {col.getActions({ id: row.subUnitCode, row }).map((action) => (
+              <button key={action.key} onClick={action.props.onClick}>
+                {action.props.label}
+              </button>
+            ))}
+          </>
+        );
+      }
+      return <>{row[col.field as keyof OrgSubUnit] as React.ReactNode}</>;
+    };
+
+    return (
+      <div data-testid="custom-data-grid">
+        <span data-testid="total-pages">{props.totalPages}</span>
+        {props.columns.map((column) => (
+          <span key={column.field} data-testid={`header-${column.field}`}>
+            {column.headerName}
+          </span>
+        ))}
+        {props.rows.map((row) => (
+          <div key={row.subUnitCode} data-testid={`row-${row.subUnitCode}`}>
+            {props.columns.map((column) => (
+              <div
+                key={column.field}
+                data-testid={`cell-${row.subUnitCode}-${column.field}`}
+              >
+                <Cell col={column} row={row} />
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
 }));
 
 describe('SubUnitDataGrid', () => {
   const mockOnDelete = vi.fn();
+  const mockNavigate = vi.fn();
   const sampleRow = {
     organizationId: 123,
     subUnitCode: 'SUB-001',
@@ -83,6 +115,7 @@ describe('SubUnitDataGrid', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useNavigate).mockReturnValue(mockNavigate);
   });
 
   it('renders the empty state when the response has no rows', () => {
@@ -169,6 +202,25 @@ describe('SubUnitDataGrid', () => {
     fireEvent.click(screen.getByRole('button', { name: 'commons.remove' }));
 
     expect(mockOnDelete).toHaveBeenCalledWith(sampleRow);
+  });
+
+  it('navigates to the sub-unit detail when the detail action is clicked', () => {
+    render(
+      <SubUnitDataGrid
+        id=""
+        data={{ content: [sampleRow], totalPages: 1 } as PagedOrgSubUnit}
+        onDelete={mockOnDelete}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'commons.toDetail' }));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      generatePath(PageRoutes.SUB_UNIT_DETAIL, {
+        organizationId: sampleRow.organizationId,
+        subUnitCode: sampleRow.subUnitCode
+      })
+    );
   });
 
   it('uses an empty rows array when data is undefined', () => {

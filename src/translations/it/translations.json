@@ -150,8 +150,8 @@
         "button": "Associa"
       }
     },
-    "subUnit": "Sottunità",
-    "affiliateSubUnit": "Associa sottunità",
+    "subUnit": "Sottounità",
+    "affiliateSubUnit": "Associa sottounità",
     "subCode": "Codice univoco",
     "subType": "Struttura",
     "subName": "Denominazione",
@@ -167,10 +167,10 @@
       "subUnitType": "Filtra per Struttura"
     },
     "deleteDialogSubUnit": {
-      "title": "Sei sicuro di voler rimuovere la sottunità?",
-      "message": "Denominazione sottunità che verrà rimossa: <strong>{{subUnitName}}</strong>"
+      "title": "Sei sicuro di voler rimuovere la sottounità?",
+      "message": "Denominazione sottounità che verrà rimossa: <strong>{{subUnitName}}</strong>"
     },
-    "subUnitEmptyData": "Nessuna sottunità associata"
+    "subUnitEmptyData": "Nessuna sottounità associata"
   },
   "a11y": {
     "navigation": {
