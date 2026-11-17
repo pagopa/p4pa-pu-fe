@@ -147,7 +147,7 @@ export const MyOrganization = ({ omitOrgName }: { omitOrgName?: boolean }) => {
   const handleRowClick = (row: Operator | undefined) => {
     if (row) {
       const detailPath = generatePath(PageRoutes.OPERATORS_DETAIL, {
-        organizationId,
+        organizationId: String(organizationId),
         mappedExternalUserId: row?.id
       });
       navigate(detailPath);

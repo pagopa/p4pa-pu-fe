@@ -6,29 +6,39 @@ import { ServiceDataGrid } from './ServiceDataGrid';
 import type { PagedOrgSilServiceView } from '../../../../generated/core/client';
 import { OrgSilServiceType } from '../../../../generated/core/client';
 
-vi.mock('../../../components/DataGrid/CustomDataGrid', () => ({
-  default: ({ rows, columns }: any) => (
-    <div data-testid="custom-data-grid">
-      {rows.map((row: any, index: number) => {
-        const actionsColumn = columns.find(
-          (col: any) => col.field === 'actions'
-        );
-        const actionCell = actionsColumn?.renderCell
-          ? actionsColumn.renderCell({ row })
-          : null;
+const captured = vi.hoisted(() => ({
+  columns: [] as Array<{
+    field: string;
+    valueGetter?: (value: unknown) => unknown;
+  }>
+}));
 
-        return (
-          <div key={index} data-testid={`row-${row.orgSilServiceId}`}>
-            <span>{row.applicationName}</span>
-            <span>{row.serviceType}</span>
-            <div data-testid={`action-cell-${row.orgSilServiceId}`}>
-              {actionCell}
+vi.mock('../../../components/DataGrid/CustomDataGrid', () => ({
+  default: ({ rows, columns }: any) => {
+    captured.columns = columns;
+    return (
+      <div data-testid="custom-data-grid">
+        {rows.map((row: any, index: number) => {
+          const actionsColumn = columns.find(
+            (col: any) => col.field === 'actions'
+          );
+          const actionCell = actionsColumn?.renderCell
+            ? actionsColumn.renderCell({ row })
+            : null;
+
+          return (
+            <div key={index} data-testid={`row-${row.orgSilServiceId}`}>
+              <span>{row.applicationName}</span>
+              <span>{row.serviceType}</span>
+              <div data-testid={`action-cell-${row.orgSilServiceId}`}>
+                {actionCell}
+              </div>
             </div>
-          </div>
-        );
-      })}
-    </div>
-  )
+          );
+        })}
+      </div>
+    );
+  }
 }));
 
 vi.mock('react-i18next', () => ({
@@ -122,5 +132,21 @@ describe('ServiceDataGrid', () => {
 
     expect(screen.getByTestId('custom-data-grid')).toBeInTheDocument();
     expect(screen.queryByText('Test Service 1')).not.toBeInTheDocument();
+  });
+
+  it('translates known service types and falls back for unknown ones', () => {
+    renderComponent();
+
+    const valueGetter = captured.columns.find(
+      (column) => column.field === 'serviceType'
+    )?.valueGetter;
+
+    expect(valueGetter?.(OrgSilServiceType.PAID_NOTIFICATION_OUTCOME)).toBe(
+      'Payment Notice'
+    );
+    expect(valueGetter?.(OrgSilServiceType.ACTUALIZATION)).toBe(
+      'Amount Actualization'
+    );
+    expect(valueGetter?.('UNKNOWN')).toBe('UNKNOWN');
   });
 });

@@ -114,7 +114,7 @@ export const Management = ({
         value={debtPositionTypeOrgCount}
         linkLabel={t('organizations.management.debtTypesLink')}
         to={generatePath(PageRoutes.DEBT_TYPES_DASHBOARD_BYORG, {
-          organizationId
+          organizationId: String(organizationId)
         })}
       />
       <LinkRow
@@ -122,7 +122,7 @@ export const Management = ({
         value={operatorsCount}
         linkLabel={t('organizations.management.operatorsLink')}
         to={generatePath(PageRoutes.BROKER_OPERATORS, {
-          organizationId,
+          organizationId: String(organizationId),
           orgName
         })}
       />
@@ -131,7 +131,7 @@ export const Management = ({
         value={orgSubUnitCount}
         linkLabel={t('organizations.management.subUnitsLink')}
         to={generatePath(PageRoutes.ORGANIZATIONS_SUB_UNITS, {
-          organizationId
+          organizationId: String(organizationId)
         })}
       />
     </SectionCard>

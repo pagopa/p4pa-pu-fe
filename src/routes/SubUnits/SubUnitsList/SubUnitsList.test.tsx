@@ -131,7 +131,7 @@ describe('SubUnitsList', () => {
         expect.objectContaining({
           id: 'ORGANIZATIONS_DETAIL',
           pathname: generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
-            organizationId: 33
+            organizationId: String(33)
           }),
           label: '33'
         }),

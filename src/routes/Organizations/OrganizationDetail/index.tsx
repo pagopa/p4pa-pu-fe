@@ -67,7 +67,7 @@ export const OrganizationDetail = () => {
   const handleEditClick = () => {
     navigate(
       generatePath(PageRoutes.ORGANIZATIONS_EDIT, {
-        organizationId: getOrganizationId
+        organizationId: String(getOrganizationId)
       })
     );
   };
@@ -158,7 +158,7 @@ export const OrganizationDetail = () => {
         onClick={() =>
           navigate(
             generatePath(PageRoutes.ORGANIZATIONS_INTEGRATIONS, {
-              organizationId: getOrganizationId
+              organizationId: String(getOrganizationId)
             })
           )
         }

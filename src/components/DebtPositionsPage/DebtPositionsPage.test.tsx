@@ -113,7 +113,6 @@ describe('DebtPositionsPage', async () => {
       fetchStatus: 'idle' as const,
       status: 'success' as const,
       refetch: vi.fn(),
-      promise: Promise.resolve([]),
       optionsMap: [
         { value: 1, label: 'Type 1' },
         { value: 2, label: 'Type 2' }
@@ -122,7 +121,8 @@ describe('DebtPositionsPage', async () => {
       isFetched: false,
       isFetchedAfterMount: false,
       isInitialLoading: false,
-      isPaused: false
+      isPaused: false,
+      isEnabled: true
     });
 
     mockUseTabsConfig.mockReturnValue([

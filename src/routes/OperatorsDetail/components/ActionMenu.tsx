@@ -28,7 +28,7 @@ export const GridActionMenu = ({
   const onDetail = () => {
     if (row?.debtPositionTypeOrgId) {
       const path = generatePath(PageRoutes.DEBT_TYPE_ORG_DETAIL, {
-        debtPositionTypeOrgId: row.debtPositionTypeOrgId
+        debtPositionTypeOrgId: String(row.debtPositionTypeOrgId)
       });
       navigate(path);
     } else {

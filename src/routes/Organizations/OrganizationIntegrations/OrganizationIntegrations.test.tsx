@@ -71,7 +71,7 @@ const mockTab = (tab?: string) =>
     );
 
 const addIntegrationPath = generatePath(PageRoutes.ADD_INTEGRATION, {
-  organizationId: 33
+  organizationId: String(33)
 });
 
 describe('OrganizationIntegrations', () => {
@@ -195,7 +195,7 @@ describe('OrganizationIntegrations', () => {
         expect.objectContaining({
           id: 'ORGANIZATIONS_DETAIL',
           pathname: generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
-            organizationId: 33
+            organizationId: String(33)
           }),
           label: 'Ente'
         }),

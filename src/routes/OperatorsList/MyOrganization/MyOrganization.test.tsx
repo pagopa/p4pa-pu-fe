@@ -219,6 +219,74 @@ describe('MyOrganization', () => {
     });
   });
 
+  it('renders the organization title when the response contains an organization name', async () => {
+    (useSearch as Mock).mockReturnValue({
+      query: {
+        data: {
+          content: [
+            {
+              mappedExternalUserId: '1',
+              firstName: 'Carla',
+              lastName: 'Danti',
+              fiscalCode: 'DNTCRL65S67M126L',
+              debtPositionTypeOrgCount: 1,
+              orgName: 'Comune di Roma'
+            }
+          ],
+          totalPages: 1
+        }
+      },
+      applyFilters: mockApplyFilters
+    });
+
+    render(<MyOrganization />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Comune di Roma')).toBeInTheDocument();
+    });
+  });
+
+  it('hides the title when omitOrgName is set', async () => {
+    (useSearch as Mock).mockReturnValue({
+      query: {
+        data: {
+          content: [
+            {
+              mappedExternalUserId: '1',
+              firstName: 'Carla',
+              lastName: 'Danti',
+              fiscalCode: 'DNTCRL65S67M126L',
+              debtPositionTypeOrgCount: 1,
+              orgName: 'Comune di Milano'
+            }
+          ],
+          totalPages: 1
+        }
+      },
+      applyFilters: mockApplyFilters
+    });
+
+    render(<MyOrganization omitOrgName />);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Comune di Milano')).not.toBeInTheDocument();
+    });
+  });
+
+  it('renders an empty grid when the response has no data', async () => {
+    (useSearch as Mock).mockReturnValue({
+      query: { data: undefined },
+      applyFilters: mockApplyFilters
+    });
+
+    render(<MyOrganization />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('grid')).toBeInTheDocument();
+    });
+    expect(screen.queryByText('Carla Danti')).not.toBeInTheDocument();
+  });
+
   it('handles missing data gracefully', async () => {
     (useSearch as unknown as Mock).mockReturnValue({
       query: {

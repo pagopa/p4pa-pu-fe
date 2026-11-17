@@ -58,7 +58,7 @@ export const OrganizationIntegrations = () => {
       { pathname: PageRoutes.ORGANIZATIONS_INDEX, id: 'ORGANIZATIONS' },
       {
         pathname: generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
-          organizationId
+          organizationId: String(organizationId)
         }),
         label: orgName,
         id: 'ORGANIZATIONS_DETAIL'
@@ -68,7 +68,11 @@ export const OrganizationIntegrations = () => {
   }, [orgName, organizationId]);
 
   const addIntegrationAction = () => {
-    navigate(generatePath(PageRoutes.ADD_INTEGRATION, { organizationId }));
+    navigate(
+      generatePath(PageRoutes.ADD_INTEGRATION, {
+        organizationId: String(organizationId)
+      })
+    );
   };
 
   return (

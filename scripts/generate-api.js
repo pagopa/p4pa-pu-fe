@@ -55,6 +55,7 @@ const buildCommands = (filePath, outDir, baseName) => {
     return {
         client: [
             'swagger-typescript-api',
+            'generate',
             '--extract-enums',
             '-p', filePath,
             '-o', outDir,
@@ -64,6 +65,7 @@ const buildCommands = (filePath, outDir, baseName) => {
         ],
         contracts: [
             'swagger-typescript-api',
+            'generate',
             '--extract-enums',
             '--modular',
             '--no-client',

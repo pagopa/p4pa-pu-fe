@@ -35,7 +35,7 @@ export const SubUnitsDataGrid = ({
   const toDetail = (subUnitCode: string) =>
     navigate(
       generatePath(PageRoutes.SUB_UNIT_DETAIL, {
-        organizationId,
+        organizationId: String(organizationId),
         subUnitCode
       })
     );

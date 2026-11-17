@@ -51,7 +51,7 @@ const SpontaneousFormDataGrid = ({
           onClick={() => {
             navigate(
               generatePath(PageRoutes.SPONTANEOUS_FORM_DETAIL, {
-                spontaneousFormId: params.row.spontaneousFormId
+                spontaneousFormId: String(params.row.spontaneousFormId)
               })
             );
           }}

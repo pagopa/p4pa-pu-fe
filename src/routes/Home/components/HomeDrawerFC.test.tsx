@@ -100,6 +100,31 @@ describe('HomeDrawerFC', () => {
     expect(mockNavigate).toHaveBeenCalledTimes(2);
   });
 
+  it('navigates to the debt positions list when no debtPositionId is present', async () => {
+    const searchResults: DashboardByFc = {
+      ...baseResults,
+      hasDebtPosition: true,
+      debtPositionId: undefined
+    };
+
+    render(
+      <HomeDrawerFC
+        searchValue="RSSMRA80A01H501U"
+        searchResults={searchResults}
+      />
+    );
+
+    const listItem = await screen.findByText('home.drawer.debtPositions');
+    await userEvent.click(listItem);
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        hashObject: { fiscalCode: 'RSSMRA80A01H501U' }
+      })
+    );
+  });
+
   it('navigates to installments list when no installmentId but hasInstallment', async () => {
     const searchResults: DashboardByFc = {
       ...baseResults,

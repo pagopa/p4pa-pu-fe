@@ -149,11 +149,34 @@ describe('ManagedOrgs', () => {
     expect(mockApplyFilters).toHaveBeenCalled();
   });
 
-  it('calls mutate when filters change (simulate via rerender with new filters)', async () => {
-    // No props shown in component, so simulate via user interactions or directly call mutate if exposed
-    // Or extend ManagedOrgs to accept filters as props for easier testing
-    // This test stub is placeholder for real interaction test if you implement filters changes
+  it('navigates to the organization debt types dashboard on row action click', async () => {
+    const navigate = vi.fn();
+    const router = await import('react-router');
+    vi.mocked(router.useNavigate).mockReturnValue(navigate);
 
-    expect(true).toBe(true);
+    render(<ManagedOrgs />);
+    await waitFor(() => screen.getByText('IPA001'));
+
+    fireEvent.click(
+      screen.getAllByRole('button', { name: 'commons.detail' })[0]
+    );
+
+    expect(router.generatePath).toHaveBeenCalledWith(expect.any(String), {
+      organizationId: '1'
+    });
+    expect(navigate).toHaveBeenCalledWith('/mock-path');
+  });
+
+  it('renders an empty grid when the data has no content', async () => {
+    (useSearch as unknown as Mock).mockReturnValue({
+      query: { data: { content: undefined, totalPages: undefined } },
+      applyFilters: mockApplyFilters
+    });
+
+    render(<ManagedOrgs />);
+
+    await waitFor(() => {
+      expect(screen.queryByText('IPA001')).not.toBeInTheDocument();
+    });
   });
 });

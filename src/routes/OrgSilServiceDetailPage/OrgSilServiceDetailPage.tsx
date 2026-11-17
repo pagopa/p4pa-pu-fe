@@ -106,7 +106,7 @@ export const OrgSilServiceDetailPage = () => {
       onActionClick: () =>
         navigate(
           generatePath(PageRoutes.ORG_SIL_SERVICE_EDIT, {
-            orgSilServiceId: Number(orgSilServiceId)
+            orgSilServiceId: String(Number(orgSilServiceId))
           })
         )
     }

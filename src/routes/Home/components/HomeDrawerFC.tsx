@@ -27,7 +27,7 @@ export const HomeDrawerFC = ({
     const { installmentId } = searchResults;
     if (installmentId) {
       const path = generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, {
-        id: installmentId
+        id: String(installmentId)
       });
       navigate(path);
     } else {
@@ -42,7 +42,7 @@ export const HomeDrawerFC = ({
     const { debtPositionId } = searchResults;
     if (debtPositionId) {
       const path = generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
-        id: debtPositionId
+        id: String(debtPositionId)
       });
       navigate(path);
     } else {
