@@ -2731,7 +2731,7 @@
         "subUnitCode": "Cerca per codice univoco",
         "subUnitType": "Cerca per struttura"
       },
-      "title": "Sottounità {{orgName}}",
+      "title": "Sottounità di {{orgName}}",
       "description": "Puoi gestire le sottounità dell’ente.",
       "create": "Aggiungi sottounità"
     }

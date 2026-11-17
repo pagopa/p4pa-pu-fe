@@ -20,6 +20,16 @@ vi.mock('@core/api/orgSubUnit', () => ({
   getOrgSubUnitOperators: vi.fn()
 }));
 
+vi.mock('@core/api/organizations', () => ({
+  getOrganizationDetail: vi.fn(() => ({
+    data: {
+      orgName: 'Ente Demo'
+    },
+    isLoading: false,
+    isError: false
+  }))
+}));
+
 vi.mock('@core/hooks/useSearch', () => ({
   useSearch: vi.fn()
 }));
@@ -222,7 +232,7 @@ describe('SubUnitDetail', () => {
           pathname: generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
             organizationId: String(33)
           }),
-          label: '33'
+          label: 'Ente Demo'
         }),
         expect.objectContaining({
           id: 'SUBUNITS_LIST',
