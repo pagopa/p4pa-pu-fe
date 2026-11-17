@@ -164,7 +164,7 @@ export const SubUnitDetail = () => {
             chip={{
               label: t(`subunits.status.${subUnitQuery.data?.status}`),
               color:
-                subUnitQuery.data?.status == 'ACTIVE' ? 'default' : 'neutral'
+                subUnitQuery.data?.status == 'ACTIVE' ? 'success' : 'neutral'
             }}
             callToAction={[changeStatusAction]}
           />

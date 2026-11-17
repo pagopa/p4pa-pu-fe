@@ -225,7 +225,7 @@ describe('SubUnitDetail', () => {
   });
 
   it.each([
-    ['ACTIVE', 'default'],
+    ['ACTIVE', 'success'],
     ['CANCELLED', 'neutral']
   ])('maps status %s to chip color %s', (status, color) => {
     vi.mocked(getOrgSubUnitById).mockReturnValue({
