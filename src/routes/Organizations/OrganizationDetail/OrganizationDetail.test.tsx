@@ -1,22 +1,15 @@
-import { fireEvent, render, screen, waitFor } from '@core/__tests__/renderers';
+import { act, fireEvent, render, screen } from '@core/__tests__/renderers';
 import {
   getOrganizationDetail,
   updateOrganization
 } from '@core/api/organizations';
+import { setOrganizationId } from '@core/store/OrganizationIdStore';
+import { PageRoutes } from '@core/routes';
 import utils from '@core/utils';
 import { OrganizationStatus } from '@generated/core/client';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import { OrganizationDetail } from '.';
 import type { OrganizationDetail as OrganizationDetailDTO } from '@generated/core/client';
-import { PageRoutes } from '@core/routes';
-import { setOrganizationId } from '@core/store/OrganizationIdStore';
-import type { OrganizationIdMemo } from '@core/models/Organization';
-
-const mockNavigate = vi.fn();
-
-vi.mock('react-router', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('react-router')>()),
-  useNavigate: () => mockNavigate
-}));
 
 vi.mock('../../../assets/appio.svg', () => ({ default: 'appio-svg-mock' }));
 vi.mock('../../../assets/send.svg', () => ({ default: 'send-svg-mock' }));
@@ -25,6 +18,15 @@ vi.mock('../../../api/organizations', () => ({
   getOrganizationDetail: vi.fn(),
   updateOrganization: vi.fn()
 }));
+
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+    useParams: vi.fn()
+  };
+});
 
 vi.mock('../../../utils', async () => {
   const actual = await vi.importActual<{ default: Record<string, unknown> }>(
@@ -59,23 +61,56 @@ const baseOrganizationDetail: OrganizationDetailDTO = {
 const mockOrganizationDetailQuery = (
   overrides: Partial<OrganizationDetailDTO> = {}
 ) => {
-  const refetch = vi.fn();
-  vi.mocked(getOrganizationDetail).mockReturnValue({
+  const query = {
     data: { ...baseOrganizationDetail, ...overrides },
     isSuccess: true,
     isError: false,
-    refetch
+    refetch: vi.fn()
+  };
+  vi.mocked(getOrganizationDetail).mockReturnValue(
+    query as unknown as ReturnType<typeof getOrganizationDetail>
+  );
+  return query;
+};
+
+const mockOrganizationDetailError = () => {
+  vi.mocked(getOrganizationDetail).mockReturnValue({
+    data: undefined,
+    isSuccess: false,
+    isError: true,
+    refetch: vi.fn()
   } as unknown as ReturnType<typeof getOrganizationDetail>);
-  return refetch;
+};
+
+const mockNavigate = vi.fn();
+
+const openEnableDialog = () => {
+  const openSpy = vi
+    .spyOn(utils.dialog, 'open')
+    .mockImplementation(() => undefined);
+  const closeSpy = vi
+    .spyOn(utils.dialog, 'close')
+    .mockImplementation(() => undefined);
+  const notifySpy = vi
+    .spyOn(utils.notify, 'emit')
+    .mockImplementation(() => undefined);
+
+  fireEvent.click(screen.getByTestId('enable-organization-button'));
+
+  expect(openSpy).toHaveBeenCalledTimes(1);
+  const dialogConfig = openSpy.mock.calls[0][0];
+
+  return { dialogConfig, openSpy, closeSpy, notifySpy };
 };
 
 describe('OrganizationDetail Page', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    setOrganizationId(33 as OrganizationIdMemo);
     vi.mocked(utils.roles.useIsSuperAdmin).mockReturnValue(false);
+    vi.mocked(useNavigate).mockReturnValue(mockNavigate);
+    vi.mocked(useParams).mockReturnValue({ organizationId: '33' });
     vi.mocked(updateOrganization).mockReturnValue({
-      mutateAsync: vi.fn().mockResolvedValue({})
+      mutateAsync: vi.fn()
     } as unknown as ReturnType<typeof updateOrganization>);
     mockOrganizationDetailQuery();
   });
@@ -134,139 +169,146 @@ describe('OrganizationDetail Page', () => {
     ).toBeInTheDocument();
   });
 
-  it('navigates to the edit page when edit is clicked', () => {
-    render(<OrganizationDetail />);
-
-    fireEvent.click(screen.getByTestId('edit-organization-button'));
-
-    expect(mockNavigate).toHaveBeenCalledWith(
-      expect.stringContaining(
-        String(PageRoutes.ORGANIZATIONS_EDIT).split('/')[1]
-      )
-    );
-    expect(mockNavigate.mock.calls[0][0]).toContain('33');
-  });
-
-  it('navigates to the integrations page when manage integrations is clicked', () => {
-    render(<OrganizationDetail />);
-
-    fireEvent.click(screen.getByTestId('manage-integrations-button'));
-
-    expect(mockNavigate).toHaveBeenCalledWith(
-      expect.stringContaining(
-        String(PageRoutes.ORGANIZATIONS_INTEGRATIONS).split('/')[1]
-      )
-    );
-    expect(mockNavigate.mock.calls[0][0]).toContain('33');
-  });
-
-  it('falls back to the organization id from the store when the URL id is not numeric', () => {
-    setOrganizationId(77 as OrganizationIdMemo);
-
-    render(<OrganizationDetail />);
-
-    expect(getOrganizationDetail).toHaveBeenCalledWith(77);
-  });
-
-  it('navigates back to the organizations list when the query fails', () => {
-    vi.mocked(getOrganizationDetail).mockReturnValue({
-      data: undefined,
-      isSuccess: false,
-      isError: true,
-      refetch: vi.fn()
-    } as unknown as ReturnType<typeof getOrganizationDetail>);
+  it('redirects to the organizations index when the query is in error', () => {
+    mockOrganizationDetailError();
 
     render(<OrganizationDetail />);
 
     expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.ORGANIZATIONS_INDEX);
   });
 
-  it('does not activate the organization when mandatory fields are missing', async () => {
-    mockOrganizationDetailQuery({ status: OrganizationStatus.DRAFT, iban: '' });
-    vi.mocked(utils.roles.useIsSuperAdmin).mockReturnValue(true);
-    const notifySpy = vi.spyOn(utils.notify, 'emit');
-    let confirm: (() => void) | undefined;
-    vi.spyOn(utils.dialog, 'open').mockImplementation((dialog) => {
-      confirm = dialog.onConfirm;
-    });
-    const closeSpy = vi.spyOn(utils.dialog, 'close');
+  it('falls back to the organization id stored in the state when the URL param is not numeric', () => {
+    setOrganizationId(66);
+    vi.mocked(useParams).mockReturnValue({ organizationId: 'not-a-number' });
 
     render(<OrganizationDetail />);
-    fireEvent.click(screen.getByTestId('enable-organization-button'));
-    await confirm?.();
 
-    expect(notifySpy).toHaveBeenCalledWith(
-      'organizations.enableDialog.emptyFields',
-      'error'
-    );
-    expect(closeSpy).toHaveBeenCalled();
-    expect(updateOrganization().mutateAsync).not.toHaveBeenCalled();
+    expect(getOrganizationDetail).toHaveBeenCalledWith(66);
   });
 
-  it('activates the organization when all mandatory fields are present', async () => {
-    const refetch = mockOrganizationDetailQuery({
-      status: OrganizationStatus.DRAFT,
-      orgLogo: 'logo.png'
-    });
+  it('navigates to the edit page when the edit button is clicked', () => {
+    render(<OrganizationDetail />);
+
+    fireEvent.click(screen.getByTestId('edit-organization-button'));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      generatePath(PageRoutes.ORGANIZATIONS_EDIT, {
+        organizationId: String(33)
+      })
+    );
+  });
+
+  it('navigates to the integrations page when the manage integrations button is clicked', () => {
+    render(<OrganizationDetail />);
+
+    fireEvent.click(screen.getByTestId('manage-integrations-button'));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      generatePath(PageRoutes.ORGANIZATIONS_INTEGRATIONS, {
+        organizationId: String(33)
+      })
+    );
+  });
+
+  it('opens the enable dialog and closes it through its onClose callback', () => {
+    mockOrganizationDetailQuery({ status: OrganizationStatus.DRAFT });
     vi.mocked(utils.roles.useIsSuperAdmin).mockReturnValue(true);
+
+    render(<OrganizationDetail />);
+
+    const { dialogConfig, closeSpy } = openEnableDialog();
+
+    dialogConfig.onClose?.();
+
+    expect(closeSpy).toHaveBeenCalled();
+  });
+
+  it('activates the organization when all required fields are filled', async () => {
     const mutateAsync = vi.fn().mockResolvedValue({});
     vi.mocked(updateOrganization).mockReturnValue({
       mutateAsync
     } as unknown as ReturnType<typeof updateOrganization>);
-    const notifySpy = vi.spyOn(utils.notify, 'emit');
-    let confirm: (() => void) | undefined;
-    vi.spyOn(utils.dialog, 'open').mockImplementation((dialog) => {
-      confirm = dialog.onConfirm;
+    vi.mocked(utils.roles.useIsSuperAdmin).mockReturnValue(true);
+    const { refetch } = mockOrganizationDetailQuery({
+      status: OrganizationStatus.DRAFT,
+      orgLogo: 'logo.png'
     });
-    vi.spyOn(utils.dialog, 'close').mockImplementation(() => undefined);
 
     render(<OrganizationDetail />);
-    fireEvent.click(screen.getByTestId('enable-organization-button'));
-    await confirm?.();
 
-    await waitFor(() => {
-      expect(mutateAsync).toHaveBeenCalledWith(
-        expect.objectContaining({
-          organizationId: 33,
-          organizationData: expect.objectContaining({
-            status: OrganizationStatus.ACTIVE
-          })
-        })
-      );
+    const { dialogConfig, notifySpy, closeSpy } = openEnableDialog();
+
+    await act(async () => {
+      await dialogConfig.onConfirm?.();
+    });
+
+    expect(mutateAsync).toHaveBeenCalledWith({
+      organizationId: 33,
+      organizationData: expect.objectContaining({
+        organizationId: 33,
+        status: OrganizationStatus.ACTIVE
+      })
     });
     expect(refetch).toHaveBeenCalled();
     expect(notifySpy).toHaveBeenCalledWith(
       'organizations.enableDialog.success',
       'success'
     );
+    expect(closeSpy).toHaveBeenCalled();
   });
 
-  it('notifies an error when the activation request fails', async () => {
-    mockOrganizationDetailQuery({
-      status: OrganizationStatus.DRAFT,
-      orgLogo: 'logo.png'
-    });
-    vi.mocked(utils.roles.useIsSuperAdmin).mockReturnValue(true);
-    const mutateAsync = vi.fn().mockRejectedValue(new Error('update failed'));
+  it('does not activate the organization and notifies when required fields are missing', async () => {
+    const mutateAsync = vi.fn();
     vi.mocked(updateOrganization).mockReturnValue({
       mutateAsync
     } as unknown as ReturnType<typeof updateOrganization>);
-    const notifySpy = vi.spyOn(utils.notify, 'emit');
-    let confirm: (() => void) | undefined;
-    vi.spyOn(utils.dialog, 'open').mockImplementation((dialog) => {
-      confirm = dialog.onConfirm;
+    vi.mocked(utils.roles.useIsSuperAdmin).mockReturnValue(true);
+    mockOrganizationDetailQuery({
+      status: OrganizationStatus.DRAFT,
+      orgLogo: '',
+      segregationCode: ''
     });
-    vi.spyOn(utils.dialog, 'close').mockImplementation(() => undefined);
 
     render(<OrganizationDetail />);
-    fireEvent.click(screen.getByTestId('enable-organization-button'));
-    await confirm?.();
 
-    await waitFor(() => {
-      expect(notifySpy).toHaveBeenCalledWith(
-        'organizations.enableDialog.error',
-        'error'
-      );
+    const { dialogConfig, notifySpy, closeSpy } = openEnableDialog();
+
+    await act(async () => {
+      await dialogConfig.onConfirm?.();
     });
+
+    expect(mutateAsync).not.toHaveBeenCalled();
+    expect(notifySpy).toHaveBeenCalledWith(
+      'organizations.enableDialog.emptyFields',
+      'error'
+    );
+    expect(closeSpy).toHaveBeenCalled();
+  });
+
+  it('notifies an error when the activation request fails', async () => {
+    const mutateAsync = vi.fn().mockRejectedValue(new Error('fail'));
+    vi.mocked(updateOrganization).mockReturnValue({
+      mutateAsync
+    } as unknown as ReturnType<typeof updateOrganization>);
+    vi.mocked(utils.roles.useIsSuperAdmin).mockReturnValue(true);
+    mockOrganizationDetailQuery({
+      status: OrganizationStatus.DRAFT,
+      orgLogo: 'logo.png',
+      orgName: undefined as unknown as string
+    });
+
+    render(<OrganizationDetail />);
+
+    const { dialogConfig, notifySpy, closeSpy } = openEnableDialog();
+
+    await act(async () => {
+      await dialogConfig.onConfirm?.();
+    });
+
+    expect(notifySpy).toHaveBeenCalledWith(
+      'organizations.enableDialog.error',
+      'error'
+    );
+    expect(closeSpy).toHaveBeenCalled();
   });
 });
