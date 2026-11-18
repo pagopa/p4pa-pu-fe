@@ -100,8 +100,8 @@ export const PdndSendServiceDialog = ({
       }
     >
       <Stack gap={2}>
-        <Field label={t('integrations.serviceDialog.clientName')}>
-          {service.clientName}
+        <Field label={t('integrations.serviceDialog.serviceName')}>
+          {service.serviceName}
         </Field>
 
         {service.purposeId && (
