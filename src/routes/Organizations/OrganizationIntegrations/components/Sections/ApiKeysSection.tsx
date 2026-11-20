@@ -81,6 +81,7 @@ export const ApiKeysSection = ({
           organizationApiKey={selectedOrganizationApiKey}
           organizationId={organizationId}
           onClose={() => setSelectedOrganizationApiKey(undefined)}
+          onEdit={handleEdit}
         />
       )}
       {organizationApiKeys.map((organizationApiKey) => {

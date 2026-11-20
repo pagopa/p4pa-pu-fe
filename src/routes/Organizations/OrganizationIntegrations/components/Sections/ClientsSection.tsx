@@ -54,6 +54,7 @@ export const ClientsSection = ({
           open
           client={selected}
           onClose={() => setSelected(undefined)}
+          onEdit={() => null}
         />
       )}
       {clients.map((client) => (

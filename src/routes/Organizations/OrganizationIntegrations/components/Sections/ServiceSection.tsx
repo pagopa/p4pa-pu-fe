@@ -74,6 +74,7 @@ export const ServicesSection = ({
           open
           service={selected}
           onClose={() => setSelected(undefined)}
+          onEdit={handleEdit}
         />
       )}
       {services.map((service) => (

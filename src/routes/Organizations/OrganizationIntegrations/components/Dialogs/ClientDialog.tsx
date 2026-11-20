@@ -17,17 +17,20 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { Button } from '@mui/material';
 
 type PdndClientDialogProps = {
   open: boolean;
   client: PdndClientNoSecretDTO;
   onClose: () => void;
+  onEdit: () => void;
 };
 
 export const PdndClientDialog = ({
   open,
   client,
   onClose,
+  onEdit,
 }: PdndClientDialogProps) => {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
@@ -42,6 +45,15 @@ export const PdndClientDialog = ({
       onClose={onClose}
       title={client.clientName}
       description={t('integrations.dialogDescription')}
+      actions={
+        <Button
+          color="primary"
+          variant="outlined"
+          onClick={() => onEdit()}
+        >
+          {t('commons.edit')}
+        </Button>
+      }
     >
       <Stack gap={2}>
         <CopiableField

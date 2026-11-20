@@ -9,6 +9,7 @@ import { SECRET_MASK } from '@core/components/ShowSecretValue';
 
 import { KeyTypeEnum } from '@generated/core/client';
 import { copyWithFeedback } from '@core/utils/clipboard';
+import Button from '@mui/material/Button';
 
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
@@ -22,6 +23,7 @@ type ApiKeyDialogProps = {
   organizationId: number;
   open: boolean;
   onClose: () => void;
+  onEdit: (organizationApiKey: OrganizationApiKey) => void;
 };
 
 export const ApiKeyDialog = ({
@@ -29,6 +31,7 @@ export const ApiKeyDialog = ({
   organizationId,
   open,
   onClose,
+  onEdit,
 }: ApiKeyDialogProps) => {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
@@ -50,6 +53,15 @@ export const ApiKeyDialog = ({
       onClose={onClose}
       title={t(`integrations.keyTypes.${organizationApiKey.keyType}`)}
       description={t('integrations.dialogDescription')}
+      actions={
+        <Button
+          color="primary"
+          variant="outlined"
+          onClick={() => onEdit(organizationApiKey)}
+        >
+          {t('commons.edit')}
+        </Button>
+      }
     >
       <Stack gap={1}>
         {String(organizationApiKey.keyType) === KeyTypeEnum.IO && (
