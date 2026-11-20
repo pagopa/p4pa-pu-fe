@@ -4,7 +4,6 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined';
 import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
 
 import type { PdndClientNoSecretDTO } from '@generated/core/data-contracts';
 
@@ -23,7 +22,7 @@ type PdndClientDialogProps = {
   open: boolean;
   client: PdndClientNoSecretDTO;
   onClose: () => void;
-  onEdit: () => void;
+  onEdit: (client: PdndClientNoSecretDTO) => void;
 };
 
 export const PdndClientDialog = ({
@@ -49,7 +48,7 @@ export const PdndClientDialog = ({
         <Button
           color="primary"
           variant="outlined"
-          onClick={() => onEdit()}
+          onClick={() => onEdit(client)}
         >
           {t('commons.edit')}
         </Button>

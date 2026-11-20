@@ -8,6 +8,9 @@ import { PdndClientDialog } from '../Dialogs/ClientDialog';
 import notify from '@core/utils/notify';
 import { useDeletePdndClient } from '@core/api/integrations';
 import utils from '@core/utils';
+import { useNavigate, generatePath } from 'react-router';
+import { PageRoutes } from '@core/routes';
+import { IntegrationType } from '@core/routes/Organizations/enums';
 
 export const ClientsSection = ({
   clients,
@@ -20,7 +23,7 @@ export const ClientsSection = ({
 }) => {
   const { t } = useTranslation();
   const [selected, setSelected] = useState<PdndClientNoSecretDTO>();
-
+  const navigate = useNavigate();
   const deletePdndClientMutation = useDeletePdndClient(organizationId);
 
   const confirmDeletePdndClient = (client: PdndClientNoSecretDTO) => {
@@ -47,6 +50,22 @@ export const ClientsSection = ({
     }
   };
 
+  const handleEditPdndClient = (client: PdndClientNoSecretDTO) => {
+    const searchParams = new URLSearchParams({
+      clientId: client.clientId
+    });
+    if (client.subUnitCode) {
+      searchParams.set('subUnitCode', client.subUnitCode);
+    }
+
+    navigate(
+      `${generatePath(PageRoutes.EDIT_INTEGRATION, {
+        organizationId: String(organizationId),
+        IntegrationType: IntegrationType.PDND_CLIENT
+      })}?${searchParams.toString()}`
+    );
+  };
+
   return (
     <Section title={t('pdndClients')}>
       {selected && (
@@ -54,7 +73,7 @@ export const ClientsSection = ({
           open
           client={selected}
           onClose={() => setSelected(undefined)}
-          onEdit={() => null}
+          onEdit={handleEditPdndClient}
         />
       )}
       {clients.map((client) => (
