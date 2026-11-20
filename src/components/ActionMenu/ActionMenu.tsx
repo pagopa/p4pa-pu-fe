@@ -13,7 +13,6 @@ type variant = 'default' | 'error' | 'main';
 
 export type MenuItemProps = {
   icon?: React.ReactNode;
-  ariaLabel?: string;
   label: string;
   action: () => void;
   variant?: variant;
@@ -86,7 +85,6 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ rowId, menuItems }) => {
           <StyledMenuItem
             key={`${rowId}-${index}`}
             variant={item.variant}
-            aria-label={item.ariaLabel}
             onClick={() => {
               item.action();
               handleClose();

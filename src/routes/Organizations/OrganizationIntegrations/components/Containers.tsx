@@ -43,7 +43,6 @@ export const Field = ({
 );
 
 export const Row = ({
-  name = '',
   onShow,
   onDelete,
   onEdit,
@@ -74,21 +73,18 @@ export const Row = ({
             {
               label: t('organizations.integrations.showItem'),
               variant: 'main',
-              action: () => onShow(),
-              ariaLabel: t('organizations.integrations.showItem', { name })
+              action: () => onShow()
             },
             {
               label: t('organizations.integrations.modifyItem'),
               variant: 'main',
-              action: () => onEdit(),
-              ariaLabel: t('organizations.integrations.modifyItem', { name })
+              action: () => onEdit()
             },
             {
               icon: <TrashCanIcon />,
               variant: 'error',
               label: t('organizations.integrations.deleteItem'),
-              action: () => onDelete(),
-              ariaLabel: t('organizations.integrations.deleteItem', { name })
+              action: () => onDelete()
             }
           ]}
         />
