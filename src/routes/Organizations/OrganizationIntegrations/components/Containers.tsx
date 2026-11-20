@@ -73,16 +73,19 @@ export const Row = ({
           menuItems={[
             {
               label: t('organizations.integrations.showItem'),
+              variant: 'main',
               action: () => onShow(),
               ariaLabel: t('organizations.integrations.showItem', { name })
             },
             {
               label: t('organizations.integrations.modifyItem'),
+              variant: 'main',
               action: () => onEdit(),
               ariaLabel: t('organizations.integrations.modifyItem', { name })
             },
             {
               icon: <TrashCanIcon />,
+              variant: 'error',
               label: t('organizations.integrations.deleteItem'),
               action: () => onDelete(),
               ariaLabel: t('organizations.integrations.deleteItem', { name })
