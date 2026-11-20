@@ -12,7 +12,7 @@ import type {
 import {
   orgAndSubUnitDTOSchema,
   organizationApiKeySchema,
-  pagedOrgSubUnitSchema,
+  orgSubUnitSchema,
   pagedPdndClientViewSchema,
   pagedPdndServiceViewSchema,
   pdndClientNoSecretDTOSchema,
@@ -274,14 +274,10 @@ export const useGetAllOrgSubUnits = (organizationId: number, enabled = true) =>
     queryKey: ['getAllOrgSubUnits', organizationId],
     enabled,
     queryFn: async () => {
-      const { data } = await utils.apiClient.bff.getPagedOrgSubUnits(
+      const { data } = await utils.apiClient.bff.getOrgSubUnits(
         organizationId,
-        {
-          // The API has no "get all" variant, so request a large page.
-          size: 100
-        }
       );
-      parseAndLog(pagedOrgSubUnitSchema, data);
+      parseAndLog(z.array(orgSubUnitSchema), data);
       return data;
     }
   });
