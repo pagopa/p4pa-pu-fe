@@ -42,7 +42,6 @@ const GenericDialog = ({
 }: GenericDialogProps) => {
   const { t } = useTranslation();
   confirmLabel = confirmLabel ?? t('commons.confirm');
-  cancelLabel = cancelLabel ?? t('commons.cancel');
   return (
     <Dialog
       open={open}
