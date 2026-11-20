@@ -248,7 +248,7 @@ export const AddIntegration = ({
         <PdndClientIntegration
           control={control}
           organizationName={String(organizationId)}
-          subUnits={subUnits?.content}
+          subUnits={subUnits}
           editMode={isPdndClientEdit}
         />
       )}
@@ -258,7 +258,7 @@ export const AddIntegration = ({
           organizationId={organizationId}
           control={control}
           orgSubUnitsWithNoServiceType={orgSubUnitsWithNoServiceType}
-          subUnits={subUnits?.content}
+          subUnits={subUnits}
           editMode={isEServiceEdit}
           serviceSubUnitCode={serviceSubUnitCode}
           serviceSubUnitName={existingEService?.subUnitName}
