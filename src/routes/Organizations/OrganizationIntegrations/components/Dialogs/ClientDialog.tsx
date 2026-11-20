@@ -3,6 +3,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopyOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined';
 import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
+import { isAxiosError } from 'axios';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router';
@@ -54,8 +55,16 @@ export const PdndClientDialog = ({
       await deleteService.mutateAsync();
       notify.emit(t('commons.done'), 'success');
       onDelete();
-    } catch {
-      notify.emit(t('errors.generic'));
+    } catch (error) {
+      if (isAxiosError(error) && error.response?.status === 409) {
+        notify.emit(
+          t('integrations.clientDialog.deleteError.message'),
+          'error',
+          t('integrations.clientDialog.deleteError.title')
+        );
+      } else {
+        notify.emit(t('errors.generic'));
+      }
     } finally {
       onClose();
     }

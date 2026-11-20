@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { AxiosError, AxiosHeaders } from 'axios';
 
 import { PdndClientDialog } from './ClientDialog';
 import { useDeletePdndClient } from '@core/api/integrations';
@@ -179,6 +180,37 @@ describe('PdndClientDialog', () => {
       expect(notifySpy).toHaveBeenCalledWith('errors.generic');
       expect(onClose).toHaveBeenCalledTimes(1);
     });
+    expect(onDelete).not.toHaveBeenCalled();
+  });
+
+  it('shows a specific snackbar with title when the client is in use (409)', async () => {
+    mockMutateAsync.mockRejectedValue(
+      new AxiosError('Conflict', '409', undefined, undefined, {
+        status: 409,
+        data: {},
+        statusText: 'Conflict',
+        headers: {},
+        config: {
+          headers: new AxiosHeaders()
+        }
+      })
+    );
+    const notifySpy = vi
+      .spyOn(notify, 'emit')
+      .mockImplementation(() => undefined);
+
+    renderDialog();
+    fireEvent.click(screen.getByRole('button', { name: 'commons.delete' }));
+
+    await waitFor(() => {
+      expect(notifySpy).toHaveBeenCalledWith(
+        'integrations.clientDialog.deleteError.message',
+        'error',
+        'integrations.clientDialog.deleteError.title'
+      );
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+    expect(notifySpy).not.toHaveBeenCalledWith('errors.generic');
     expect(onDelete).not.toHaveBeenCalled();
   });
 
