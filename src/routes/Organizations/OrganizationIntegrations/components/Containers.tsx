@@ -89,7 +89,7 @@ export const Row = ({
               label: t('organizations.integrations.deleteItem'),
               action: () => onDelete(),
               ariaLabel: t('organizations.integrations.deleteItem', { name })
-            },
+            }
           ]}
         />
       </Stack>

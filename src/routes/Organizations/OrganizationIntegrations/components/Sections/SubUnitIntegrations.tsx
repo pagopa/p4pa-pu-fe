@@ -1,10 +1,10 @@
-import { useParams } from 'react-router';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { useNavigate, useParams, generatePath } from 'react-router';
 import TrashCanIcon from '@mui/icons-material/Delete';
 import type { GridColDef } from '@mui/x-data-grid';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type {
+  PdndClientNoSecretDTO,
   PdndClientView,
   PdndServiceView
 } from '@generated/core/data-contracts';
@@ -21,12 +21,14 @@ import FilterContainer, {
 } from '@core/components/FilterContainer/FilterContainer';
 import { useSearch } from '@core/hooks/useSearch';
 import { PdndSendServiceDialog } from '../Dialogs/ServiceDialog';
-import { PdndClientDialog } from '../Dialogs/ClientDialog'; 
+import { PdndClientDialog } from '../Dialogs/ClientDialog';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import utils from '@core/utils';
 import ActionMenu from '@core/components/ActionMenu/ActionMenu';
 import notify from '@core/utils/notify';
+import { PageRoutes } from '@core/routes';
+import { IntegrationType } from '@core/routes/Organizations/enums';
 
 type Filters = { subUnitCode?: string };
 
@@ -50,9 +52,10 @@ export const SubUnitIntegrations = () => {
     }
   ];
 
-  // OTHER STUFF
+  // OTHER STUFFS
   const [selectedService, setSelectedService] = useState<PdndServiceView>();
   const [selectedClient, setSelectedClient] = useState<PdndClientView>();
+  const navigate = useNavigate();
 
   const { organizationId: urlOrganizationId } = useParams();
   const organizationId = Number(urlOrganizationId);
@@ -69,16 +72,18 @@ export const SubUnitIntegrations = () => {
         denominazione: row.subUnitName ?? row.subUnitCode
       }),
       onConfirm: () => {
-        handleDeletePdndService(row.purposeId);
+        handleDeletePdndService(row);
         utils.dialog.close();
       }
     });
   };
 
-  const handleDeletePdndService = async (purposeId?: string) => {
+  const handleDeletePdndService = async (service: PdndServiceView) => {
     try {
-      if (!purposeId) throw new Error(t('errors.missingPurposeId'));
-      await deletePdndServiceMutation.mutateAsync(purposeId);
+      if (!service.purposeId) throw new Error(t('errors.missingPurposeId'));
+      await deletePdndServiceMutation.mutateAsync({
+        purposeId: service.purposeId
+      });
       pdndServices.applyFilters(values);
       notify.emit(t('commons.done'), 'success');
     } catch (error: unknown) {
@@ -136,13 +141,20 @@ export const SubUnitIntegrations = () => {
           menuItems={[
             {
               label: t('organizations.integrations.showItem'),
+              variant: 'main',
               action: () => setSelectedService(row)
             },
             {
+              label: t('organizations.integrations.modifyItem'),
+              variant: 'main',
+              action: () => handleEditPdndService(row)
+            },
+            {
               icon: <TrashCanIcon />,
+              variant: 'error',
               label: t('organizations.integrations.deleteItem'),
               action: () => confirmDeletePdndService(row)
-            },
+            }
           ]}
         />
       )
@@ -227,19 +239,64 @@ export const SubUnitIntegrations = () => {
           })}
           menuItems={[
             {
+              variant: 'main',
               label: t('organizations.integrations.showItem'),
               action: () => setSelectedClient(row)
             },
             {
+              variant: 'main',
+              label: t('organizations.integrations.modifyItem'),
+              action: () =>
+                handleEditPdndClient({
+                  ...row,
+                  publicKey: 'MISSING PUBLIC KEY'
+                })
+            },
+            {
               icon: <TrashCanIcon />,
+              variant: 'error',
               label: t('organizations.integrations.deleteItem'),
               action: () => confirmDeletePdndClient(row)
-            },
+            }
           ]}
         />
       )
     }
   ];
+
+  const handleEditPdndService = (service: PdndServiceView) => {
+    if (!service.purposeId) return;
+
+    const searchParams = new URLSearchParams({
+      purposeId: service.purposeId
+    });
+    if (service.subUnitCode) {
+      searchParams.set('subUnitCode', service.subUnitCode);
+    }
+
+    navigate(
+      `${generatePath(PageRoutes.EDIT_INTEGRATION, {
+        organizationId: String(organizationId),
+        IntegrationType: IntegrationType.E_SERVICE
+      })}?${searchParams.toString()}`
+    );
+  };
+
+  const handleEditPdndClient = (client: PdndClientNoSecretDTO) => {
+    const searchParams = new URLSearchParams({
+      clientId: client.clientId
+    });
+    if (client.subUnitCode) {
+      searchParams.set('subUnitCode', client.subUnitCode);
+    }
+
+    navigate(
+      `${generatePath(PageRoutes.EDIT_INTEGRATION, {
+        organizationId: String(organizationId),
+        IntegrationType: IntegrationType.PDND_CLIENT
+      })}?${searchParams.toString()}`
+    );
+  };
 
   return (
     <Stack gap={5}>
@@ -248,14 +305,16 @@ export const SubUnitIntegrations = () => {
           open
           service={selectedService}
           onClose={() => setSelectedService(undefined)}
+          onEdit={handleEditPdndService}
         />
       )}
       {selectedClient && (
         <PdndClientDialog
           open
           // Adding a publicKey field to satisfy PdndClientDialog requirements
-          client={{...selectedClient, publicKey: 'test'}}
+          client={{ ...selectedClient, publicKey: 'test' }}
           onClose={() => setSelectedClient(undefined)}
+          onEdit={handleEditPdndClient}
         />
       )}
       <FilterContainer

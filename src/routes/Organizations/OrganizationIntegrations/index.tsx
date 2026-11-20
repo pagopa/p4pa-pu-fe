@@ -39,8 +39,10 @@ export const OrganizationIntegrations = () => {
 
   const { data: organization } = getOrganizationDetail(organizationId);
 
-  const { data: organizationApiKeys = [], refetch: organizationApiKeysRefetch } =
-    useGetOrganizationApiKeys(organizationId);
+  const {
+    data: organizationApiKeys = [],
+    refetch: organizationApiKeysRefetch
+  } = useGetOrganizationApiKeys(organizationId);
 
   const { data: services = [], refetch: pdndServicesRefetch } =
     useGetPdndServices(organizationId);
@@ -48,7 +50,8 @@ export const OrganizationIntegrations = () => {
   const { data: clients = [], refetch: pdndClientsRefetch } =
     useGetPdndClients(organizationId);
 
-  const isEmpty = organizationApiKeys.length + services.length + clients.length === 0;
+  const isEmpty =
+    organizationApiKeys.length + services.length + clients.length === 0;
 
   const orgName = organization?.orgName;
 

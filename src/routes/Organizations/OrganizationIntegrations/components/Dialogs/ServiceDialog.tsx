@@ -18,7 +18,7 @@ export const PdndSendServiceDialog = ({
   service,
   open,
   onClose,
-  onEdit,
+  onEdit
 }: ServiceDialogProps) => {
   const { t } = useTranslation();
 

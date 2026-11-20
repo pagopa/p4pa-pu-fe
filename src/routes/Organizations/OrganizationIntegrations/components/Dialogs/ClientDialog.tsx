@@ -1,4 +1,3 @@
-
 import ContentCopyIcon from '@mui/icons-material/ContentCopyOutlined';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined';
 import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
@@ -29,7 +28,7 @@ export const PdndClientDialog = ({
   open,
   client,
   onClose,
-  onEdit,
+  onEdit
 }: PdndClientDialogProps) => {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);

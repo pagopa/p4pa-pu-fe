@@ -1,32 +1,44 @@
-import { describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, screen } from '@core/__tests__/renderers';
 
 import { ApiKeysSection } from './ApiKeysSection';
 import type { OrganizationApiKey } from '@generated/core/client';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
+import { useDeleteOrganizationApiKey } from '@core/api/integrations';
+
+vi.mock('@core/api/integrations', () => ({
+  useDeleteOrganizationApiKey: vi.fn()
+}));
+
+const mockNavigate = vi.fn();
+
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: () => mockNavigate
+}));
 
 vi.mock('../Dialogs/ApiKeyDialog', () => ({
   ApiKeyDialog: ({
-    apiKey,
+    organizationApiKey,
     organizationId,
     onClose,
-    onDelete
+    onEdit
   }: {
-    apiKey: OrganizationApiKey;
+    organizationApiKey: OrganizationApiKey;
     organizationId: number;
     onClose: () => void;
-    onDelete: () => void;
+    onEdit: (apiKey: OrganizationApiKey) => void;
   }) => (
     <div
       data-testid="api-key-dialog"
-      data-key-type={apiKey.keyType}
+      data-key-type={organizationApiKey.keyType}
       data-organization-id={organizationId}
     >
       <button data-testid="close-dialog" onClick={onClose}>
         close
       </button>
-      <button data-testid="delete-key" onClick={onDelete}>
-        delete
+      <button data-testid="edit-key" onClick={() => onEdit(organizationApiKey)}>
+        edit
       </button>
     </div>
   )
@@ -39,14 +51,32 @@ const apiKeys = [
 
 const renderSection = (keys = apiKeys, onDelete = vi.fn()) =>
   render(
-    <ApiKeysSection apiKeys={keys} organizationId={33} onDelete={onDelete} />
+    <ApiKeysSection
+      organizationApiKeys={keys}
+      organizationId={33}
+      onDelete={onDelete}
+    />
   );
 
 describe('ApiKeysSection', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(useDeleteOrganizationApiKey).mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false
+    } as unknown as ReturnType<typeof useDeleteOrganizationApiKey>);
+  });
+
   it('renders nothing when there are no api keys', () => {
     const { container } = renderSection([]);
 
-    expect(container).toBeEmptyDOMElement();
+    expect(screen.getByRole('heading')).toHaveTextContent(
+      'organizations.integrations.pagoPaProducts'
+    );
+    expect(screen.queryAllByRole('button')).toHaveLength(0);
+    expect(
+      container.querySelector('[data-testid="api-key-dialog"]')
+    ).not.toBeInTheDocument();
   });
 
   // The component translates with a keyPrefix, so match on the key's suffix
@@ -79,8 +109,8 @@ describe('ApiKeysSection', () => {
 
     expect(screen.queryByTestId('api-key-dialog')).not.toBeInTheDocument();
 
-    // Every row's show button shares the same mocked label, so pick by position.
-    fireEvent.click(screen.getAllByRole('button')[1]);
+    fireEvent.click(screen.getAllByRole('button', { name: /openMenu/i })[1]);
+    fireEvent.click(screen.getByRole('menuitem', { name: /showItem/i }));
 
     const dialog = screen.getByTestId('api-key-dialog');
     expect(dialog).toHaveAttribute('data-key-type', 'SEND');
@@ -91,13 +121,15 @@ describe('ApiKeysSection', () => {
     expect(screen.queryByTestId('api-key-dialog')).not.toBeInTheDocument();
   });
 
-  it('forwards onDelete to the dialog', () => {
-    const onDelete = vi.fn();
-    renderSection(apiKeys, onDelete);
+  it('passes the selected key to the dialog edit callback', () => {
+    renderSection();
 
-    fireEvent.click(screen.getAllByRole('button')[0]);
-    fireEvent.click(screen.getByTestId('delete-key'));
+    fireEvent.click(screen.getAllByRole('button', { name: /openMenu/i })[0]);
+    fireEvent.click(screen.getByRole('menuitem', { name: /showItem/i }));
+    fireEvent.click(screen.getByTestId('edit-key'));
 
-    expect(onDelete).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.stringContaining('keyType=IO')
+    );
   });
 });

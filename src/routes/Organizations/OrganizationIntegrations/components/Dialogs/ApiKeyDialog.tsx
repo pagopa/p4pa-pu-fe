@@ -15,7 +15,7 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { OrganizationApiKey } from '@generated/core/data-contracts';
+import type { OrganizationApiKey } from '@generated/core/data-contracts';
 import { useGetOrganizationApiKey } from '@core/api/integrations';
 
 type ApiKeyDialogProps = {
@@ -31,11 +31,11 @@ export const ApiKeyDialog = ({
   organizationId,
   open,
   onClose,
-  onEdit,
+  onEdit
 }: ApiKeyDialogProps) => {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
-  
+
   const copy = (value: string) => {
     copyWithFeedback(value, t('commons.copied'));
   };

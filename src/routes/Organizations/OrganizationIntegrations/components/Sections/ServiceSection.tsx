@@ -38,8 +38,10 @@ export const ServicesSection = ({
 
   const handleDeletePdndService = async (service: PdndServiceView) => {
     try {
-      if(!service.purposeId) throw new Error('Purpose ID is required');
-      await deletePdndServiceMutation.mutateAsync({purposeId: service.purposeId});
+      if (!service.purposeId) throw new Error('Purpose ID is required');
+      await deletePdndServiceMutation.mutateAsync({
+        purposeId: service.purposeId
+      });
       notify.emit(t('commons.done'), 'success');
       onDelete();
     } catch {
@@ -83,7 +85,7 @@ export const ServicesSection = ({
           name={service.serviceName}
           onShow={() => setSelected(service)}
           onDelete={() => confirmDeletePdndService(service)}
-          onEdit={() => handleEdit(service) }
+          onEdit={() => handleEdit(service)}
         >
           <Field label={t('name')} width={'25%'}>
             {service.serviceName}

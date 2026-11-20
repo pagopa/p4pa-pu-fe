@@ -1,5 +1,8 @@
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
-import { OrganizationApiKeyType, type OrganizationApiKey } from '@generated/core/client';
+import {
+  OrganizationApiKeyType,
+  type OrganizationApiKey
+} from '@generated/core/client';
 import { useState } from 'react';
 import { useNavigate, generatePath } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +27,8 @@ export const ApiKeysSection = ({
 }) => {
   const { t } = useTranslation(undefined, I18N_PREFIX);
   const navigate = useNavigate();
-  const [selectedOrganizationApiKey, setSelectedOrganizationApiKey] = useState<OrganizationApiKey>();
+  const [selectedOrganizationApiKey, setSelectedOrganizationApiKey] =
+    useState<OrganizationApiKey>();
 
   const deleteApiKey = useDeleteOrganizationApiKey(organizationId);
 
@@ -33,15 +37,17 @@ export const ApiKeysSection = ({
       title: t('organizations.integrations.deleteDialog.title'),
       message: t('organizations.integrations.deleteDialog.apiKey'),
       onConfirm: () => {
-        handleDeleteApiKey(keyType!);
+        handleDeleteApiKey(keyType);
         utils.dialog.close();
       }
     });
   };
 
-  const handleDeleteApiKey = async (organizationApiKeyType: OrganizationApiKeyType) => {
+  const handleDeleteApiKey = async (
+    organizationApiKeyType: OrganizationApiKeyType
+  ) => {
     try {
-      await deleteApiKey.mutateAsync({organizationApiKeyType});
+      await deleteApiKey.mutateAsync({ organizationApiKeyType });
       notify.emit(t('commons.done'), 'success');
       onDelete();
     } catch {
@@ -60,10 +66,7 @@ export const ApiKeysSection = ({
       organizationApiKey.keyType === OrganizationApiKeyType.IO &&
       organizationApiKey.flagActive !== undefined
     ) {
-      searchParams.set(
-        'serviceEnabled',
-        String(organizationApiKey.flagActive)
-      );
+      searchParams.set('serviceEnabled', String(organizationApiKey.flagActive));
     }
     navigate(
       `${generatePath(PageRoutes.EDIT_INTEGRATION, {
@@ -102,7 +105,9 @@ export const ApiKeysSection = ({
                   size="small"
                   color={organizationApiKey.flagActive ? 'primary' : 'default'}
                   sx={{ '& .MuiChip-label': { fontWeight: 600 } }}
-                  label={t(organizationApiKey.flagActive ? 'active' : 'inactive')}
+                  label={t(
+                    organizationApiKey.flagActive ? 'active' : 'inactive'
+                  )}
                 />
               </Field>
             )}

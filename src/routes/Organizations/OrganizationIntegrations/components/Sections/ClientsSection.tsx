@@ -39,7 +39,7 @@ export const ClientsSection = ({
 
   const handleDeletePdndClient = async (client: PdndClientNoSecretDTO) => {
     try {
-      if(!client.clientId) throw new Error('Client ID is required');
+      if (!client.clientId) throw new Error('Client ID is required');
       await deletePdndClientMutation.mutateAsync(client.clientId);
       notify.emit(t('commons.done'), 'success');
       onDelete();

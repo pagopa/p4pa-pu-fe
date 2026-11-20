@@ -56,12 +56,16 @@ export const useGetOrganizationApiKey = (
     }
   });
 
-export const useDeleteOrganizationApiKey = (
-  organizationId: number,
-) =>
+export const useDeleteOrganizationApiKey = (organizationId: number) =>
   useMutation({
     mutationKey: ['deleteOrganizationApiKey', organizationId],
-    mutationFn: async ({ organizationApiKeyType, query }: { organizationApiKeyType: OrganizationApiKeyType; query?: { subUnitCode?: string } }) => {
+    mutationFn: async ({
+      organizationApiKeyType,
+      query
+    }: {
+      organizationApiKeyType: OrganizationApiKeyType;
+      query?: { subUnitCode?: string };
+    }) => {
       await utils.apiClient.bff.deleteOrganizationApiKey(
         organizationId,
         organizationApiKeyType,
@@ -169,12 +173,16 @@ export const useGetOrgSubUnitsPdndServices = (organizationId: number) =>
     }
   });
 
-export const useDeletePdndService = (
-  organizationId: number,
-) =>
+export const useDeletePdndService = (organizationId: number) =>
   useMutation({
     mutationKey: ['deletePdndService', organizationId],
-    mutationFn: async ({purposeId, subUnitCode}: {purposeId: string; subUnitCode?: string}) => {
+    mutationFn: async ({
+      purposeId,
+      subUnitCode
+    }: {
+      purposeId: string;
+      subUnitCode?: string;
+    }) => {
       await utils.apiClient.bff.deletePdndService(
         organizationId,
         purposeId,
