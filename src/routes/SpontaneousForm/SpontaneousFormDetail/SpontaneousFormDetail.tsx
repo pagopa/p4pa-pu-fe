@@ -199,6 +199,7 @@ const SpontaneousFormDetail = () => {
         title={t('spontaneousForm.detail.cannotDeleteTitle')}
         message={t('spontaneousForm.detail.cannotDeleteMessage')}
         confirmLabel={t('commons.close')}
+        cancelLabel=""
         onConfirm={handleErrorDialogClose}
         onClose={handleErrorDialogClose}
         data-testid="error-dialog"
