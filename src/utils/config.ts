@@ -76,7 +76,7 @@ const config: Config = {
   loginUrl: VITE_LOGIN_URL,
   resourcesUrl: VITE_RESOURCES_URL,
   /** This array is populated by paths that don't need a auth token */
-  tokenHeaderExcludePaths: ['/auth-callback', '/checkout-callback/*'],
+  tokenHeaderExcludePaths: ['/auth-callback', '/checkout-callback/*', '/bff/token/refresh'],
   /** A global custom parameters serializer:
    * - null value and empty string parameters are strippef off.
    * - arrays separated by comma.

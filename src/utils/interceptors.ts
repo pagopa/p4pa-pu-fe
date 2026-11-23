@@ -5,6 +5,7 @@ import navigation from './navigation';
 import i18n from '../translations/i18n';
 import { appState } from '../store/AppStateStore';
 import router, { PageRoutes } from '../routes';
+import refreshToken from './auth';
 
 export const setupInterceptors = (client: Client) => {
   client.instance.interceptors.request.use(
@@ -25,14 +26,30 @@ export const setupInterceptors = (client: Client) => {
 
   client.instance.interceptors.response.use(
     (response) => response,
-    (error: AxiosError) => {
+    async (error: AxiosError) => {
       const status = error.response?.status;
       const isApplicationReady = appState.value.ready === true;
       if (status === 401) {
-        navigation.setAuthErrorState(true);
-        utils.storage.clear();
-        navigation.navigateToLoggedOut();
-        return Promise.reject(error);
+        // If the request was for refreshing the token, reject immediately to avoid infinite loop
+        if (error.config?.url?.split('?')[0].includes('refresh')) {
+          return Promise.reject(error);
+        }
+        // Attempt to refresh the token and retry the request
+        try {
+          const newToken = await refreshToken();
+          // Retry the original request with the new token
+          if (newToken.access_token && error.config?.headers) {
+            error.config.headers['Authorization'] =
+              `Bearer ${newToken.access_token}`;
+            return client.instance.request(error.config);
+          }
+        } catch {
+          // If refreshing the token fails, handle the error and navigate to logged out state
+          navigation.setAuthErrorState(true);
+          utils.storage.clear();
+          navigation.navigateToLoggedOut();
+          return Promise.reject(error);
+        }
       }
 
       if (status === 400) {
