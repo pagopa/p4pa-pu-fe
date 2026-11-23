@@ -80,7 +80,7 @@ describe('Header component', () => {
     const mockStorage = vi.spyOn(Storage.prototype, 'clear');
     const mockLogout = vi
       .spyOn(utils.apiClient.bff, 'logout')
-      .mockResolvedValue(undefined);
+      .mockResolvedValue({} as never);
     window.localStorage.setItem('refreshToken', 'test-refresh-token');
 
     render(<Header />);
