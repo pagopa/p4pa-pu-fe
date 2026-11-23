@@ -4,55 +4,45 @@ import { ApiKeyDialog } from './ApiKeyDialog';
 import type { OrganizationApiKey } from '@generated/core/data-contracts';
 import { SECRET_MASK } from '@core/components/ShowSecretValue';
 import { fireEvent, render, screen } from '@core/__tests__/renderers';
-import {
-  useGetOrganizationApiKey,
-  useDeleteOrganizationApiKey
-} from '@core/api/integrations';
+import { useGetOrganizationApiKey } from '@core/api/integrations';
+import { copyWithFeedback } from '@core/utils/clipboard';
 
 vi.mock('@core/api/integrations', () => ({
-  useDeleteOrganizationApiKey: vi.fn(),
   useGetOrganizationApiKey: vi.fn()
 }));
 
+vi.mock('@core/utils/clipboard', () => ({
+  copyWithFeedback: vi.fn()
+}));
+
 const apiKey = { keyType: 'IO' } as OrganizationApiKey;
-const mockMutateAsync = vi.fn();
-const writeText = vi.fn();
 const onClose = vi.fn();
-const onDelete = vi.fn();
+const onEdit = vi.fn();
 
 const renderDialog = () =>
   render(
     <ApiKeyDialog
-      apiKey={apiKey}
+      organizationApiKey={apiKey}
       organizationId={33}
       open
       onClose={onClose}
-      onDelete={onDelete}
+      onEdit={onEdit}
     />
   );
 
 describe('ApiKeyDialog', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    Object.defineProperty(navigator, 'clipboard', {
-      value: { writeText },
-      configurable: true
-    });
 
     vi.mocked(useGetOrganizationApiKey).mockReturnValue({
       data: { apiKey: 'secret-key' }
     } as unknown as ReturnType<typeof useGetOrganizationApiKey>);
-    vi.mocked(useDeleteOrganizationApiKey).mockReturnValue({
-      mutateAsync: mockMutateAsync,
-      isPending: false
-    } as unknown as ReturnType<typeof useDeleteOrganizationApiKey>);
   });
 
-  it('loads and deletes the key for the given organization and key type', () => {
+  it('loads the key for the given organization and key type', () => {
     renderDialog();
 
     expect(useGetOrganizationApiKey).toHaveBeenCalledWith(33, 'IO');
-    expect(useDeleteOrganizationApiKey).toHaveBeenCalledWith(33, 'IO');
   });
 
   it('masks the key by default and reveals it when toggled', () => {
@@ -78,19 +68,17 @@ describe('ApiKeyDialog', () => {
       screen.getByRole('button', { name: 'integrations.apiKeyDialog.copy' })
     );
 
-    expect(writeText).toHaveBeenCalledWith('secret-key');
+    expect(copyWithFeedback).toHaveBeenCalledWith(
+      'secret-key',
+      'commons.copied'
+    );
   });
 
-  it('disables the delete button while the delete is pending', () => {
-    vi.mocked(useDeleteOrganizationApiKey).mockReturnValue({
-      mutateAsync: mockMutateAsync,
-      isPending: true
-    } as unknown as ReturnType<typeof useDeleteOrganizationApiKey>);
-
+  it('calls onEdit with the organization API key', () => {
     renderDialog();
 
-    expect(
-      screen.getByRole('button', { name: 'commons.delete' })
-    ).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'commons.edit' }));
+
+    expect(onEdit).toHaveBeenCalledWith(apiKey);
   });
 });

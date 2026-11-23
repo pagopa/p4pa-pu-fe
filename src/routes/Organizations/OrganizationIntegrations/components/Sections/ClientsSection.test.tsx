@@ -1,32 +1,59 @@
-import { describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, screen } from '@core/__tests__/renderers';
 
 import type { PdndClientNoSecretDTO } from '@generated/core/client';
 
 import { ClientsSection } from './ClientsSection';
+import { useDeletePdndClient } from '@core/api/integrations';
+import notify from '@core/utils/notify';
+import utils from '@core/utils';
+
+vi.mock('@core/api/integrations', () => ({
+  useDeletePdndClient: vi.fn()
+}));
+
+vi.mock('@core/utils/notify', () => ({
+  default: { emit: vi.fn() }
+}));
+
+vi.mock('@core/utils', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@core/utils')>();
+  return {
+    ...actual,
+    default: {
+      ...actual.default,
+      dialog: {
+        open: vi.fn(),
+        close: vi.fn()
+      }
+    }
+  };
+});
+
+const mockNavigate = vi.fn();
+const mockMutateAsync = vi.fn();
+
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: () => mockNavigate
+}));
 
 vi.mock('../Dialogs/ClientDialog', () => ({
   PdndClientDialog: ({
     client,
-    organizationId,
     onClose,
-    onDelete
+    onEdit
   }: {
     client: PdndClientNoSecretDTO;
-    organizationId: number;
     onClose: () => void;
-    onDelete: () => void;
+    onEdit: (client: PdndClientNoSecretDTO) => void;
   }) => (
-    <div
-      data-testid="client-dialog"
-      data-client-id={client.clientId}
-      data-organization-id={organizationId}
-    >
+    <div data-testid="client-dialog" data-client-id={client.clientId}>
       <button data-testid="close-dialog" onClick={onClose}>
         close
       </button>
-      <button data-testid="delete-client" onClick={onDelete}>
-        delete
+      <button data-testid="edit-client" onClick={() => onEdit(client)}>
+        edit
       </button>
     </div>
   )
@@ -43,12 +70,21 @@ const renderSection = (list = clients, onDelete = vi.fn()) =>
   );
 
 describe('ClientsSection', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(useDeletePdndClient).mockReturnValue({
+      mutateAsync: mockMutateAsync,
+      isPending: false
+    } as unknown as ReturnType<typeof useDeletePdndClient>);
+    mockMutateAsync.mockResolvedValue({});
+  });
+
   it('renders the section title and a row per client', () => {
     renderSection();
 
     expect(
       screen.getByRole('heading', {
-        name: 'organizations.integrations.pdndClients'
+        name: 'pdndClients'
       })
     ).toBeInTheDocument();
 
@@ -68,27 +104,71 @@ describe('ClientsSection', () => {
 
     expect(screen.queryByTestId('client-dialog')).not.toBeInTheDocument();
 
-    // Each row has a show button; select the second client's button.
-    fireEvent.click(screen.getAllByRole('button')[1]);
+    fireEvent.click(screen.getAllByRole('button', { name: /openMenu/i })[1]);
+    fireEvent.click(screen.getByRole('menuitem', { name: /showItem/i }));
 
     const dialog = screen.getByTestId('client-dialog');
 
     expect(dialog).toHaveAttribute('data-client-id', 'client-b');
-    expect(dialog).toHaveAttribute('data-organization-id', '33');
 
     fireEvent.click(screen.getByTestId('close-dialog'));
 
     expect(screen.queryByTestId('client-dialog')).not.toBeInTheDocument();
   });
 
-  it('forwards onDelete to the dialog', () => {
-    const onDelete = vi.fn();
+  it('navigates to edit for the selected client', () => {
+    renderSection([
+      {
+        clientId: 'client-a',
+        clientName: 'Client A',
+        subUnitCode: 'SU1',
+        organizationId: 33,
+        kid: 'some-kind',
+        publicKey: 'some-key'
+      }
+    ]);
 
+    fireEvent.click(screen.getByRole('button', { name: /openMenu/i }));
+    fireEvent.click(screen.getByRole('menuitem', { name: /modifyItem/i }));
+    fireEvent.click(screen.getByTestId('edit-client'));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.stringContaining('clientId=client-a&subUnitCode=SU1')
+    );
+  });
+
+  it('opens the delete confirmation and refreshes after success', async () => {
+    const onDelete = vi.fn();
+    vi.mocked(utils.dialog.open).mockImplementation((options) => {
+      options.onConfirm?.();
+    });
     renderSection(clients, onDelete);
 
-    fireEvent.click(screen.getAllByRole('button')[0]);
-    fireEvent.click(screen.getByTestId('delete-client'));
+    fireEvent.click(screen.getAllByRole('button', { name: /openMenu/i })[0]);
+    fireEvent.click(screen.getByRole('menuitem', { name: /deleteItem/i }));
 
-    expect(onDelete).toHaveBeenCalledTimes(1);
+    await vi.waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledWith('client-a');
+      expect(notify.emit).toHaveBeenCalledWith('commons.done', 'success');
+      expect(onDelete).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('shows an error notification when deletion fails', async () => {
+    mockMutateAsync.mockRejectedValue(new Error('delete failed'));
+    vi.mocked(utils.dialog.open).mockImplementation((options) => {
+      options.onConfirm?.();
+    });
+
+    const onDelete = vi.fn();
+    renderSection(clients, onDelete);
+
+    fireEvent.click(screen.getAllByRole('button', { name: /openMenu/i })[0]);
+    fireEvent.click(screen.getByRole('menuitem', { name: /deleteItem/i }));
+
+    await vi.waitFor(() => {
+      expect(notify.emit).toHaveBeenCalledWith('errors.generic');
+    });
+    expect(onDelete).not.toHaveBeenCalled();
   });
 });

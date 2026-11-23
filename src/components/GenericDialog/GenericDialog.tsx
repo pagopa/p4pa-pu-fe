@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -39,6 +40,8 @@ const GenericDialog = ({
   onClose,
   'data-testid': testId
 }: GenericDialogProps) => {
+  const { t } = useTranslation();
+  confirmLabel = confirmLabel ?? t('commons.confirm');
   return (
     <Dialog
       open={open}

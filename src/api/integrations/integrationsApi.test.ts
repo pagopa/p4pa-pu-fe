@@ -98,10 +98,13 @@ describe('deleteOrganizationApiKey', () => {
       .mockResolvedValue({} as AxiosResponse);
 
     const { result } = renderHook(() =>
-      useDeleteOrganizationApiKey(organizationId, keyType, query)
+      useDeleteOrganizationApiKey(organizationId)
     );
 
-    await result.current.mutateAsync();
+    await result.current.mutateAsync({
+      organizationApiKeyType: keyType,
+      query
+    });
 
     expect(apiMock).toHaveBeenCalledWith(organizationId, keyType, query);
   });
@@ -230,11 +233,9 @@ describe('deletePdndService', () => {
       .spyOn(utils.apiClient.bff, 'deletePdndService')
       .mockResolvedValue({} as AxiosResponse);
 
-    const { result } = renderHook(() =>
-      useDeletePdndService(organizationId, 'service-1')
-    );
+    const { result } = renderHook(() => useDeletePdndService(organizationId));
 
-    await result.current.mutateAsync();
+    await result.current.mutateAsync({ purposeId: 'service-1' });
 
     expect(apiMock).toHaveBeenCalledWith(
       organizationId,
@@ -248,11 +249,12 @@ describe('deletePdndService', () => {
       .spyOn(utils.apiClient.bff, 'deletePdndService')
       .mockResolvedValue({} as AxiosResponse);
 
-    const { result } = renderHook(() =>
-      useDeletePdndService(organizationId, 'service-1', 'SU1')
-    );
+    const { result } = renderHook(() => useDeletePdndService(organizationId));
 
-    await result.current.mutateAsync();
+    await result.current.mutateAsync({
+      purposeId: 'service-1',
+      subUnitCode: 'SU1'
+    });
 
     expect(apiMock).toHaveBeenCalledWith(organizationId, 'service-1', {
       subUnitCode: 'SU1'
@@ -491,11 +493,9 @@ describe('deletePdndClient', () => {
       .spyOn(utils.apiClient.bff, 'deletePdndClient')
       .mockResolvedValue({} as AxiosResponse);
 
-    const { result } = renderHook(() =>
-      useDeletePdndClient(organizationId, 'client-c')
-    );
+    const { result } = renderHook(() => useDeletePdndClient(organizationId));
 
-    await result.current.mutateAsync();
+    await result.current.mutateAsync('client-c');
 
     expect(apiMock).toHaveBeenCalledWith(organizationId, 'client-c');
   });

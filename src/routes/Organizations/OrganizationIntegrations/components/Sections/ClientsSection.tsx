@@ -3,9 +3,14 @@ import { useTranslation } from 'react-i18next';
 
 import type { PdndClientNoSecretDTO } from '@generated/core/client';
 
-import { I18N_PREFIX } from '../..';
 import { Field, Row, Section } from '../Containers';
 import { PdndClientDialog } from '../Dialogs/ClientDialog';
+import notify from '@core/utils/notify';
+import { useDeletePdndClient } from '@core/api/integrations';
+import utils from '@core/utils';
+import { useNavigate, generatePath } from 'react-router';
+import { PageRoutes } from '@core/routes';
+import { IntegrationType } from '@core/routes/Organizations/enums';
 
 export const ClientsSection = ({
   clients,
@@ -16,8 +21,50 @@ export const ClientsSection = ({
   organizationId: number;
   onDelete: () => void;
 }) => {
-  const { t } = useTranslation(undefined, I18N_PREFIX);
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<PdndClientNoSecretDTO>();
+  const navigate = useNavigate();
+  const deletePdndClientMutation = useDeletePdndClient(organizationId);
+
+  const confirmDeletePdndClient = (client: PdndClientNoSecretDTO) => {
+    utils.dialog.open({
+      title: t('organizations.integrations.deleteDialog.title'),
+      message: t('organizations.integrations.deleteDialog.pdndClient'),
+      onConfirm: () => {
+        handleDeletePdndClient(client);
+        utils.dialog.close();
+      }
+    });
+  };
+
+  const handleDeletePdndClient = async (client: PdndClientNoSecretDTO) => {
+    try {
+      if (!client.clientId) throw new Error('Client ID is required');
+      await deletePdndClientMutation.mutateAsync(client.clientId);
+      notify.emit(t('commons.done'), 'success');
+      onDelete();
+    } catch {
+      notify.emit(t('errors.generic'));
+    } finally {
+      utils.dialog.close();
+    }
+  };
+
+  const handleEditPdndClient = (client: PdndClientNoSecretDTO) => {
+    const searchParams = new URLSearchParams({
+      clientId: client.clientId
+    });
+    if (client.subUnitCode) {
+      searchParams.set('subUnitCode', client.subUnitCode);
+    }
+
+    navigate(
+      `${generatePath(PageRoutes.EDIT_INTEGRATION, {
+        organizationId: String(organizationId),
+        IntegrationType: IntegrationType.PDND_CLIENT
+      })}?${searchParams.toString()}`
+    );
+  };
 
   return (
     <Section title={t('pdndClients')}>
@@ -25,9 +72,8 @@ export const ClientsSection = ({
         <PdndClientDialog
           open
           client={selected}
-          organizationId={organizationId}
           onClose={() => setSelected(undefined)}
-          onDelete={onDelete}
+          onEdit={handleEditPdndClient}
         />
       )}
       {clients.map((client) => (
@@ -35,6 +81,8 @@ export const ClientsSection = ({
           key={client.clientId}
           name={client.clientName}
           onShow={() => setSelected(client)}
+          onEdit={() => setSelected(client)}
+          onDelete={() => confirmDeletePdndClient(client)}
         >
           <Field label={t('name')} width={'25%'}>
             {client.clientName}
