@@ -14,7 +14,7 @@ import type {
 import {
   orgAndSubUnitDTOSchema,
   organizationApiKeySchema,
-  pagedOrgSubUnitSchema,
+  orgSubUnitSchema,
   pagedPdndServiceViewSchema,
   pdndClientNoSecretDTOSchema,
   pdndServiceViewSchema
@@ -356,7 +356,7 @@ describe('useUpdatePdndClient', () => {
 
 describe('getAllOrgSubUnits', () => {
   it('does not fetch when disabled', () => {
-    const apiMock = vi.spyOn(utils.apiClient.bff, 'getPagedOrgSubUnits');
+    const apiMock = vi.spyOn(utils.apiClient.bff, 'getOrgSubUnits');
     const { result } = renderHook(() =>
       useGetAllOrgSubUnits(organizationId, false)
     );
@@ -365,16 +365,16 @@ describe('getAllOrgSubUnits', () => {
     expect(apiMock).not.toHaveBeenCalled();
   });
 
-  it('requests the first 100 sub-units and returns the page', async () => {
-    const dataMock = createMock(pagedOrgSubUnitSchema);
+  it('requests all sub-units and returns the list', async () => {
+    const dataMock = [createMock(orgSubUnitSchema)];
     const apiMock = vi
-      .spyOn(utils.apiClient.bff, 'getPagedOrgSubUnits')
+      .spyOn(utils.apiClient.bff, 'getOrgSubUnits')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
     const { result } = renderHook(() => useGetAllOrgSubUnits(organizationId));
 
     await waitFor(() => {
-      expect(apiMock).toHaveBeenCalledWith(organizationId, { size: 100 });
+      expect(apiMock).toHaveBeenCalledWith(organizationId);
       expect(result.current.data).toEqual(dataMock);
     });
   });

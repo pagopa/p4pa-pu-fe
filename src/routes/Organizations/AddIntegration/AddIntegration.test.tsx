@@ -71,7 +71,7 @@ const {
       (
         organizationId: number,
         enabled?: boolean
-      ) => { data: { content: Array<PdndClientView> } | undefined }
+      ) => { data: Array<PdndClientView> | undefined }
     >(),
   mockGetOrgSubUnitWithNoServiceType: vi.fn(),
   mockGetPdndClientsByOrgSubUnitCode: vi.fn(),
@@ -407,7 +407,7 @@ describe('AddIntegration', () => {
     mockEncryptAndSaveApiKey.mockReturnValue({ mutateAsync: mockMutateAsync });
     mockMutateAsync.mockResolvedValue(undefined);
     mockGetAllOrgSubUnits.mockReturnValue({
-      data: { content: SUB_UNITS }
+      data: SUB_UNITS
     });
     mockGetOrgSubUnitWithNoServiceType.mockReturnValue({
       data: SUB_UNITS
