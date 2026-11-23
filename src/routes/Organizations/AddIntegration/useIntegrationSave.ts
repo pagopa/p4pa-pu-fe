@@ -27,6 +27,7 @@ type UseIntegrationSaveParams = {
   organizationId: number;
   isEServiceEdit: boolean;
   isPdndClientEdit: boolean;
+  isPagoPAEdit: boolean;
   clientIdByURL?: string;
   purposeIdByURL?: string;
   serviceSubUnitCode?: string;
@@ -41,6 +42,7 @@ export const useIntegrationSave = ({
   organizationId,
   isEServiceEdit,
   isPdndClientEdit,
+  isPagoPAEdit,
   clientIdByURL,
   purposeIdByURL,
   serviceSubUnitCode
@@ -179,6 +181,13 @@ export const useIntegrationSave = ({
     formData: AddIntegrationFormData
   ): PendingUpdate | null => {
     if (
+      isPagoPAEdit &&
+      formData.flagIntegrationType === IntegrationType.PAGOPA_PRODUCT &&
+      formData.PAGOPA_PRODUCT
+    ) {
+      return { type: 'pagoPA', values: formData.PAGOPA_PRODUCT };
+    }
+    if (
       isPdndClientEdit &&
       formData.flagIntegrationType === IntegrationType.PDND_CLIENT &&
       formData.PDND_CLIENT
@@ -228,11 +237,18 @@ export const useIntegrationSave = ({
       return;
     }
 
-    const { type, values } = pendingUpdate;
     // Keep the dialog open on failure so the user can retry (or cancel).
-    const saved = await saveAndNavigate(() =>
-      type === 'eservice' ? submitEService(values) : submitPdnd(values)
-    );
+    const saveAction = (): Promise<void> => {
+      switch (pendingUpdate.type) {
+        case 'eservice':
+          return submitEService(pendingUpdate.values);
+        case 'pdndClient':
+          return submitPdnd(pendingUpdate.values);
+        case 'pagoPA':
+          return submitPagoPA(pendingUpdate.values);
+      }
+    };
+    const saved = await saveAndNavigate(saveAction);
     if (saved) {
       setPendingUpdate(null);
     }
@@ -242,7 +258,8 @@ export const useIntegrationSave = ({
 
   const updateMutationByType = {
     eservice: updatePdndServiceMutation,
-    pdndClient: updateClientMutation
+    pdndClient: updateClientMutation,
+    pagoPA: savePagoPAMutation
   };
 
   const isUpdatePending = pendingUpdate

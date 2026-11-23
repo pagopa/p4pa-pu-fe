@@ -146,6 +146,19 @@ describe('OrganizationIntegrations', () => {
     ).toBeInTheDocument();
   });
 
+  it('shows the e-service title even when there are no e-services', () => {
+    mockQuery(useGetOrganizationApiKeys, []);
+    mockQuery(useGetPdndServices, []);
+    mockQuery(useGetPdndClients, [
+      { clientId: 'client-c', clientName: 'Client C', organizationId: 1 }
+    ]);
+
+    render(<OrganizationIntegrations />);
+
+    expect(screen.getByText('pdndServices')).toBeInTheDocument();
+    expect(screen.getByText('pdndClients')).toBeInTheDocument();
+  });
+
   it('shows the sub-units tab content when the tab hash param is 1', () => {
     mockTab('1');
 

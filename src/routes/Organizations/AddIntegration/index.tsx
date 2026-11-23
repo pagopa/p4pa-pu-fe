@@ -71,6 +71,9 @@ export const AddIntegration = ({
   const isPdndClientEdit =
     isEditMode && integrationTypeByURL === IntegrationType.PDND_CLIENT;
 
+  const isPagoPAEdit =
+    isEditMode && integrationTypeByURL === IntegrationType.PAGOPA_PRODUCT;
+
   const { data: existingEService, isPending: isEServicePending } =
     useGetPdndService(
       organizationId,
@@ -108,6 +111,7 @@ export const AddIntegration = ({
     organizationId,
     isEServiceEdit,
     isPdndClientEdit,
+    isPagoPAEdit,
     clientIdByURL,
     purposeIdByURL,
     serviceSubUnitCode
