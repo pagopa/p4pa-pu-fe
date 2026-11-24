@@ -5,6 +5,7 @@ import { fireEvent, render, screen, waitFor } from '../../__tests__/renderers';
 import { PageRoutes } from '../../routes';
 import { setUserInfo } from '../../store/UserInfoStore';
 import { organizationsState } from '../../store/OrganizationsStore';
+import utils from '../../utils';
 import type { OrganizationDTO } from '../../../generated/core/data-contracts';
 import {
   OperatorRole,
@@ -77,6 +78,10 @@ describe('Header component', () => {
 
   it('should clear session storage and navigate to home when "Esci" is clicked', async () => {
     const mockStorage = vi.spyOn(Storage.prototype, 'clear');
+    const mockLogout = vi
+      .spyOn(utils.apiClient.bff, 'logout')
+      .mockResolvedValue({} as never);
+    window.localStorage.setItem('refreshToken', 'test-refresh-token');
 
     render(<Header />);
 
@@ -84,6 +89,9 @@ describe('Header component', () => {
     fireEvent.click(screen.getByText('commons.userActions.logout'));
 
     await waitFor(() => {
+      expect(mockLogout).toHaveBeenCalledWith({
+        revoked_token: 'test-refresh-token'
+      });
       expect(mockStorage).toHaveBeenCalled();
       expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.LOGGED_OUT);
     });
