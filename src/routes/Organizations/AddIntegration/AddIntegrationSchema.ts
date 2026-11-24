@@ -89,7 +89,8 @@ export type EServiceFormData = NonNullable<AddIntegrationFormData['E_SERVICE']>;
 // An edit of an existing resource, waiting for the user's confirmation.
 export type PendingUpdate =
   | { type: 'eservice'; values: EServiceFormData }
-  | { type: 'pdndClient'; values: PdndFormData };
+  | { type: 'pdndClient'; values: PdndFormData }
+  | { type: 'pagoPA'; values: PagoPAFormData };
 
 export const DEFAULT_PDND_VALUES: PdndFormData = {
   ownerType: PdndOwnerType.ORGANIZATION,

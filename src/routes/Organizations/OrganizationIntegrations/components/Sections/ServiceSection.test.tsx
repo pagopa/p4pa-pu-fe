@@ -87,18 +87,17 @@ describe('ServicesSection', () => {
     mockMutateAsync.mockResolvedValue({});
   });
 
-  it('renders nothing when there are no services', () => {
-    const { container } = renderSection([]);
+  it('renders the title even when there are no services', () => {
+    renderSection([]);
 
     expect(
       screen.getByRole('heading', {
         name: 'pdndServices'
       })
     ).toBeInTheDocument();
-    expect(screen.queryAllByRole('button')).toHaveLength(0);
-    expect(
-      container.querySelector('[data-testid="service-dialog"]')
-    ).not.toBeInTheDocument();
+    // No rows are rendered: neither the label nor the value of a field.
+    expect(screen.queryByRole('term')).not.toBeInTheDocument();
+    expect(screen.queryByRole('definition')).not.toBeInTheDocument();
   });
 
   it('renders the title and a row per service, with a placeholder for a missing purposeId', () => {
