@@ -34,10 +34,14 @@ export const Phone = ({ children, open, onClose }: PhoneProps) => {
       data-testid="phone-dialog"
     >
       <DialogTitle id="phone-dialog-title" sx={styles.dialogTitle}>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center">
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <Typography variant="h6">{t('appPreview.title')}</Typography>
           <IconButton onClick={onClose} aria-label={t('commons.close')}>
-            <CloseIcon fontSize="small" />
+            <CloseIcon fontSize="small" color="action" />
           </IconButton>
         </Stack>
         <Typography variant="body2">{t('appPreview.messageInfo')}</Typography>
