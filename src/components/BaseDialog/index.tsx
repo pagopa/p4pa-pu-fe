@@ -7,6 +7,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
 
 type BaseDialogProps = {
   open: boolean;
@@ -41,12 +44,21 @@ export const BaseDialog = ({
       sx={{ padding: 3 }}
     >
       <DialogTitle id={titleId} gap={1}>
-        {title}
-        {description && (
-          <Typography id={descriptionId} variant="body2" color="text.secondary">
-            {description}
-          </Typography>
-        )}
+        <Stack direction="row" justifyContent="flex-end" alignItems="center">
+          {title}
+          <IconButton onClick={onClose} aria-label="Chiudi" sx={{ p: 0 }}>
+            <CloseIcon fontSize="small" />
+          </IconButton>
+          {description && (
+            <Typography
+              id={descriptionId}
+              variant="body2"
+              color="text.secondary"
+            >
+              {description}
+            </Typography>
+          )}
+        </Stack>
       </DialogTitle>
 
       <DialogContent>{children}</DialogContent>

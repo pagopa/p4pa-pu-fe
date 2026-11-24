@@ -8,6 +8,9 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
 
 export type GenericDialogProps = {
   open: boolean;
@@ -52,7 +55,12 @@ const GenericDialog = ({
       aria-labelledby={ariaLabelledby || 'generic-dialog-title'}
     >
       <DialogTitle sx={{ px: 4, pt: 4 }} id="generic-dialog-title">
-        {title}
+        <Stack direction="row" justifyContent="flex-end" alignItems="center">
+          {title}
+          <IconButton onClick={onClose} aria-label="Chiudi" sx={{ p: 0 }}>
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </Stack>
       </DialogTitle>
       <DialogContent sx={{ px: 4 }}>
         {message && <DialogContentText>{message}</DialogContentText>}
