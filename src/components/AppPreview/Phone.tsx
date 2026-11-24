@@ -1,6 +1,5 @@
 import type React from 'react';
 import { LazyBackground } from '../LazyBackground';
-import CloseIcon from '@mui/icons-material/Close';
 import { useTranslation } from 'react-i18next';
 import {
   GRADIENT_BACKGROUND,
@@ -11,9 +10,10 @@ import {
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+
+import { DialogCloseButton } from '@core/components/DialogCloseButton';
 
 type PhoneProps = {
   open: boolean;
@@ -40,9 +40,7 @@ export const Phone = ({ children, open, onClose }: PhoneProps) => {
           alignItems="center"
         >
           <Typography variant="h6">{t('appPreview.title')}</Typography>
-          <IconButton onClick={onClose} aria-label={t('commons.close')}>
-            <CloseIcon fontSize="small" color="action" />
-          </IconButton>
+          {onClose && <DialogCloseButton onClick={onClose} />}
         </Stack>
         <Typography variant="body2">{t('appPreview.messageInfo')}</Typography>
       </DialogTitle>

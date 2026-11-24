@@ -35,6 +35,15 @@ describe('GenericDialog', () => {
     expect(defaultProps.onClose).toHaveBeenCalled();
   });
 
+  it('calls onClose when the close icon is clicked', () => {
+    render(<GenericDialog {...defaultProps} />);
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'commons.closeDialog' })
+    );
+    expect(defaultProps.onClose).toHaveBeenCalled();
+  });
+
   it('calls onConfirm when Confirm button is clicked', () => {
     render(<GenericDialog {...defaultProps} />);
 

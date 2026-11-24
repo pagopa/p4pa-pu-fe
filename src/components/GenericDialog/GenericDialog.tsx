@@ -8,9 +8,9 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import CloseIcon from '@mui/icons-material/Close';
-import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
+
+import { DialogCloseButton } from '@core/components/DialogCloseButton';
 
 export type GenericDialogProps = {
   open: boolean;
@@ -22,7 +22,7 @@ export type GenericDialogProps = {
   fullWidth?: boolean;
   confirmLoading?: boolean;
   onConfirm?: () => void;
-  onClose?: () => void;
+  onClose: () => void;
   'data-testid'?: string;
   ariaDescribedby?: string;
   ariaLabelledby?: string;
@@ -62,13 +62,7 @@ const GenericDialog = ({
           gap={5}
         >
           {title}
-          <IconButton
-            onClick={onClose}
-            aria-label={t('commons.closeDialog')}
-            sx={{ p: 0, mt: 0.5 }}
-          >
-            <CloseIcon fontSize="small" color="action" />
-          </IconButton>
+          <DialogCloseButton onClick={onClose} />
         </Stack>
       </DialogTitle>
       <DialogContent sx={{ px: 4 }}>

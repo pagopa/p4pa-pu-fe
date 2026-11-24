@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import { useId } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import type { DialogProps } from '@mui/material/Dialog';
 import Dialog from '@mui/material/Dialog';
@@ -8,9 +7,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import CloseIcon from '@mui/icons-material/Close';
-import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
+
+import { DialogCloseButton } from '@core/components/DialogCloseButton';
 
 type BaseDialogProps = {
   open: boolean;
@@ -31,7 +30,6 @@ export const BaseDialog = ({
   actions,
   maxWidth = 'sm'
 }: BaseDialogProps) => {
-  const { t } = useTranslation();
   const titleId = useId();
   const descriptionId = useId();
 
@@ -45,8 +43,8 @@ export const BaseDialog = ({
       aria-describedby={description ? descriptionId : undefined}
       sx={{ padding: 3 }}
     >
-      <DialogTitle id={titleId} gap={1}>
-        <Stack>
+      <DialogTitle id={titleId}>
+        <Stack gap={1}>
           <Stack
             direction="row"
             justifyContent="space-between"
@@ -54,13 +52,7 @@ export const BaseDialog = ({
             gap={5}
           >
             {title}
-            <IconButton
-              onClick={onClose}
-              aria-label={t('commons.closeDialog')}
-              sx={{ p: 0, mt: 0.5 }}
-            >
-              <CloseIcon fontSize="small" color="action" />
-            </IconButton>
+            <DialogCloseButton onClick={onClose} />
           </Stack>
           {description && (
             <Typography
