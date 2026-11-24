@@ -57,8 +57,9 @@ const GenericDialog = ({
       <DialogTitle sx={{ px: 4, pt: 4 }} id="generic-dialog-title">
         <Stack
           direction="row"
-          justifyContent="flex-end"
+          justifyContent="space-between"
           alignItems="flex-start"
+          gap={5}
         >
           {title}
           <IconButton

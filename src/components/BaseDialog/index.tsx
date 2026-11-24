@@ -46,19 +46,22 @@ export const BaseDialog = ({
       sx={{ padding: 3 }}
     >
       <DialogTitle id={titleId} gap={1}>
-        <Stack
-          direction="row"
-          justifyContent="flex-end"
-          alignItems="flex-start"
-        >
-          {title}
-          <IconButton
-            onClick={onClose}
-            aria-label={t('commons.closeDialog')}
-            sx={{ p: 0, mt: 0.5 }}
+        <Stack>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="flex-start"
+            gap={5}
           >
-            <CloseIcon fontSize="small" color="action" />
-          </IconButton>
+            {title}
+            <IconButton
+              onClick={onClose}
+              aria-label={t('commons.closeDialog')}
+              sx={{ p: 0, mt: 0.5 }}
+            >
+              <CloseIcon fontSize="small" color="action" />
+            </IconButton>
+          </Stack>
           {description && (
             <Typography
               id={descriptionId}
