@@ -60,8 +60,7 @@ export const SubUnitsDataGrid = ({
       field: 'creationDate',
       headerName: t('commons.creationDate'),
       flex: 1,
-      renderCell: (params) =>
-        formatDate(params.row.creationDate, 'dd MMMM yyyy')
+      renderCell: (params) => formatDate(params.row.creationDate)
     },
     {
       field: 'status',

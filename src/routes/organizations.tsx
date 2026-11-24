@@ -106,7 +106,7 @@ export const organizationsRoutes = [
         path: `:organizationId?`,
         handle: {
           backButton: false,
-          hideBreadcrumbs: true
+          custom: true
         }
       },
       {
@@ -187,7 +187,8 @@ export const organizationsRoutes = [
     ),
     handle: {
       backButton: false,
-      hideBreadcrumbs: true
+      hideBreadcrumbs: false,
+      custom: true
     }
   }
 ];

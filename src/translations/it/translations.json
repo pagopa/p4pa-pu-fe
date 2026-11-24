@@ -150,8 +150,8 @@
         "button": "Associa"
       }
     },
-    "subUnit": "Sottunità",
-    "affiliateSubUnit": "Associa sottunità",
+    "subUnit": "Sottounità",
+    "affiliateSubUnit": "Associa sottounità",
     "subCode": "Codice univoco",
     "subType": "Struttura",
     "subName": "Denominazione",
@@ -167,10 +167,10 @@
       "subUnitType": "Filtra per Struttura"
     },
     "deleteDialogSubUnit": {
-      "title": "Sei sicuro di voler rimuovere la sottunità?",
-      "message": "Denominazione sottunità che verrà rimossa: <strong>{{subUnitName}}</strong>"
+      "title": "Sei sicuro di voler rimuovere la sottounità?",
+      "message": "Denominazione sottounità che verrà rimossa: <strong>{{subUnitName}}</strong>"
     },
-    "subUnitEmptyData": "Nessuna sottunità associata"
+    "subUnitEmptyData": "Nessuna sottounità associata"
   },
   "a11y": {
     "navigation": {
@@ -2418,7 +2418,11 @@
     "clientDialog": {
       "clientId": "ID del client",
       "kid": "ID della chiave (KID)",
-      "publicKey": "Chiave pubblica"
+      "publicKey": "Chiave pubblica",
+      "deleteError": {
+        "title": "Impossibile eliminare il client",
+        "message": "Il client è attualmente in uso."
+      }
     },
     "serviceDialog": {
       "clientName": "Client name",
@@ -2616,12 +2620,25 @@
       "emptyDescription": "Aggiungi una nuova integrazione a un prodotto o servizio",
       "add": "Aggiungi integrazione",
       "show": "Mostra",
-      "showItem": "Mostra {{name}}",
+      "showItem": "Mostra dettaglio",
+      "deleteItem": "Elimina",
+      "modifyItem": "Modifica",
       "keyTypes": {
         "IO": "IO",
         "SEND": "SEND",
         "GENERATE_NOTICE": "Stampa avvisi"
-      }
+      },
+      "deleteDialog": {
+        "title": "Vuoi eleminare l'integrazione?",
+        "message": "Sei sicuro di voler eliminare questa integrazione?",
+        "subUnitPdndService": "L’integrazione e-service PDND di {{denominazione}} sarà rimossa. Potrai ricrearla in futuro, se necessario.",
+        "subUnitPdndClient": "L’integrazione client PDND di {{denominazione}} sarà rimossa. Potrai ricrearla in futuro, se necessario.",
+        "apiKey": "L’integrazione Prodotto PagoPA sarà rimossa. Potrai ricrearla in futuro, se necessario.",
+        "pdndService": "L’integrazione e-service PDND sarà rimossa. Potrai ricrearla in futuro, se necessario.",
+        "pdndClient": "L’integrazione client PDND sarà rimossa. Potrai ricrearla in futuro, se necessario.",
+        "confirm": "Conferma",
+        "cancel": "Annulla"
+      } 
     },
     "management": {
       "title": "Gestioni",
@@ -2732,7 +2749,7 @@
         "subUnitCode": "Cerca per codice univoco",
         "subUnitType": "Cerca per struttura"
       },
-      "title": "Sottounità {{orgName}}",
+      "title": "Sottounità di {{orgName}}",
       "description": "Puoi gestire le sottounità dell’ente.",
       "create": "Aggiungi sottounità"
     }

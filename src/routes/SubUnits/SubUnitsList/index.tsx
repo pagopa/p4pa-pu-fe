@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import Stack from '@mui/material/Stack';
 
+import { getOrganizationDetail } from '@core/api/organizations';
 import type { SubUnitsFilters } from '@core/api/orgSubUnit';
 import { getPagedOrgSubUnits } from '@core/api/orgSubUnit';
 
@@ -31,7 +32,7 @@ export const SubUnitsList = () => {
   const { filters: filterItems } = useSubUnitsFilters();
 
   const handleFilterChange = useCallback((id: string, value: unknown) => {
-    setFilterValues((prev) => ({
+    setFilterValues((prev: SubUnitsFilters) => ({
       ...prev,
       [id]: value as string
     }));
@@ -46,6 +47,7 @@ export const SubUnitsList = () => {
     }
   }, [organizationId]);
 
+  const organizationQuery = getOrganizationDetail(organizationId);
   const query = getPagedOrgSubUnits(organizationId);
 
   const campaignNotifications = useSearch({
@@ -64,16 +66,18 @@ export const SubUnitsList = () => {
         pathname: generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
           organizationId: String(organizationId)
         }),
-        label: urlOrganizationId,
+        label: organizationQuery.data?.orgName || urlOrganizationId,
         id: 'ORGANIZATIONS_DETAIL'
       },
       {
         pathname: '#',
-        label: t('subunits.list.title', { orgName: urlOrganizationId }),
+        label: t('subunits.list.title', {
+          orgName: organizationQuery.data?.orgName || urlOrganizationId
+        }),
         id: 'SUBUNITS_LIST'
       }
     ]);
-  }, [t, urlOrganizationId, organizationId]);
+  }, [t, organizationQuery.data?.orgName, organizationId]);
 
   const createSubUnitAction: ActionMenuItem = {
     buttonText: t('subunits.list.create'),
@@ -91,7 +95,9 @@ export const SubUnitsList = () => {
     <Stack gap={5}>
       <Stack>
         <TitleComponent
-          title={t('subunits.list.title', { orgName: urlOrganizationId })}
+          title={t('subunits.list.title', {
+            orgName: organizationQuery.data?.orgName || urlOrganizationId
+          })}
           description={t('subunits.list.description')}
           callToAction={[createSubUnitAction]}
         />

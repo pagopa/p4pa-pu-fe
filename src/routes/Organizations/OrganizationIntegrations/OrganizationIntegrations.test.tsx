@@ -4,6 +4,9 @@ import { generatePath, useNavigate, useParams } from 'react-router';
 import { render, screen } from '../../../__tests__/renderers';
 import { getOrganizationDetail } from '../../../api/organizations';
 import {
+  useDeleteOrganizationApiKey,
+  useDeletePdndClient,
+  useDeletePdndService,
   useGetOrganizationApiKeys,
   useGetPdndClients,
   useGetPdndServices
@@ -22,6 +25,9 @@ vi.mock('../../../api/organizations', () => ({
   getOrganizationDetail: vi.fn()
 }));
 vi.mock('@core/api/integrations', () => ({
+  useDeleteOrganizationApiKey: vi.fn(),
+  useDeletePdndClient: vi.fn(),
+  useDeletePdndService: vi.fn(),
   useGetOrganizationApiKeys: vi.fn(),
   useGetPdndServices: vi.fn(),
   useGetPdndClients: vi.fn(),
@@ -87,6 +93,19 @@ describe('OrganizationIntegrations', () => {
     vi.mocked(useParams).mockReturnValue({ organizationId: '33' });
     mockTab();
 
+    vi.mocked(useDeleteOrganizationApiKey).mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false
+    } as unknown as ReturnType<typeof useDeleteOrganizationApiKey>);
+    vi.mocked(useDeletePdndService).mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false
+    } as unknown as ReturnType<typeof useDeletePdndService>);
+    vi.mocked(useDeletePdndClient).mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false
+    } as unknown as ReturnType<typeof useDeletePdndClient>);
+
     mockQuery(getOrganizationDetail, { orgName: 'Ente' });
     mockQuery(useGetOrganizationApiKeys, [
       { keyType: OrganizationApiKeyType.IO, flagActive: true },
@@ -125,6 +144,19 @@ describe('OrganizationIntegrations', () => {
     expect(
       screen.getByRole('tab', { name: 'organizations.management.subUnits' })
     ).toBeInTheDocument();
+  });
+
+  it('shows the e-service title even when there are no e-services', () => {
+    mockQuery(useGetOrganizationApiKeys, []);
+    mockQuery(useGetPdndServices, []);
+    mockQuery(useGetPdndClients, [
+      { clientId: 'client-c', clientName: 'Client C', organizationId: 1 }
+    ]);
+
+    render(<OrganizationIntegrations />);
+
+    expect(screen.getByText('pdndServices')).toBeInTheDocument();
+    expect(screen.getByText('pdndClients')).toBeInTheDocument();
   });
 
   it('shows the sub-units tab content when the tab hash param is 1', () => {

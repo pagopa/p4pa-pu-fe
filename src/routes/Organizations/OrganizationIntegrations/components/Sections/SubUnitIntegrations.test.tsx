@@ -4,14 +4,22 @@ import userEvent from '@testing-library/user-event';
 
 import { render, screen, within } from '@core/__tests__/renderers';
 import {
+  useDeletePdndClient,
+  useDeletePdndService,
   useGetOrgSubUnitsPdndClients,
   useGetOrgSubUnitsPdndServices
 } from '@core/api/integrations';
 import { useSearch } from '@core/hooks/useSearch';
+import notify from '@core/utils/notify';
+import utils from '@core/utils';
 
 import { SubUnitIntegrations } from './SubUnitIntegrations';
 
+const mockNavigate = vi.hoisted(() => vi.fn());
+
 vi.mock('@core/api/integrations', () => ({
+  useDeletePdndClient: vi.fn(),
+  useDeletePdndService: vi.fn(),
   useGetOrgSubUnitsPdndServices: vi.fn(),
   useGetOrgSubUnitsPdndClients: vi.fn()
 }));
@@ -26,7 +34,8 @@ vi.mock('react-router', async () => {
 
   return {
     ...actual,
-    useParams: vi.fn()
+    useParams: vi.fn(),
+    useNavigate: vi.fn().mockReturnValue(mockNavigate)
   };
 });
 
@@ -146,8 +155,52 @@ vi.mock('../Dialogs/ServiceDialog', () => ({
   )
 }));
 
+vi.mock('../Dialogs/ClientDialog', () => ({
+  PdndClientDialog: ({
+    client,
+    onClose,
+    onEdit
+  }: {
+    client: { clientId: string; subUnitCode?: string };
+    onClose: () => void;
+    onEdit: (client: {
+      clientId: string;
+      subUnitCode?: string;
+    }) => void;
+  }) => (
+    <div data-testid="client-dialog" data-client-id={client.clientId}>
+      <button data-testid="close-client-dialog" onClick={onClose}>
+        close
+      </button>
+      <button data-testid="edit-client" onClick={() => onEdit(client)}>
+        edit
+      </button>
+    </div>
+  )
+}));
+
+vi.mock('@core/utils/notify', () => ({
+  default: { emit: vi.fn() }
+}));
+
+vi.mock('@core/utils', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@core/utils')>();
+  return {
+    ...actual,
+    default: {
+      ...actual.default,
+      dialog: {
+        open: vi.fn(),
+        close: vi.fn()
+      }
+    }
+  };
+});
+
 const mockApplyServiceFilters = vi.fn();
 const mockApplyClientFilters = vi.fn();
+const mockServiceMutateAsync = vi.fn();
+const mockClientMutateAsync = vi.fn();
 
 const service = {
   subUnitCode: 'SU1',
@@ -191,6 +244,16 @@ describe('SubUnitIntegrations', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     window.location.hash = '';
+    vi.mocked(useDeletePdndService).mockReturnValue({
+      mutateAsync: mockServiceMutateAsync,
+      isPending: false
+    } as unknown as ReturnType<typeof useDeletePdndService>);
+    vi.mocked(useDeletePdndClient).mockReturnValue({
+      mutateAsync: mockClientMutateAsync,
+      isPending: false
+    } as unknown as ReturnType<typeof useDeletePdndClient>);
+    mockServiceMutateAsync.mockResolvedValue({});
+    mockClientMutateAsync.mockResolvedValue({});
 
     vi.mocked(useParams).mockReturnValue({
       organizationId: '33'
@@ -271,12 +334,12 @@ describe('SubUnitIntegrations', () => {
 
     expect(screen.queryByTestId('service-dialog')).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: /showItem/i }));
+    await user.click(screen.getByRole('button', { name: /openMenu/i }));
+    await user.click(screen.getByRole('menuitem', { name: /showItem/i }));
 
     const dialog = screen.getByTestId('service-dialog');
 
     expect(dialog).toHaveAttribute('data-purpose-id', 'purp_1');
-    expect(dialog).toHaveAttribute('data-organization-id', '33');
 
     await user.click(screen.getByTestId('close-dialog'));
 
@@ -285,15 +348,42 @@ describe('SubUnitIntegrations', () => {
 
   it('reapplies the current filters when a service is deleted', async () => {
     const user = userEvent.setup();
+    vi.mocked(utils.dialog.open).mockImplementation((options) => {
+      options.onConfirm?.();
+    });
 
     render(<SubUnitIntegrations />);
 
-    await user.click(screen.getByRole('button', { name: /showItem/i }));
-
-    await user.click(screen.getByTestId('delete-service'));
+    await user.click(screen.getByRole('button', { name: /openMenu/i }));
+    await user.click(screen.getByRole('menuitem', { name: /deleteItem/i }));
 
     expect(mockApplyServiceFilters).toHaveBeenCalledWith({});
     expect(mockApplyClientFilters).not.toHaveBeenCalled();
+  });
+
+  it('navigates to the service edit page with sub-unit identifiers', async () => {
+    const user = userEvent.setup();
+
+    render(<SubUnitIntegrations />);
+
+    await user.click(screen.getByRole('button', { name: /openMenu/i }));
+    await user.click(screen.getByRole('menuitem', { name: /modifyItem/i }));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.stringContaining('purposeId=purp_1&subUnitCode=SU1')
+    );
+  });
+
+  it('does not navigate for a service without a purpose ID', async () => {
+    const user = userEvent.setup();
+    mockServices([{ ...service, purposeId: undefined }]);
+
+    render(<SubUnitIntegrations />);
+
+    await user.click(screen.getByRole('button', { name: /openMenu/i }));
+    await user.click(screen.getByRole('menuitem', { name: /modifyItem/i }));
+
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it('requests the clients for the numeric organizationId', () => {
@@ -331,8 +421,66 @@ describe('SubUnitIntegrations', () => {
     render(<SubUnitIntegrations />);
 
     expect(
-      getClientsSection().getByRole('button', { name: /showItem/i })
+      getClientsSection().getByRole('button', { name: /openMenu/i })
     ).toBeInTheDocument();
+  });
+
+  it('opens and closes the dialog for the selected client', async () => {
+    const user = userEvent.setup();
+    mockClients([client]);
+
+    render(<SubUnitIntegrations />);
+
+    await user.click(
+      getClientsSection().getByRole('button', { name: /openMenu/i })
+    );
+    await user.click(screen.getByRole('menuitem', { name: /showItem/i }));
+
+    expect(screen.getByTestId('client-dialog')).toHaveAttribute(
+      'data-client-id',
+      'client-b'
+    );
+
+    await user.click(screen.getByTestId('close-client-dialog'));
+    expect(screen.queryByTestId('client-dialog')).not.toBeInTheDocument();
+  });
+
+  it('navigates to the client edit page with sub-unit identifiers', async () => {
+    const user = userEvent.setup();
+    mockClients([client]);
+
+    render(<SubUnitIntegrations />);
+
+    await user.click(
+      getClientsSection().getByRole('button', { name: /openMenu/i })
+    );
+    await user.click(screen.getByRole('menuitem', { name: /modifyItem/i }));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.stringContaining('clientId=client-b&subUnitCode=SU2')
+    );
+  });
+
+  it('reapplies client filters after a successful delete', async () => {
+    const user = userEvent.setup();
+    mockClients([client]);
+    vi.mocked(utils.dialog.open).mockImplementation((options) => {
+      options.onConfirm?.();
+    });
+
+    render(<SubUnitIntegrations />);
+
+    await user.click(
+      getClientsSection().getByRole('button', { name: /openMenu/i })
+    );
+    await user.click(screen.getByRole('menuitem', { name: /deleteItem/i }));
+
+    await vi.waitFor(() => {
+      expect(mockClientMutateAsync).toHaveBeenCalledWith('client-b');
+      expect(mockApplyClientFilters).toHaveBeenCalledWith({});
+      expect(mockApplyServiceFilters).not.toHaveBeenCalled();
+      expect(notify.emit).toHaveBeenCalledWith('commons.done', 'success');
+    });
   });
 
   it('renders only the header row in the clients grid when there are no clients', () => {

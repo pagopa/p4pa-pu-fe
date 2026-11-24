@@ -90,6 +90,7 @@ export function Layout() {
       <MISnackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         description={utils.notify.status.payload.value?.text || 'unkown error'}
+        title={utils.notify.status.payload.value?.title}
         onClose={utils.notify.dismiss}
         severity={utils.notify.status.payload.value?.severity || 'error'}
         open={utils.notify.status.isVisible.value}
