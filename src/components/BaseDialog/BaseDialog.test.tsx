@@ -63,4 +63,29 @@ describe('BaseDialog', () => {
     );
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it('keeps the close button and description out of the heading', () => {
+    render(
+      <BaseDialog
+        open
+        onClose={onClose}
+        title="Dialog title"
+        description="Dialog description"
+      >
+        Dialog content
+      </BaseDialog>
+    );
+
+    const heading = screen.getByRole('heading', {
+      level: 2,
+      name: 'Dialog title'
+    });
+
+    expect(heading).not.toContainElement(
+      screen.getByRole('button', { name: 'commons.closeDialog' })
+    );
+    expect(heading).not.toContainElement(
+      screen.getByText('Dialog description')
+    );
+  });
 });

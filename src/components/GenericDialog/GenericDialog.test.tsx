@@ -92,6 +92,30 @@ describe('GenericDialog', () => {
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
+  it('keeps the close button out of the dialog heading', () => {
+    render(<GenericDialog {...defaultProps} />);
+
+    const heading = screen.getByRole('heading', {
+      level: 2,
+      name: 'Test Title'
+    });
+
+    expect(heading).not.toContainElement(
+      screen.getByRole('button', { name: 'commons.closeDialog' })
+    );
+  });
+
+  it('links the dialog to its title and message', () => {
+    render(<GenericDialog {...defaultProps} />);
+
+    const dialog = screen.getByRole('dialog');
+    const titleId = screen.getByRole('heading', { level: 2 }).id;
+    const messageId = screen.getByText('Test message').id;
+
+    expect(dialog).toHaveAttribute('aria-labelledby', titleId);
+    expect(dialog).toHaveAttribute('aria-describedby', messageId);
+  });
+
   it('renders only confirm button when no cancelLabel is provided', () => {
     const testId = 'confirm-only-dialog';
     const propsWithoutCancel = { ...defaultProps, cancelLabel: undefined };

@@ -9,7 +9,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Stack from '@mui/material/Stack';
 
-import { DialogCloseButton } from '@core/components/DialogCloseButton';
+import { DialogHeader } from '@core/components/DialogHeader';
 
 type BaseDialogProps = {
   open: boolean;
@@ -43,17 +43,9 @@ export const BaseDialog = ({
       aria-describedby={description ? descriptionId : undefined}
       sx={{ padding: 3 }}
     >
-      <DialogTitle id={titleId}>
+      <DialogTitle component="div">
         <Stack gap={1}>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="flex-start"
-            gap={5}
-          >
-            {title}
-            <DialogCloseButton onClick={onClose} />
-          </Stack>
+          <DialogHeader id={titleId} title={title} onClose={onClose} />
           {description && (
             <Typography
               id={descriptionId}
