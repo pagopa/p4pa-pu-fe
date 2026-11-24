@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AxiosError, AxiosHeaders } from 'axios';
 import { fireEvent, render, screen } from '@core/__tests__/renderers';
 
 import type { PdndClientNoSecretDTO } from '@generated/core/client';
@@ -169,6 +170,39 @@ describe('ClientsSection', () => {
     await vi.waitFor(() => {
       expect(notify.emit).toHaveBeenCalledWith('errors.generic');
     });
+    expect(onDelete).not.toHaveBeenCalled();
+  });
+
+  it('shows a specific notification with title when the client is in use (409)', async () => {
+    mockMutateAsync.mockRejectedValue(
+      new AxiosError('Conflict', '409', undefined, undefined, {
+        status: 409,
+        data: {},
+        statusText: 'Conflict',
+        headers: {},
+        config: {
+          headers: new AxiosHeaders()
+        }
+      })
+    );
+    vi.mocked(utils.dialog.open).mockImplementation((options) => {
+      options.onConfirm?.();
+    });
+
+    const onDelete = vi.fn();
+    renderSection(clients, onDelete);
+
+    fireEvent.click(screen.getAllByRole('button', { name: /openMenu/i })[0]);
+    fireEvent.click(screen.getByRole('menuitem', { name: /deleteItem/i }));
+
+    await vi.waitFor(() => {
+      expect(notify.emit).toHaveBeenCalledWith(
+        'integrations.clientDialog.deleteError.message',
+        'error',
+        'integrations.clientDialog.deleteError.title'
+      );
+    });
+    expect(notify.emit).not.toHaveBeenCalledWith('errors.generic');
     expect(onDelete).not.toHaveBeenCalled();
   });
 });

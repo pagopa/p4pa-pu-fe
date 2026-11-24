@@ -2,10 +2,15 @@ import { type AlertProps } from '@mui/material/Alert/Alert';
 import { signal } from '@preact/signals-react';
 
 /** emits a notification */
-const emit = (text: string, severity: AlertProps['severity'] = 'error') => {
+const emit = (
+  text: string,
+  severity: AlertProps['severity'] = 'error',
+  title?: string
+) => {
   isVisible.value = true;
   payload.value.text = text;
   payload.value.severity = severity;
+  payload.value.title = title;
 };
 
 /** dismiss a notification */
@@ -16,6 +21,7 @@ const dismiss = () => {
 type notificationPayload = {
   text?: string;
   severity?: AlertProps['severity'];
+  title?: string;
 };
 
 const isVisible = signal<boolean>(false);

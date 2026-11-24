@@ -49,6 +49,21 @@ describe('notify', () => {
       expect(notify.status.payload.value.severity).toBe('info');
     });
 
+    it('should emit notification with an optional title', () => {
+      notify.emit('Description', 'error', 'Title');
+
+      expect(notify.status.isVisible.value).toBe(true);
+      expect(notify.status.payload.value.title).toBe('Title');
+      expect(notify.status.payload.value.text).toBe('Description');
+    });
+
+    it('should clear a previously set title', () => {
+      notify.emit('Description', 'error', 'Title');
+      notify.emit('Another description', 'success');
+
+      expect(notify.status.payload.value.title).toBeUndefined();
+    });
+
     it('should overwrite previous notification when called multiple times', () => {
       notify.emit('First message', 'error');
       notify.emit('Second message', 'success');
