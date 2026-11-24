@@ -55,10 +55,18 @@ const GenericDialog = ({
       aria-labelledby={ariaLabelledby || 'generic-dialog-title'}
     >
       <DialogTitle sx={{ px: 4, pt: 4 }} id="generic-dialog-title">
-        <Stack direction="row" justifyContent="flex-end" alignItems="center">
+        <Stack
+          direction="row"
+          justifyContent="flex-end"
+          alignItems="flex-start"
+        >
           {title}
-          <IconButton onClick={onClose} aria-label="Chiudi" sx={{ p: 0 }}>
-            <CloseIcon fontSize="small" />
+          <IconButton
+            onClick={onClose}
+            aria-label={t('commons.closeDialog')}
+            sx={{ p: 0, mt: 0.5 }}
+          >
+            <CloseIcon fontSize="small" color="action" />
           </IconButton>
         </Stack>
       </DialogTitle>

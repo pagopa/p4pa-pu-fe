@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useId } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { DialogProps } from '@mui/material/Dialog';
 import Dialog from '@mui/material/Dialog';
@@ -30,6 +31,7 @@ export const BaseDialog = ({
   actions,
   maxWidth = 'sm'
 }: BaseDialogProps) => {
+  const { t } = useTranslation();
   const titleId = useId();
   const descriptionId = useId();
 
@@ -44,10 +46,18 @@ export const BaseDialog = ({
       sx={{ padding: 3 }}
     >
       <DialogTitle id={titleId} gap={1}>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center">
+        <Stack
+          direction="row"
+          justifyContent="flex-end"
+          alignItems="flex-start"
+        >
           {title}
-          <IconButton onClick={onClose} aria-label="Chiudi" sx={{ p: 0 }}>
-            <CloseIcon fontSize="small" />
+          <IconButton
+            onClick={onClose}
+            aria-label={t('commons.closeDialog')}
+            sx={{ p: 0, mt: 0.5 }}
+          >
+            <CloseIcon fontSize="small" color="action" />
           </IconButton>
           {description && (
             <Typography
