@@ -1,8 +1,12 @@
 import { signal } from '@preact/signals-react';
 import type { GenericDialogProps } from '../components/GenericDialog/GenericDialog';
 
+type DialogOptions = Omit<GenericDialogProps, 'open' | 'onClose'> & {
+  onClose?: () => void;
+};
+
 /** open a Dialog notification */
-const open = (dialog: Omit<GenericDialogProps, 'open'>) => {
+const open = (dialog: DialogOptions) => {
   isDialogVisible.value = true;
   dialogPayload.value['data-testid'] = dialog['data-testid'];
   dialogPayload.value.title = dialog.title;
@@ -24,7 +28,8 @@ const close = () => {
 
 const resetState: GenericDialogProps = {
   title: '',
-  open: false
+  open: false,
+  onClose: () => undefined
 };
 
 const isDialogVisible = signal<boolean>(false);

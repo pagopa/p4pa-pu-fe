@@ -7,6 +7,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import Stack from '@mui/material/Stack';
+
+import { DialogHeader } from '@core/components/DialogHeader';
 
 type BaseDialogProps = {
   open: boolean;
@@ -40,13 +43,19 @@ export const BaseDialog = ({
       aria-describedby={description ? descriptionId : undefined}
       sx={{ padding: 3 }}
     >
-      <DialogTitle id={titleId} gap={1}>
-        {title}
-        {description && (
-          <Typography id={descriptionId} variant="body2" color="text.secondary">
-            {description}
-          </Typography>
-        )}
+      <DialogTitle component="div">
+        <Stack gap={1}>
+          <DialogHeader id={titleId} title={title} onClose={onClose} />
+          {description && (
+            <Typography
+              id={descriptionId}
+              variant="body2"
+              color="text.secondary"
+            >
+              {description}
+            </Typography>
+          )}
+        </Stack>
       </DialogTitle>
 
       <DialogContent>{children}</DialogContent>

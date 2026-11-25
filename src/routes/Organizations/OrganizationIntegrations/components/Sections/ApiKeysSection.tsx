@@ -34,8 +34,8 @@ export const ApiKeysSection = ({
 
   const confirmDeleteApiKey = (keyType: OrganizationApiKeyType) => {
     utils.dialog.open({
-      title: t('organizations.integrations.deleteDialog.title'),
-      message: t('organizations.integrations.deleteDialog.apiKey'),
+      title: t('deleteDialog.title'),
+      message: t('deleteDialog.apiKey'),
       onConfirm: () => {
         handleDeleteApiKey(keyType);
         utils.dialog.close();
