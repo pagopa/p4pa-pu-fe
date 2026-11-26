@@ -3,7 +3,11 @@ import type {
   PagedClassificationPaidInstallmentsView
 } from '../../../../generated/core/data-contracts';
 import { subDays } from 'date-fns';
-import { toStartOfDay, toEndOfDay } from '../../../utils/formatters';
+import {
+  date as dateFormatter,
+  toStartOfDay,
+  toEndOfDay
+} from '../../../utils/formatters';
 
 export type PaidInstallmentDTO = ClassificationPaidInstallmentsView;
 export type PagedPaidInstallmentsDTO = PagedClassificationPaidInstallmentsView;
@@ -67,13 +71,13 @@ export const convertFiltersToAPI = (
   }
 
   if (uiFilters.dateFrom && uiFilters.dateTo) {
-    apiFilters.paymentDateTimeFrom = uiFilters.dateFrom.toISOString();
-    apiFilters.paymentDateTimeTo = uiFilters.dateTo.toISOString();
+    apiFilters.paymentDateTimeFrom = dateFormatter.code(uiFilters.dateFrom);
+    apiFilters.paymentDateTimeTo = dateFormatter.code(uiFilters.dateTo);
   }
 
   if (uiFilters.updateDateFrom && uiFilters.updateDateTo) {
-    apiFilters.updateDateFrom = uiFilters.updateDateFrom.toISOString();
-    apiFilters.updateDateTo = uiFilters.updateDateTo.toISOString();
+    apiFilters.updateDateFrom = dateFormatter.code(uiFilters.updateDateFrom);
+    apiFilters.updateDateTo = dateFormatter.code(uiFilters.updateDateTo);
   }
 
   if (!apiFilters.paymentDateTimeFrom && !apiFilters.paymentDateTimeTo) {
@@ -82,8 +86,8 @@ export const convertFiltersToAPI = (
     const from = toStartOfDay(thirtyDaysAgo);
     const to = toEndOfDay(today);
 
-    apiFilters.paymentDateTimeFrom = from?.toISOString();
-    apiFilters.paymentDateTimeTo = to?.toISOString();
+    apiFilters.paymentDateTimeFrom = dateFormatter.code(from);
+    apiFilters.paymentDateTimeTo = dateFormatter.code(to);
   }
 
   return apiFilters;
