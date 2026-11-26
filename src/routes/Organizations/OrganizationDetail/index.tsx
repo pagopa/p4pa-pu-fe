@@ -19,6 +19,7 @@ import { useLanguage } from '@core/hooks/useLanguage';
 import { PageRoutes } from '@core/routes';
 import { useStore } from '@core/store/GlobalStore';
 import utils from '@core/utils';
+import { setCustomBreadcrumbsItems } from '@core/store/AppStateStore';
 
 import { OrganizationDetailAlert } from './components/OrganizationDetailAlert';
 import {
@@ -64,10 +65,25 @@ export const OrganizationDetail = () => {
     }
   }, [data]);
 
+  useEffect(() => {
+    const orgName = organizationDetailData?.orgName;
+    if (!orgName) return;
+    setCustomBreadcrumbsItems([
+      { pathname: PageRoutes.ORGANIZATIONS_INDEX, id: 'ORGANIZATIONS' },
+      {
+        pathname: generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
+          organizationId: String(getOrganizationId)
+        }),
+        label: orgName,
+        id: 'ORGANIZATIONS_DETAIL'
+      }
+    ]);
+  }, [organizationDetailData?.orgName, getOrganizationId]);
+
   const handleEditClick = () => {
     navigate(
       generatePath(PageRoutes.ORGANIZATIONS_EDIT, {
-        organizationId: getOrganizationId
+        organizationId: String(getOrganizationId)
       })
     );
   };
@@ -158,7 +174,7 @@ export const OrganizationDetail = () => {
         onClick={() =>
           navigate(
             generatePath(PageRoutes.ORGANIZATIONS_INTEGRATIONS, {
-              organizationId: getOrganizationId
+              organizationId: String(getOrganizationId)
             })
           )
         }
@@ -177,7 +193,7 @@ export const OrganizationDetail = () => {
   );
 
   return (
-    <Stack gap={5} pb={5}>
+    <Stack gap={5} pb={5} pt={1}>
       <TitleComponent
         title={(isSuccess && organizationDetailData?.orgName) || ''}
         startDecoration={<OrganizationLogo />}

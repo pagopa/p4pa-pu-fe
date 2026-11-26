@@ -286,7 +286,7 @@ describe('ClientSilCreate', () => {
   });
 
   it('disables form elements when mutation is pending', () => {
-    mockCreateClientSil.mockReturnValueOnce({
+    mockCreateClientSil.mockReturnValue({
       mutateAsync: mockMutateAsync,
       isPending: true
     });

@@ -72,13 +72,13 @@ describe('Management', () => {
     expect(debtTypesLink).toHaveAttribute(
       'href',
       generatePath(PageRoutes.DEBT_TYPES_DASHBOARD_BYORG, {
-        organizationId: data.organizationId
+        organizationId: String(data.organizationId)
       })
     );
     expect(operatorsLink).toHaveAttribute(
       'href',
       generatePath(PageRoutes.BROKER_OPERATORS, {
-        organizationId: data.organizationId,
+        organizationId: String(data.organizationId),
         orgName: data.orgName
       })
     );

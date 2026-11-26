@@ -66,7 +66,7 @@ const TaxonomyDataGrid = ({
           onClick={() => {
             navigate(
               generatePath(PageRoutes.BACKOFFICE_TAXONOMY_DETAIL, {
-                taxonomyId: params.row.taxonomyId
+                taxonomyId: String(params.row.taxonomyId)
               })
             );
           }}

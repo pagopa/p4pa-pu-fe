@@ -21,3 +21,9 @@ export const postTokenOrError = async () => {
     return null;
   }
 };
+
+export const refreshToken = async (refreshToken: string) => {
+  const { data } = await utils.apiClient.bff.refreshToken({ refreshToken });
+  parseAndLog(accessTokenSchema, data);
+  return data;
+};

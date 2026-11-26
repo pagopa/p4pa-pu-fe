@@ -3,7 +3,7 @@ import type { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
 import { accessTokenSchema } from '../../generated/core/zod-schema';
 import { createMock } from 'zodock';
-import { postTokenOrError } from './token';
+import { postTokenOrError, refreshToken } from './token';
 
 vi.mock('./utils', () => {
   const originalModule = vi.importActual('utils');
@@ -49,5 +49,17 @@ describe('get Token API ', () => {
     const result = await postTokenOrError();
 
     expect(result).toBe(null);
+  });
+
+  it('refreshes a token without using a hook', async () => {
+    const dataMock = createMock(accessTokenSchema);
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'refreshToken')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const result = await refreshToken(fakeSelfCareToken);
+
+    expect(apiMock).toHaveBeenCalledWith({ refreshToken: fakeSelfCareToken });
+    expect(result).toEqual(dataMock);
   });
 });

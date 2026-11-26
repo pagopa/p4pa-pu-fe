@@ -1,15 +1,14 @@
 import type { ReactNode } from 'react';
 import { useId } from 'react';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useTranslation } from 'react-i18next';
-import { I18N_PREFIX } from '..';
 
 import Stack from '@mui/material/Stack';
 import type { TypographyProps } from '@mui/material/Typography';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
+import ActionMenu from '@core/components/ActionMenu/ActionMenu';
+import TrashCanIcon from '@mui/icons-material/Delete';
 
 export const Field = ({
   label,
@@ -44,15 +43,18 @@ export const Field = ({
 );
 
 export const Row = ({
-  name,
   onShow,
+  onDelete,
+  onEdit,
   children
 }: {
-  name: string;
+  name?: string;
   onShow: () => void;
+  onDelete: () => void;
+  onEdit: () => void;
   children: ReactNode;
 }) => {
-  const { t } = useTranslation(undefined, I18N_PREFIX);
+  const { t } = useTranslation();
   return (
     <Paper elevation={0} sx={{ p: 3 }}>
       <Stack direction="row" alignItems="center" gap={10}>
@@ -65,14 +67,27 @@ export const Row = ({
         >
           {children}
         </Stack>
-        <Button
-          variant="text"
-          endIcon={<ArrowForwardIcon />}
-          aria-label={t('showItem', { name })}
-          onClick={onShow}
-        >
-          {t('show')}
-        </Button>
+        <ActionMenu
+          rowId={'test'}
+          menuItems={[
+            {
+              label: t('organizations.integrations.showItem'),
+              variant: 'main',
+              action: () => onShow()
+            },
+            {
+              label: t('organizations.integrations.modifyItem'),
+              variant: 'main',
+              action: () => onEdit()
+            },
+            {
+              icon: <TrashCanIcon />,
+              variant: 'error',
+              label: t('organizations.integrations.deleteItem'),
+              action: () => onDelete()
+            }
+          ]}
+        />
       </Stack>
     </Paper>
   );

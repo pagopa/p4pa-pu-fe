@@ -142,7 +142,7 @@ export const MyOrg = () => {
     if (!row) return;
     navigate(
       generatePath(PageRoutes.DEBT_TYPE_ORG_DETAIL, {
-        debtPositionTypeOrgId: row.debtPositionTypeOrgId
+        debtPositionTypeOrgId: String(row.debtPositionTypeOrgId)
       })
     );
   };

@@ -36,6 +36,10 @@ vi.mock('../navigation', () => ({
   }
 }));
 
+vi.mock('../auth', () => ({
+  default: vi.fn()
+}));
+
 vi.mock('@core/translations/i18n', () => ({
   default: {
     addResourceBundle: vi.fn(),
@@ -50,6 +54,7 @@ vi.mock('@core/translations/i18n', () => ({
 
 import utils from '..';
 import navigation from '../navigation';
+import refreshToken from '../auth';
 import { setAppState } from '../../store/AppStateStore';
 import router, { PageRoutes } from '../../routes';
 
@@ -247,6 +252,7 @@ describe('Response interceptor auth error handling', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(refreshToken).mockReset();
     setupInterceptors(client);
     const responseInterceptorCall = (
       client.instance.interceptors.response.use as Mock
@@ -254,7 +260,7 @@ describe('Response interceptor auth error handling', () => {
     responseErrorHandler = responseInterceptorCall[1];
   });
 
-  it('should handle 401 error (Unauthorized)', async () => {
+  it('logs out when the refresh request fails with 401 without refreshing again', async () => {
     const error: AxiosError = {
       name: 'AxiosError',
       message: 'Request failed with status code 401',
@@ -270,11 +276,52 @@ describe('Response interceptor auth error handling', () => {
       toJSON: () => ({})
     };
 
+    const refreshError: AxiosError = {
+      ...error,
+      config: {
+        url: '/bff/token/refresh?refreshToken=expired'
+      } as InternalAxiosRequestConfig
+    };
+    vi.mocked(refreshToken).mockImplementation(async () => {
+      await responseErrorHandler(refreshError);
+      throw new Error('Refresh request unexpectedly succeeded');
+    });
+
     await expect(responseErrorHandler(error)).rejects.toBe(error);
 
+    expect(refreshToken).toHaveBeenCalledTimes(1);
     expect(navigation.setAuthErrorState).toHaveBeenCalledWith(true);
     expect(utils.storage.clear).toHaveBeenCalled();
     expect(navigation.navigateToLoggedOut).toHaveBeenCalled();
+  });
+
+  it('does not log out after a successful refresh', async () => {
+    const error: AxiosError = {
+      name: 'AxiosError',
+      message: 'Unauthorized',
+      response: {
+        status: 401,
+        data: {},
+        statusText: 'Unauthorized',
+        headers: {} as AxiosRequestHeaders,
+        config: {} as InternalAxiosRequestConfig
+      },
+      config: { url: '/api/test' } as InternalAxiosRequestConfig,
+      isAxiosError: true,
+      toJSON: () => ({})
+    };
+    vi.mocked(refreshToken).mockResolvedValue({
+      access_token: 'new-token',
+      token_type: 'Bearer',
+      expires_in: 3600
+    });
+
+    await expect(responseErrorHandler(error)).rejects.toBe(error);
+
+    expect(refreshToken).toHaveBeenCalledTimes(1);
+    expect(navigation.setAuthErrorState).not.toHaveBeenCalled();
+    expect(utils.storage.clear).not.toHaveBeenCalled();
+    expect(navigation.navigateToLoggedOut).not.toHaveBeenCalled();
   });
 
   it('should handle 403 error (Forbidden)', async () => {

@@ -4,12 +4,13 @@ import type {
   OrgSubUnit,
   PagedOrgSubUnit
 } from '../../../../generated/core/client';
-import type { GridColDef } from '@mui/x-data-grid';
+import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { OrgSubUnitStatus } from '@generated/core/data-contracts';
 import EmptyDetailContainer from '../../../components/DebtPositionsInstallmentDetail/EmptyDetailContainer';
+import { SubUnitActionMenu } from './ActionMenu';
 import utils from '@core/utils';
-import Button from '@mui/material/Button';
+import type { ChipOwnProps } from '@mui/material/Chip';
 import Chip from '@mui/material/Chip';
-import RemoveCircleOutline from '@mui/icons-material/RemoveCircleOutline';
 
 type PagedOrgSubUnitDataGridProps = {
   data?: PagedOrgSubUnit;
@@ -23,6 +24,11 @@ const SubUnitDataGrid = ({
   id
 }: PagedOrgSubUnitDataGridProps) => {
   const { t } = useTranslation();
+
+  const colorMap: Record<OrgSubUnitStatus, ChipOwnProps['color']> = {
+    [OrgSubUnitStatus.ACTIVE]: 'success',
+    [OrgSubUnitStatus.CANCELLED]: 'default'
+  };
 
   const columns: Array<GridColDef<OrgSubUnit>> = [
     {
@@ -57,7 +63,7 @@ const SubUnitDataGrid = ({
       type: 'string',
       renderCell: (params) => (
         <Chip
-          color="info"
+          color={colorMap[params.value as OrgSubUnitStatus]}
           size="small"
           label={t(`OperatorDetail.subUnitStatus.${params.value}`)}
         />
@@ -66,18 +72,12 @@ const SubUnitDataGrid = ({
     {
       field: 'action',
       headerName: '',
-      flex: 1,
+      flex: 0.5,
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: (params) => (
-        <Button
-          endIcon={<RemoveCircleOutline />}
-          onClick={() => onDelete(params.row)}
-          color="error"
-        >
-          {t('commons.remove')}
-        </Button>
+      renderCell: (params: GridRenderCellParams<OrgSubUnit>) => (
+        <SubUnitActionMenu row={params.row} onDelete={onDelete} />
       )
     }
   ];

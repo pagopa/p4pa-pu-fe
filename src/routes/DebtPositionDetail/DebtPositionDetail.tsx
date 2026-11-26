@@ -357,7 +357,7 @@ const DebtPositionDetail = () => {
         { pathname: PageRoutes.DEBT_POSITIONS_INDEX, id: 'DEBT_POSITIONS' },
         {
           pathname: generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
-            id: debtPositionDetail.paymentOptions[0].debtPositionId
+            id: String(debtPositionDetail.paymentOptions[0].debtPositionId)
           }),
           label: debtPositionDetail.description || '-',
           id: 'branch'

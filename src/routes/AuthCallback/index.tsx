@@ -16,6 +16,10 @@ export default function AuthCallback() {
   useEffect(() => {
     if (result?.token.access_token) {
       window.localStorage.setItem('accessToken', result.token.access_token);
+      window.localStorage.setItem(
+        'refreshToken',
+        result.token.refresh_token || ''
+      );
       setIdToken(result.idToken);
       navigate(PageRoutes.HOME);
     } else {

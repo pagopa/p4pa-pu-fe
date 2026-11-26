@@ -71,7 +71,7 @@ const {
       (
         organizationId: number,
         enabled?: boolean
-      ) => { data: { content: Array<PdndClientView> } | undefined }
+      ) => { data: Array<PdndClientView> | undefined }
     >(),
   mockGetOrgSubUnitWithNoServiceType: vi.fn(),
   mockGetPdndClientsByOrgSubUnitCode: vi.fn(),
@@ -407,7 +407,7 @@ describe('AddIntegration', () => {
     mockEncryptAndSaveApiKey.mockReturnValue({ mutateAsync: mockMutateAsync });
     mockMutateAsync.mockResolvedValue(undefined);
     mockGetAllOrgSubUnits.mockReturnValue({
-      data: { content: SUB_UNITS }
+      data: SUB_UNITS
     });
     mockGetOrgSubUnitWithNoServiceType.mockReturnValue({
       data: SUB_UNITS
@@ -438,6 +438,136 @@ describe('AddIntegration', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  it('asks for confirmation before updating a PagoPA product', async () => {
+    vi.mocked(useParams).mockReturnValue({
+      organizationId: '33',
+      IntegrationType: 'pagoPa-product'
+    });
+    mockGetOrganizationApiKey.mockReturnValue({
+      data: { apiKey: 'old-key' }
+    });
+
+    render(<AddIntegration mode={IntegrationMode.EDIT} />, '/?keyType=IO');
+
+    const apiKey = await screen.findByRole('textbox');
+    await waitFor(() => expect(apiKey).toHaveValue('old-key'));
+
+    fireEvent.change(apiKey, { target: { value: 'new-key' } });
+    fireEvent.click(screen.getByTestId('next-button'));
+
+    const dialog = await screen.findByTestId('confirm-pagopa-update-dialog');
+    expect(
+      within(dialog).getByText('integrations.edit.confirmDialog.title')
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).getByText('integrations.edit.confirmDialog.message')
+    ).toBeInTheDocument();
+    expect(mockMutateAsync).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
+
+    fireEvent.click(
+      screen.getByTestId('confirm-pagopa-update-dialog-confirm-button')
+    );
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith(-1);
+    });
+    expect(mockMutateAsync).toHaveBeenCalledExactlyOnceWith({
+      apiKey: 'new-key',
+      keyType: KeyTypeEnum.IO,
+      serviceEnabled: false
+    });
+  });
+
+  it('does not update a PagoPA product when the confirmation is cancelled', async () => {
+    vi.mocked(useParams).mockReturnValue({
+      organizationId: '33',
+      IntegrationType: 'pagoPa-product'
+    });
+    mockGetOrganizationApiKey.mockReturnValue({
+      data: { apiKey: 'old-key' }
+    });
+
+    render(<AddIntegration mode={IntegrationMode.EDIT} />, '/?keyType=IO');
+
+    const apiKey = await screen.findByRole('textbox');
+    await waitFor(() => expect(apiKey).toHaveValue('old-key'));
+    fireEvent.change(apiKey, { target: { value: 'new-key' } });
+    fireEvent.click(screen.getByTestId('next-button'));
+
+    await screen.findByTestId('confirm-pagopa-update-dialog');
+    fireEvent.click(
+      screen.getByTestId('confirm-pagopa-update-dialog-cancel-button')
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId('confirm-pagopa-update-dialog')
+      ).not.toBeInTheDocument();
+    });
+    expect(mockMutateAsync).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it('notifies when the PagoPA update fails without navigating away', async () => {
+    mockMutateAsync.mockRejectedValueOnce(new Error('Update failed'));
+    const consoleSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    vi.mocked(useParams).mockReturnValue({
+      organizationId: '33',
+      IntegrationType: 'pagoPa-product'
+    });
+    mockGetOrganizationApiKey.mockReturnValue({
+      data: { apiKey: 'old-key' }
+    });
+
+    render(<AddIntegration mode={IntegrationMode.EDIT} />, '/?keyType=IO');
+
+    const apiKey = await screen.findByRole('textbox');
+    await waitFor(() => expect(apiKey).toHaveValue('old-key'));
+    fireEvent.change(apiKey, { target: { value: 'new-key' } });
+    fireEvent.click(screen.getByTestId('next-button'));
+
+    await screen.findByTestId('confirm-pagopa-update-dialog');
+    fireEvent.click(
+      screen.getByTestId('confirm-pagopa-update-dialog-confirm-button')
+    );
+
+    await waitFor(() => {
+      expect(utils.notify.emit).toHaveBeenCalledWith(
+        'integrations.add.errors.saveIntegration.message'
+      );
+    });
+    expect(consoleSpy).toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(utils.notify.emit).not.toHaveBeenCalledWith(
+      'commons.done',
+      'success'
+    );
+    // The dialog stays open so the user can retry the update.
+    expect(
+      screen.getByTestId('confirm-pagopa-update-dialog')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('confirm-pagopa-update-dialog-confirm-button')
+    ).toBeEnabled();
+
+    // Retrying from the still-open dialog saves the update.
+    fireEvent.click(
+      screen.getByTestId('confirm-pagopa-update-dialog-confirm-button')
+    );
+
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledTimes(2);
+    });
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
+    expect(
+      screen.queryByTestId('confirm-pagopa-update-dialog')
+    ).not.toBeInTheDocument();
   });
 
   it('starts without a selection or notification and uses the organization from the URL', () => {

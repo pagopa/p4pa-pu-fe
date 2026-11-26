@@ -1,31 +1,58 @@
-import { describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, screen } from '@core/__tests__/renderers';
 
-import type { PdndServiceView } from '@generated/core/client';
+import { PdndServiceType, type PdndServiceView } from '@generated/core/client';
 import { ServicesSection } from './ServiceSection';
+import { useDeletePdndService } from '@core/api/integrations';
+import notify from '@core/utils/notify';
+import utils from '@core/utils';
+
+vi.mock('@core/api/integrations', () => ({
+  useDeletePdndService: vi.fn()
+}));
+
+vi.mock('@core/utils/notify', () => ({
+  default: { emit: vi.fn() }
+}));
+
+vi.mock('@core/utils', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@core/utils')>();
+  return {
+    ...actual,
+    default: {
+      ...actual.default,
+      dialog: {
+        open: vi.fn(),
+        close: vi.fn()
+      }
+    }
+  };
+});
+
+const mockNavigate = vi.fn();
+const mockMutateAsync = vi.fn();
+
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: () => mockNavigate
+}));
 
 vi.mock('../Dialogs/ServiceDialog', () => ({
   PdndSendServiceDialog: ({
     service,
-    organizationId,
     onClose,
-    onDelete
+    onEdit
   }: {
     service: PdndServiceView;
-    organizationId: number;
     onClose: () => void;
-    onDelete: () => void;
+    onEdit: (service: PdndServiceView) => void;
   }) => (
-    <div
-      data-testid="service-dialog"
-      data-client-id={service.clientId}
-      data-organization-id={organizationId}
-    >
+    <div data-testid="service-dialog" data-client-id={service.clientId}>
       <button data-testid="close-dialog" onClick={onClose}>
         close
       </button>
-      <button data-testid="delete-service" onClick={onDelete}>
-        delete
+      <button data-testid="edit-service" onClick={() => onEdit(service)}>
+        edit
       </button>
     </div>
   )
@@ -51,10 +78,26 @@ const renderSection = (list = services, onDelete = vi.fn()) =>
   );
 
 describe('ServicesSection', () => {
-  it('renders nothing when there are no services', () => {
-    const { container } = renderSection([]);
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(useDeletePdndService).mockReturnValue({
+      mutateAsync: mockMutateAsync,
+      isPending: false
+    } as unknown as ReturnType<typeof useDeletePdndService>);
+    mockMutateAsync.mockResolvedValue({});
+  });
 
-    expect(container).toBeEmptyDOMElement();
+  it('renders the title even when there are no services', () => {
+    renderSection([]);
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'pdndServices'
+      })
+    ).toBeInTheDocument();
+    // No rows are rendered: neither the label nor the value of a field.
+    expect(screen.queryByRole('term')).not.toBeInTheDocument();
+    expect(screen.queryByRole('definition')).not.toBeInTheDocument();
   });
 
   it('renders the title and a row per service, with a placeholder for a missing purposeId', () => {
@@ -62,7 +105,7 @@ describe('ServicesSection', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'organizations.integrations.pdndServices'
+        name: 'pdndServices'
       })
     ).toBeInTheDocument();
     ['SEND service', 'purp_1', 'client-a', 'Other service', 'client-b'].forEach(
@@ -76,25 +119,87 @@ describe('ServicesSection', () => {
 
     expect(screen.queryByTestId('service-dialog')).not.toBeInTheDocument();
 
-    // Every row's show button shares the same label, so pick by position.
-    fireEvent.click(screen.getAllByRole('button')[1]);
+    fireEvent.click(screen.getAllByRole('button', { name: /openMenu/i })[1]);
+    fireEvent.click(screen.getByRole('menuitem', { name: /showItem/i }));
 
     const dialog = screen.getByTestId('service-dialog');
     expect(dialog).toHaveAttribute('data-client-id', 'client-b');
-    expect(dialog).toHaveAttribute('data-organization-id', '33');
 
     fireEvent.click(screen.getByTestId('close-dialog'));
 
     expect(screen.queryByTestId('service-dialog')).not.toBeInTheDocument();
   });
 
-  it('forwards onDelete to the dialog', () => {
+  it('navigates to edit with purpose and sub-unit identifiers', () => {
+    renderSection([
+      {
+        serviceName: 'SEND service',
+        serviceType: PdndServiceType.SEND,
+        purposeId: 'purp_1',
+        subUnitCode: 'SU1',
+        clientId: 'client-a',
+        clientName: 'Client A'
+      }
+    ]);
+
+    fireEvent.click(screen.getByRole('button', { name: /openMenu/i }));
+    fireEvent.click(screen.getByRole('menuitem', { name: /modifyItem/i }));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.stringContaining('purposeId=purp_1&subUnitCode=SU1')
+    );
+  });
+
+  it('does not navigate when editing a service without a purpose ID', () => {
+    renderSection([
+      {
+        serviceName: 'Other service',
+        serviceType: PdndServiceType.SEND,
+        clientId: 'client-b',
+        clientName: 'Client B'
+      }
+    ]);
+
+    fireEvent.click(screen.getByRole('button', { name: /openMenu/i }));
+    fireEvent.click(screen.getByRole('menuitem', { name: /modifyItem/i }));
+
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it('opens delete confirmation and refreshes after success', async () => {
+    const onDelete = vi.fn();
+    vi.mocked(utils.dialog.open).mockImplementation((options) => {
+      options.onConfirm?.();
+    });
+    renderSection(services, onDelete);
+
+    fireEvent.click(screen.getAllByRole('button', { name: /openMenu/i })[0]);
+    fireEvent.click(screen.getByRole('menuitem', { name: /deleteItem/i }));
+
+    await vi.waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledWith({
+        purposeId: 'purp_1'
+      });
+      expect(notify.emit).toHaveBeenCalledWith('commons.done', 'success');
+      expect(onDelete).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('shows an error notification when deletion fails', async () => {
+    mockMutateAsync.mockRejectedValue(new Error('delete failed'));
+    vi.mocked(utils.dialog.open).mockImplementation((options) => {
+      options.onConfirm?.();
+    });
+
     const onDelete = vi.fn();
     renderSection(services, onDelete);
 
-    fireEvent.click(screen.getAllByRole('button')[0]);
-    fireEvent.click(screen.getByTestId('delete-service'));
+    fireEvent.click(screen.getAllByRole('button', { name: /openMenu/i })[0]);
+    fireEvent.click(screen.getByRole('menuitem', { name: /deleteItem/i }));
 
-    expect(onDelete).toHaveBeenCalledTimes(1);
+    await vi.waitFor(() => {
+      expect(notify.emit).toHaveBeenCalledWith('errors.generic');
+    });
+    expect(onDelete).not.toHaveBeenCalled();
   });
 });

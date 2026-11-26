@@ -1,9 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
-import type {
-  IngestionFlowFileType,
-  RequestParams
-} from '../../../generated/fileshare/client';
+import type { IngestionFlowFileType } from '../../../generated/fileshare/client';
 import { FileOrigin } from '../../../generated/fileshare/client';
 import { extractFilename } from '../../utils/formatters';
 import type { FlowFileFilteredRequest } from './mappings';
@@ -35,7 +32,7 @@ export const uploadIngestionFlowFile = ({
 }) =>
   useMutation({
     mutationKey: ['uploadIngestionFlowFiles', organizationId],
-    mutationFn: async (file: File, params?: RequestParams) => {
+    mutationFn: async (file: File) => {
       const { data: response } =
         await utils.fileshareClient.organization.uploadIngestionFlowFile(
           organizationId,
@@ -46,8 +43,7 @@ export const uploadIngestionFlowFile = ({
           },
           {
             ingestionFlowFile: file
-          },
-          params
+          }
         );
 
       return response;

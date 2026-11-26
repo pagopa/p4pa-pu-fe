@@ -39,7 +39,7 @@ export const CourtesyPage = () => {
   const toEdit = () => {
     navigate(
       generatePath(PageRoutes.ORGANIZATIONS_EDIT, {
-        organizationId: state[STATE.ORGANIZATION_ID]
+        organizationId: String(state[STATE.ORGANIZATION_ID])
       })
     );
   };

@@ -90,7 +90,7 @@ export const AllOrganizations = () => {
   ) => {
     if (row) {
       const detailPath = generatePath(PageRoutes.BROKER_OPERATORS, {
-        organizationId: row?.organizationId,
+        organizationId: String(row?.organizationId),
         orgName: row?.orgName
       });
       navigate(detailPath);

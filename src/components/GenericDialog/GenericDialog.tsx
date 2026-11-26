@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import { useId } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -7,6 +9,8 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
+
+import { DialogHeader } from '@core/components/DialogHeader';
 
 export type GenericDialogProps = {
   open: boolean;
@@ -18,7 +22,7 @@ export type GenericDialogProps = {
   fullWidth?: boolean;
   confirmLoading?: boolean;
   onConfirm?: () => void;
-  onClose?: () => void;
+  onClose: () => void;
   'data-testid'?: string;
   ariaDescribedby?: string;
   ariaLabelledby?: string;
@@ -39,20 +43,30 @@ const GenericDialog = ({
   onClose,
   'data-testid': testId
 }: GenericDialogProps) => {
+  const { t } = useTranslation();
+  const generatedTitleId = useId();
+  const generatedDescriptionId = useId();
+  const titleId = ariaLabelledby ?? generatedTitleId;
+  const descriptionId = ariaDescribedby ?? generatedDescriptionId;
+  confirmLabel = confirmLabel ?? t('commons.confirm');
   return (
     <Dialog
       open={open}
       onClose={onClose}
       fullWidth={fullWidth}
       data-testid={testId}
-      aria-describedby={ariaDescribedby}
-      aria-labelledby={ariaLabelledby || 'generic-dialog-title'}
+      aria-describedby={
+        ariaDescribedby ?? (message ? descriptionId : undefined)
+      }
+      aria-labelledby={titleId}
     >
-      <DialogTitle sx={{ px: 4, pt: 4 }} id="generic-dialog-title">
-        {title}
+      <DialogTitle component="div" sx={{ px: 4, pt: 4 }}>
+        <DialogHeader id={titleId} title={title} onClose={onClose} />
       </DialogTitle>
       <DialogContent sx={{ px: 4 }}>
-        {message && <DialogContentText>{message}</DialogContentText>}
+        {message && (
+          <DialogContentText id={descriptionId}>{message}</DialogContentText>
+        )}
         {children}
       </DialogContent>
       <DialogActions sx={{ px: 4, pb: 3 }}>

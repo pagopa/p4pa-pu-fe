@@ -6,7 +6,8 @@ import type { PendingUpdate } from '../AddIntegrationSchema';
 
 const TEST_ID_BY_TYPE: Record<PendingUpdate['type'], string> = {
   eservice: 'confirm-eservice-update-dialog',
-  pdndClient: 'confirm-pdnd-client-update-dialog'
+  pdndClient: 'confirm-pdnd-client-update-dialog',
+  pagoPA: 'confirm-pagopa-update-dialog'
 };
 
 type ConfirmUpdateDialogProps = {

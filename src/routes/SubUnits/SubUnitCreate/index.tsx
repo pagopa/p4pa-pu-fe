@@ -65,7 +65,9 @@ export const SubUnitCreate = () => {
         status: OrgSubUnitStatus.ACTIVE
       });
       navigate(
-        generatePath(PageRoutes.ORGANIZATIONS_SUB_UNITS, { organizationId })
+        generatePath(PageRoutes.ORGANIZATIONS_SUB_UNITS, {
+          organizationId: String(organizationId)
+        })
       );
       utils.notify.emit(t('commons.done'), 'success');
     } catch (error) {
@@ -82,7 +84,9 @@ export const SubUnitCreate = () => {
 
   const onCancel = () => {
     navigate(
-      generatePath(PageRoutes.ORGANIZATIONS_SUB_UNITS, { organizationId })
+      generatePath(PageRoutes.ORGANIZATIONS_SUB_UNITS, {
+        organizationId: String(organizationId)
+      })
     );
   };
 

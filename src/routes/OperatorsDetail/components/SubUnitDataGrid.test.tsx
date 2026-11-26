@@ -25,17 +25,30 @@ vi.mock(
   })
 );
 
+vi.mock('./ActionMenu', () => ({
+  SubUnitActionMenu: (props: {
+    row: OrgSubUnit;
+    onDelete: (row: OrgSubUnit) => void;
+  }) => (
+    <button
+      data-testid={`delete-button-${props.row.subUnitCode}`}
+      onClick={() => props.onDelete(props.row)}
+    >
+      Delete
+    </button>
+  )
+}));
+
+type Column = {
+  field: string;
+  headerName?: string;
+  renderCell?: (params: { value: unknown; row: OrgSubUnit }) => React.ReactNode;
+};
+
 vi.mock('../../../components/DataGrid/CustomDataGrid', () => ({
   default: (props: {
     rows: Array<OrgSubUnit>;
-    columns: Array<{
-      field: string;
-      headerName?: string;
-      renderCell?: (params: {
-        value: unknown;
-        row: OrgSubUnit;
-      }) => React.ReactNode;
-    }>;
+    columns: Array<Column>;
     getRowId: (row: OrgSubUnit) => string;
     totalPages: number;
   }) => (
@@ -166,9 +179,21 @@ describe('SubUnitDataGrid', () => {
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'commons.remove' }));
+    fireEvent.click(screen.getByTestId('delete-button-SUB-001'));
 
     expect(mockOnDelete).toHaveBeenCalledWith(sampleRow);
+  });
+
+  it('renders the action menu for each row', () => {
+    render(
+      <SubUnitDataGrid
+        id=""
+        data={{ content: [sampleRow], totalPages: 1 } as PagedOrgSubUnit}
+        onDelete={mockOnDelete}
+      />
+    );
+
+    expect(screen.getByTestId('delete-button-SUB-001')).toBeInTheDocument();
   });
 
   it('uses an empty rows array when data is undefined', () => {

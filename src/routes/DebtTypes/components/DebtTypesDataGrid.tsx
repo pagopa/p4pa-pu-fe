@@ -68,7 +68,7 @@ const DebtTypesDataGrid = ({
           onClick={() => {
             navigate(
               generatePath(PageRoutes.DEBT_TYPE_CATALOG_DETAIL, {
-                debtPositionTypeId: params.row.debtPositionTypeId
+                debtPositionTypeId: String(params.row.debtPositionTypeId)
               })
             );
           }}

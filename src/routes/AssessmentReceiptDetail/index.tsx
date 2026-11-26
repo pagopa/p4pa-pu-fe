@@ -77,15 +77,15 @@ export const AssessmentReceiptDetail = () => {
       },
       {
         pathname: generatePath(PageRoutes.ASSESSMENT_DETAIL, {
-          id: assessmentId
+          id: String(assessmentId)
         }),
         label: assessmentName,
         id: 'ASSESSMENT_DETAIL'
       },
       {
         pathname: generatePath(PageRoutes.ASSESSMENT_RECEIPT_DETAIL, {
-          assessmentId,
-          receiptId
+          assessmentId: String(assessmentId),
+          receiptId: String(receiptId)
         }),
         label: t('assessmentDetail.paymentDetail.title'),
         id: 'ASSESSMENT_RECEIPT_DETAIL'

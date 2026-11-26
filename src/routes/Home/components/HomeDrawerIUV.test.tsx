@@ -92,6 +92,40 @@ describe('HomeDrawerIUV', () => {
     expect(mockNavigate).toHaveBeenCalled();
   });
 
+  it('navigates to the installment list when no installmentId is present', async () => {
+    const results: DashboardByIuv = {
+      ...baseResults,
+      hasInstallment: true,
+      installmentId: undefined
+    } as DashboardByIuv;
+
+    render(<HomeDrawerIUV searchValue="IUV123" searchResults={results} />);
+    const item = await screen.findByText('Visualizza dettaglio Avvisi');
+    await userEvent.click(item);
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ hashObject: { iuv: 'IUV123' } })
+    );
+  });
+
+  it('navigates to the debt positions list when no debtPositionId is present', async () => {
+    const results: DashboardByIuv = {
+      ...baseResults,
+      hasDebtPosition: true,
+      debtPositionId: undefined
+    } as DashboardByIuv;
+
+    render(<HomeDrawerIUV searchValue="IUV123" searchResults={results} />);
+    const item = await screen.findByText('Visualizza Posizioni Debitorie');
+    await userEvent.click(item);
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ hashObject: { iuv: 'IUV123' } })
+    );
+  });
+
   it('navigates to reporting detail when iuf exists, otherwise to list', async () => {
     const withIuf: DashboardByIuv = {
       ...baseResults,

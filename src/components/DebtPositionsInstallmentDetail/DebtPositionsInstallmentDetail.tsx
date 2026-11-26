@@ -213,14 +213,14 @@ export const DebtPositionsInstallmentDetail = () => {
         { pathname: PageRoutes.DEBT_POSITIONS_INDEX, id: 'DEBT_POSITIONS' },
         {
           pathname: generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
-            id: installment.debtPositionId
+            id: String(installment.debtPositionId)
           }),
           label: installment.debtPositionDescription || '-',
           id: 'branch'
         },
         {
           pathname: generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, {
-            id: installment.installmentId
+            id: String(installment.installmentId)
           }),
           id: 'DEBT_POSITION_INSTALLMENT_DETAIL'
         }
@@ -288,7 +288,7 @@ export const DebtPositionsInstallmentDetail = () => {
                   onLinkClick: () =>
                     navigate(
                       generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
-                        id: installment?.debtPositionId
+                        id: String(installment?.debtPositionId)
                       })
                     )
                 }

@@ -41,7 +41,7 @@ const OrganizationEditWizard = () => {
       utils.notify.emit(t('organizationEditWizard.errorLoadingData'), 'error');
       navigate(
         generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
-          organizationId: getOrganizationId
+          organizationId: String(getOrganizationId)
         })
       );
       return;

@@ -66,7 +66,8 @@ export const Header = (props: HeaderProps) => {
 
   async function logoutUser() {
     try {
-      await utils.apiClient.bff.logout();
+      const refreshToken = window.localStorage.getItem('refreshToken') || '';
+      await utils.apiClient.bff.logout({ revoked_token: refreshToken });
     } catch (e) {
       console.warn(e);
     } finally {

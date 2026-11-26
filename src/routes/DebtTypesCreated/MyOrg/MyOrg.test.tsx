@@ -32,7 +32,12 @@ vi.mock('../../../hooks/useSearch', () => ({
   useSearch: vi.fn()
 }));
 
+vi.mock('../../../api/debtTypesCreated', () => ({
+  useDebtPositionTypeOrgSearch: vi.fn(() => ({}))
+}));
+
 import { useSearch } from '../../../hooks/useSearch';
+import { useDebtPositionTypeOrgSearch } from '../../../api/debtTypesCreated';
 
 describe('MyOrg', () => {
   const mockNavigate = vi.fn();
@@ -144,7 +149,7 @@ describe('MyOrg', () => {
 
     expect(mockNavigate).toHaveBeenCalledWith('/mock-path');
     expect(mockGeneratePath).toHaveBeenCalledWith(expect.any(String), {
-      debtPositionTypeOrgId: 1
+      debtPositionTypeOrgId: '1'
     });
   });
 
@@ -177,6 +182,53 @@ describe('MyOrg', () => {
           name: 'Detail of managed organization debt type'
         })
       ).toHaveLength(2);
+    });
+  });
+
+  it('uses the store organization id when the URL id is not numeric', async () => {
+    mockUseParams.mockReturnValue({ organizationId: 'not-a-number' });
+    const searchSpy = vi.mocked(useDebtPositionTypeOrgSearch);
+
+    render(<MyOrg />);
+
+    expect(searchSpy).toHaveBeenCalledWith(3);
+  });
+
+  it('renders fallback row id and state when values are missing', async () => {
+    (useSearch as unknown as Mock).mockReturnValue({
+      query: {
+        data: {
+          content: [
+            {
+              debtPositionTypeOrgId: undefined,
+              code: 'NO-ID',
+              description: 'No id',
+              updateDate: undefined,
+              flagActive: false
+            }
+          ],
+          totalPages: undefined
+        }
+      },
+      applyFilters: mockApplyFilters
+    });
+
+    render(<MyOrg />);
+
+    await waitFor(() => {
+      expect(screen.getByText('NO-ID')).toBeInTheDocument();
+      expect(screen.getByText('Disabled')).toBeInTheDocument();
+    });
+  });
+
+  it('navigates using the row id from the table', async () => {
+    render(<MyOrg />);
+    await waitFor(() => screen.getByTestId('navigate-icon-2'));
+
+    fireEvent.click(screen.getByTestId('navigate-icon-2'));
+
+    expect(mockGeneratePath).toHaveBeenCalledWith(expect.any(String), {
+      debtPositionTypeOrgId: '2'
     });
   });
 

@@ -39,7 +39,7 @@ export const HomeDrawerIUF = ({
     const { classificationId } = searchResults;
     if (classificationId) {
       const path = generatePath(PageRoutes.CLASSIFICATION_DETAIL, {
-        classificationId
+        classificationId: String(classificationId)
       });
       navigate(generatePath(path));
     } else {

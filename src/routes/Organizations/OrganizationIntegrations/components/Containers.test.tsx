@@ -31,16 +31,19 @@ describe('Field', () => {
 describe('Row', () => {
   it('renders its children and calls onShow when the show button is clicked', () => {
     const onShow = vi.fn();
+    const onEdit = vi.fn();
+    const onDelete = vi.fn();
 
     render(
-      <Row name="Item" onShow={onShow}>
+      <Row name="Item" onShow={onShow} onEdit={onEdit} onDelete={onDelete}>
         <Field label="Name">Mario</Field>
       </Row>
     );
 
     expect(screen.getByText('Mario')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button'));
+    fireEvent.click(screen.getByRole('button', { name: /openMenu/i }));
+    fireEvent.click(screen.getByRole('menuitem', { name: /showItem/i }));
 
     expect(onShow).toHaveBeenCalledTimes(1);
   });

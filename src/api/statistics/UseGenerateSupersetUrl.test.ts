@@ -144,7 +144,8 @@ describe('useGenerateSupersetUrl', () => {
       expect(onSuccessMock).toHaveBeenCalledWith(
         mockResponse,
         { organizationId: 123 },
-        undefined
+        undefined,
+        expect.objectContaining({ mutationKey: ['generateSupersetUrl'] })
       )
     );
   });
@@ -165,7 +166,8 @@ describe('useGenerateSupersetUrl', () => {
       expect(onErrorMock).toHaveBeenCalledWith(
         mockError,
         { organizationId: 123 },
-        undefined
+        undefined,
+        expect.objectContaining({ mutationKey: ['generateSupersetUrl'] })
       )
     );
   });

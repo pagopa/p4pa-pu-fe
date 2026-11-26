@@ -148,13 +148,13 @@ describe('BeneficiaryPaymentFields', () => {
   });
 
   it('should render IBAN field', () => {
-    render(<BeneficiaryPaymentFields {...mockProps} />);
+    render(<BeneficiaryPaymentFields<TestFormValues> {...mockProps} />);
 
     expect(screen.getByTestId('iban-field')).toBeInTheDocument();
   });
 
   it('should set proper validation rules for IBAN field', () => {
-    render(<BeneficiaryPaymentFields {...mockProps} />);
+    render(<BeneficiaryPaymentFields<TestFormValues> {...mockProps} />);
 
     expect(ibanRules.validate).toHaveProperty('ibanFormat');
     expect(ibanRules.validate).toHaveProperty('paymentMethod');
@@ -165,7 +165,7 @@ describe('BeneficiaryPaymentFields', () => {
   });
 
   it('should pass correct props to IBANField', () => {
-    render(<BeneficiaryPaymentFields {...mockProps} />);
+    render(<BeneficiaryPaymentFields<TestFormValues> {...mockProps} />);
 
     const ibanField = screen.getByTestId('iban-field');
     expect(ibanField).toHaveAttribute('data-disabled', 'false');
@@ -173,7 +173,12 @@ describe('BeneficiaryPaymentFields', () => {
   });
 
   it('should handle disabled state correctly', () => {
-    render(<BeneficiaryPaymentFields {...mockProps} disabled={true} />);
+    render(
+      <BeneficiaryPaymentFields<TestFormValues>
+        {...mockProps}
+        disabled={true}
+      />
+    );
 
     expect(screen.getByTestId('iban-field')).toHaveAttribute(
       'data-disabled',
@@ -194,7 +199,7 @@ describe('BeneficiaryPaymentFields', () => {
       return undefined;
     });
 
-    render(<BeneficiaryPaymentFields {...mockProps} />);
+    render(<BeneficiaryPaymentFields<TestFormValues> {...mockProps} />);
 
     const paymentMethodValidator = ibanRules.validate.paymentMethod;
 
@@ -208,13 +213,13 @@ describe('BeneficiaryPaymentFields', () => {
   });
 
   it('should render PostalIban field', () => {
-    render(<BeneficiaryPaymentFields {...mockProps} />);
+    render(<BeneficiaryPaymentFields<TestFormValues> {...mockProps} />);
 
     expect(screen.getByTestId('postal-iban-field')).toBeInTheDocument();
   });
 
   it('should pass correct props to PostalIbanField', () => {
-    render(<BeneficiaryPaymentFields {...mockProps} />);
+    render(<BeneficiaryPaymentFields<TestFormValues> {...mockProps} />);
 
     const postalIbanField = screen.getByTestId('postal-iban-field');
     expect(postalIbanField).toHaveAttribute('data-disabled', 'false');
@@ -222,7 +227,12 @@ describe('BeneficiaryPaymentFields', () => {
   });
 
   it('should handle disabled state correctly for PostalIbanField', () => {
-    render(<BeneficiaryPaymentFields {...mockProps} disabled={true} />);
+    render(
+      <BeneficiaryPaymentFields<TestFormValues>
+        {...mockProps}
+        disabled={true}
+      />
+    );
 
     expect(screen.getByTestId('postal-iban-field')).toHaveAttribute(
       'data-disabled',

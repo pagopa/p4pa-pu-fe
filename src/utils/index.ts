@@ -12,6 +12,7 @@ import dialog from './dialog';
 import URI from './URI';
 import debtpositions from './debtpositions';
 import * as formatters from './formatters';
+import refreshToken from './auth';
 
 export default {
   apiClient: new Api({
@@ -34,5 +35,6 @@ export default {
   roles,
   filtersValidation,
   formatters,
-  debtpositions
+  debtpositions,
+  refreshToken
 };

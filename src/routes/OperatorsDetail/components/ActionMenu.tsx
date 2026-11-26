@@ -1,5 +1,10 @@
-import ActionMenu from '../../../components/ActionMenu/ActionMenu';
-import type { DebtPositionTypeOrgDTO } from '../../../../generated/core/data-contracts';
+import ActionMenu, {
+  type MenuItemProps
+} from '../../../components/ActionMenu/ActionMenu';
+import type {
+  DebtPositionTypeOrgDTO,
+  OrgSubUnit
+} from '../../../../generated/core/data-contracts';
 import RemoveCircleOutline from '@mui/icons-material/RemoveCircleOutline';
 import OpenInNew from '@mui/icons-material/OpenInNew';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +33,7 @@ export const GridActionMenu = ({
   const onDetail = () => {
     if (row?.debtPositionTypeOrgId) {
       const path = generatePath(PageRoutes.DEBT_TYPE_ORG_DETAIL, {
-        debtPositionTypeOrgId: row.debtPositionTypeOrgId
+        debtPositionTypeOrgId: String(row.debtPositionTypeOrgId)
       });
       navigate(path);
     } else {
@@ -67,4 +72,60 @@ export const GridActionMenu = ({
   }
 
   return <ActionMenu rowId={row.debtPositionTypeId} menuItems={menuItems} />;
+};
+
+type SubUnitActionMenuProps = {
+  row: OrgSubUnit;
+  onDelete: (row: OrgSubUnit) => void;
+};
+
+export const SubUnitActionMenu = ({
+  row,
+  onDelete: onDeleteProp
+}: SubUnitActionMenuProps) => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const onDelete = () => {
+    onDeleteProp(row);
+  };
+
+  const onDetail = () => {
+    navigate(
+      generatePath(PageRoutes.SUB_UNIT_DETAIL, {
+        organizationId: String(row.organizationId),
+        subUnitCode: row.subUnitCode
+      })
+    );
+  };
+
+  const menuItems: Array<MenuItemProps> = [
+    {
+      icon: (
+        <OpenInNew
+          color="primary"
+          fontSize="small"
+          aria-label={t('commons.goToDetail')}
+          data-testid={`navigate-to-detail-${row.subUnitCode}`}
+        />
+      ),
+      label: t('commons.goToDetail'),
+      action: onDetail
+    },
+    {
+      icon: (
+        <RemoveCircleOutline
+          fontSize="small"
+          color="error"
+          aria-label={t('commons.onlyRemove')}
+          data-testid={`remove-detail-${row.subUnitCode}`}
+        />
+      ),
+      label: t('commons.onlyRemove'),
+      action: onDelete,
+      variant: 'error'
+    }
+  ];
+
+  return <ActionMenu rowId={row.subUnitCode} menuItems={menuItems} />;
 };

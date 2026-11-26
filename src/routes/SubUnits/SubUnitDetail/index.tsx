@@ -16,6 +16,7 @@ import {
   getOrgSubUnitOperators,
   updateOrgSubUnitStatus
 } from '@core/api/orgSubUnit';
+import { getOrganizationDetail } from '@core/api/organizations';
 import GenericDialog from '@core/components/GenericDialog/GenericDialog';
 import { useCallback, useEffect, useState } from 'react';
 import { SubUnitSummary } from './components/SubUnitSummary';
@@ -35,11 +36,20 @@ export const SubUnitDetail = () => {
   const [filterValues, setFilterValues] =
     useState<SubUnitsOperatorsFilters>(initialFilters);
 
+  const handleFilterChange = useCallback((id: string, value: unknown) => {
+    setFilterValues((prev) => ({
+      ...prev,
+      [id]: value as string
+    }));
+  }, []);
+
   const { organizationId: urlOrganizationId, subUnitCode: urlSubUnitCode } =
     useParams();
 
   const organizationId = Number(urlOrganizationId);
   const subUnitCode = String(urlSubUnitCode);
+
+  const organizationQuery = getOrganizationDetail(organizationId);
 
   useEffect(() => {
     if (isNaN(organizationId) || !urlSubUnitCode) {
@@ -50,13 +60,6 @@ export const SubUnitDetail = () => {
   const updateStatus = updateOrgSubUnitStatus(organizationId, subUnitCode);
   const subUnitQuery = getOrgSubUnitById(organizationId, subUnitCode);
   const query = getOrgSubUnitOperators(organizationId, subUnitCode);
-
-  const handleFilterChange = useCallback((id: string, value: unknown) => {
-    setFilterValues((prev) => ({
-      ...prev,
-      [id]: value as string
-    }));
-  }, []);
 
   const statusKey =
     subUnitQuery.data?.status === OrgSubUnitStatus.ACTIVE
@@ -101,7 +104,7 @@ export const SubUnitDetail = () => {
   const handleSubunitAssignOperator = () => {
     navigate(
       generatePath(PageRoutes.SUB_UNIT_DETAIL_ASSIGN_OPERATORS, {
-        organizationId,
+        organizationId: String(organizationId),
         subUnitCode: subUnitCode
       })
     );
@@ -121,16 +124,18 @@ export const SubUnitDetail = () => {
       { pathname: PageRoutes.ORGANIZATIONS, id: 'ORGANIZATIONS' },
       {
         pathname: generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
-          organizationId
+          organizationId: String(organizationId)
         }),
-        label: urlOrganizationId,
+        label: organizationQuery.data?.orgName || urlOrganizationId,
         id: 'ORGANIZATIONS_DETAIL'
       },
       {
         pathname: generatePath(PageRoutes.ORGANIZATIONS_SUB_UNITS, {
-          organizationId
+          organizationId: String(organizationId)
         }),
-        label: t('subunits.list.title', { orgName: urlOrganizationId }),
+        label: t('subunits.list.title', {
+          orgName: organizationQuery.data?.orgName || urlOrganizationId
+        }),
         id: 'SUBUNITS_LIST'
       },
       {
@@ -139,7 +144,7 @@ export const SubUnitDetail = () => {
         id: 'SUB_UNIT_DETAIL'
       }
     ]);
-  }, [t, urlOrganizationId, organizationId]);
+  }, [t, organizationQuery.data?.orgName, organizationId]);
 
   return (
     <>
@@ -159,7 +164,7 @@ export const SubUnitDetail = () => {
             chip={{
               label: t(`subunits.status.${subUnitQuery.data?.status}`),
               color:
-                subUnitQuery.data?.status == 'ACTIVE' ? 'default' : 'neutral'
+                subUnitQuery.data?.status == 'ACTIVE' ? 'success' : 'neutral'
             }}
             callToAction={[changeStatusAction]}
           />

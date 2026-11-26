@@ -14,7 +14,7 @@ import type {
 import {
   orgAndSubUnitDTOSchema,
   organizationApiKeySchema,
-  pagedOrgSubUnitSchema,
+  orgSubUnitSchema,
   pagedPdndServiceViewSchema,
   pdndClientNoSecretDTOSchema,
   pdndServiceViewSchema
@@ -98,10 +98,13 @@ describe('deleteOrganizationApiKey', () => {
       .mockResolvedValue({} as AxiosResponse);
 
     const { result } = renderHook(() =>
-      useDeleteOrganizationApiKey(organizationId, keyType, query)
+      useDeleteOrganizationApiKey(organizationId)
     );
 
-    await result.current.mutateAsync();
+    await result.current.mutateAsync({
+      organizationApiKeyType: keyType,
+      query
+    });
 
     expect(apiMock).toHaveBeenCalledWith(organizationId, keyType, query);
   });
@@ -230,11 +233,9 @@ describe('deletePdndService', () => {
       .spyOn(utils.apiClient.bff, 'deletePdndService')
       .mockResolvedValue({} as AxiosResponse);
 
-    const { result } = renderHook(() =>
-      useDeletePdndService(organizationId, 'service-1')
-    );
+    const { result } = renderHook(() => useDeletePdndService(organizationId));
 
-    await result.current.mutateAsync();
+    await result.current.mutateAsync({ purposeId: 'service-1' });
 
     expect(apiMock).toHaveBeenCalledWith(
       organizationId,
@@ -248,11 +249,12 @@ describe('deletePdndService', () => {
       .spyOn(utils.apiClient.bff, 'deletePdndService')
       .mockResolvedValue({} as AxiosResponse);
 
-    const { result } = renderHook(() =>
-      useDeletePdndService(organizationId, 'service-1', 'SU1')
-    );
+    const { result } = renderHook(() => useDeletePdndService(organizationId));
 
-    await result.current.mutateAsync();
+    await result.current.mutateAsync({
+      purposeId: 'service-1',
+      subUnitCode: 'SU1'
+    });
 
     expect(apiMock).toHaveBeenCalledWith(organizationId, 'service-1', {
       subUnitCode: 'SU1'
@@ -354,7 +356,7 @@ describe('useUpdatePdndClient', () => {
 
 describe('getAllOrgSubUnits', () => {
   it('does not fetch when disabled', () => {
-    const apiMock = vi.spyOn(utils.apiClient.bff, 'getPagedOrgSubUnits');
+    const apiMock = vi.spyOn(utils.apiClient.bff, 'getOrgSubUnits');
     const { result } = renderHook(() =>
       useGetAllOrgSubUnits(organizationId, false)
     );
@@ -363,16 +365,16 @@ describe('getAllOrgSubUnits', () => {
     expect(apiMock).not.toHaveBeenCalled();
   });
 
-  it('requests the first 100 sub-units and returns the page', async () => {
-    const dataMock = createMock(pagedOrgSubUnitSchema);
+  it('requests all sub-units and returns the list', async () => {
+    const dataMock = [createMock(orgSubUnitSchema)];
     const apiMock = vi
-      .spyOn(utils.apiClient.bff, 'getPagedOrgSubUnits')
+      .spyOn(utils.apiClient.bff, 'getOrgSubUnits')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
     const { result } = renderHook(() => useGetAllOrgSubUnits(organizationId));
 
     await waitFor(() => {
-      expect(apiMock).toHaveBeenCalledWith(organizationId, { size: 100 });
+      expect(apiMock).toHaveBeenCalledWith(organizationId);
       expect(result.current.data).toEqual(dataMock);
     });
   });
@@ -491,11 +493,9 @@ describe('deletePdndClient', () => {
       .spyOn(utils.apiClient.bff, 'deletePdndClient')
       .mockResolvedValue({} as AxiosResponse);
 
-    const { result } = renderHook(() =>
-      useDeletePdndClient(organizationId, 'client-c')
-    );
+    const { result } = renderHook(() => useDeletePdndClient(organizationId));
 
-    await result.current.mutateAsync();
+    await result.current.mutateAsync('client-c');
 
     expect(apiMock).toHaveBeenCalledWith(organizationId, 'client-c');
   });

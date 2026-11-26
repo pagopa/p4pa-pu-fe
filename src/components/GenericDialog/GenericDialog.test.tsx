@@ -35,6 +35,15 @@ describe('GenericDialog', () => {
     expect(defaultProps.onClose).toHaveBeenCalled();
   });
 
+  it('calls onClose when the close icon is clicked', () => {
+    render(<GenericDialog {...defaultProps} />);
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'commons.closeDialog' })
+    );
+    expect(defaultProps.onClose).toHaveBeenCalled();
+  });
+
   it('calls onConfirm when Confirm button is clicked', () => {
     render(<GenericDialog {...defaultProps} />);
 
@@ -81,6 +90,30 @@ describe('GenericDialog', () => {
     expect(screen.getByTestId(`${testId}-confirm-button`)).toBeDisabled();
     expect(screen.getByTestId(`${testId}-cancel-button`)).toBeDisabled();
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
+  });
+
+  it('keeps the close button out of the dialog heading', () => {
+    render(<GenericDialog {...defaultProps} />);
+
+    const heading = screen.getByRole('heading', {
+      level: 2,
+      name: 'Test Title'
+    });
+
+    expect(heading).not.toContainElement(
+      screen.getByRole('button', { name: 'commons.closeDialog' })
+    );
+  });
+
+  it('links the dialog to its title and message', () => {
+    render(<GenericDialog {...defaultProps} />);
+
+    const dialog = screen.getByRole('dialog');
+    const titleId = screen.getByRole('heading', { level: 2 }).id;
+    const messageId = screen.getByText('Test message').id;
+
+    expect(dialog).toHaveAttribute('aria-labelledby', titleId);
+    expect(dialog).toHaveAttribute('aria-describedby', messageId);
   });
 
   it('renders only confirm button when no cancelLabel is provided', () => {

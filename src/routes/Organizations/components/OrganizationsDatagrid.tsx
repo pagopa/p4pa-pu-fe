@@ -34,7 +34,7 @@ const OrganizationsDatagrid = ({
   ) => {
     navigate(
       generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
-        organizationId: org.organizationId
+        organizationId: String(org.organizationId)
       })
     );
   };
