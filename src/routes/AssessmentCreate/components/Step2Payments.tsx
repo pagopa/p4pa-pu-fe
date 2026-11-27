@@ -494,13 +494,21 @@ const Step2PaymentsComponent = forwardRef<
 
           // If explicitly present, add data filters
           if (uiFilters.dateFrom && uiFilters.dateTo) {
-            apiFilters.paymentDateTimeFrom = uiFilters.dateFrom.toISOString();
-            apiFilters.paymentDateTimeTo = uiFilters.dateTo.toISOString();
+            apiFilters.paymentDateTimeFrom = utils.formatters.date.code(
+              uiFilters.dateFrom
+            );
+            apiFilters.paymentDateTimeTo = utils.formatters.date.code(
+              uiFilters.dateTo
+            );
           }
 
           if (uiFilters.updateDateFrom && uiFilters.updateDateTo) {
-            apiFilters.updateDateFrom = uiFilters.updateDateFrom.toISOString();
-            apiFilters.updateDateTo = uiFilters.updateDateTo.toISOString();
+            apiFilters.updateDateFrom = utils.formatters.date.code(
+              uiFilters.updateDateFrom
+            );
+            apiFilters.updateDateTo = utils.formatters.date.code(
+              uiFilters.updateDateTo
+            );
           }
 
           // We don't add default dates in remove mode
