@@ -155,8 +155,12 @@ describe('OrganizationIntegrations', () => {
 
     render(<OrganizationIntegrations />);
 
-    expect(screen.getByText('pdndServices')).toBeInTheDocument();
-    expect(screen.getByText('pdndClients')).toBeInTheDocument();
+    expect(
+      screen.getByText('organizations.integrations.pdndServices')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('organizations.integrations.pdndClients')
+    ).toBeInTheDocument();
   });
 
   it('shows the sub-units tab content when the tab hash param is 1', () => {

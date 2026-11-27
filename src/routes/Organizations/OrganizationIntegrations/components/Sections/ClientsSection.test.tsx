@@ -85,7 +85,7 @@ describe('ClientsSection', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'pdndClients'
+        name: 'organizations.integrations.pdndClients'
       })
     ).toBeInTheDocument();
 
