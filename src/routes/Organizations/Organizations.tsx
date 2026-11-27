@@ -23,6 +23,7 @@ export const Organizations = () => {
   const initialFilters: OrganizationsFilters = utils.URI.decode(
     window.location.hash
   );
+
   const [filterValues, setFilterValues] =
     useState<OrganizationsFilters>(initialFilters);
 

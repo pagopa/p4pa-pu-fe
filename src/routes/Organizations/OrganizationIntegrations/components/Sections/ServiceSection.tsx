@@ -70,7 +70,7 @@ export const ServicesSection = ({
   };
 
   return (
-    <Section title={t('pdndServices')}>
+    <Section title={t('organizations.integrations.pdndServices')}>
       {selected && (
         <PdndSendServiceDialog
           open
@@ -90,10 +90,16 @@ export const ServicesSection = ({
           <Field label={t('name')} width={'25%'}>
             {service.serviceName}
           </Field>
-          <Field label={t('purposeId')} variant="monospaced">
+          <Field
+            label={t('organizations.integrations.purposeId')}
+            variant="monospaced"
+          >
             {service.purposeId || '-'}
           </Field>
-          <Field label={t('clientId')} variant="monospaced">
+          <Field
+            label={t('organizations.integrations.clientId')}
+            variant="monospaced"
+          >
             {service.clientId}
           </Field>
         </Row>

@@ -92,7 +92,7 @@ describe('ServicesSection', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'pdndServices'
+        name: 'organizations.integrations.pdndServices'
       })
     ).toBeInTheDocument();
     // No rows are rendered: neither the label nor the value of a field.
@@ -105,7 +105,7 @@ describe('ServicesSection', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'pdndServices'
+        name: 'organizations.integrations.pdndServices'
       })
     ).toBeInTheDocument();
     ['SEND service', 'purp_1', 'client-a', 'Other service', 'client-b'].forEach(

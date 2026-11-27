@@ -76,7 +76,7 @@ export const ClientsSection = ({
   };
 
   return (
-    <Section title={t('pdndClients')}>
+    <Section title={t('organizations.integrations.pdndClients')}>
       {selected && (
         <PdndClientDialog
           open
@@ -93,10 +93,13 @@ export const ClientsSection = ({
           onEdit={() => setSelected(client)}
           onDelete={() => confirmDeletePdndClient(client)}
         >
-          <Field label={t('name')} width={'25%'}>
+          <Field label={t('organizations.integrations.name')} width={'25%'}>
             {client.clientName}
           </Field>
-          <Field label={t('clientId')} variant="monospaced">
+          <Field
+            label={t('organizations.integrations.clientId')}
+            variant="monospaced"
+          >
             {client.clientId}
           </Field>
         </Row>
