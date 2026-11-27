@@ -1,11 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import React from 'react';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 import { Step2Payments, validateStep2Payments } from './Step2Payments';
 import type { Step2PaymentsRef } from './Step2Payments';
 import { render } from '../../../__tests__/renderers';
+import utils from '../../../utils';
+import { setOrganizationId } from '../../../store/OrganizationIdStore';
 
 const mockPaymentsState = {
   paymentsData: {
@@ -115,6 +117,12 @@ vi.mock('./PaymentsTable', () => ({
         Seleziona pagamento
       </button>
       <button
+        data-testid="mock-deselect-payment"
+        onClick={() => onSelectionChange?.([])}
+      >
+        Deseleziona pagamento
+      </button>
+      <button
         data-testid="mock-apply-filters"
         onClick={() =>
           onFiltersApplied?.(
@@ -125,6 +133,24 @@ vi.mock('./PaymentsTable', () => ({
         }
       >
         Applica filtri
+      </button>
+      <button
+        data-testid="mock-apply-all-filters"
+        onClick={() =>
+          onFiltersApplied?.(
+            {
+              iuv: '  IUV-ALL  ',
+              dateFrom: new Date('2023-01-01T00:00:00Z'),
+              dateTo: new Date('2023-01-31T00:00:00Z'),
+              updateDateFrom: new Date('2023-02-01T00:00:00Z'),
+              updateDateTo: new Date('2023-02-28T00:00:00Z')
+            },
+            { page: 1, size: 20 },
+            ['paymentDateTime,desc']
+          )
+        }
+      >
+        Applica tutti i filtri
       </button>
       <button
         data-testid="mock-filter-error"
@@ -224,6 +250,44 @@ const renderWithForm = (
   );
 };
 
+const SetterHarness = ({
+  children,
+  field,
+  value,
+  initialValues = {}
+}: {
+  children: React.ReactNode;
+  field: string;
+  value: unknown;
+  initialValues?: Record<string, unknown>;
+}) => {
+  const methods = useForm({
+    defaultValues: {
+      addPaymentsToAssessment: true,
+      selectedPayments: [],
+      selectedPaymentIuds: [],
+      operatingYear: '',
+      chapterCode: '',
+      debtPositionTypeOrgCode: '',
+      ...initialValues
+    }
+  });
+
+  return (
+    <FormProvider {...methods}>
+      <button
+        data-testid={`set-${field}`}
+        onClick={() =>
+          methods.setValue(field as 'debtPositionTypeOrgCode', value as string)
+        }
+      >
+        set
+      </button>
+      {children}
+    </FormProvider>
+  );
+};
+
 describe('Step2Payments', () => {
   const translations = {
     'assessmentCreate.configuration.step2.addPayments.radioLabel':
@@ -242,7 +306,13 @@ describe('Step2Payments', () => {
       'Hai selezionato {{count}} pagamenti',
     'assessmentCreate.configuration.step2.selection.banner.clearSelection':
       'Svuota selezione',
-    'commons.inThisPage': 'in questa pagina'
+    'commons.inThisPage': 'in questa pagina',
+    'assessmentCreate.removePayments.confirmModal.title': 'Rimuovi pagamenti',
+    'assessmentCreate.removePayments.confirmModal.description':
+      'Confermi la rimozione?',
+    'commons.onlyRemove': 'Rimuovi',
+    'commons.cancel': 'Annulla',
+    'errors.generic': 'Si è verificato un errore'
   };
 
   beforeEach(() => {
@@ -1219,6 +1289,389 @@ describe('Step2Payments', () => {
       );
 
       consoleErrorSpy.mockRestore();
+    });
+  });
+
+  describe('Remove mode data flow', () => {
+    const assessmentDetailResponse = {
+      pagedAssessmentsRowsDetail: {
+        content: [
+          {
+            iud: 'iud-1',
+            iuv: 'iuv-1',
+            updateDate: '2023-01-01T00:00:00Z',
+            amountCents: 1234
+          },
+          {
+            iud: 'iud-2',
+            iuv: 'iuv-2',
+            updateDate: '2023-01-02T00:00:00Z',
+            amountCents: 0
+          }
+        ],
+        totalElements: 2,
+        totalPages: 1,
+        number: 0,
+        size: 10
+      }
+    };
+
+    beforeEach(() => {
+      setOrganizationId(123);
+      mockGlobalSelection.isIudSelected = vi.fn().mockReturnValue(false);
+    });
+
+    it('should load assessment details when filters are applied in remove mode', async () => {
+      const getDetailsSpy = vi
+        .spyOn(utils.apiClient.bff, 'getPagedAssessmentsDetails')
+        .mockResolvedValue({ data: assessmentDetailResponse } as never);
+
+      renderWithForm(<Step2Payments />, {
+        addPaymentsToAssessment: true,
+        isModifyMode: true,
+        modifyAction: 'remove',
+        assessmentId: 55
+      });
+
+      fireEvent.click(screen.getByTestId('mock-apply-filters'));
+
+      await waitFor(() => {
+        expect(getDetailsSpy).toHaveBeenCalledWith(
+          123,
+          55,
+          expect.objectContaining({
+            page: 0,
+            size: 10,
+            sort: ['iuv,asc']
+          })
+        );
+      });
+
+      getDetailsSpy.mockRestore();
+    });
+
+    it('should map every filter when applying all filters in remove mode', async () => {
+      const getDetailsSpy = vi
+        .spyOn(utils.apiClient.bff, 'getPagedAssessmentsDetails')
+        .mockResolvedValue({ data: assessmentDetailResponse } as never);
+
+      renderWithForm(<Step2Payments />, {
+        addPaymentsToAssessment: true,
+        isModifyMode: true,
+        modifyAction: 'remove',
+        assessmentId: 55
+      });
+
+      fireEvent.click(screen.getByTestId('mock-apply-all-filters'));
+
+      await waitFor(() => {
+        expect(getDetailsSpy).toHaveBeenCalledWith(
+          123,
+          55,
+          expect.objectContaining({
+            iuv: 'IUV-ALL',
+            page: 1,
+            size: 20,
+            sort: ['paymentDateTime,desc']
+          })
+        );
+      });
+
+      const queryParams = getDetailsSpy.mock.calls[0][2] as Record<
+        string,
+        unknown
+      >;
+      expect(queryParams.paymentDateTimeFrom).toBeDefined();
+      expect(queryParams.paymentDateTimeTo).toBeDefined();
+      expect(queryParams.updateDateFrom).toBeDefined();
+      expect(queryParams.updateDateTo).toBeDefined();
+
+      getDetailsSpy.mockRestore();
+    });
+
+    it('should not load assessment details when assessmentId is missing', () => {
+      const getDetailsSpy = vi.spyOn(
+        utils.apiClient.bff,
+        'getPagedAssessmentsDetails'
+      );
+
+      renderWithForm(<Step2Payments />, {
+        addPaymentsToAssessment: true,
+        isModifyMode: true,
+        modifyAction: 'remove'
+      });
+
+      fireEvent.click(screen.getByTestId('mock-apply-filters'));
+
+      expect(getDetailsSpy).not.toHaveBeenCalled();
+      getDetailsSpy.mockRestore();
+    });
+
+    it('should handle assessment details API errors', async () => {
+      const consoleErrorSpy = vi.spyOn(console, 'error');
+      const getDetailsSpy = vi
+        .spyOn(utils.apiClient.bff, 'getPagedAssessmentsDetails')
+        .mockRejectedValue(new Error('details error'));
+
+      renderWithForm(<Step2Payments />, {
+        addPaymentsToAssessment: true,
+        isModifyMode: true,
+        modifyAction: 'remove',
+        assessmentId: 55
+      });
+
+      fireEvent.click(screen.getByTestId('mock-apply-filters'));
+
+      await waitFor(() => {
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          'Failed to fetch assessment detail:',
+          expect.any(Error)
+        );
+      });
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Step2 Payments API Error:',
+        expect.any(Error)
+      );
+
+      getDetailsSpy.mockRestore();
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should confirm removal successfully and close the dialog', async () => {
+      const ref = React.createRef<Step2PaymentsRef>();
+      const deleteSpy = vi
+        .spyOn(utils.apiClient.bff, 'deleteAssessmentsDetails')
+        .mockResolvedValue({ data: {} } as never);
+
+      renderWithForm(<Step2Payments ref={ref} />, {
+        addPaymentsToAssessment: true,
+        isModifyMode: true,
+        modifyAction: 'remove',
+        assessmentId: 55,
+        assessmentName: 'Assessment test',
+        selectedAssessmentDetailIds: [1, 2]
+      });
+
+      act(() => {
+        ref.current?.showValidationError(true);
+      });
+
+      const confirmButton = await screen.findByTestId(
+        'remove-payments-confirm-modal-confirm-button'
+      );
+      fireEvent.click(confirmButton);
+
+      await waitFor(() => {
+        expect(deleteSpy).toHaveBeenCalledWith(123, {
+          assessmentDetailIds: [1, 2]
+        });
+      });
+
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId('remove-payments-confirm-modal')
+        ).not.toBeInTheDocument();
+      });
+
+      deleteSpy.mockRestore();
+    });
+
+    it('should close the dialog without removing when cancelled', async () => {
+      const ref = React.createRef<Step2PaymentsRef>();
+      const deleteSpy = vi.spyOn(
+        utils.apiClient.bff,
+        'deleteAssessmentsDetails'
+      );
+
+      renderWithForm(<Step2Payments ref={ref} />, {
+        addPaymentsToAssessment: true,
+        isModifyMode: true,
+        modifyAction: 'remove',
+        assessmentId: 55,
+        selectedAssessmentDetailIds: [1, 2]
+      });
+
+      act(() => {
+        ref.current?.showValidationError(true);
+      });
+
+      const cancelButton = await screen.findByTestId(
+        'remove-payments-confirm-modal-cancel-button'
+      );
+      fireEvent.click(cancelButton);
+
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId('remove-payments-confirm-modal')
+        ).not.toBeInTheDocument();
+      });
+
+      expect(deleteSpy).not.toHaveBeenCalled();
+      deleteSpy.mockRestore();
+    });
+
+    it('should navigate to the error response on a 4xx removal error', async () => {
+      const ref = React.createRef<Step2PaymentsRef>();
+      const consoleErrorSpy = vi.spyOn(console, 'error');
+      const notifySpy = vi.spyOn(utils.notify, 'emit');
+      const deleteSpy = vi
+        .spyOn(utils.apiClient.bff, 'deleteAssessmentsDetails')
+        .mockRejectedValue({ response: { status: 400 } });
+
+      renderWithForm(<Step2Payments ref={ref} />, {
+        addPaymentsToAssessment: true,
+        isModifyMode: true,
+        modifyAction: 'remove',
+        assessmentId: 55,
+        selectedAssessmentDetailIds: [1]
+      });
+
+      act(() => {
+        ref.current?.showValidationError(true);
+      });
+
+      fireEvent.click(
+        await screen.findByTestId(
+          'remove-payments-confirm-modal-confirm-button'
+        )
+      );
+
+      await waitFor(() => {
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          'Error during payment removal:',
+          { response: { status: 400 } }
+        );
+      });
+
+      expect(notifySpy).not.toHaveBeenCalled();
+
+      deleteSpy.mockRestore();
+      notifySpy.mockRestore();
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should show a generic notification on a non-4xx removal error', async () => {
+      const ref = React.createRef<Step2PaymentsRef>();
+      const consoleErrorSpy = vi.spyOn(console, 'error');
+      const notifySpy = vi
+        .spyOn(utils.notify, 'emit')
+        .mockImplementation(() => undefined);
+      const deleteSpy = vi
+        .spyOn(utils.apiClient.bff, 'deleteAssessmentsDetails')
+        .mockRejectedValue(new Error('server error'));
+
+      renderWithForm(<Step2Payments ref={ref} />, {
+        addPaymentsToAssessment: true,
+        isModifyMode: true,
+        modifyAction: 'remove',
+        assessmentId: 55,
+        selectedAssessmentDetailIds: [1]
+      });
+
+      act(() => {
+        ref.current?.showValidationError(true);
+      });
+
+      fireEvent.click(
+        await screen.findByTestId(
+          'remove-payments-confirm-modal-confirm-button'
+        )
+      );
+
+      await waitFor(() => {
+        expect(notifySpy).toHaveBeenCalledWith('Si è verificato un errore');
+      });
+
+      deleteSpy.mockRestore();
+      notifySpy.mockRestore();
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should clear assessment detail selections in remove mode', () => {
+      mockGlobalSelection.totalSelected = 1;
+
+      renderWithForm(<Step2Payments />, {
+        addPaymentsToAssessment: true,
+        isModifyMode: true,
+        modifyAction: 'remove',
+        assessmentId: 55,
+        selectedAssessmentDetailIds: [1]
+      });
+
+      fireEvent.click(screen.getByTestId('clear-selection-button'));
+
+      expect(mockGlobalSelection.clearAllSelections).toHaveBeenCalled();
+    });
+  });
+
+  describe('Selection changes scope', () => {
+    beforeEach(() => {
+      mockGlobalSelection.isIudSelected = vi.fn().mockReturnValue(false);
+    });
+
+    it('should deselect IUDs that were removed from the current page', () => {
+      mockPaymentsState.paymentsData = {
+        content: [
+          {
+            iud: 'test-iud-1',
+            amount: 100,
+            paymentDateTime: '2023-01-01T00:00:00Z',
+            receiptCreationDate: '2023-01-01T00:00:00Z',
+            organizationId: 123
+          }
+        ],
+        totalElements: 1,
+        totalPages: 1,
+        number: 0,
+        size: 10
+      } as PagedPaidInstallmentsDTO;
+      mockGlobalSelection.globalSelectedIuds = new Set(['test-iud-1']);
+
+      renderWithForm(<Step2Payments />, { addPaymentsToAssessment: true });
+
+      fireEvent.click(screen.getByTestId('mock-deselect-payment'));
+
+      expect(mockGlobalSelection.toggleIudSelection).toHaveBeenCalledWith(
+        ['test-iud-1'],
+        false
+      );
+    });
+  });
+
+  describe('Debt type change handling', () => {
+    it('should reset data and reload when the debt type changes', async () => {
+      const resetUrlSpy = vi.spyOn(utils.URI, 'resetUrlParams');
+
+      render(
+        <SetterHarness
+          field="debtPositionTypeOrgCode"
+          value="ORG2"
+          initialValues={{
+            addPaymentsToAssessment: true,
+            debtPositionTypeOrgCode: 'ORG1'
+          }}
+        >
+          <Step2Payments />
+        </SetterHarness>
+      );
+
+      fireEvent.click(screen.getByTestId('set-debtPositionTypeOrgCode'));
+
+      await waitFor(() => {
+        expect(mockPaymentsState.resetPaymentsData).toHaveBeenCalled();
+      });
+
+      expect(mockGlobalSelection.clearAllSelections).toHaveBeenCalled();
+      expect(resetUrlSpy).toHaveBeenCalledWith({
+        excludeKeys: ['page', 'size', 'sortField', 'sortDirection'],
+        defaults: { page: 1, size: 10 }
+      });
+      await waitFor(() => {
+        expect(mockPaidInstallments.fetchPaidInstallments).toHaveBeenCalled();
+      });
+
+      resetUrlSpy.mockRestore();
     });
   });
 
